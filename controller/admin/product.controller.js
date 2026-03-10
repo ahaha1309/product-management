@@ -113,10 +113,6 @@ module.exports.createPost = async (req, res) => {
   const price = parseInt(req.body.price);
   const discount = parseInt(req.body.discount);
   const quantity = parseInt(req.body.quantity);
-  const thumbnail='';
-  if(req.file){
-   thumbnail = `/uploads/${req.file.filename}`;   
-  }
   const position = parseInt(req.body.position) || autoPosition + 1;
   const status = req.body.status;
   const data = {
@@ -125,7 +121,7 @@ module.exports.createPost = async (req, res) => {
     price: price,
     discountPercentage: discount,
     stock: quantity,
-    thumbnail: thumbnail,
+    thumbnail: req.body[req.file.fieldname],
     status: status,
     position: position,
   };
