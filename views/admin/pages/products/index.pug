@@ -13,6 +13,8 @@ block main
          .col-6
            include ../../mixins/form.search.pug 
            +formSearch(keyword)
+  include ../../mixins/sort.pug 
+  +sort()
   .card.mb-2
     .card-header Danh sách
     .card-body 
@@ -22,6 +24,7 @@ block main
             +changeMulti(`${prefixAdmin}/product/change-multi?_method=PATCH`)
           .col-4 
             a(href=`${prefixAdmin}/product/create` class="btn btn-outline-success float-end ") Thêm mới
+
        table.table.table-hover.table-sm
          thead 
            tr  

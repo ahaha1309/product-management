@@ -2,10 +2,10 @@ document.addEventListener(
   'DOMContentLoaded',
   function () {
     const btn = document.querySelectorAll('.btn-outline-success');
+    const url = new URL(window.location.href);
     btn.forEach((button) => {
       button.onclick = function () {
         const status = button.getAttribute('button-status');
-        let url = new URL(window.location.href);
         if (status) {
           url.searchParams.set('status', status);
         } else {
@@ -17,7 +17,6 @@ document.addEventListener(
     //end button status(Tất cả,...)
     const formSearch = document.querySelector('#form-search');
     if (formSearch) {
-      let url = new URL(window.location.href);
       formSearch.addEventListener('submit', (e) => {
         e.preventDefault();
         const keyword = e.target.elements.keyword.value;
@@ -35,12 +34,39 @@ document.addEventListener(
     page.forEach((page) => {
       page.onclick = function () {
         const currentPage = page.getAttribute('button-pagination');
-        let url = new URL(window.location.href);
         url.searchParams.set('page', currentPage);
         window.location.href = url.href;
       };
     });
-    //Thay đổi trạng thái sản phẩm
+    //sắp xếp
+    const btnSort = document.querySelector('[sort-clear]');
+    const typeSort = document.querySelector("[name='sort']");
+    if(typeSort){
+    typeSort.addEventListener('change', () => {
+      const [sortKey, value] = typeSort.value.split('-');
+      url.searchParams.set('sortKey', sortKey);
+      url.searchParams.set('value', value);
+      window.location.href = url.href;
+    });
+    //xóa sắp xếp
+    btnSort.addEventListener('click', () => {
+      url.searchParams.delete('sortKey');
+      url.searchParams.delete('value');
+      window.location.href = url.href;
+    });
+   }
+   //Thêm selected cho option
+   const options=document.querySelectorAll('[option-select');
+   const sortKey=url.searchParams.get('sortKey');
+   const value=url.searchParams.get('value');
+   if(sortKey&&value){
+   options.forEach(option=>{
+    const select=sortKey+'-'+value;
+    if(option.value==select){
+      option.selected=true
+    }
+   })
+  }
   },
   false
 );

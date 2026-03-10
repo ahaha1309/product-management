@@ -19,8 +19,17 @@ module.exports.product = async (req, res) => {
 
   const countProduct = await Product.countDocuments(find);
   const pagination = paginationHelper(req.query, countProduct);
+  //sort
+  let sort = {};
+  if (req.query.sortKey && req.query.value) {
+    sort[req.query.sortKey] = req.query.value;
+  } else {
+    sort['position']='desc'
+  }
+  //end
   const product = await Product.find(find)
-    .sort({ position: 'desc' })
+    .sort(sort)
+    .collation({ locale: 'vi' })
     .limit(pagination.limit)
     .skip(pagination.skip);
   var objectRespon = {
@@ -93,17 +102,17 @@ module.exports.create = async (req, res) => {
   });
 };
 module.exports.edit = async (req, res) => {
-  const id=req.params.id;
+  const id = req.params.id;
   try {
-  const product=await Product.findOne({_id:id})
-  res.render('admin/pages/products/edit', {
-    title: 'Chỉnh sửa sản phẩm',
-    product:product,
-    id:id
-  });    
+    const product = await Product.findOne({ _id: id });
+    res.render('admin/pages/products/edit', {
+      title: 'Chỉnh sửa sản phẩm',
+      product: product,
+      id: id,
+    });
   } catch (error) {
-    req.flash('error','Không tồn tại sản phẩm này')
-    res.redirect(`${systemConfig.prefixAdmin}/product`)
+    req.flash('error', 'Không tồn tại sản phẩm này');
+    res.redirect(`${systemConfig.prefixAdmin}/product`);
   }
 };
 module.exports.createPost = async (req, res) => {
@@ -129,18 +138,18 @@ module.exports.createPost = async (req, res) => {
   res.redirect(`${systemConfig.prefixAdmin}/product`);
 };
 module.exports.editPost = async (req, res) => {
-  const id=req.params.id;
-  const product=await Product.findOne({_id:id})
-  const thumbnail=product.thumbnail;
+  const id = req.params.id;
+  const product = await Product.findOne({ _id: id });
+  const thumbnail = product.thumbnail;
   const title = req.body.title;
   const description = req.body.description;
   const price = parseInt(req.body.price);
   const discount = parseInt(req.body.discount);
   const quantity = parseInt(req.body.quantity);
-  if(req.file){
-  thumbnail = `/uploads/${req.file.filename}`;   
+  if (req.file) {
+    thumbnail = `/uploads/${req.file.filename}`;
   }
-  const position = parseInt(req.body.position)
+  const position = parseInt(req.body.position);
   const status = req.body.status;
   const data = {
     title: title,
@@ -152,26 +161,26 @@ module.exports.editPost = async (req, res) => {
     status: status,
     position: position,
   };
-  try{
-   await Product.updateOne({ _id: id }, { $set: data });
-   req.flash('success','Cập nhật thành công') ;  
-  } catch(error){
-   req.flash('error','Cập nhật thất bại') ;  
+  try {
+    await Product.updateOne({ _id: id }, { $set: data });
+    req.flash('success', 'Cập nhật thành công');
+  } catch (error) {
+    req.flash('error', 'Cập nhật thất bại');
   }
   res.redirect(`${systemConfig.prefixAdmin}/product`);
 };
 
 module.exports.detail = async (req, res) => {
-  const id=req.params.id;
+  const id = req.params.id;
   try {
-  const product=await Product.findOne({_id:id})
-  res.render('admin/pages/products/detail', {
-    title: product.title,
-    product:product,
-    id:id
-  });    
+    const product = await Product.findOne({ _id: id });
+    res.render('admin/pages/products/detail', {
+      title: product.title,
+      product: product,
+      id: id,
+    });
   } catch (error) {
-    req.flash('error','Không tồn tại sản phẩm này')
-    res.redirect(`${systemConfig.prefixAdmin}/product`)
+    req.flash('error', 'Không tồn tại sản phẩm này');
+    res.redirect(`${systemConfig.prefixAdmin}/product`);
   }
 };

@@ -1,0 +1,15 @@
+mixin sort()
+ .card.mb-2
+    .card-header Sắp xếp
+      .card-body
+          .row
+                .col-4
+                  div(sort)
+                    select.form-select(name="sort" sort-select)
+                       option(value="position-desc" option-select) Vị trí giảm dần
+                       option(value="position-asc" option-select) Vị trí tăng dần
+                       option(value="price-desc" option-select) Giá giảm dần
+                       option(value="price-asc" option-select) Giá tăng dần
+                       option(value="title-asc" option-select) Tiêu đề A - Z
+                       option(value="title-desc" option-select) Tiêu đề Z - A
+                    button.btn.btn-danger.mt-2(sort-clear) Clear
