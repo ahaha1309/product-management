@@ -1,0 +1,35 @@
+extends ../../layout/default.pug
+block main
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  +alert-success(messages.success)
+  h1 Chi tiết sản phẩm
+  form(action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
+    .mb-3
+      label.form-label Tiêu đề
+      .form-control( name="title"  placeholder="Nhập tiêu đề sản phẩm" required) #{product.title}
+    .mb-3 
+      label.form-label Mô tả
+      .form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
+    .mb-3
+      label.form-label Giá
+      .form-control( name="price"  placeholder='Nhập giá sản phẩm' required) #{product.price}
+    .mb-3
+      label.form-label Giảm giá (%)
+      .form-control( name="discount"  placeholder='Nhập giảm giá' required) #{product.discountPercentage}
+    .mb-3
+      label.form-label Số lượng
+      .form-control(type="number" name="quantity" placeholder='Nhập số lượng' required) #{product.stock}
+    .form-group.mb-3(upload-image)
+      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+      img.image-preview(src=`${product.thumbnail}`  upload-image-preview)
+      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+    .mb-3 
+      .mb-3
+      label.form-label Vị trí
+      .form-control( name="position"  placeholder="Tự động tăng" ) #{product.position}
+    .mb-3 
+        label.form-label Trạng thái
+        .form-control( name="status"  ) #{product.status}
+    a(href=`${prefixAdmin}/product/edit/${product.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=product.id) Chỉnh sửa
+  script(src='/admin/js/product.js')

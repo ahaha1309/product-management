@@ -1,0 +1,31 @@
+{
+  "name": "product-managent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --inspect index.js",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.19.0",
+    "method-override": "^3.0.0",
+    "mongodb": "4.1",
+    "mongoose": "^8.11.0",
+    "mongoose-slug-updater": "^3.3.0",
+    "multer": "^2.1.1",
+    "nodemon": "^3.1.9",
+    "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}
