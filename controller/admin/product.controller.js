@@ -116,6 +116,7 @@ module.exports.edit = async (req, res) => {
   }
 };
 module.exports.createPost = async (req, res) => {
+  try{
   const autoPosition = await Product.countDocuments({ deleted: false });
   const title = req.body.title;
   const description = req.body.description;
@@ -130,12 +131,16 @@ module.exports.createPost = async (req, res) => {
     price: price,
     discountPercentage: discount,
     stock: quantity,
-    thumbnail: req.body[req.file.fieldname],
+    thumbnail: req.file ? req.body[req.file.fieldname] : '',
     status: status,
     position: position,
   };
   await Product.create(data);
   res.redirect(`${systemConfig.prefixAdmin}/product`);
+  } catch (error) {
+    console.log("Create Product Error:", error);
+    res.redirect(`${systemConfig.prefixAdmin}/product`);
+  }
 };
 module.exports.editPost = async (req, res) => {
   const id = req.params.id;

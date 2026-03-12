@@ -10,7 +10,7 @@ block main
       .form-control( name="title"  placeholder="Nhập tiêu đề sản phẩm" required) #{product.title}
     .mb-3 
       label.form-label Mô tả
-      .form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
+      .form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") !{product.description}
     .mb-3
       label.form-label Giá
       .form-control( name="price"  placeholder='Nhập giá sản phẩm' required) #{product.price}

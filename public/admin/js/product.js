@@ -112,25 +112,3 @@ if (alertElement) {
     alertElement.classList.add('alert-hidden');
   });
 }
-//upload image
-const uploadImage = document.querySelector('[upload-image]');
-if (uploadImage) {
-  const inputImg = document.querySelector('[upload-image-input]');
-  const imgPreview = document.querySelector('[upload-image-preview]');
-  const btnClose = document.querySelector('[close-image-upload]');
-  inputImg.addEventListener('change', (e) => {
-    btnClose.classList.remove('d-none');
-    const file = e.target.files[0];
-    if (file) {
-      imgPreview.classList.remove('d-none');
-      imgPreview.src = URL.createObjectURL(file);
-    }
-    btnClose.addEventListener('click', (e) => {
-      e.preventDefault();
-      imgPreview.src = '';
-      inputImg.value = '';
-      btnClose.classList.add('d-none');
-      imgPreview.classList.add('d-none');
-    });
-  });
-}

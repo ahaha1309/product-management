@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const flash=require('express-flash');
+const path=require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const database = require('./config/database');
@@ -27,9 +28,12 @@ app.use(express.static(`${__dirname}/public`));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'pug');
 
+//dùng req.flash để truyền biến messages 
 app.use(cookieParser("keyboard cat"));
 app.use(session({ cookie: { maxAge: 60000 } })); // Cấu hình session với thời gian sống là 60 giây
 app.use(flash());
+//tinymce
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 //routers
 routes(app);
 routerAdmin(app);
