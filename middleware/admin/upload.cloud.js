@@ -29,7 +29,7 @@ module.exports.upload = (req, res, next) => {
       next();
     }
 
-    upload(req);
+    upload(req).catch(next);
   } else {
     next();
   }
