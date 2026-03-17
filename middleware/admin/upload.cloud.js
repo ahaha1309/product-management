@@ -29,7 +29,10 @@ module.exports.upload = (req, res, next) => {
       next();
     }
 
-    upload(req);
+    upload(req).catch((error) => {
+  console.error("Cloudinary upload error:", JSON.stringify(error)); // ← JSON.stringify
+  next(error);
+});
   } else {
     next();
   }
