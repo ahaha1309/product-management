@@ -3,15 +3,10 @@ include ../../mixins/alert.pug
 include ../../mixins/select-tree.pug
 
 block main
-  h1.mb-4 Thêm mới danh mục sản phẩm
+  h1.mb-4 Chi tiết danh mục sản phẩm
 
   +alert-error(5000)
-  form(
-    action=`${prefixAdmin}/category-product/create`
-    method="POST"
-    enctype='multipart/form-data'
-  )
-
+  form( action=`${prefixAdmin}/category-product/create` method="POST" enctype='multipart/form-data' )
     // Tiêu đề danh mục
     .form-group.mb-3
       label(for="title") Tiêu đề
@@ -19,23 +14,25 @@ block main
         type="text"
         id="title"
         name="title"
+        value=category.title
         placeholder="Nhập tiêu đề danh mục"
-        required
+        required 
+        readonly
       )
     .mb-3 
       label.form-label Mô tả
-      textarea.form-control(name="description" id='description' placeholder="Nhập mô tả sản phẩm" rows="5")
+      p(name="description" id='des' placeholder="Nhập mô tả sản phẩm" rows="3" ) !{category.description}
     // Danh mục cha
     .form-group.mb-3
       label(for="parent_id") Danh mục cha
-      select.form-select(name="parent_id" id="parent_id")
+      select.form-select(name="parent_id" id="parent_id" disabled)
         option(value="") -- Không có --
         if(categories && categories.length > 0)
-          +select-tree(categories)
+          +select-tree(categories,1,category.parent_id)
     .form-group.mb-3(upload-image)
       label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
-      img.image-preview.d-none(src=''  upload-image-preview)
+      input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input disabled)
+      img.image-preview(src=category.thumbnail  upload-image-preview)
       button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
 
     // Vị trí
@@ -46,18 +43,16 @@ block main
         id="position"
         name="position"
         placeholder="Tự động tăng"
+        value=category.position
+        disabled
       )
 
     // Trạng thái
     .form-group.mb-3
       label Trạng thái
-      .form-control.d-flex.gap-3
-        label
-          input(type="radio" name="status" value="active" checked)
-          | Hoạt động
-        label
-          input(type="radio" name="status" value="inactive")
-          | Dừng hoạt động
+      span.mx-3(
+        class=`badge text-bg-${category.status=="active" ? "success" :"danger"}`
+       ) #{category.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
 
     // Submit
-    button.btn.btn-primary(type="submit") Tạo mới
+    a.btn.btn-primary(href=`${prefixAdmin}/category-product/edit/${category._id}`) Chỉnh sửa

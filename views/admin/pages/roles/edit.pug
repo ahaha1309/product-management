@@ -1,0 +1,15 @@
+extends ../../layout/default.pug
+include ../../mixins/select-tree.pug
+block main
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  h1 Sửa nhóm quyền
+  form(action=`${prefixAdmin}/roles/edit/${role.id}?_method=PATCH` method="POST" )
+    .mb-3
+      label.form-label Tiêu đề
+      input.form-control(type="text" value=role.title name="title" placeholder="Nhập tiêu đề nhóm quyền" required)
+    .mb-3 
+      label.form-label Mô tả
+      textarea.form-control(name="description" id='' placeholder="Nhập mô tả nhóm quyền" )= role.description
+    button.btn.btn-success(type="submit") Cập nhật
+  script(src='/admin/js/product.js')

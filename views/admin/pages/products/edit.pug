@@ -1,4 +1,5 @@
 extends ../../layout/default.pug
+include ../../mixins/select-tree.pug
 block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
@@ -10,7 +11,13 @@ block main
       input.form-control(type="text" name="title" value=product.title placeholder="Nhập tiêu đề sản phẩm" required)
     .mb-3 
       label.form-label Mô tả
-      textarea.form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
+      textarea.form-control(name="description"  id='description' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
+    .form-group.mb-3
+      label(for="product_category_id") Danh mục sản phẩm
+      select.form-select(name="product_category_id" id="product_category_id")
+        option(value="") -- Không có --
+        if(categories && categories.length > 0)
+          +select-tree(categories,1,product.product_category_id)
     .mb-3
       label.form-label Giá
       input.form-control(type="number" name="price" value=product.price placeholder='Nhập giá sản phẩm' required)

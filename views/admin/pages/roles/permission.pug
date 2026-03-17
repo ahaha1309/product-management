@@ -1,0 +1,113 @@
+extends ../../layout/default
+
+block main
+  h1.mb-4 Phân quyền
+
+  div.text-right
+    button.btn.btn-primary.mb-3(type="submit") Cập nhật
+  if(roles && roles.length > 0)
+    table.table.table-hover.table-sm(id="table-permission")
+        thead
+        tr
+            th Tính năng
+            each role in roles
+              th.text-center #{role.title}
+
+        tbody
+          tr.d-none(data-name='id')
+            td
+            each role in roles
+              td.text-center 
+                input(type="text" name="id" value=role.id multi-status)
+          // Danh mục sản phẩm
+          tr
+             td(colspan="3" background="#f8f9fa")
+              b Danh mục sản phẩm
+
+          tr(data-name="products-category_view")
+             td Xem
+             each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_view"))
+
+          tr(data-name="products-category_create")
+            td Thêm mới
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_create"))
+
+          tr(data-name="products-category_edit")
+            td Chỉnh sửa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_edit"))
+
+          tr(data-name="products-category_delete")
+            td(style="color: red;") Xóa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_delete"))
+          // Sản phẩm
+          tr(style="background: #666767;")
+             td(colspan="3")
+              b Sản phẩm
+
+          tr(data-name="products_view")
+             td Xem
+             each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products_view"))
+
+          tr(data-name="products_create")
+            td Thêm mới
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products_create"))
+
+          tr(data-name="products_edit")
+            td Chỉnh sửa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products_edit"))
+
+          tr(data-name="products_delete")
+            td(style="color: red;") Xóa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("products_delete"))
+          // Nhóm quyền
+          tr(style="background: #666767;")
+             td(colspan="3")
+              b Nhóm quyền
+
+          tr(data-name="roles_view")
+             td Xem
+             each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("roles_view"))
+
+          tr(data-name="roles_create")
+            td Thêm mới
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("roles_create"))
+
+          tr(data-name="roles_edit")
+            td Chỉnh sửa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("roles_edit"))
+
+          tr(data-name="roles_delete")
+            td(style="color: red;") Xóa
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("roles_delete"))
+          tr(data-name="roles_permission")
+            td Phân quyền
+            each role in roles
+              td.text-center
+                input(type="checkbox" checked=role.permission&&role.permission.includes("roles_permission"))
+    form(action=`${prefixAdmin}/roles/permission?_method=PATCH` method="POST" id="form-permission")
+       input(type="hidden" name="permissions" id="input-permissions")
+    script(src="/admin/js/roles.js")

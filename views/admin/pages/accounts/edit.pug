@@ -1,0 +1,42 @@
+extends ../../layout/default.pug
+include ../../mixins/select-tree.pug
+block main
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  if(roles.length===0)
+    .alert.alert-warning Chưa có vai trò nào, vui lòng tạo vai trò trước khi tạo tài khoản
+  else
+    h1 Chỉnh sửa tài khoản 
+    form(action=`${prefixAdmin}/accounts/edit/${account._id}?_method=PATCH` method="POST" enctype='multipart/form-data')
+      .mb-3
+        label.form-label Full name
+        input.form-control(type="text" name="fullname" value=account.fullname placeholder="Nhập họ và tên" required)
+      .mb-3 
+        label.form-label Email
+        input.form-control(type="email" name="email" value=account.email placeholder="Nhập email" required)
+      .mb-3 
+        label.form-label Password
+        input.form-control(type="password" name="password"  placeholder="Nhập mật khẩu" )
+      .mb-3 
+        label.form-label Phone
+        input.form-control(type="text" name="phone" value=account.phone placeholder="Nhập số điện thoại" )
+      .mb-3
+        label.form-labelRoleId Phân Quyền
+        select.form-select(name="roleId" id="roleId")
+          option(value="") -- Chọn vai trò --
+          each role in roles
+            option(value=role._id selected=account.roleId == role._id) #{role.title}
+      .form-group.mb-3(upload-image)
+        label.mb-2(for="thumbnail" style='width:100%') Avatar
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=account.avatar  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+      .mb-3 
+          label.form-label Trạng thái
+          .form-control.d-flex.gap-3
+            input(type="radio" name="status" value="active" checked=account.status == "active") 
+            | Hoạt động
+            input(type="radio" name="status" value="inactive" checked=account.status == "inactive") 
+            | Dừng hoạt động
+      button.btn.btn-success(type="submit") Cập nhật
+    script(src='/admin/js/product.js')

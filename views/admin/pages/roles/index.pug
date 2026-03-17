@@ -1,0 +1,49 @@
+extends ../../layout/default.pug 
+block main 
+  include ../../mixins/alert.pug
+  +alert-success(messages.success)
+  h1 Danh sách sản phẩm
+  .card.mb-2
+    .card-header Danh sách
+    .card-body 
+       .row.pb-2 
+          .col-8
+          .col-4 
+            a(href=`${prefixAdmin}/roles/create` class="btn btn-outline-success float-end ") Thêm mới
+
+       table.table.table-hover.table-sm
+         thead 
+           tr  
+             th STT 
+             th Nhóm quyền
+             th Mô tả ngắn
+             th Hành động 
+         tbody 
+         if(role && role.length > 0)
+           each Item,Index in role
+            tr 
+               td #{(Index+1)}
+               td #{Item.title}
+               td #{Item.description}
+               td
+                 a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="btn btn-secondary btn-sm mx-1" button-change-activity="fix" btn-id=Item.id) Chi tiết
+                 a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=Item.id) Sửa 
+                 button(class="btn btn-danger btn-sm ms-1" button-change-activity="delete" btn-id=Item.id) Xóa
+
+  //-   include ../../mixins/pagination 
+  //-   +pagination(pagination)
+
+  form(
+     action=""
+     method="POST"
+     id="form-change-status"
+     data-path=`${prefixAdmin}/roles/change-status`
+  ) 
+  form(
+     action=""
+     method="POST"
+     id="form-change-activity"
+     data-path=`${prefixAdmin}/roles/change-activity`
+  ) 
+  
+  script(src="/admin/js/product.js") 

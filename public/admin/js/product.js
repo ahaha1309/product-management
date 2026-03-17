@@ -1,4 +1,4 @@
-
+document.addEventListener("DOMContentLoaded", () => {
 //thây đổi trạng thái sản phảm
 const buttonChangeStatus = document.querySelectorAll('[button-change-status]');
 if (buttonChangeStatus.length > 0) {
@@ -40,6 +40,7 @@ if (formActivity) {
 //thay đổi nhiều sản phẩm
 const checkAll = document.querySelector('[name="checkall"]');
 const multiStatus = document.querySelectorAll('[multi-status]');
+console.log(multiStatus);
 const inputId = document.querySelector('[input-ids]');
 if (checkAll) {
   checkAll.addEventListener('change', () => {
@@ -112,3 +113,4 @@ if (alertElement) {
     alertElement.classList.add('alert-hidden');
   });
 }
+});

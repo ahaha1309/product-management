@@ -3,6 +3,8 @@ const fillterButtonHelper = require('../../helper/fillterButton');
 const searchHelper = require('../../helper/search');
 const paginationHelper = require('../../helper/pagination');
 const systemConfig = require('../../config/system');
+const createTreeHelper = require('../../helper/createTree');
+const categoryModel = require('../../models/product-category.model');
 module.exports.product = async (req, res) => {
   const fillterStatus = fillterButtonHelper(req.query);
   let find = {
@@ -97,11 +99,16 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
+    const categoryParent = await categoryModel.find({ deleted: false });
+    const categories = createTreeHelper.createTree(categoryParent);  
   res.render('admin/pages/products/create', {
     title: 'Thêm mới sản phẩm',
+    categories: categories,
   });
 };
 module.exports.edit = async (req, res) => {
+  const categoryParent = await categoryModel.find({ deleted: false });
+  const categories = createTreeHelper.createTree(categoryParent);  
   const id = req.params.id;
   try {
     const product = await Product.findOne({ _id: id });
@@ -109,6 +116,7 @@ module.exports.edit = async (req, res) => {
       title: 'Chỉnh sửa sản phẩm',
       product: product,
       id: id,
+      categories: categories,
     });
   } catch (error) {
     req.flash('error', 'Không tồn tại sản phẩm này');
@@ -121,6 +129,7 @@ module.exports.createPost = async (req, res) => {
   const title = req.body.title;
   const description = req.body.description;
   const price = parseInt(req.body.price);
+  const product_category_id = req.body.product_category_id;
   const discount = parseInt(req.body.discount);
   const quantity = parseInt(req.body.quantity);
   const position = parseInt(req.body.position) || autoPosition + 1;
@@ -134,6 +143,7 @@ module.exports.createPost = async (req, res) => {
     thumbnail: req.file ? req.body[req.file.fieldname] : '',
     status: status,
     position: position,
+    product_category_id: product_category_id,
   };
   await Product.create(data);
   res.redirect(`${systemConfig.prefixAdmin}/product`);
@@ -147,6 +157,7 @@ module.exports.editPost = async (req, res) => {
   const product = await Product.findOne({ _id: id });
   const thumbnail = product.thumbnail;
   const title = req.body.title;
+  const product_category_id=req.body.product_category_id;
   const description = req.body.description;
   const price = parseInt(req.body.price);
   const discount = parseInt(req.body.discount);
@@ -165,6 +176,7 @@ module.exports.editPost = async (req, res) => {
     thumbnail: thumbnail,
     status: status,
     position: position,
+    product_category_id: product_category_id,
   };
   try {
     await Product.updateOne({ _id: id }, { $set: data });
