@@ -4,62 +4,63 @@ include ../../mixins/select-tree.pug
 
 block main
   h1.mb-4 Chỉnh sửa danh mục sản phẩm
+  if(role.permission.includes('products-category_edit'))
+    +alert-error(5000)
+    form(
+      action=`${prefixAdmin}/category-product/edit/${category.id}?_method=PATCH`
+      method="POST"
+      enctype='multipart/form-data'
+    )
 
-  +alert-error(5000)
-  form(
-    action=`${prefixAdmin}/category-product/edit/${category.id}?_method=PATCH`
-    method="POST"
-    enctype='multipart/form-data'
-  )
+      // Tiêu đề danh mục
+      .form-group.mb-3
+        label(for="title") Tiêu đề
+        input.form-control(
+          type="text"
+          id="title"
+          value=category.title
+          name="title"
+          placeholder="Nhập tiêu đề danh mục"
+          required
+        )
+      .mb-3 
+        label.form-label Mô tả
+        textarea.form-control(name="description" id='description' placeholder="Nhập mô tả sản phẩm" rows="5") !{category.description}
+      // Danh mục cha
+      .form-group.mb-3
+        label(for="parent_id") Danh mục cha
+        select.form-select(name="parent_id" id="parent_id")
+          option(value="") -- Không có --
+          if(categories && categories.length > 0)
+            +select-tree(categories, 1, category.parent_id)
+      .form-group.mb-3(upload-image)
+        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=category.thumbnail  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
 
-    // Tiêu đề danh mục
-    .form-group.mb-3
-      label(for="title") Tiêu đề
-      input.form-control(
-        type="text"
-        id="title"
-        value=category.title
-        name="title"
-        placeholder="Nhập tiêu đề danh mục"
-        required
-      )
-    .mb-3 
-      label.form-label Mô tả
-      textarea.form-control(name="description" id='description' placeholder="Nhập mô tả sản phẩm" rows="5") !{category.description}
-    // Danh mục cha
-    .form-group.mb-3
-      label(for="parent_id") Danh mục cha
-      select.form-select(name="parent_id" id="parent_id")
-        option(value="") -- Không có --
-        if(categories && categories.length > 0)
-          +select-tree(categories, 1, category.parent_id)
-    .form-group.mb-3(upload-image)
-      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
-      img.image-preview(src=category.thumbnail  upload-image-preview)
-      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+      // Vị trí
+      .form-group.mb-3
+        label(for="position") Vị trí
+        input.form-control(
+          type="number"
+          id="position"
+          value=category.position
+          name="position"
+          placeholder="Tự động tăng"
+        )
 
-    // Vị trí
-    .form-group.mb-3
-      label(for="position") Vị trí
-      input.form-control(
-        type="number"
-        id="position"
-        value=category.position
-        name="position"
-        placeholder="Tự động tăng"
-      )
-
-    // Trạng thái
-    .form-group.mb-3
-      label Trạng thái
-      .form-control.d-flex.gap-3
-        label
-          input(type="radio" name="status" value="active" checked=(category.status=='active'))
-          | Hoạt động
-        label
-          input(type="radio" name="status" value="inactive" checked=(category.status=='inactive'))
-          | Dừng hoạt động
-
+      // Trạng thái
+      .form-group.mb-3
+        label Trạng thái
+        .form-control.d-flex.gap-3
+          label
+            input(type="radio" name="status" value="active" checked=(category.status=='active'))
+            | Hoạt động
+          label
+            input(type="radio" name="status" value="inactive" checked=(category.status=='inactive'))
+            | Dừng hoạt động
     // Submit
     button.btn.btn-primary(type="submit") Cập nhật
+  else
+    .alert.alert-danger Bạn không có quyền chỉnh sửa danh mục sản phẩm

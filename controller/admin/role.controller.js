@@ -1,10 +1,10 @@
 const roleModel=require('../../models/roles.model');
 const systemConfig = require('../../config/system');
 module.exports.index = async (req, res) => {
-  const role=await roleModel.find({deleted:false});
+  const roles=await roleModel.find({deleted:false});
   res.render('admin/pages/roles/index', {
     title: 'Nhóm quyền',
-    role: role
+    roles: roles
   });
 };
 
@@ -72,6 +72,7 @@ module.exports.permissionPost = async (req, res) => {
     await roleModel.findByIdAndUpdate(roleId, { permission: permissions });
   }
   const roles=await roleModel.find({deleted:false});
+  req.flash('success', 'Cập nhật quyền thành công');
   res.redirect('back');
 }
 module.exports.detail = async (req, res) => {
@@ -91,7 +92,7 @@ module.exports.detail = async (req, res) => {
     req.flash('error', 'Không tồn tại nhóm quyền này');
     res.redirect(`${systemConfig.prefixAdmin}/roles`);
   } };
-  module.exports.changeActivity = async (req, res) => {
+module.exports.changeActivity = async (req, res) => {
   const activity = req.params.activity;
   const id = req.params.id;
   if (activity == 'delete') {

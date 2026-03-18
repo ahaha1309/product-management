@@ -11,5 +11,6 @@ block main
     .mb-3 
       label.form-label Mô tả
       textarea.form-control(name="description" id='' placeholder="Nhập mô tả nhóm quyền" readonly)= role.description
-    a.btn.btn-success(href=`${prefixAdmin}/roles/edit/${role.id}`) Chỉnh sửa
+    if(role.permission.includes('roles_edit'))
+       a.btn.btn-success(href=`${prefixAdmin}/roles/edit/${role.id}`) Chỉnh sửa
   script(src='/admin/js/product.js')

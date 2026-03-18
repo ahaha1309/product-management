@@ -5,7 +5,7 @@ block main
   +alert-error(messages.error)
   if(roles.length===0)
     .alert.alert-warning Chưa có vai trò nào, vui lòng tạo vai trò trước khi tạo tài khoản
-  else
+  if(role.permission.includes('accounts_create'))
     h1 Thêm mới tài khoản 
     form(action=`${prefixAdmin}/accounts/create` method="POST" enctype='multipart/form-data')
       .mb-3
@@ -39,4 +39,6 @@ block main
             input(type="radio" name="status" value="inactive") 
             | Dừng hoạt động
       button.btn.btn-success(type="submit") Thêm mới
+  else
+    .alert.alert-danger Bạn không có quyền tạo tài khoản
     script(src='/admin/js/product.js')

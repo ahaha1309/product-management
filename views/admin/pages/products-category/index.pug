@@ -3,56 +3,60 @@ include ../../mixins/table-tree.pug
 block main 
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  h1 Danh mục sản phẩm
-  .card.mb-2 
-    .card-header Bộ lọc tìm kiếm
-    .card-body 
-       .row 
-         .col-6
-           include ../../mixins/filllter.status.pug 
-           +fillterStatus(button)
-         .col-6
-           include ../../mixins/form.search.pug 
-           +formSearch(keyword)
-  include ../../mixins/sort.pug 
-  +sortCategory()
-  .card.mb-2
-    .card-header Danh sách
-    .card-body 
-       .row.pb-2 
-          .col-8
-            include ../../mixins/change.multi.pug
-            +changeMulti(`${prefixAdmin}/category-product/change-multi?_method=PATCH`)
-          .col-4 
-            a(href=`${prefixAdmin}/category-product/create` class="btn btn-outline-success float-end ") Thêm mới
-       table.table.table-hover.table-sm
-         thead 
-           tr  
-             th 
-               input(type="checkbox" name="checkall")
-             th STT 
-             th Hình ảnh
-             th Tiêu đề
-             th Vị trí
-             th Trạng thái
-             th Hành động 
-         tbody 
-            +table-tree(categoryProduct)
+  if(role.permission.includes('products-category_view'))
+    h1 Danh mục sản phẩm
+    .card.mb-2 
+      .card-header Bộ lọc tìm kiếm
+      .card-body 
+        .row 
+          .col-6
+            include ../../mixins/filllter.status.pug 
+            +fillterStatus(button)
+          .col-6
+            include ../../mixins/form.search.pug 
+            +formSearch(keyword)
+    include ../../mixins/sort.pug 
+    +sortCategory()
+    .card.mb-2
+      .card-header Danh sách
+      .card-body 
+        .row.pb-2 
+            .col-8
+              if(role.permission.includes('products-category_edit'))
+                include ../../mixins/change.multi.pug
+                +changeMulti(`${prefixAdmin}/category-product/change-multi?_method=PATCH`)
+            .col-4 
+              if(role.permission.includes('products-category_create'))
+                a(href=`${prefixAdmin}/category-product/create` class="btn btn-outline-success float-end ") Thêm mới
+        table.table.table-hover.table-sm
+          thead 
+            tr  
+              th 
+                input(type="checkbox" name="checkall")
+              th STT 
+              th Hình ảnh
+              th Tiêu đề
+              th Vị trí
+              th Trạng thái
+              th Hành động 
+          tbody 
+              +table-tree(categoryProduct)
 
-  //- include ../../mixins/pagination 
-  //- +pagination(pagination)
+    //- include ../../mixins/pagination 
+    //- +pagination(pagination)
 
-  form(
-     action=""
-     method="POST"
-     id="form-change-status"
-     data-path=`${prefixAdmin}/category-product/change-status`
-  ) 
-  form(
-     action=""
-     method="POST"
-     id="form-change-activity"
-     data-path=`${prefixAdmin}/category-product/change-activity`
-  ) 
-  
+    form(
+      action=""
+      method="POST"
+      id="form-change-status"
+      data-path=`${prefixAdmin}/category-product/change-status`
+    ) 
+    form(
+      action=""
+      method="POST"
+      id="form-change-activity"
+      data-path=`${prefixAdmin}/category-product/change-activity`
+    ) 
+  else
+    .alert.alert-danger Bạn không có quyền xem danh mục sản phẩm
   script(src="/admin/js/product.js")

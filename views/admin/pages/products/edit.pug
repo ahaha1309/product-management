@@ -4,44 +4,47 @@ block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
   +alert-success(messages.success)
-  h1 Chỉnh sửa sản phẩm
-  form(action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
-    .mb-3
-      label.form-label Tiêu đề
-      input.form-control(type="text" name="title" value=product.title placeholder="Nhập tiêu đề sản phẩm" required)
-    .mb-3 
-      label.form-label Mô tả
-      textarea.form-control(name="description"  id='description' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
-    .form-group.mb-3
-      label(for="product_category_id") Danh mục sản phẩm
-      select.form-select(name="product_category_id" id="product_category_id")
-        option(value="") -- Không có --
-        if(categories && categories.length > 0)
-          +select-tree(categories,1,product.product_category_id)
-    .mb-3
-      label.form-label Giá
-      input.form-control(type="number" name="price" value=product.price placeholder='Nhập giá sản phẩm' required)
-    .mb-3
-      label.form-label Giảm giá (%)
-      input.form-control(type="number" name="discount" value=product.discountPercentage placeholder='Nhập giảm giá' required)
-    .mb-3
-      label.form-label Số lượng
-      input.form-control(type="number" name="quantity" value=product.stock placeholder='Nhập số lượng' required)
-    .form-group.mb-3(upload-image)
-      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
-      img.image-preview(src=`${product.thumbnail}`  upload-image-preview)
-      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
-    .mb-3 
+  if(role.permission.includes('products_edit'))
+    h1 Chỉnh sửa sản phẩm
+    form(action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
       .mb-3
-      label.form-label Vị trí
-      input.form-control(type="number" name="position" value=product.position placeholder="Tự động tăng" )
-    .mb-3 
-        label.form-label Trạng thái
-        .form-control.d-flex.gap-3
-           input(type="radio" name="status" value="active" checked=(product.status=='active')) 
-           | Hoạt động
-           input(type="radio" name="status" value="inactive" checked=(product.status=='inactive')) 
-           | Dừng hoạt động
-    button.btn.btn-success(type="submit") Cập nhật
+        label.form-label Tiêu đề
+        input.form-control(type="text" name="title" value=product.title placeholder="Nhập tiêu đề sản phẩm" required)
+      .mb-3 
+        label.form-label Mô tả
+        textarea.form-control(name="description"  id='description' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
+      .form-group.mb-3
+        label(for="product_category_id") Danh mục sản phẩm
+        select.form-select(name="product_category_id" id="product_category_id")
+          option(value="") -- Không có --
+          if(categories && categories.length > 0)
+            +select-tree(categories,1,product.product_category_id)
+      .mb-3
+        label.form-label Giá
+        input.form-control(type="number" name="price" value=product.price placeholder='Nhập giá sản phẩm' required)
+      .mb-3
+        label.form-label Giảm giá (%)
+        input.form-control(type="number" name="discount" value=product.discountPercentage placeholder='Nhập giảm giá' required)
+      .mb-3
+        label.form-label Số lượng
+        input.form-control(type="number" name="quantity" value=product.stock placeholder='Nhập số lượng' required)
+      .form-group.mb-3(upload-image)
+        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=`${product.thumbnail}`  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+      .mb-3 
+        .mb-3
+        label.form-label Vị trí
+        input.form-control(type="number" name="position" value=product.position placeholder="Tự động tăng" )
+      .mb-3 
+          label.form-label Trạng thái
+          .form-control.d-flex.gap-3
+            input(type="radio" name="status" value="active" checked=(product.status=='active')) 
+            | Hoạt động
+            input(type="radio" name="status" value="inactive" checked=(product.status=='inactive')) 
+            | Dừng hoạt động
+      button.btn.btn-success(type="submit") Cập nhật
+  else
+    .alert.alert-danger Bạn không có quyền chỉnh sửa sản phẩm
   script(src='/admin/js/product.js')

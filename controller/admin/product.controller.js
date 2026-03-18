@@ -5,6 +5,8 @@ const paginationHelper = require('../../helper/pagination');
 const systemConfig = require('../../config/system');
 const createTreeHelper = require('../../helper/createTree');
 const categoryModel = require('../../models/product-category.model');
+const account = require('../../models/account.model');
+const moment=require('moment');
 module.exports.product = async (req, res) => {
   const fillterStatus = fillterButtonHelper(req.query);
   let find = {
@@ -34,6 +36,13 @@ module.exports.product = async (req, res) => {
     .collation({ locale: 'vi' })
     .limit(pagination.limit)
     .skip(pagination.skip);
+for (const item of product) {
+  const user = await account
+    .findById(item.createdBy.accountId)
+    .select('fullname');
+
+  item.fullname = user?.fullname || '';
+}
   var objectRespon = {
     title: 'Danh sách sản phẩm',
     message: 'Danh sách sản phẩm',
@@ -56,7 +65,7 @@ module.exports.changeActivity = async (req, res) => {
   const activity = req.params.activity;
   const id = req.params.id;
   if (activity == 'delete') {
-    await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    await Product.updateOne({ _id: id }, { deleted: true, deletedBy:{ accountId: res.locals.account.id, deletedAt: new Date() } });
   }
   res.redirect('back');
 };
@@ -75,7 +84,7 @@ module.exports.changeMulti = async (req, res) => {
     case 'delete':
       await Product.updateMany(
         { _id: { $in: ids } },
-        { $set: { deleted: true, deletedAt: new Date() } }
+        { $set: { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } } }
       );
       req.flash('success', `Xóa thành công!`);
       break;
@@ -99,6 +108,7 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
+    console.log(res.locals.account);
     const categoryParent = await categoryModel.find({ deleted: false });
     const categories = createTreeHelper.createTree(categoryParent);  
   res.render('admin/pages/products/create', {
@@ -125,6 +135,7 @@ module.exports.edit = async (req, res) => {
 };
 module.exports.createPost = async (req, res) => {
   try{
+  
   const autoPosition = await Product.countDocuments({ deleted: false });
   const title = req.body.title;
   const description = req.body.description;
@@ -140,6 +151,10 @@ module.exports.createPost = async (req, res) => {
     price: price,
     discountPercentage: discount,
     stock: quantity,
+    createdBy: {
+      accountId: res.locals.account.id,
+      createdAt: new Date()
+    },
     thumbnail: req.file ? req.body[req.file.fieldname] : '',
     status: status,
     position: position,

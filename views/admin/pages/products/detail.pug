@@ -31,5 +31,6 @@ block main
     .mb-3 
         label.form-label Trạng thái
         .form-control( name="status"  ) #{product.status}
-    a(href=`${prefixAdmin}/product/edit/${product.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=product.id) Chỉnh sửa
+    if(role.permission.includes('products_edit'))
+      a(href=`${prefixAdmin}/product/edit/${product.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=product.id) Chỉnh sửa
   script(src='/admin/js/product.js')

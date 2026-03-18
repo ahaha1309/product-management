@@ -53,6 +53,9 @@ block main
       span.mx-3(
         class=`badge text-bg-${category.status=="active" ? "success" :"danger"}`
        ) #{category.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
-
+    
     // Submit
-    a.btn.btn-primary(href=`${prefixAdmin}/category-product/edit/${category._id}`) Chỉnh sửa
+    if(role.permission.includes('products-category_edit'))
+      a.btn.btn-primary(href=`${prefixAdmin}/category-product/edit/${category._id}`) Chỉnh sửa
+  else
+    .alert.alert-danger Bạn không có quyền xem danh mục sản phẩm
