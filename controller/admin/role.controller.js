@@ -48,7 +48,7 @@ module.exports.editPost= async (req, res) => {
   const description = req.body.description;
 
   try {
-    await roleModel.findByIdAndUpdate(id, { title: title, description: description });
+    await roleModel.updateOne(id, { title: title, description: description, $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } } });
     req.flash('success', 'Cập nhật nhóm quyền thành công');
     res.redirect(`${systemConfig.prefixAdmin}/roles`);
   } catch (error) {
@@ -71,7 +71,6 @@ module.exports.permissionPost = async (req, res) => {
     const permissions = item.permissions;
     await roleModel.findByIdAndUpdate(roleId, { permission: permissions });
   }
-  const roles=await roleModel.find({deleted:false});
   req.flash('success', 'Cập nhật quyền thành công');
   res.redirect('back');
 }

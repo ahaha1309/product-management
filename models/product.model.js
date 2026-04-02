@@ -32,7 +32,18 @@ const Productschema = new mongoose.Schema({
   slug:{
     type:String,
     slug:"title",
-    unique:true
+    unique:true,
+    slugOn: { update: true } 
+  },
+  updatedBy:[
+    {
+      accountId:String,
+      updatedAt: Date,
+    }
+  ],
+  featured: {
+    type: Boolean,
+    default: false
   }
 },
 {

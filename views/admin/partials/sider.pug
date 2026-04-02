@@ -18,3 +18,11 @@
          if(role.permission.includes('accounts_view'))
             li 
                a(href=prefixAdmin+"/accounts") Danh sách tài khoản
+         if(role.permission.includes('articles_view'))
+            li 
+               a(href=prefixAdmin+"/articles") Bài viết
+         if(role.permission.includes('articles-category_view'))
+            li 
+               a(href=prefixAdmin+"/category-article") Danh mục bài viết
+         li 
+            a(href=prefixAdmin+"/my-account") Thông tin cá nhân

@@ -37,10 +37,11 @@ block main
               th STT 
               th Hình ảnh
               th Tiêu đề
-              th Created By
               th Giá
               th Vị trí
               th Trạng thái
+              th Created By
+              th Updated By
               th Hành động 
           tbody 
             each Item,Index in product
@@ -56,10 +57,6 @@ block main
                 height="auto"
                 )
                 td #{Item.title}
-                td 
-                   p #{Item.fullname}
-                   if(Item.createdBy)
-                     +formatDateTime(Item.createdBy.createdAt)
                 td #{Item.price}$
                 td 
                   input(
@@ -80,8 +77,15 @@ block main
                       ) #{Item.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
                    else
                       span(class=`badge text-bg-${Item.status=="active" ? "success" :"danger"}`) #{Item.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
+                td 
+                   p #{Item.fullname}
+                   if(Item.createdBy)
+                     +formatDateTime(Item.createdBy.createdAt)
+                td 
+                   p #{Item.updatedByName}
+                   if(Item.updatedBy && Item.updatedBy.length > 0)
+                     +formatDateTime(Item.updatedBy[Item.updatedBy.length - 1].updatedAt)
                 td
-                  
                   a(href=`${prefixAdmin}/product/detail/${Item.id}` class="btn btn-secondary btn-sm mx-1" button-change-activity="fix" btn-id=Item.id) Chi tiết
                   if(role.permission.includes('products_edit'))
                     a(href=`${prefixAdmin}/product/edit/${Item.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=Item.id) Sửa 

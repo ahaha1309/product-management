@@ -1,0 +1,10 @@
+mixin sub-menu(categories, path = '')
+  ul
+    each item in categories
+      //- 1. Kiểm tra có menu con không để thêm class 'sub-menu'
+      li(class=(item.children && item.children.length > 0 ? 'sub-menu' : ''))
+        a(href=`${path}/c/${item.slug}`) #{item.title}
+        
+        //- 2. Thụt lề lệnh if vào TRONG thẻ li để ul con nằm đúng cấu trúc
+        if (item.children && item.children.length > 0)
+          +sub-menu(item.children, path)

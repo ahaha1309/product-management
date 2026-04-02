@@ -1,0 +1,40 @@
+extends ../../layout/default.pug
+include ../../mixins/select-tree.pug
+block main
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  +alert-success(messages.success)
+  if(role.permission.includes('articles_create'))
+    h1 Tạo mới bài viết
+    form(action=`${prefixAdmin}/articles/create` method="POST" enctype='multipart/form-data')
+      .mb-3
+        label.form-label Tiêu đề
+        input.form-control(type="text" name="title" placeholder="Nhập tiêu đề bài viết" required)
+      .mb-3 
+        label.form-label Mô tả
+        textarea.form-control(name="description"  id='description' placeholder="Nhập mô tả bài viết" rows="5") 
+      .form-group.mb-3
+        label(for="article_category_id") Danh mục bài viết
+        select.form-select(name="article_category_id" id="article_category_id")
+          option(value="") -- Không có --
+          if(categories && categories.length > 0)
+            +select-tree(categories)
+        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=``  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+      .mb-3 
+        .mb-3
+        label.form-label Vị trí
+        input.form-control(type="number" name="position"  placeholder="Tự động tăng" )
+      .mb-3 
+          label.form-label Trạng thái
+          .form-control.d-flex.gap-3
+            input(type="radio" name="status" value="active" ) 
+            | Hoạt động
+            input(type="radio" name="status" value="inactive" ) 
+            | Dừng hoạt động
+      button.btn.btn-success(type="submit") Tạo mới
+  else
+    .alert.alert-danger Bạn không có quyền tạo mới bài viết
+  script(src='/admin/js/product.js')

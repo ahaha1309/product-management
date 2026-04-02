@@ -1,0 +1,86 @@
+extends ../../layouts/default.pug 
+include ../../mixins/box-head.pug
+include ../../mixins/product-layout.pug
+
+block main
+  .container.mt-5.cart-page
+    h3.mb-4.fw-bold Giỏ hàng của bạn
+
+    .row
+      //- Cột trái: Danh sách sản phẩm trong giỏ
+      .col-lg-8.mb-4
+        if (cart && cart.products && cart.products.length > 0)
+          .bg-white.rounded.shadow-sm.p-3
+            //- Tiêu đề các cột
+            .cart-header.d-none.d-md-flex.text-muted.fw-bold.pb-2.border-bottom.mb-3
+              //- Thêm cột Checkbox chọn tất cả
+              .col-1.text-center 
+                input#check-all(type="checkbox")
+              .col-4 Sản phẩm
+              .col-2.text-center Đơn giá
+              .col-2.text-center Số lượng
+              .col-2.text-center Thành tiền
+              .col-1.text-center Xóa
+
+            //- Lặp qua từng sản phẩm
+            each item in cart.products
+              .cart-item.d-flex.align-items-center.py-3.border-bottom
+                //- 0. Checkbox chọn từng sản phẩm (Gán data-price để JS lấy giá tính toán)
+                .col-1.text-center
+                  input.item-check(type="checkbox" value=item.product.id data-price='')
+
+                //- 1. Hình ảnh & Tên sản phẩm
+                .col-4.d-flex.align-items-center
+                  img.cart-img.rounded.me-3(src=item.product.thumbnail alt=item.product.title)
+                  a.cart-title.text-dark.text-decoration-none(href=`/detail/${item.product.slug}`) #{item.product.title}
+                
+                //- 2. Đơn giá
+                .col-2.text-center.cart-price(data-price=item.product.newPrice)
+                  | #{item.product.newPrice} $
+                
+                //- 3. Bộ chọn số lượng (+ / -)
+                .col-2.d-flex.justify-content-center
+                  .quantity-group.d-flex
+                    button.btn-qty.minus(type="button") -
+                    input.input-qty(type="number" value=item.quantity min="1" name="quantity" data-product-id=item.product.id)
+                    button.btn-qty.plus(type="button") +
+                
+                //- 4. Tổng tiền của item đó
+                .col-2.text-center.cart-item-total.text-success.fw-bold
+                  | #{item.quantity*item.product.newPrice} $
+                
+                //- 5. Nút Xóa
+                .col-1.text-center
+                  form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST")
+                    button.btn-delete(type="submit" title="Xóa sản phẩm")
+                      i.bi.bi-trash.text-danger.fs-5
+        else
+          //- Giỏ hàng trống
+          .text-center.p-5.bg-white.rounded.shadow-sm
+            i.bi.bi-cart-x.text-muted(style="font-size: 4rem;")
+            p.mt-3.mb-4.fs-5 Giỏ hàng của bạn đang trống.
+            a.btn.btn-success.px-4.py-2(href="/products") Tiếp tục mua sắm
+
+      //- Cột phải: Tổng quan đơn hàng
+      .col-lg-4
+        .cart-summary.bg-white.rounded.shadow-sm.p-4
+          h4.summary-title.mb-4 Tóm tắt đơn hàng
+          
+          .d-flex.justify-content-between.mb-3
+            span.text-muted Tạm tính:
+            //- Để mặc định là 0$ vì ban đầu chưa tick ô nào
+            span.temp-amount.fw-bold 0$
+            
+          .d-flex.justify-content-between.mb-4
+            span.text-muted Phí giao hàng:
+            span Miễn phí
+            
+          hr.my-4
+          
+          .d-flex.justify-content-between.mb-4.align-items-center
+            span.fw-bold.fs-5 Tổng cộng:
+            //- Để mặc định là 0$
+            span.total-amount.text-danger.fw-bold.fs-3 0$
+            
+          a.btn.btn-warning.w-100.py-3.fw-bold.fs-5(href="/checkout") TIẾN HÀNH ĐẶT HÀNG
+    script(src='/js/cart.js')

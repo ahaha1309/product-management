@@ -44,6 +44,13 @@ block main
             | Hoạt động
             input(type="radio" name="status" value="inactive" checked=(product.status=='inactive')) 
             | Dừng hoạt động
+      .mb-3 
+          label.form-label Trạng thái nổi bật
+          .form-control.d-flex.gap-3
+            input(type="radio" name="featured" value="true" checked=(product.featured==true)) 
+            | Có
+            input(type="radio" name="featured" value="false" checked=(product.featured==false)) 
+            | Không
       button.btn.btn-success(type="submit") Cập nhật
   else
     .alert.alert-danger Bạn không có quyền chỉnh sửa sản phẩm

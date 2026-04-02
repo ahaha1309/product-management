@@ -20,7 +20,13 @@ const Categoryschema = new mongoose.Schema({
     type:String,
     slug:"title",
     unique:true
-  }
+  },
+  updatedBy:[
+    {
+      accountId:String,
+      updatedAt: Date,
+    }
+  ],
 },
 {
   timestamps:true

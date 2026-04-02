@@ -1,31 +1,61 @@
 extends ../../layouts/default.pug
+include ../../mixins/alert.pug
 block main
-  h1 Chi tiết sản phẩm
-  form(action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
-    .mb-3
-      label.form-label Tiêu đề
-      .form-control( name="title"  placeholder="Nhập tiêu đề sản phẩm" required) #{product.title}
-    .mb-3 
-      label.form-label Mô tả
-      .form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") #{product.description}
-    .mb-3
-      label.form-label Giá
-      .form-control( name="price"  placeholder='Nhập giá sản phẩm' required) #{product.price}
-    .mb-3
-      label.form-label Giảm giá (%)
-      .form-control( name="discount"  placeholder='Nhập giảm giá' required) #{product.discountPercentage}
-    .mb-3
-      label.form-label Số lượng
-      .form-control(type="number" name="quantity" placeholder='Nhập số lượng' required) #{product.stock}
-    .form-group.mb-3(upload-image)
-      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      img.image-preview(src=`${product.thumbnail}`  upload-image-preview)
-      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
-    .mb-3 
-      .mb-3
-      label.form-label Vị trí
-      .form-control( name="position"  placeholder="Tự động tăng" ) #{product.position}
-    .mb-3 
-        label.form-label Trạng thái
-        .form-control( name="status"  ) #{product.status}
-  script(src='/admin/js/product.js')
+  +alert-success(messages.success)
+  .container.mt-5
+    .row
+      //- Cột trái: Ảnh sản phẩm
+      .col-md-4
+        .product-image
+          img.img-fluid(src=product.thumbnail alt=product.title)
+          
+      //- Cột phải: Thông tin & Form
+      .col-md-6
+        .product-info
+          h1.title #{product.title}
+          
+          .category.gap-2.d-flex.align-items-center
+            span Danh mục: 
+            a(href=`/c/${product.Slug}`) Nước hoa
+          .d-flex.align-items-center.mb-3.gap-1
+             .price-new #{product.newPrice}$
+             span -
+             .price-old #{product.price}$
+
+          .discount-box.gap-2.d-flex.align-items-center
+            span.label Giảm tới
+            span.badge-discount #{product.discountPercentage}%
+
+          form.form-add-cart(action=`/cart/add/${product._id}` method="POST")
+            input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock)
+            
+            //- Cụm 2 nút bấm
+            .button-group
+              button.btn-add-cart(type="submit") Thêm vào giỏ
+              button.btn-buy-now(type="button") Mua ngay
+
+    //- Đường gạch ngang phân cách
+    hr.my-5
+
+    //- Phần Mô tả sản phẩm
+    .row
+      .col-12
+        h2.desc-title Mô tả sản phẩm
+        .desc-content
+           //- Dùng !{} để in ra HTML thuần từ database
+           p !{product.description}
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      const isLogin = !{JSON.stringify(isLogin)}
+
+      const btn = document.querySelector('.button-group .btn-add-cart');
+
+      if (btn) {
+        btn.addEventListener('click', function (e) {
+          if (!isLogin) {
+            e.preventDefault();
+            alert('Bạn cần đăng nhập!');
+          }
+        });
+      }
+    });

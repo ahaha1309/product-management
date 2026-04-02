@@ -25,6 +25,7 @@ module.exports.index = async (req, res) => {
   }
   const categoryProduct = await categoryModel.find(find).sort(sort).collation({ locale: 'vi' });
   const categoryProductTree = createTreeHelper.createTree(categoryProduct);
+  console.log(categoryProductTree);
   var objectRespon = {
     title: 'Danh mục sản phẩm',
     categoryProduct: categoryProductTree,
@@ -38,7 +39,13 @@ module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
 
-  await categoryModel.updateOne({ _id: id }, { status: status });
+  await categoryModel.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+    }
+  );
   req.flash('success', `Cập nhật trạng thái thành công!`);
   res.redirect('back');
 };
@@ -46,7 +53,14 @@ module.exports.changeActivity = async (req, res) => {
   const activity = req.params.activity;
   const id = req.params.id;
   if (activity == 'delete') {
-    await categoryModel.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    await categoryModel.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedAt: new Date(),
+        $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+      }
+    );
   }
   res.redirect('back');
 };
@@ -55,11 +69,23 @@ module.exports.changeMulti = async (req, res) => {
   const ids = req.body.ids.split(',').filter((id) => id);
   switch (status) {
     case 'active':
-      await categoryModel.updateMany({ _id: { $in: ids } }, { $set: { status: 'active' } });
+      await categoryModel.updateMany(
+        { _id: { $in: ids } },
+        {
+          $set: { status: 'active' },
+          $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+        }
+      );
       req.flash('success', `Cập nhật trạng thái thành công!`);
       break;
     case 'inactive':
-      await categoryModel.updateMany({ _id: { $in: ids } }, { $set: { status: 'inactive' } });
+      await categoryModel.updateMany(
+        { _id: { $in: ids } },
+        {
+          $set: { status: 'inactive' },
+          $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+        }
+      );
       req.flash('success', `Cập nhật trạng thái thành công!`);
       break;
     case 'delete':
@@ -78,7 +104,13 @@ module.exports.changeMulti = async (req, res) => {
         };
       });
       for (const item of result) {
-        await categoryModel.updateOne({ _id: item.id }, { $set: { position: item.position } });
+        await categoryModel.updateOne(
+          { _id: item.id },
+          {
+            $set: { position: item.position },
+            $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+          }
+        );
       }
       req.flash('success', `Cập nhật vị trí thành công!`);
       break;
@@ -119,26 +151,33 @@ module.exports.edit = async (req, res) => {
   }
 };
 module.exports.createPost = async (req, res) => {
-  try {
-    const autoPosition = await categoryModel.countDocuments({ deleted: false });
-    const title = req.body.title;
-    const parent_id = req.body.parent_id || '';
-    const description = req.body.description;
-    const position = parseInt(req.body.position);
-    const status = req.body.status;
-    const data = {
-      title: title,
-      parent_id: parent_id,
-      description: description,
-      thumbnail: req.file ? req.body[req.file.fieldname] : '',
-      status: status,
-      position: position || autoPosition + 1,
-    };
-    await categoryModel.create(data);
+  const role = res.locals.role.permission;
+  if (!role.includes('products-category_create')) {
+    req.flash('error', 'Bạn không có quyền thực hiện hành động này');
     res.redirect(`${systemConfig.prefixAdmin}/category-product`);
-  } catch (error) {
-    console.log('Create Category Error:', error);
-    res.redirect(`${systemConfig.prefixAdmin}/category-product`);
+    return;
+  } else {
+    try {
+      const autoPosition = await categoryModel.countDocuments({ deleted: false });
+      const title = req.body.title;
+      const parent_id = req.body.parent_id || '';
+      const description = req.body.description;
+      const position = parseInt(req.body.position);
+      const status = req.body.status;
+      const data = {
+        title: title,
+        parent_id: parent_id,
+        description: description,
+        thumbnail: req.file ? req.body[req.file.fieldname] : '',
+        status: status,
+        position: position || autoPosition + 1,
+      };
+      await categoryModel.create(data);
+      res.redirect(`${systemConfig.prefixAdmin}/category-product`);
+    } catch (error) {
+      console.log('Create Category Error:', error);
+      res.redirect(`${systemConfig.prefixAdmin}/category-product`);
+    }
   }
 };
 module.exports.editPost = async (req, res) => {
@@ -158,7 +197,13 @@ module.exports.editPost = async (req, res) => {
       status: status,
       position: position || autoPosition + 1,
     };
-    await categoryModel.updateOne({ _id: id }, { $set: data });
+    await categoryModel.updateOne(
+      { _id: id },
+      {
+        $set: data,
+        $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+      }
+    );
     res.redirect(`${systemConfig.prefixAdmin}/category-product`);
   } catch (error) {
     console.log('Edit Category Error:', error);

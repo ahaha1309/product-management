@@ -1,0 +1,62 @@
+extends ../../layout/default.pug
+include ../../mixins/table-tree.pug 
+block main 
+  include ../../mixins/alert.pug
+  +alert-success(messages.success)
+  if(role.permission.includes('articles-category_view'))
+    h1 Danh mục bài viết
+    .card.mb-2 
+      .card-header Bộ lọc tìm kiếm
+      .card-body 
+        .row 
+          .col-6
+            include ../../mixins/filllter.status.pug 
+            +fillterStatus(button)
+          .col-6
+            include ../../mixins/form.search.pug 
+            +formSearch(keyword)
+    include ../../mixins/sort.pug 
+    +sortCategory()
+    .card.mb-2
+      .card-header Danh sách
+      .card-body 
+        .row.pb-2 
+            .col-8
+              if(role.permission.includes('articles-category_edit'))
+                include ../../mixins/change.multi.pug
+                +changeMulti(`${prefixAdmin}/category-article/change-multi?_method=PATCH`)
+            .col-4 
+              if(role.permission.includes('articles-category_create'))
+                a(href=`${prefixAdmin}/category-article/create` class="btn btn-outline-success float-end ") Thêm mới
+        table.table.table-hover.table-sm
+          thead 
+            tr  
+              th 
+                input(type="checkbox" name="checkall")
+              th STT 
+              th Hình ảnh
+              th Tiêu đề
+              th Vị trí
+              th Trạng thái
+              th Hành động 
+          tbody 
+              +table-tree(categoryArticle, 0, 0, role)
+
+    //- include ../../mixins/pagination 
+    //- +pagination(pagination)
+
+    form(
+      action=""
+      method="POST"
+      id="form-change-status"
+      data-path=`${prefixAdmin}/category-article/change-status`
+    ) 
+    form(
+      action=""
+      method="POST"
+      id="form-change-activity"
+      data-path=`${prefixAdmin}/category-article/change-activity`
+    ) 
+  else
+    .alert.alert-danger Bạn không có quyền xem danh mục sản phẩm
+  script(src="/admin/js/product.js")

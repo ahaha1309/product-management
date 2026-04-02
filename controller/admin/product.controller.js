@@ -6,7 +6,6 @@ const systemConfig = require('../../config/system');
 const createTreeHelper = require('../../helper/createTree');
 const categoryModel = require('../../models/product-category.model');
 const account = require('../../models/account.model');
-const moment=require('moment');
 module.exports.product = async (req, res) => {
   const fillterStatus = fillterButtonHelper(req.query);
   let find = {
@@ -28,7 +27,7 @@ module.exports.product = async (req, res) => {
   if (req.query.sortKey && req.query.value) {
     sort[req.query.sortKey] = req.query.value;
   } else {
-    sort['position']='desc'
+    sort['position'] = 'desc';
   }
   //end
   const product = await Product.find(find)
@@ -36,13 +35,17 @@ module.exports.product = async (req, res) => {
     .collation({ locale: 'vi' })
     .limit(pagination.limit)
     .skip(pagination.skip);
-for (const item of product) {
-  const user = await account
-    .findById(item.createdBy.accountId)
-    .select('fullname');
-
-  item.fullname = user?.fullname || '';
-}
+  for (const item of product) {
+    const userCreate = await account.findById(item.createdBy.accountId).select('fullname');
+    if (item.updatedBy && item.updatedBy.length > 0) {
+      const lastUpdate = item.updatedBy[item.updatedBy.length - 1];
+      const userUpdate = await account.findById(lastUpdate.accountId).select('fullname');
+      item.updatedByName = userUpdate?.fullname || '';
+    } else {
+      item.updatedByName = '';
+    }
+    item.fullname = userCreate?.fullname || '';
+  }
   var objectRespon = {
     title: 'Danh sách sản phẩm',
     message: 'Danh sách sản phẩm',
@@ -56,8 +59,13 @@ for (const item of product) {
 module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
-
-  await Product.updateOne({ _id: id }, { status: status });
+  await Product.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+    }
+  );
   req.flash('success', `Cập nhật trạng thái thành công!`);
   res.redirect('back');
 };
@@ -65,7 +73,10 @@ module.exports.changeActivity = async (req, res) => {
   const activity = req.params.activity;
   const id = req.params.id;
   if (activity == 'delete') {
-    await Product.updateOne({ _id: id }, { deleted: true, deletedBy:{ accountId: res.locals.account.id, deletedAt: new Date() } });
+    await Product.updateOne(
+      { _id: id },
+      { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } }
+    );
   }
   res.redirect('back');
 };
@@ -74,17 +85,38 @@ module.exports.changeMulti = async (req, res) => {
   const ids = req.body.ids.split(',').filter((id) => id);
   switch (status) {
     case 'active':
-      await Product.updateMany({ _id: { $in: ids } }, { $set: { status: 'active' } });
+      await Product.updateMany(
+        { _id: { $in: ids } },
+        {
+          $set: {
+            status: 'active',
+            $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+          },
+        }
+      );
       req.flash('success', `Cập nhật trạng thái thành công!`);
       break;
     case 'inactive':
-      await Product.updateMany({ _id: { $in: ids } }, { $set: { status: 'inactive' } });
+      await Product.updateMany(
+        { _id: { $in: ids } },
+        {
+          $set: {
+            status: 'inactive',
+            $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+          },
+        }
+      );
       req.flash('success', `Cập nhật trạng thái thành công!`);
       break;
     case 'delete':
       await Product.updateMany(
         { _id: { $in: ids } },
-        { $set: { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } } }
+        {
+          $set: {
+            deleted: true,
+            deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() },
+          },
+        }
       );
       req.flash('success', `Xóa thành công!`);
       break;
@@ -97,7 +129,15 @@ module.exports.changeMulti = async (req, res) => {
         };
       });
       for (const item of result) {
-        await Product.updateOne({ _id: item.id }, { $set: { position: item.position } });
+        await Product.updateOne(
+          { _id: item.id },
+          {
+            $set: {
+              position: item.position,
+              $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+            },
+          }
+        );
       }
       req.flash('success', `Cập nhật vị trí thành công!`);
       break;
@@ -108,9 +148,8 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
-    console.log(res.locals.account);
-    const categoryParent = await categoryModel.find({ deleted: false });
-    const categories = createTreeHelper.createTree(categoryParent);  
+  const categoryParent = await categoryModel.find({ deleted: false });
+  const categories = createTreeHelper.createTree(categoryParent);
   res.render('admin/pages/products/create', {
     title: 'Thêm mới sản phẩm',
     categories: categories,
@@ -118,7 +157,7 @@ module.exports.create = async (req, res) => {
 };
 module.exports.edit = async (req, res) => {
   const categoryParent = await categoryModel.find({ deleted: false });
-  const categories = createTreeHelper.createTree(categoryParent);  
+  const categories = createTreeHelper.createTree(categoryParent);
   const id = req.params.id;
   try {
     const product = await Product.findOne({ _id: id });
@@ -134,36 +173,37 @@ module.exports.edit = async (req, res) => {
   }
 };
 module.exports.createPost = async (req, res) => {
-  try{
-  
-  const autoPosition = await Product.countDocuments({ deleted: false });
-  const title = req.body.title;
-  const description = req.body.description;
-  const price = parseInt(req.body.price);
-  const product_category_id = req.body.product_category_id;
-  const discount = parseInt(req.body.discount);
-  const quantity = parseInt(req.body.quantity);
-  const position = parseInt(req.body.position) || autoPosition + 1;
-  const status = req.body.status;
-  const data = {
-    title: title,
-    description: description,
-    price: price,
-    discountPercentage: discount,
-    stock: quantity,
-    createdBy: {
-      accountId: res.locals.account.id,
-      createdAt: new Date()
-    },
-    thumbnail: req.file ? req.body[req.file.fieldname] : '',
-    status: status,
-    position: position,
-    product_category_id: product_category_id,
-  };
-  await Product.create(data);
-  res.redirect(`${systemConfig.prefixAdmin}/product`);
+  try {
+    const autoPosition = await Product.countDocuments({ deleted: false });
+    const title = req.body.title;
+    const description = req.body.description;
+    const price = parseInt(req.body.price);
+    const product_category_id = req.body.product_category_id;
+    const discount = parseInt(req.body.discount);
+    const quantity = parseInt(req.body.quantity);
+    const position = parseInt(req.body.position) || autoPosition + 1;
+    const featured = req.body.featured ;
+    const status = req.body.status;
+    const data = {
+      title: title,
+      description: description,
+      price: price,
+      discountPercentage: discount,
+      stock: quantity,
+      createdBy: {
+        accountId: res.locals.account.id,
+        createdAt: new Date(),
+      },
+      thumbnail: req.file ? req.body[req.file.fieldname] : '',
+      status: status,
+      position: position,
+      product_category_id: product_category_id,
+      featured: featured,
+    };
+    await Product.create(data);
+    res.redirect(`${systemConfig.prefixAdmin}/product`);
   } catch (error) {
-    console.log("Create Product Error:", error);
+    console.log('Create Product Error:', error);
     res.redirect(`${systemConfig.prefixAdmin}/product`);
   }
 };
@@ -172,7 +212,7 @@ module.exports.editPost = async (req, res) => {
   const product = await Product.findOne({ _id: id });
   const thumbnail = product.thumbnail;
   const title = req.body.title;
-  const product_category_id=req.body.product_category_id;
+  const product_category_id = req.body.product_category_id;
   const description = req.body.description;
   const price = parseInt(req.body.price);
   const discount = parseInt(req.body.discount);
@@ -181,6 +221,7 @@ module.exports.editPost = async (req, res) => {
     thumbnail = `/uploads/${req.file.filename}`;
   }
   const position = parseInt(req.body.position);
+  const featured = req.body.featured ;
   const status = req.body.status;
   const data = {
     title: title,
@@ -192,9 +233,17 @@ module.exports.editPost = async (req, res) => {
     status: status,
     position: position,
     product_category_id: product_category_id,
+    featured: featured,
+
   };
   try {
-    await Product.updateOne({ _id: id }, { $set: data });
+    await Product.updateOne(
+      { _id: id },
+      {
+        $set: data,
+        $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
+      }
+    );
     req.flash('success', 'Cập nhật thành công');
   } catch (error) {
     req.flash('error', 'Cập nhật thất bại');

@@ -1,14 +1,61 @@
+include ../mixins/sub-menu.pug
 header.header 
-  .container-fluid 
-    .row.align-items-center.justify-content-center
+  .container.col-12
+    .row.align-items-center
       .col-3
          .inner-logo 
              a(href="/")
-                 img(src="/image/logo.svg",alt="",class="logo")
-      .col-3
-         .inner-menu 
-             ul 
-                 li 
+                 img(src="/image/logo.png",alt="",class="logo")
+      .col-4 
+          form(action='/search' id="form-search" method='GET' )
+             .input-group 
+               input(type="text"
+             placeholder="Nhập từ khóa..."
+             name="keyword"
+             value=keyword
+             class="form-control"
+             style="width:50%!important;flex:none;") 
+               .input-group-append.ms-2
+                button(class="btn btn-primary" type="submit") Tìm
+      .col-5
+         .inner-menu
+             ul  
+                  li
+                    form(action="/cart" method='GET' id='form-cart')
+                        button.btn-add-cart(type="submit" style="position: relative; z-index: 10;")
+                          i.bi.bi-cart3
+                          if(quantityCart)
+                            .inner-quantity #{quantityCart}
+                  li  
                      a(href="/") Trang chủ
-                 li 
+                  li(class='sub-menu') 
+                     - const path='/product'
                      a(href="/product") Sản phẩm
+                     if(category && category.length > 0)
+                        +sub-menu(category, path)
+                  li 
+                    a(href="/contact") Bài viết
+                  if (user)
+                    li.d-flex.gap-2 
+                       a(class='btn btn-primary' href="/my-account") Xin chào #{user.fullName}
+                       a(class='btn btn-danger' href="/auth/logout") Đăng xuất 
+                  else 
+                    li 
+                       a(class='btn btn-primary' href="/auth/login") Đăng nhập
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+     const isLogin = !{JSON.stringify(isLogin)};
+     const formCart = document.querySelector("#form-cart");
+     const btn = document.querySelector('ul li form .btn-add-cart');
+     if (btn && formCart) {
+       btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (!isLogin) {
+          alert('Bạn cần đăng nhập!');
+          return;
+        }
+      formCart.submit();
+       });
+      }
+    });

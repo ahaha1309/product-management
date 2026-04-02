@@ -139,6 +139,62 @@ block main
               each role in roles
                 td.text-center
                   input(type="checkbox" checked=role.permission&&role.permission.includes("accounts_delete"))
+            // Bài viết
+            tr(style="background: #666767;")
+              td(colspan="3")
+                b Bài viết
+
+            tr(data-name="articles_view")
+              td Xem
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_view"))
+
+            tr(data-name="articles_create")
+              td Thêm mới
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_create"))
+
+            tr(data-name="articles_edit")
+              td Chỉnh sửa
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_edit"))
+
+            tr(data-name="articles_delete")
+              td(style="color: red;") Xóa
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_delete"))
+            // Danh mục bài viết
+            tr(style="background: #666767;")
+              td(colspan="3")
+                b Danh mục bài viết
+
+            tr(data-name="articles-category_view")
+              td Xem
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_view"))
+
+            tr(data-name="articles-category_create")
+              td Thêm mới
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_create"))
+
+            tr(data-name="articles-category_edit")
+              td Chỉnh sửa
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_edit"))
+
+            tr(data-name="articles-category_delete")
+              td(style="color: red;") Xóa
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_delete"))
       form(action=`${prefixAdmin}/roles/permission?_method=PATCH` method="POST" id="form-permission")
         input(type="hidden" name="permissions" id="input-permissions")
   else
