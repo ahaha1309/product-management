@@ -31,14 +31,12 @@ module.exports.addProduct = async (req, res) => {
   try {
     const cart = await cartModel.findOne({ userId: res.locals.user._id });
     if (cart) {
-      const productExist = cart.products.find(
-        item => item.productId == idAdd
-      );
+      const productExist = cart.products.find((item) => item.productId == idAdd);
       if (productExist) {
         const newQuantity = productExist.quantity + quantity;
         await cartModel.updateOne(
-          { userId: res.locals.user._id, "products.productId": idAdd },
-          { $set: { "products.$.quantity": newQuantity } }
+          { userId: res.locals.user._id, 'products.productId': idAdd },
+          { $set: { 'products.$.quantity': newQuantity } }
         );
       } else {
         await cartModel.updateOne(
@@ -52,15 +50,37 @@ module.exports.addProduct = async (req, res) => {
         products: [{ productId: idAdd, quantity: quantity }],
       });
     }
-    req.flash("success", "Thêm sản phẩm vào giỏ hàng thành công");
-    res.redirect("back");
+    req.flash('success', 'Thêm sản phẩm vào giỏ hàng thành công');
+    res.redirect('back');
   } catch (error) {
     console.log(error);
-    res.redirect("back");
+    res.redirect('back');
   }
 };
 module.exports.deleteProduct = async (req, res) => {
   const id = req.params.id;
-  await cartModel.updateOne({ userId: res.locals.user._id }, { $pull: { products: { productId: id } } });
+  await cartModel.updateOne(
+    { userId: res.locals.user._id },
+    { $pull: { products: { productId: id } } }
+  );
+  req.flash('success', 'Đã xóa sản phẩm thành công');
   res.redirect('back');
+};
+module.exports.updateQuantity = async (req, res) => {
+  const idUpdate = req.params.id;
+  const quantity = req.params.quantity;
+  try {
+    await cartModel.updateOne(
+      { userId: res.locals.user._id, 'products.productId': idUpdate },
+      {
+        $set: {
+          'products.$.quantity': quantity,
+        },
+      }
+    );
+    res.redirect('back');
+  } catch (error) {
+    console.log(error);
+    res.redirect('back');
+  }
 };

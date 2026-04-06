@@ -1,0 +1,821 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+include ../../mixins/alert.pug
+
+block main
+  .checkout-page
+    +alert-success(messages.success)
+    .container
+      .checkout-wrapper
+        .checkout-left
+          // Section 1: Thông tin giao hàng
+          .checkout-section
+            .section-header
+              h2 1. Thông tin giao hàng
+              a.edit-link(href="#") Chỉnh sửa
+            
+            .shipping-info
+              .info-row
+                span.info-label Người nhận:
+                span.info-value= `${user.fullName} | ${user.phone}`
+              .info-row
+                span.info-label Địa chỉ giao:
+                span.info-value= user.address
+            
+            .edit-form(style="display: none;")
+              input.input-field(
+                type="text",
+                id="editFullName",
+                value=user.fullName,
+                placeholder="Họ và tên"
+              )
+              input.input-field(
+                type="tel",
+                id="editPhone",
+                value=user.phone,
+                placeholder="Số điện thoại"
+              )
+              input.input-field(
+                type="text",
+                id="editAddress",
+                value=user.address,
+                placeholder="Địa chỉ"
+              )
+              .form-actions
+                button.btn-save(type="button") Lưu
+                button.btn-cancel(type="button") Hủy
+
+          // Section 2: Danh sách sản phẩm
+          .checkout-section
+            .section-header
+              h2 2. Danh sách sản phẩm (#{products.length})
+            
+            .products-list
+              each product in products
+                .product-item
+                  .product-image
+                    img(src=product.thumbnail, alt=product.title)
+                  
+                  .product-info
+                    h4= product.title
+                    p.product-variant= `Phiên bản: ${product.variant || 'Mặc định'}`
+                    p.product-price= `${product.newPrice.toLocaleString('vi-VN')}₫`
+                  
+                  .product-quantity
+                    span= `x${product.quantity}`
+                  
+                  .product-total
+                    span= `${(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫`
+                  
+                  .product-remove
+                    button.btn-remove(type="button", data-product-id=product.id) ✕
+
+          // Section 3: Voucher
+          .checkout-section
+            .section-header
+              h2 3. Mã khuyến mãi
+            
+            .voucher-section
+              .voucher-input-group
+                input#voucherCode.input-field(
+                  type="text",
+                  placeholder="Nhập mã voucher",
+                  value=appliedVoucher ? appliedVoucher.code : ''
+                )
+                button#applyVoucher.btn-apply(type="button") Áp dụng
+              
+              if appliedVoucher
+                .voucher-applied
+                  .voucher-info
+                    span.voucher-code= appliedVoucher.code
+                    span.voucher-discount= `Giảm ${appliedVoucher.discount}%`
+                  button.btn-remove-voucher(type="button") Xóa
+
+          // Section 4: Phương thức thanh toán
+          .checkout-section
+            .section-header
+              h2 4. Phương thức thanh toán
+            
+            .payment-methods
+              each method in paymentMethods
+                label.payment-method(data-method-id=method.id)
+                  input(
+                    type="radio",
+                    name="paymentMethod",
+                    value=method.id,
+                    checked=method.id === 'credit_card'
+                  )
+                  .method-card
+                    .method-icon
+                      span= method.icon
+                    .method-info
+                      h4= method.name
+                      p= method.description
+                    .method-check
+                      span ✓
+
+        // Sidebar: Tổng hợp giá
+        .checkout-right
+          .order-summary
+            .summary-header
+              h3 Tóm tắt đơn hàng
+
+            .summary-item
+              span Tổng tiền hàng:
+              span.price= `${subtotal.toLocaleString('vi-VN')}₫`
+
+            if appliedVoucher
+              .summary-item.discount
+                span Giảm giá (#{appliedVoucher.discount}%):
+                span.price= `-${discountAmount.toLocaleString('vi-VN')}₫`
+
+            .summary-item.shipping
+              span Phí vận chuyển:
+              span.price= `${shippingFee.toLocaleString('vi-VN')}₫`
+
+            .summary-divider
+
+            .summary-item.total
+              span Tổng thanh toán:
+              span.price-total= `${total.toLocaleString('vi-VN')}₫`
+
+            button#checkoutBtn.btn-checkout(type="button") Đặt hàng
+
+            //- Toast notification (ẩn mặc định)
+            #checkoutToast.checkout-toast(style="display:none;")
+              span#toastMessage
+
+            .payment-info
+              p ✓ Bảo mật 100%
+              p ✓ Miễn phí hoàn đơn
+              p ✓ Hỗ trợ 24/7
+
+  style.
+    .checkout-page {
+      background: #f5f5f5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .checkout-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .checkout-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .checkout-right {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+      }
+    }
+
+    /* Sections */
+    .checkout-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .edit-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .edit-link:hover {
+      color: #764ba2;
+    }
+
+    /* Shipping Info */
+    .shipping-info {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid #667eea;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .info-value {
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    /* Products List */
+    .products-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .product-item {
+      display: grid;
+      grid-template-columns: 80px 1fr 60px 120px 30px;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s;
+    }
+
+    .product-item:hover {
+      background: #f0f0f0;
+      border-color: #667eea;
+    }
+
+    @media (max-width: 640px) {
+      .product-item {
+        grid-template-columns: 60px 1fr 50px;
+        gap: 8px;
+      }
+      .product-quantity, .product-remove {
+        display: none;
+      }
+      .product-total {
+        grid-column: 3;
+        text-align: right;
+      }
+    }
+
+    .product-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0 0 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-variant {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0;
+    }
+
+    .product-price {
+      font-size: 13px;
+      color: #667eea;
+      font-weight: 600;
+      margin: 4px 0 0;
+    }
+
+    .product-quantity {
+      text-align: center;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .product-total {
+      text-align: right;
+      font-weight: 700;
+      color: #667eea;
+      font-size: 14px;
+    }
+
+    .btn-remove {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+      padding: 4px;
+    }
+
+    .btn-remove:hover {
+      transform: scale(1.2);
+    }
+
+    /* Voucher Section */
+    .voucher-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    #voucherCode {
+      flex: 1;
+    }
+
+    .btn-apply {
+      padding: 10px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-apply:hover {
+      background: #764ba2;
+    }
+
+    .voucher-applied {
+      background: #dbeafe;
+      border: 1px solid #0369a1;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .voucher-info {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .voucher-code {
+      background: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      color: #0369a1;
+      font-size: 12px;
+    }
+
+    .voucher-discount {
+      color: #0369a1;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .btn-remove-voucher {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .btn-remove-voucher:hover {
+      transform: scale(1.1);
+    }
+
+    /* Payment Methods */
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .payment-method {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .payment-method input {
+      display: none;
+    }
+
+    .method-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    .payment-method input:checked ~ .method-card {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .method-icon {
+      font-size: 32px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .method-info {
+      flex: 1;
+    }
+
+    .method-info h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .method-info p {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 4px 0 0;
+    }
+
+    .method-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .payment-method input:checked ~ .method-card .method-check {
+      background: #667eea;
+    }
+
+    /* Order Summary */
+    .order-summary {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-header {
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .summary-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .summary-item .price {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .summary-item.discount .price {
+      color: #ef4444;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: #f0f0f0;
+      margin: 12px 0;
+    }
+
+    .summary-item.total {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f2937;
+      padding: 12px 0;
+    }
+
+    .price-total {
+      color: #667eea;
+      font-size: 18px;
+    }
+
+    .btn-checkout {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .btn-checkout:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-checkout:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* Toast */
+    .checkout-toast {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .checkout-toast.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .checkout-toast.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .payment-info {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .payment-info p {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 6px 0;
+    }
+
+    /* Form */
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-save, .btn-cancel {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-save {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-save:hover {
+      background: #764ba2;
+    }
+
+    .btn-cancel {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .btn-cancel:hover {
+      background: #e5e7eb;
+    }
+
+  script.
+    // ==========================================
+    // HELPER: Hiển thị toast thông báo
+    // ==========================================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('checkoutToast');
+      const toastMsg = document.getElementById('toastMessage');
+      toast.className = `checkout-toast ${type}`;
+      toastMsg.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    // ==========================================
+    // Toggle edit form
+    // ==========================================
+    document.querySelector('.edit-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      const shippingInfo = document.querySelector('.shipping-info');
+      const editForm = document.querySelector('.edit-form');
+      shippingInfo.style.display = shippingInfo.style.display === 'none' ? 'block' : 'none';
+      editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Save shipping info
+    document.querySelector('.btn-save').addEventListener('click', () => {
+      const fullName = document.getElementById('editFullName').value.trim();
+      const phone = document.getElementById('editPhone').value.trim();
+      const address = document.getElementById('editAddress').value.trim();
+
+      if (!fullName || !phone || !address) {
+        alert('Vui lòng điền đầy đủ thông tin giao hàng');
+        return;
+      }
+
+      // TODO: Gọi API cập nhật thông tin user nếu cần
+      document.querySelector('.shipping-info').style.display = 'block';
+      document.querySelector('.edit-form').style.display = 'none';
+      showToast('✓ Cập nhật thông tin thành công!');
+    });
+
+    // Cancel edit
+    document.querySelector('.btn-cancel').addEventListener('click', () => {
+      document.querySelector('.shipping-info').style.display = 'block';
+      document.querySelector('.edit-form').style.display = 'none';
+    });
+
+    // ==========================================
+    // Apply voucher
+    // ==========================================
+    document.getElementById('applyVoucher').addEventListener('click', async () => {
+      const code = document.getElementById('voucherCode').value.trim();
+      if (!code) {
+        showToast('Vui lòng nhập mã voucher', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('/checkout/apply-voucher', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showToast(`✓ Áp dụng voucher "${code}" thành công!`);
+          location.reload();
+        } else {
+          showToast(data.message || 'Mã voucher không hợp lệ', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối, vui lòng thử lại', 'error');
+      }
+    });
+
+    // Remove voucher
+    if (document.querySelector('.btn-remove-voucher')) {
+      document.querySelector('.btn-remove-voucher').addEventListener('click', () => {
+        location.reload();
+      });
+    }
+
+    // ==========================================
+    // Remove product
+    // ==========================================
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const productId = e.target.closest('[data-product-id]').dataset.productId;
+        if (confirm('Xóa sản phẩm này?')) {
+          e.target.closest('.product-item').remove();
+        }
+      });
+    });
+
+    // ==========================================
+    // CHECKOUT: POST đến /checkout/create-payment-url
+    // ==========================================
+    document.getElementById('checkoutBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('checkoutBtn');
+
+      // Lấy phương thức thanh toán đang được chọn
+      const paymentMethodEl = document.querySelector('input[name="paymentMethod"]:checked');
+      if (!paymentMethodEl) {
+        showToast('Vui lòng chọn phương thức thanh toán', 'error');
+        return;
+      }
+
+      // Thu thập danh sách sản phẩm còn lại trên trang
+      const productItems = document.querySelectorAll('.product-item');
+      if (productItems.length === 0) {
+        showToast('Giỏ hàng trống, vui lòng thêm sản phẩm', 'error');
+        return;
+      }
+
+      const products = Array.from(productItems).map(item => ({
+        id: item.querySelector('.btn-remove')?.dataset.productId
+      }));
+      const totalPrice=document.querySelector('.price-total').textContent;
+      const totalPriceNumber=Number(totalPrice.replace(/[^\d]/g, ""));
+      // Lấy mã voucher (nếu có)
+      const voucherCode = document.getElementById('voucherCode')?.value.trim() || null;
+
+      // Thông tin giao hàng (lấy từ input nếu đang edit, hoặc từ server-rendered)
+      const payload = {
+        paymentMethod : paymentMethodEl.value,
+        products      : products,
+        voucherCode   : voucherCode,
+        amount: totalPriceNumber,
+        orderCode: 'ORD'+'-'+ Date.now()
+        // Nếu bạn cần gửi thêm thông tin khác (shippingFee, total...) thêm vào đây
+      };
+
+      // Disable nút tránh double-click
+      btn.disabled = true;
+      btn.textContent = 'Đang xử lý...';
+
+      try {
+        const res = await fetch('/checkout/create-payment-url', {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.paymentUrl) {
+          // Server trả về URL thanh toán → redirect
+          showToast('✓ Đang chuyển đến trang thanh toán...');
+          setTimeout(() => { window.location.href = data.paymentUrl; }, 800);
+        } else {
+          // Server trả về lỗi
+          showToast(data.message || 'Đặt hàng thất bại, vui lòng thử lại', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Đặt hàng';
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối, vui lòng thử lại', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Đặt hàng';
+      }
+    });

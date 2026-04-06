@@ -37,7 +37,7 @@ header.header
                     a(href="/contact") Bài viết
                   if (user)
                     li.d-flex.gap-2 
-                       a(class='btn btn-primary' href="/my-account") Xin chào #{user.fullName}
+                       a(class='btn btn-primary' href=`/my-account/${user._id}`) Xin chào #{user.fullName}
                        a(class='btn btn-danger' href="/auth/logout") Đăng xuất 
                   else 
                     li 

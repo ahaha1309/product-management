@@ -44,9 +44,10 @@ module.exports.getProductsByCategory = async (req, res) => {
     const products= await Product.find({
       product_category_id: {$in:[category._id,...listSubCategoryId]}
     });
+    const newProduct=productHelper.productHelper(products)
     res.render('client/pages/products/index', {
       title: `Sản phẩm ${category.title}`,
-      product: products,
+      product: newProduct,
     });
 
   } catch (e) {

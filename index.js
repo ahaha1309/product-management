@@ -26,6 +26,7 @@ app.locals.moment = moment;
 
 // body-parser để lấy dữ liệu từ form gửi lên
 app.use(bodyParser.urlencoded());
+app.use(express.json());
 
 app.use(express.static(`${__dirname}/public`));
 app.set('views', `${__dirname}/views`);

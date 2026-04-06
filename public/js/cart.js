@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const minus = document.querySelectorAll('.minus');
   const listQuantity = document.querySelectorAll('.input-qty');
   const cartTotalAmount = document.querySelectorAll('.cart-item-total');
-  
+  const listProduct=document.querySelector('[name="listProduct"]')
+
   // 👉 Hàm lấy giá (tái sử dụng)
   const getPrice = (index) => {
     return parseFloat(listPrice[index].innerText.replace(/[^0-9.]/g, '')) || 0;
@@ -24,9 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
     listQuantity[index].value = qty;
 
     const total = qty * getPrice(index);
-    cartTotalAmount[index].innerText = total.toLocaleString() + ' $';
+    cartTotalAmount[index].innerText = total + ' $';
 
     calculateTotal();
+
+    const idUpdate = listQuantity[index].getAttribute('data-product-id');
+    const formUpdate = document.querySelector('[form-update-quantity]');
+    const dataPath = formUpdate.getAttribute('data-path');
+
+  fetch(`${dataPath}/${idUpdate}/${qty}`, {
+    method: "PATCH"
+  })
+  .then(res => res.json())
+  .then(data => console.log("updated"))
+  .catch(err => console.log(err));
   };
 
   // 👉 Hàm tính tổng
@@ -40,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    const formatted = currentTotal.toLocaleString() + ' $';
+    const formatted = currentTotal + ' $';
     tempAmount.innerText = formatted;
     totalAmount.innerText = formatted;
   };
@@ -55,21 +67,29 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => updateItem(index, -1));
   });
 
-  // 👉 Check all
+  //  Check all
   if (checkAll) {
     checkAll.addEventListener('change', (e) => {
       const isChecked = e.target.checked;
-      itemChecks.forEach(cb => cb.checked = isChecked);
+      itemChecks.forEach((cb) => (cb.checked = isChecked));
       calculateTotal();
     });
   }
 
-  // 👉 Check từng item
+  //  Check từng item
   itemChecks.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
-      const allChecked = Array.from(itemChecks).every(c => c.checked);
+      const id=checkbox.value;
+      const allChecked = Array.from(itemChecks).every((c) => c.checked);
       if (checkAll) checkAll.checked = allChecked;
       calculateTotal();
+
+      if (checkbox.checked) {
+        listProduct.value += id + ',';
+      } else {
+        const ids = listProduct.value.split(',').filter((id) => id && id != checkbox.value);
+        listProduct.value = ids.join(',') + (ids.length > 0 ? ',' : '');
+      }
     });
   });
 });

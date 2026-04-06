@@ -1,0 +1,40 @@
+extends ../../layouts/default.pug 
+include ../../mixins/box-head.pug
+
+block main 
+   .container
+      .card
+        .header
+          .avatar 
+            img#avatarPreview.avatar(src=user.avatar || 'https://via.placeholder.com/100?text=No+Avatar', alt='Avatar')
+          p Thông tin cá nhân
+
+        .content
+          .form-group
+            label Họ và tên
+            .field
+              span.icon 👤
+              .field-content= user.fullName || '(chưa cập nhật)'
+
+          .form-group
+            label Email
+            .field(class=user.email ? '' : 'empty')
+              span.icon ✉️
+              .field-content= user.email ? `${user.email}` : '(chưa cập nhật)'
+
+          .form-group
+            label Địa chỉ
+            .field(class=user.address ? '' : 'empty')
+              span.icon 📍
+              .field-content= user.address || '(chưa cập nhật)'
+
+          .form-group
+            label Số điện thoại
+            .field(class=user.phone ? '' : 'empty')
+              span.icon 📱
+              .field-content= user.phone || '(chưa cập nhật)'
+
+          .actions
+            a.btn.btn-primary(href=`/my-account/edit/${user._id}`) Chỉnh sửa
+            a.btn.btn-secondary(href="/") Quay lại
+

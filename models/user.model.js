@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const generate=require('../helper/generate');
 const userSchema = new mongoose.Schema({
-  fullname: String,
+  fullName: String,
   email: String,
+  avatar:String,
+  address:String,
+  phone:String,
   password: String,
   token: {
     type: String,

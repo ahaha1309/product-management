@@ -27,12 +27,12 @@ block main
               .cart-item.d-flex.align-items-center.py-3.border-bottom
                 //- 0. Checkbox chọn từng sản phẩm (Gán data-price để JS lấy giá tính toán)
                 .col-1.text-center
-                  input.item-check(type="checkbox" value=item.product.id data-price='')
+                  input.item-check(type="checkbox" value=item.product.id data-price='' checkbox)
 
                 //- 1. Hình ảnh & Tên sản phẩm
                 .col-4.d-flex.align-items-center
                   img.cart-img.rounded.me-3(src=item.product.thumbnail alt=item.product.title)
-                  a.cart-title.text-dark.text-decoration-none(href=`/detail/${item.product.slug}`) #{item.product.title}
+                  a.cart-title.text-dark.text-decoration-none(href=`/product/detail/${item.product.slug}`) #{item.product.title}
                 
                 //- 2. Đơn giá
                 .col-2.text-center.cart-price(data-price=item.product.newPrice)
@@ -59,7 +59,7 @@ block main
           .text-center.p-5.bg-white.rounded.shadow-sm
             i.bi.bi-cart-x.text-muted(style="font-size: 4rem;")
             p.mt-3.mb-4.fs-5 Giỏ hàng của bạn đang trống.
-            a.btn.btn-success.px-4.py-2(href="/products") Tiếp tục mua sắm
+            a.btn.btn-success.px-4.py-2(href="/product") Tiếp tục mua sắm
 
       //- Cột phải: Tổng quan đơn hàng
       .col-lg-4
@@ -70,10 +70,7 @@ block main
             span.text-muted Tạm tính:
             //- Để mặc định là 0$ vì ban đầu chưa tick ô nào
             span.temp-amount.fw-bold 0$
-            
-          .d-flex.justify-content-between.mb-4
-            span.text-muted Phí giao hàng:
-            span Miễn phí
+
             
           hr.my-4
           
@@ -81,6 +78,12 @@ block main
             span.fw-bold.fs-5 Tổng cộng:
             //- Để mặc định là 0$
             span.total-amount.text-danger.fw-bold.fs-3 0$
-            
-          a.btn.btn-warning.w-100.py-3.fw-bold.fs-5(href="/checkout") TIẾN HÀNH ĐẶT HÀNG
+          form(action='/checkout' method='GET')
+            input(type="hidden" name="listProduct")
+            button.btn.btn-warning.w-100.py-3.fw-bold.fs-5 TIẾN HÀNH ĐẶT HÀNG
     script(src='/js/cart.js')
+  form(action='' 
+       method='POST' 
+       form-update-quantity
+       data-path='/cart/update-quantity'
+    )

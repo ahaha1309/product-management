@@ -5,6 +5,8 @@ const authMiddleware=require('../../middleware/client/auth.middleware')
 const searchRouter=require('./search.router')
 const cartRouter=require('./cart.router')
 const authRouter=require('./auth.router')
+const userRouter=require('./user.router')
+const orderRouter=require('./order.router')
 
 module.exports = (app) => {
   app.use(categoryMiddleware.category);
@@ -14,5 +16,7 @@ module.exports = (app) => {
   app.use('/product', productRouter);
   app.use('/search',searchRouter)
   app.use('/cart',authMiddleware.requireAuth,cartRouter)
-  app.use('/auth',authRouter)
+  app.use('/auth',authRouter);
+  app.use('/my-account',userRouter)
+  app.use('/checkout',orderRouter)
 };
