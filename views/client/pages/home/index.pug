@@ -4,13 +4,13 @@ include ../../mixins/product-layout.pug
 include ../../mixins/alert.pug
 
 block main 
-  .container.my-3
-    +alert-success(messages.success)
-    .row 
-       .col-12 
-          +box-head("Sản phẩm nổi bật")
-    +product-grid(productFeatured)
-    .row 
-       .col-12 
-          +box-head("Sản phẩm mới nhất")
-    +product-grid(productNew)
+    .container.my-3
+        +alert-success(messages.success)
+        
+        // ✅ FEATURED PRODUCTS
+        +box-head("⭐ Sản phẩm nổi bật")
+        +product-grid(productFeatured)
+        
+        // ✅ NEW PRODUCTS
+        +box-head("🆕 Sản phẩm mới nhất")
+        +product-grid(productNew)

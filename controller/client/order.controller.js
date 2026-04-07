@@ -7,12 +7,12 @@ const crypto = require('crypto');
 const orders = require('../../models/orders.model');
 
 module.exports.index = async (req, res) => {
-  const listIdProduct = req.query.listProduct.split(',').filter((id) => id && id != ' ');
+  const listSlugProduct = req.query.listProduct.split(',').filter((slug) => slug && slug != ' ');
   let products = [];
   const cart = await cartModel.findOne({ userId: res.locals.user._id });
-  for (let id of listIdProduct) {
-    const product = await productModel.findOne({ _id: id });
-    const indexProduct = cart.products.findIndex((item) => item.productId == id);
+  for (let slug of listSlugProduct) {
+    const product = await productModel.findOne({ slug: slug });
+    const indexProduct = cart.products.findIndex((item) => item.productId == product._id);
     const quantity = cart.products[indexProduct].quantity;
     product.newPrice = productHelper.priceNewProduct(product);
     product.quantity = quantity;

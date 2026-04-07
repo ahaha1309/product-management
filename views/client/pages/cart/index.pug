@@ -27,7 +27,7 @@ block main
               .cart-item.d-flex.align-items-center.py-3.border-bottom
                 //- 0. Checkbox chọn từng sản phẩm (Gán data-price để JS lấy giá tính toán)
                 .col-1.text-center
-                  input.item-check(type="checkbox" value=item.product.id data-price='' checkbox)
+                  input.item-check(type="checkbox" slug=item.product.slug data-price='' checkbox)
 
                 //- 1. Hình ảnh & Tên sản phẩm
                 .col-4.d-flex.align-items-center

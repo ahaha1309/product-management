@@ -1,0 +1,27 @@
+mixin chatbot()
+        .chatbot-floating-btn#chatbotBtn
+            i.bi.bi-chat-dots
+            .badge.badge-dot
+                span New
+        
+        // Chat Modal
+        #chatbotModal.chatbot-modal
+            .chatbot-container
+                .chatbot-header
+                    h5.mb-0 AI Customer Support
+                    button.btn-close#closeChatbot(type="button" aria-label="Close")
+                
+                #chatbotMessages.chatbot-messages
+                    .chat-message.bot-message
+                        .message-content
+                            p Xin chào! 👋 Tôi là trợ lý AI. Tôi có thể giúp bạn với bất kỳ câu hỏi nào về sản phẩm. Hãy nhập câu hỏi của bạn!
+                
+                .chatbot-input-area
+                    .input-group
+                        input.form-control#chatInput(
+                            type="text" 
+                            placeholder="Nhập câu hỏi của bạn..." 
+                            aria-label="Chat input"
+                        )
+                        button.btn.btn-primary#sendBtn(type="button")
+                            i.bi.bi-send

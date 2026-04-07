@@ -1,13 +1,24 @@
 mixin product-item(Item)
-          .col-xl-2.col-lg-3.col-md-4.col-6.mb-4
-             .product-item 
-                .product-image 
-                   .inner-image
-                      img(src=Item.thumbnail,alt=Item.title)
-                   .inner-info 
-                      a.title(href=`/product/detail/${Item.slug}`) #{Item.title}
-                      .price #{Item.priceNew}$
-                      if(Item.featured==true)
-                        .inner-feature Nổi bật
-                      .old-price(style="text-decoration: line-through;") #{Item.price}$
-                      .inner-discount.bg-danger #{Item.discountPercentage}%
+    .col-xl-2.col-lg-3.col-md-4.col-6.mb-4
+        .product-item 
+            .product-image 
+                .inner-image
+                    img(src=Item.thumbnail, alt=Item.title, loading="lazy")
+                
+                // ✅ Overlay badges
+                if Item.featured === true
+                    .inner-feature 
+                        i.bi.bi-star-fill
+                        |  Nổi bật
+                
+                .inner-discount= Item.discountPercentage + '%'
+            
+            .inner-info 
+                a.title(href=`/product/detail/${Item.slug}`, title=Item.title) 
+                    span= Item.title
+                
+                .price 
+                    strong= Item.priceNew + '$'
+                
+                if Item.price > Item.priceNew
+                    .old-price= Item.price + '$'

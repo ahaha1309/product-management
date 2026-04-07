@@ -79,16 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
   //  Check từng item
   itemChecks.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
-      const id=checkbox.value;
+      const slug=checkbox.getAttribute('slug');
       const allChecked = Array.from(itemChecks).every((c) => c.checked);
       if (checkAll) checkAll.checked = allChecked;
       calculateTotal();
 
       if (checkbox.checked) {
-        listProduct.value += id + ',';
+        listProduct.value += slug + ',';
       } else {
-        const ids = listProduct.value.split(',').filter((id) => id && id != checkbox.value);
-        listProduct.value = ids.join(',') + (ids.length > 0 ? ',' : '');
+        const slugs = listProduct.value.split(',').filter((slug) => slug && slug != checkbox.getAttribute('slug'));
+        listProduct.value = slugs.join(',') + (slugs.length > 0 ? ',' : '');
       }
     });
   });

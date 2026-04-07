@@ -1,61 +1,92 @@
 include ../mixins/sub-menu.pug
+
 header.header 
   .container
     .row.align-items-center
+      //- Logo
       .col-3
-         .inner-logo 
-             a(href="/")
-                 img(src="/image/logo.png",alt="",class="logo")
+        .inner-logo 
+          a(href="/")
+            img(src="/image/logo.png", alt="Logo", class="logo")
+      
+      //- Search Bar
       .col-4 
-          form(action='/search' id="form-search" method='GET' )
-             .input-group 
-               input(type="text"
-             placeholder="Nhập từ khóa..."
-             name="keyword"
-             value=keyword
-             class="form-control"
-             style="width:50%!important;flex:none;") 
-               .input-group-append.ms-2
-                button(class="btn btn-primary" type="submit") Tìm
+        form(action='/search', id="form-search", method='GET')
+          .input-group 
+            input(
+              type="text",
+              placeholder="Nhập từ khóa...",
+              name="keyword",
+              value=keyword,
+              class="form-control search-input"
+            )
+            button.btn.btn-primary(type="submit")
+              i.bi.bi-search
+              |  Tìm
+      
+      //- Menu
       .col-5
-         .inner-menu
-             ul  
-                  li
-                    form(action="/cart" method='GET' id='form-cart')
-                        button.btn-add-cart(type="submit" style="position: relative; z-index: 10;")
-                          i.bi.bi-cart3
-                          if(quantityCart)
-                            .inner-quantity #{quantityCart}
-                  li  
-                     a(href="/") Trang chủ
-                  li(class='sub-menu') 
-                     - const path='/product'
-                     a(href="/product") Sản phẩm
-                     if(category && category.length > 0)
-                        +sub-menu(category, path)
-                  li 
-                    a(href="/contact") Bài viết
-                  if (user)
-                    li.d-flex.gap-2 
-                       a(class='btn btn-primary' href=`/my-account/${user._id}`) Xin chào #{user.fullName}
-                       a(class='btn btn-danger' href="/auth/logout") Đăng xuất 
-                  else 
-                    li 
-                       a(class='btn btn-primary' href="/auth/login") Đăng nhập
+        .inner-menu
+          ul  
+            //- Cart Button
+            li.cart-item
+              form(action="/cart", method='GET', id='form-cart')
+                button.btn-cart-icon(type="submit")
+                  i.bi.bi-cart3
+                  if(quantityCart)
+                    .inner-quantity= quantityCart
+            
+            //- Home
+            li
+              a(href="/") 
+                i.bi.bi-house-fill
+                |  Trang chủ
+            
+            //- Products with Submenu
+            li.sub-menu
+              - const path='/product'
+              a(href="/product")
+                i.bi.bi-box-seam
+                |  Sản phẩm
+              if(category && category.length > 0)
+                +sub-menu(category, path)
+            
+            //- Blog
+            li
+              a(href="/contact")
+                i.bi.bi-file-text
+                |  Bài viết
+            
+            //- Auth Section
+            if (user)
+              li.auth-section
+                a.btn.btn-auth-primary(href=`/my-account/${user._id}`)
+                  i.bi.bi-person-circle
+                  |  #{user.fullName}
+                a.btn.btn-auth-danger(href="/auth/logout")
+                  i.bi.bi-box-arrow-right
+                  |  Đăng xuất
+            else 
+              li
+                a.btn.btn-auth-primary(href="/auth/login")
+                  i.bi.bi-box-arrow-in-right
+                  |  Đăng nhập
+
   script.
     document.addEventListener('DOMContentLoaded', function () {
-     const isLogin = !{JSON.stringify(isLogin)};
-     const formCart = document.querySelector("#form-cart");
-     const btn = document.querySelector('ul li form .btn-add-cart');
-     if (btn && formCart) {
-       btn.addEventListener('click', function (e) {
-        e.preventDefault();
+      const isLogin = !{JSON.stringify(isLogin)};
+      const formCart = document.querySelector("#form-cart");
+      const btn = document.querySelector('ul li form .btn-cart-icon');
+      
+      if (btn && formCart) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
 
-        if (!isLogin) {
-          alert('Bạn cần đăng nhập!');
-          return;
-        }
-      formCart.submit();
-       });
+          if (!isLogin) {
+            alert('Bạn cần đăng nhập để xem giỏ hàng!');
+            return;
+          }
+          formCart.submit();
+        });
       }
     });

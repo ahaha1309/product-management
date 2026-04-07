@@ -1,4 +1,5 @@
 const productModel=require('../../models/product.model')
+const productHelper=require('../../helper/product')
 module.exports.search = async (req, res) => {
   const keyword = req.query.keyword || '';
 
@@ -9,10 +10,10 @@ module.exports.search = async (req, res) => {
     title:regex,
     status:'active'
   });
-
+  const newProduct=productHelper.productHelper(searchProduct)
   res.render('client/pages/products/index', {
     title: `Sản phẩm tìm kiếm`,
-    product: searchProduct,
+    product: newProduct,
     keyword: keyword,
   });
 };

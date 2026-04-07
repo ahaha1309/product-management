@@ -7,6 +7,7 @@ const cartRouter=require('./cart.router')
 const authRouter=require('./auth.router')
 const userRouter=require('./user.router')
 const orderRouter=require('./order.router')
+const chatBotRouter=require('./chatBot.router')
 
 module.exports = (app) => {
   app.use(categoryMiddleware.category);
@@ -19,4 +20,6 @@ module.exports = (app) => {
   app.use('/auth',authRouter);
   app.use('/my-account',userRouter)
   app.use('/checkout',orderRouter)
+  app.use('/chatbot',chatBotRouter)
+  
 };
