@@ -3,7 +3,8 @@ mixin product-item(Item)
         .product-item 
             .product-image 
                 .inner-image
-                    img(src=Item.thumbnail, alt=Item.title, loading="lazy")
+                    a.title(href=`/product/detail/${Item.slug}`, title=Item.title) 
+                       img(src=Item.thumbnail, alt=Item.title, loading="lazy")
                 
                 // ✅ Overlay badges
                 if Item.featured === true
@@ -18,7 +19,7 @@ mixin product-item(Item)
                     span= Item.title
                 
                 .price 
-                    strong= Item.priceNew + '$'
+                    strong= Number(Item.priceNew).toLocaleString('vi-VN') + '$'
                 
                 if Item.price > Item.priceNew
-                    .old-price= Item.price + '$'
+                    .old-price= Item.price.toLocaleString('vi-VN') + '$'

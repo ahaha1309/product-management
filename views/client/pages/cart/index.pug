@@ -36,7 +36,7 @@ block main
                 
                 //- 2. Đơn giá
                 .col-2.text-center.cart-price(data-price=item.product.newPrice)
-                  | #{item.product.newPrice} $
+                  | #{Number(item.product.newPrice).toLocaleString('vi-VN')} $
                 
                 //- 3. Bộ chọn số lượng (+ / -)
                 .col-2.d-flex.justify-content-center
@@ -47,7 +47,7 @@ block main
                 
                 //- 4. Tổng tiền của item đó
                 .col-2.text-center.cart-item-total.text-success.fw-bold
-                  | #{item.quantity*item.product.newPrice} $
+                  | #{Number(item.quantity*item.product.newPrice).toLocaleString('vi-VN')} $
                 
                 //- 5. Nút Xóa
                 .col-1.text-center
@@ -78,7 +78,7 @@ block main
             span.fw-bold.fs-5 Tổng cộng:
             //- Để mặc định là 0$
             span.total-amount.text-danger.fw-bold.fs-3 0$
-          form(action='/checkout' method='GET')
+          form(action='/order' method='GET')
             input(type="hidden" name="listProduct")
             button.btn.btn-warning.w-100.py-3.fw-bold.fs-5 TIẾN HÀNH ĐẶT HÀNG
     script(src='/js/cart.js')

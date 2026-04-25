@@ -2,6 +2,7 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug 
 
 block main
+  link(rel="stylesheet", href="/css/product-detail.css")
   +alert-success(messages.success)
   .container.mt-5
     .row
@@ -17,7 +18,7 @@ block main
           
           .category.gap-2.d-flex.align-items-center
             span Danh mục: 
-            a(href=`/c/${product.Slug}`) Nước hoa
+            a(href=`/product/c/${product.category.slug}`) #{product.category.title}
           .d-flex.align-items-center.mb-3.gap-1
              .price-new #{product.newPrice}$
              span -
@@ -28,7 +29,7 @@ block main
             span.badge-discount #{product.discountPercentage}%
 
           form.form-add-cart(action=`/cart/add/${product._id}` method="POST" formSubmit)
-            input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock)
+            input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock slug=product.slug)
             
             //- Cụm 2 nút bấm
             .button-group
@@ -45,431 +46,28 @@ block main
         .desc-content
            //- Dùng !{} để in ra HTML thuần từ database
            p !{product.description}
-  style. 
-
-        /* ===== CONTAINER & LAYOUT ===== */
-        .container.mt-5 {
-            margin-top: 3rem !important;
-            margin-bottom: 3rem !important;
-        }
-
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-right: -15px;
-            margin-left: -15px;
-        }
-
-        .col-md-4,
-        .col-md-6,
-        .col-12 {
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-
-        .col-md-4 {
-            flex: 0 0 33.333%;
-        }
-
-        .col-md-6 {
-            flex: 0 0 50%;
-        }
-
-        .col-12 {
-            flex: 0 0 100%;
-        }
-
-        /* ===== PRODUCT IMAGE SECTION ===== */
-        .product-image {
-            position: relative;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 12px;
-            overflow: hidden;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-image img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .product-image:hover img {
-            transform: scale(1.05);
-        }
-
-        /* ===== PRODUCT INFO SECTION ===== */
-        .product-info {
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        /* ===== TITLE ===== */
-        .product-info .title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        /* ===== CATEGORY ===== */
-        .category {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ecf0f1;
-            font-size: 15px;
-            color: #7f8c8d;
-        }
-
-        .category span:first-child {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .category a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .category a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        /* ===== PRICE SECTION ===== */
-        .d-flex.align-items-center.mb-3.gap-1 {
-            margin-bottom: 20px !important;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            align-items: center !important;
-            gap: 15px !important;
-        }
-
-        .price-new {
-            font-size: 36px;
-            font-weight: 800;
-            color: #e74c3c;
-            line-height: 1;
-        }
-
-        .price-old {
-            font-size: 18px;
-            color: #95a5a6;
-            text-decoration: line-through;
-        }
-
-        /* ===== DISCOUNT BOX ===== */
-        .discount-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            align-items: center !important;
-            gap: 10px !important;
-        }
-
-        .discount-box .label {
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .badge-discount {
-            background: white;
-            color: #e74c3c;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        /* ===== FORM - ADD TO CART ===== */
-        .form-add-cart {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        /* ===== QUANTITY INPUT ===== */
-        .quantity-input {
-            width: 80px;
-            padding: 12px;
-            border: 2px solid #ecf0f1;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-
-        .quantity-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        /* ===== BUTTON GROUP ===== */
-        .button-group {
-            display: flex;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .btn-add-cart,
-        .btn-buy-now {
-            flex: 1;
-            padding: 14px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ✅ BUTTON: ADD TO CART */
-        .btn-add-cart {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-add-cart:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-add-cart:active {
-            transform: translateY(0);
-        }
-
-        /* ✅ BUTTON: BUY NOW */
-        .btn-buy-now {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-buy-now:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* ===== DIVIDER ===== */
-        hr.my-5 {
-            margin: 3rem 0 !important;
-            border: none;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ecf0f1, transparent);
-        }
-
-        /* ===== DESCRIPTION SECTION ===== */
-        .desc-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-            position: relative;
-        }
-
-        .desc-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -3px;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .desc-content {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-
-        .desc-content p {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 15px;
-        }
-
-        .desc-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 768px) {
-            .col-md-4,
-            .col-md-6 {
-                flex: 0 0 100%;
-            }
-
-            .product-info .title {
-                font-size: 24px;
-            }
-
-            .price-new {
-                font-size: 28px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn-add-cart,
-            .btn-buy-now {
-                width: 100%;
-            }
-
-            .form-add-cart {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .quantity-input {
-                width: 100%;
-            }
-
-            .d-flex.align-items-center.mb-3.gap-1 {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 10px !important;
-            }
-
-            .discount-box {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start !important;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .container.mt-5 {
-                margin-top: 1rem !important;
-            }
-
-            .product-info {
-                padding: 15px;
-            }
-
-            .product-info .title {
-                font-size: 20px;
-            }
-
-            .price-new {
-                font-size: 24px;
-            }
-
-            .price-old {
-                font-size: 14px;
-            }
-
-            .btn-add-cart,
-            .btn-buy-now {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-
-            .desc-title {
-                font-size: 20px;
-            }
-
-            .desc-content {
-                padding: 15px;
-            }
-
-            .desc-content p {
-                font-size: 13px;
-            }
-        }
-
-        /* ===== UTILITIES ===== */
-        .gap-1 {
-            gap: 0.5rem !important;
-        }
-
-        .gap-2 {
-            gap: 1rem !important;
-        }
-
-        .d-flex {
-            display: flex;
-        }
-
-        .align-items-center {
-            align-items: center;
-        }
-
-        .mb-3 {
-            margin-bottom: 1rem !important;
-        }
-
-        .my-5 {
-            margin-top: 3rem !important;
-            margin-bottom: 3rem !important;
-        }
-
-        /* ===== ANIMATION ===== */
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .product-image,
-        .product-info,
-        .desc-content {
-            animation: slideInUp 0.5s ease forwards;
-        }
-
-        .product-info {
-            animation-delay: 0.1s;
-        }
-
-        .desc-content {
-            animation-delay: 0.2s;
-        }
   script.
     document.addEventListener('DOMContentLoaded', function () {
       const isLogin = !{JSON.stringify(isLogin)}
 
       const btn = document.querySelectorAll('.button-group button');
-      const form=document.querySelector('')
 
       if (btn) {
-        btn.foreach(btn=>{
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
+        btn.forEach(btn=>{
+          btn.addEventListener('click', (e)=> {
           if (!isLogin) {
+            e.preventDefault();
             alert('Bạn cần đăng nhập!');
-          } else if(btn.hasAttribute("checkout")){
-
           }
-        });
-        })
-      }
-    });
+          if(btn.hasAttribute('checkout')){
+            const product = document.querySelector('.quantity-input');
+            const quantity = product.value;
+            const slug = product.getAttribute('slug');
+
+            window.location.href = `/order?product=${slug}&quantity=${quantity}`;
+            return;
+          }
+          })
+         })
+        }
+      })

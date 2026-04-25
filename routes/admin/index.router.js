@@ -9,6 +9,7 @@ const authMiddleware=require('../../middleware/admin/auth.middleware');
 const articleRouter=require('./article.router');
 const categoryArticleRouter=require('./category-article.router');
 const myAccountRouter=require('./my-account.router');
+const orderRouter=require('./order.router')
 module.exports = (app) => {
   const path_admin = systemConfig.prefixAdmin;
   app.use(path_admin + '/dashboard',authMiddleware.requireAuth, dashboardRouter);
@@ -23,4 +24,5 @@ module.exports = (app) => {
   });
   app.use(path_admin + '/auth', authRouter);
   app.use(path_admin + '/my-account',authMiddleware.requireAuth, myAccountRouter);
+  app.use(path_admin + '/orders', authMiddleware.requireAuth, orderRouter);
 };

@@ -6,6 +6,9 @@
          if(role.permission.includes('products_view'))
             li 
                a(href=prefixAdmin+"/product") Sản phẩm
+         if(role.permission.includes('orders_view'))
+            li 
+               a(href=prefixAdmin+"/orders") Đơn hàng
          if(role.permission.includes('products-category_view'))
             li 
                a(href=prefixAdmin+"/category-product") Danh mục sản phẩm

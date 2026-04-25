@@ -1,0 +1,205 @@
+/* ==========================================
+   TỔNG QUAN & BỐ CỤC KHUNG
+========================================== */
+body {
+  background-color: #f4f6f9; /* Màu nền xám lạnh, tôn lên các khối trắng */
+}
+
+/* Card bao bọc danh sách */
+.card {
+  border: none;
+  border-radius: 16px; /* Bo góc lớn, hiện đại */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); /* Đổ bóng cực êm */
+  background-color: #ffffff;
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid #f1f3f5;
+  padding: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2b2b2b;
+}
+
+.card-body {
+  padding: 1rem 1.5rem;
+}
+
+/* ==========================================
+   BẢNG DỮ LIỆU (TABLE)
+========================================== */
+.table {
+  margin-bottom: 0;
+  color: #495057;
+  vertical-align: middle;
+}
+
+/* Tiêu đề cột */
+.table thead th {
+  border-top: none;
+  border-bottom: 1px solid #e9ecef;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.8px;
+  color: #868e96;
+  padding-bottom: 1rem;
+  font-weight: 600;
+}
+
+.table td, .table th {
+  padding: 1.2rem 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #f8f9fa;
+}
+
+/* Hiệu ứng di chuột vào dòng */
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #fbfcff; /* Xanh nhạt tinh tế khi hover */
+}
+
+/* Highlight mã đơn hàng trông như code */
+.table td strong {
+  font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  color: #343a40;
+  background-color: #f1f3f5;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #e9ecef;
+}
+
+/* ==========================================
+   BADGE & FORM CONTROLS (Thẻ trạng thái & Dropdown)
+========================================== */
+.badge {
+  padding: 0.55em 0.9em;
+  font-weight: 500;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.3px;
+}
+
+.badge-secondary {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+/* Tùy chỉnh thả xuống (Select) mượt mà, bỏ mũi tên mặc định thô kệch */
+.select-status, .select-payment-status {
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  color: #495057;
+  background-color: #f8f9fa;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23adb5bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 14px 10px;
+  padding-right: 2rem;
+  transition: all 0.2s ease;
+}
+
+.select-status:hover, .select-payment-status:hover {
+  border-color: #ced4da;
+  background-color: #ffffff;
+}
+
+.select-status:focus, .select-payment-status:focus {
+  border-color: #a3c4f3;
+  box-shadow: 0 0 0 0.2rem rgba(163, 196, 243, 0.25);
+  outline: none;
+  background-color: #ffffff;
+}
+
+/* Nút Chi tiết */
+.btn-detail {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-detail:hover {
+  background-color: #bbdefb;
+  color: #082a63;
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   POP-UP (MODAL) CHI TIẾT
+========================================== */
+.modal-content {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: 1px solid #f1f3f5;
+  padding: 1.5rem 2rem;
+  background-color: #ffffff;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+.modal-body {
+  padding: 2rem;
+  background-color: #fafbfc;
+}
+
+.modal-body h6 {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* Bảng trong Modal */
+.modal-body .table-bordered {
+  border: 1px solid #e9ecef;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modal-body .table-bordered th, 
+.modal-body .table-bordered td {
+  border: 1px solid #e9ecef;
+}
+
+.modal-footer {
+  border-top: 1px solid #f1f3f5;
+  padding: 1.2rem 2rem;
+  background-color: #ffffff;
+}
+
+.modal-footer .btn-secondary {
+  background-color: #f1f3f5;
+  color: #495057;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #e9ecef;
+}

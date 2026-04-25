@@ -6,6 +6,10 @@ const orderSchema = new mongoose.Schema({
   userId: String,
   // orderCode sẽ đóng vai trò là vnp_TxnRef (Mã giao dịch gửi sang VNPAY)
   orderCode:String,
+  products:{
+    type:Array,
+    default:[]
+  },
   title: String,
   // ==========================================
   // CÁC TRƯỜNG THÊM VÀO ĐỂ PHỤC VỤ VNPAY
@@ -33,11 +37,12 @@ const orderSchema = new mongoose.Schema({
     vnp_PayDate: String,       // Thời gian thanh toán thành công
   },
   // ==========================================
-  deleted: {
-    type: Boolean,
-    default: false
+  status:{
+    type: String,
+    enum: ['', 'confirm', 'finish','canceled'], 
+    default: '' 
   },
-  deletedAt: Date,
+  canceledAt: Date,
 },
 {
   timestamps: true // Tự động sinh createdAt và updatedAt

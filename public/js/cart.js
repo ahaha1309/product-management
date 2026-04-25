@@ -8,13 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const minus = document.querySelectorAll('.minus');
   const listQuantity = document.querySelectorAll('.input-qty');
   const cartTotalAmount = document.querySelectorAll('.cart-item-total');
-  const listProduct=document.querySelector('[name="listProduct"]')
+  const listProduct = document.querySelector('[name="listProduct"]');
 
   // 👉 Hàm lấy giá (tái sử dụng)
   const getPrice = (index) => {
-    return parseFloat(listPrice[index].innerText.replace(/[^0-9.]/g, '')) || 0;
+    // Loại bỏ tất cả ký tự không phải là số (xóa cả dấu chấm phân cách hàng nghìn)
+    const priceText = listPrice[index].innerText.replace(/\D/g, '');
+    return parseFloat(priceText) || 0;
   };
-
   // 👉 Hàm update 1 item
   const updateItem = (index, delta) => {
     let qty = parseInt(listQuantity[index].value) || 0;
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     listQuantity[index].value = qty;
 
     const total = qty * getPrice(index);
-    cartTotalAmount[index].innerText = total + ' $';
+    cartTotalAmount[index].innerText = total.toLocaleString('vi-VN') + ' $';
 
     calculateTotal();
 
@@ -33,12 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const formUpdate = document.querySelector('[form-update-quantity]');
     const dataPath = formUpdate.getAttribute('data-path');
 
-  fetch(`${dataPath}/${idUpdate}/${qty}`, {
-    method: "PATCH"
-  })
-  .then(res => res.json())
-  .then(data => console.log("updated"))
-  .catch(err => console.log(err));
+    fetch(`${dataPath}/${idUpdate}/${qty}`, {
+      method: 'PATCH',
+    })
+      .then((res) => res.json())
+      .then((data) => console.log('updated'))
+      .catch((err) => console.log(err));
   };
 
   // 👉 Hàm tính tổng
@@ -51,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTotal += qty * getPrice(index);
       }
     });
-
-    const formatted = currentTotal + ' $';
+    currentTotal = Math.round(currentTotal);
+    const formatted = currentTotal.toLocaleString('vi-VN') + ' $';
     tempAmount.innerText = formatted;
     totalAmount.innerText = formatted;
   };
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //  Check từng item
   itemChecks.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
-      const slug=checkbox.getAttribute('slug');
+      const slug = checkbox.getAttribute('slug');
       const allChecked = Array.from(itemChecks).every((c) => c.checked);
       if (checkAll) checkAll.checked = allChecked;
       calculateTotal();
@@ -87,7 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checkbox.checked) {
         listProduct.value += slug + ',';
       } else {
-        const slugs = listProduct.value.split(',').filter((slug) => slug && slug != checkbox.getAttribute('slug'));
+        const slugs = listProduct.value
+          .split(',')
+          .filter((slug) => slug && slug != checkbox.getAttribute('slug'));
         listProduct.value = slugs.join(',') + (slugs.length > 0 ? ',' : '');
       }
     });

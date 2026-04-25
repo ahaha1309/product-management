@@ -10,8 +10,8 @@ const orderRouter=require('./order.router')
 const chatBotRouter=require('./chatBot.router')
 
 module.exports = (app) => {
-  app.use(categoryMiddleware.category);
-  app.use(authMiddleware.infoUser);
+  app.use('/', categoryMiddleware.category);
+  app.use('/', authMiddleware.infoUser);
   
   app.use('/',  homeRouter);
   app.use('/product', productRouter);
@@ -19,7 +19,7 @@ module.exports = (app) => {
   app.use('/cart',authMiddleware.requireAuth,cartRouter)
   app.use('/auth',authRouter);
   app.use('/my-account',userRouter)
-  app.use('/checkout',orderRouter)
+  app.use('/order',orderRouter)
   app.use('/chatbot',chatBotRouter)
   
 };

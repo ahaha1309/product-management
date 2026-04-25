@@ -1,0 +1,21 @@
+mixin sort()
+  .card.border-0.shadow-sm
+    .card-header.bg-white.fw-bold 
+      i.fa-solid.fa-sort.me-2
+      | Sắp xếp theo
+    .card-body
+      .row
+        .col-md-5.col-lg-4
+          div(sort)
+            .input-group
+              select.form-select(name="sort" sort-select)
+                option(value='') ---Chọn cách sắp xếp---
+                option(value="position-desc" selected=type=='position-desc'?true:false) Mới nhất
+                option(value="position-asc" selected=type=='position-asc'?true:false) Cũ nhất
+                option(value="price-desc" selected=type=='price-desc'?true:false) Giá: Cao → Thấp
+                option(value="price-asc" selected=type=='price-asc'?true:false) Giá: Thấp → Cao
+                option(value="title-asc" selected=type=='title-asc'?true:false) Tên sản phẩm: A → Z
+                option(value="title-desc" selected=type=='title-desc'?true:false) Tên sản phẩm: Z → A
+              button.btn.btn-outline-danger(sort-clear type="button") 
+                i.fa-solid.fa-xmark.me-1
+                | Xóa bộ lọc

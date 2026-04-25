@@ -3,15 +3,27 @@ const categoryModel=require('../../models/product-category.model')
 const productHelper = require('../../helper/product');
 const getSubCategoryHelper=require('../../helper/product-category')
 module.exports.index = async (req, res) => {
+  let sort = {};
+  let sortKey='';
+  let value='';
+  if (req.query.sortKey && req.query.value) {
+    sortKey=req.query.sortKey;
+    value=req.query.value
+    sort[sortKey] = value;
+  } else {
+    sort['position'] = 'desc';
+  }
+  console.log(sort)
   const product = await Product.find({
     status: 'active',
     deleted: false,
-  }).sort({ position: "desc" });
+  }).sort(sort);
   const newProduct = productHelper.productHelper(product);
   res.render('client/pages/products/index.pug', {
     title: 'Trang sản phẩm',
     message: 'Trang sản phẩm',
     product: newProduct,
+    type:sortKey+'-'+value
   });
 };
 

@@ -1,0 +1,61 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  link(rel="stylesheet", href="/css/orderHistory.css")
+  
+  .container.shopee-order-history
+    +alert-success(messages.success)
+    +alert-error(messages.error)
+
+    //- Thanh tab trạng thái (Giả lập giao diện Shopee)
+    .shopee-tabs
+      a.tab-item(href="/order/history" class=`${status==' '?'active':''}`) Tất cả
+      a.tab-item(href="/order/history?status=confirm" class=`${status=='confirm'?'active':''}`) Chờ xác nhận
+      a.tab-item(href="/order/history?status=finish" type='finish') Hoàn thành
+      a.tab-item(href="/order/history?status=canceled" class=`${status=='canceled'?'active':''}`) Đã hủy
+
+    if orders && orders.length > 0
+      .orders-list
+        each order in orders
+          //- Thẻ card đơn hàng
+          .shopee-card
+            //- Header: Tên Shop / Mã đơn & Trạng thái
+            .card-header
+              .shop-info
+                span.badge Yêu thích
+                span.shop-name Đơn hàng: #{order.orderCode}
+
+            //- Body: Danh sách sản phẩm (Click vào khu vực này để xem chi tiết)
+            a.card-body(href=`/order/detail/${order._id}`)
+              each item in order.products
+                .shopee-product
+                  .product-img
+                    img(src=item.thumbnail, alt=item.title)
+                  .product-details
+                    h4.product-name #{item.title}
+                    if item.variant
+                      p.product-variant Phân loại: #{item.variant}
+                    span.product-qty x#{item.quantity}
+                  .product-price
+                    //- Có thể thêm giá gốc gạch ngang nếu DB của bạn có lưu
+                    span.new-price #{Number(item.newPrice).toLocaleString('vi-VN')}₫
+
+            //- Footer: Tổng tiền và Nút hành động
+            .card-footer
+              .total-amount
+                - var totalQty = order.products.reduce((sum, p) => sum + p.quantity, 0)
+                span Thành tiền (#{totalQty} sản phẩm): 
+                span.amount-highlight #{order.amount.toLocaleString('vi-VN')}₫
+              
+              .card-actions
+                a.btn-outline(href=`/order/detail/${order._id}`) Xem chi tiết
+                if order.paymentStatus === 'success' || order.status === 'canceled'
+                  a.btn-primary(href=`/order/${order._id}`) Mua lại
+
+    else
+      .empty-orders
+        img(src="/images/empty-cart.png", alt="Chưa có đơn hàng")
+        p Bạn chưa có đơn hàng nào.
+        a.btn-shopping(href="/product") Tiếp tục mua sắm
+  script(src='/js/orderHistory.js')

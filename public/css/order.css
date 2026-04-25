@@ -127,7 +127,7 @@
       }
     }
 
-    .product-image {
+    .product-image-detail {
       width: 80px;
       height: 80px;
       border-radius: 8px;
@@ -135,7 +135,7 @@
       background: white;
     }
 
-    .product-image img {
+    .product-image-detail img {
       width: 100%;
       height: 100%;
       object-fit: cover;

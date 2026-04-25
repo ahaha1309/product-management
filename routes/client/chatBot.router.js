@@ -63,7 +63,8 @@ router.post('/chat', async (req, res) => {
       context || '',
       history,
       paginationData?.products || allProducts,
-      productContext
+      productContext,
+      sessionId
     );
 
     session.history = updatedHistory;

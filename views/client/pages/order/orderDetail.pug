@@ -1,0 +1,106 @@
+extends ../../layouts/default.pug
+include ../../../admin/mixins/moment.pug
+
+block main
+  //- Có thể tái sử dụng file css của trang order, hoặc tạo file mới order-detail.css
+  link(rel="stylesheet", href="/css/order.css") 
+  
+  .checkout-page.order-detail-page
+    .container
+      .checkout-wrapper
+        
+        //- Cột trái: Thông tin chi tiết
+        .checkout-left
+          .page-header(style="margin-bottom: 20px;")
+            h1 Chi tiết đơn hàng
+            p Ngày đặt: 
+              +formatDateTime(order.createdAt)
+            p Trạng thái đơn hàng: 
+              strong(class=order.status === '' ? 'text-warning' : (order.status === 'confirm' ? 'text-warning' : (order.status === 'finish' ? 'text-success' : 'text-danger'))) #{order.status === '' ? 'Chờ xác nhân' : (order.status === 'confirm' ? 'Đã xác nhận' : (order.status === 'finish' ? 'Đã giao hàng' : 'Đã hủy'))}
+
+          // Section 1: Thông tin giao hàng (Chỉ hiển thị)
+          .checkout-section
+            .section-header
+              h2 1. Thông tin người nhận
+            
+            .shipping-info
+              .info-row
+                span.info-label Người nhận:
+                span.info-value= `${user.fullName} | ${user.phone}`
+              .info-row
+                span.info-label Địa chỉ giao:
+                span.info-value= user.address
+
+          // Section 2: Danh sách sản phẩm (Không có nút xóa)
+          .checkout-section
+            .section-header
+              h2 2. Danh sách sản phẩm (#{order.products.length})
+            
+            .products-list
+              each item in order.products
+                .product-item
+                  .product-image-detail
+                    img(src=item.thumbnail, alt=item.title, loading="lazy")
+                  
+                  .product-info
+                    h4= item.title
+                    p.product-price= `${item.newPrice.toLocaleString('vi-VN')}₫`
+                  
+                  .product-quantity
+                    span= `x${item.quantity}`
+                  
+                  .product-total
+                    span= `${(item.newPrice * item.quantity).toLocaleString('vi-VN')}₫`
+
+          // Section 3: Phương thức thanh toán (Chỉ hiển thị trạng thái)
+          .checkout-section
+            .section-header
+              h2 3. Thông tin thanh toán
+            
+            .payment-info-static(style="padding: 15px; background: #f9f9f9; border-radius: 8px;")
+              p(style="margin-bottom: 8px;")
+                strong Phương thức: 
+                | #{order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán trực tuyến (VNPAY)'}
+              p
+                strong Trạng thái thanh toán: 
+                if order.paymentStatus === 'success'
+                  span.text-success(style="color: green; font-weight: bold;") Đã thanh toán
+                else
+                  span.text-warning(style="color: orange; font-weight: bold;") Chưa thanh toán
+
+        //- Cột phải: Tổng hợp giá (Không có nút đặt hàng)
+        .checkout-right
+          .order-summary
+            .summary-header
+              h3 Tóm tắt thanh toán
+
+            //- Tùy thuộc vào model order của bạn lưu những gì để hiển thị lại
+            .summary-item
+              span Tổng tiền hàng:
+              //- Giả sử bạn có lưu totalAmount (chưa tính phí ship) hoặc tính toán lại
+              span.price= `${(order.amount - 30000).toLocaleString('vi-VN')}₫` 
+
+            .summary-item.shipping
+              span Phí vận chuyển:
+              span.price 30.000₫
+
+            .summary-divider
+
+            .summary-item.total
+                span Tổng cộng:
+                span.price-total= `${order.amount.toLocaleString('vi-VN')}₫`
+
+                //- Nút quay lại
+            a.btn-checkout(href="/order/history" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;") Quay lại danh sách đơn
+
+                //- Thêm nút Hủy đơn hàng (Chỉ hiện khi trạng thái là pending)
+            if order.status == ''
+                button#btnCancelOrder.btn-outline(
+                    type="button" 
+                    data-id=order._id 
+                    style="width: 100%; color: #ee4d2d; border-color: #ee4d2d; padding: 10px; cursor: pointer;"
+                ) Hủy đơn hàng
+
+            #checkoutToast.checkout-toast(style="display:none;")
+            span#toastMessage
+    script(src='/js/orderHistory.js')

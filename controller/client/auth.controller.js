@@ -72,5 +72,5 @@ module.exports.registerPost=async (req,res)=>{
 module.exports.logout = (req, res) => {
   req.session.destroy();
   res.clearCookie('token');
-  res.redirect(`back`);
+  res.redirect(`/`);
 };

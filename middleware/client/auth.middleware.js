@@ -22,6 +22,9 @@ module.exports.infoUser = async (req, res, next) => {
       deleted: false,
       status: "active"
     }).select("-password -confirmPassword -token").lean();
+    if(!user){
+      return next()
+    }
     const cart = await cartModel.findOne({ userId: user._id });
     if(!cart){
       return res.locals.quantityCart=0

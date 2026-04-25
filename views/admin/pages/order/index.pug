@@ -1,0 +1,102 @@
+extends ../../layout/default.pug
+
+block main
+  h1.mb-4 Quản lý đơn hàng
+  link(rel="stylesheet", href="/admin/css/order.css")
+
+  .card.mb-3
+    .card-header Danh sách đơn hàng
+    .card-body
+      table.table.table-hover.table-sm
+        thead
+          tr
+            th STT
+            th Mã đơn hàng
+            th Tổng tiền
+            th P.Thức TT
+            th Trạng thái TT
+            th Trạng thái Đơn
+            th Ngày tạo
+            th Hành động
+        tbody
+          if orders.length > 0
+            each item, index in orders
+              tr
+                td #{index + 1}
+                td 
+                  strong #{item.orderCode}
+                td.text-danger.font-weight-bold #{item.amount.toLocaleString('vi-VN')}₫
+                td 
+                  span.badge.badge-secondary #{item.paymentMethod}
+                
+                td
+                  select.form-control.form-control-sm.select-payment-status(data-id=item._id)
+                    option(value="pending" selected=(item.paymentStatus === 'pending')) ⏳ Chờ thanh toán
+                    option(value="success" selected=(item.paymentStatus === 'success')) ✅ Đã thanh toán
+                    option(value="failed" selected=(item.paymentStatus === 'failed')) ❌ Thất bại
+
+                td
+                  select.form-control.form-control-sm.select-status(data-id=item._id)
+                    option(value="" selected=(item.status === '')) Chờ xử lý
+                    option(value="confirm" selected=(item.status === 'confirm')) Đã xác nhận
+                    option(value="finish" selected=(item.status === 'finish')) Hoàn thành
+                    option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
+
+                td #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                
+                td
+                  //- Sửa lại nút Chi tiết: dùng button thay vì thẻ a, thêm class btn-detail
+                  button.btn.btn-sm.btn-info.btn-detail(data-id=item._id) Chi tiết
+
+          else
+            tr
+              td(colspan="8" class="text-center") Chưa có đơn hàng nào
+
+  //- --- Cấu trúc Modal Chi Tiết Đơn Hàng ---
+  #orderDetailModal.modal.fade(target="_blank" tabindex="-1" role="dialog")
+    .modal-dialog.modal-lg(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title Chi tiết đơn hàng: 
+            span#modalOrderCode.font-weight-bold
+        .modal-body
+          .row.mb-3
+            .col-md-6
+              h6 👤 Thông tin khách hàng
+              p.mb-1 
+                strong Họ tên: 
+                span#modalCustomerName
+              p.mb-1 
+                strong Điện thoại: 
+                span#modalCustomerPhone
+              p.mb-1 
+                strong Địa chỉ: 
+                span#modalCustomerAddress
+            .col-md-6
+              h6 💳 Thanh toán & Vận chuyển
+              p.mb-1 
+                strong Phương thức: 
+                span#modalPaymentMethod
+              p.mb-1 
+                strong Trạng thái: 
+                span#modalPaymentStatus
+          
+          h6 📦 Danh sách sản phẩm
+          .table-responsive
+            table.table.table-bordered.table-sm
+              thead.bg-light
+                tr
+                  th Hình ảnh
+                  th Sản phẩm
+                  th Đơn giá
+                  th SL
+                  th Tổng
+              tbody#modalProductList
+          
+          .text-right.mt-3
+            h5 Tổng thanh toán: 
+              span#modalTotalAmount.text-danger.font-weight-bold
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Đóng
+
+  script(src="/admin/js/order.js")

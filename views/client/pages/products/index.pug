@@ -1,8 +1,10 @@
 extends ../../layouts/default.pug 
 include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
+include ../../mixins/sort.pug
 block main 
   .container.my-3
+    +sort()
     .row 
        .col-12 
           if(!keyword)

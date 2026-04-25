@@ -195,6 +195,27 @@ block main
               each role in roles
                 td.text-center
                   input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_delete"))
+            // Quản lý đơn hàng
+            tr(style="background: #666767;")
+              td(colspan="3")
+                b Quản lý đơn hàng
+
+            tr(data-name="orders_view")
+              td Xem
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_view"))
+
+            tr(data-name="orders_confirm")
+              td Xác nhận / Hủy
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_confirm"))
+            tr(data-name="orders_delete")
+              td(style="color: red;") Xóa
+              each role in roles
+                td.text-center
+                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_delete"))
       form(action=`${prefixAdmin}/roles/permission?_method=PATCH` method="POST" id="form-permission")
         input(type="hidden" name="permissions" id="input-permissions")
   else
