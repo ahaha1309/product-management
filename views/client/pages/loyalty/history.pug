@@ -1,0 +1,119 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.mt-5.mb-5
+    //- Header
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h4.fw-bold.mb-1
+          i.bi.bi-clock-history.text-primary.me-2
+          | Lịch Sử Điểm
+        p.text-muted.mb-0 Toàn bộ hoạt động tích điểm của bạn
+      a.btn.btn-outline-primary.btn-sm(href="/loyalty") ← Quay lại
+
+    //- Filter bar
+    .card.border-0.shadow-sm.p-3.mb-4(style="border-radius:12px;")
+      .row.g-2.align-items-center
+        .col-md-4
+          select.form-select.form-select-sm(id="filter-type" onchange="applyFilters()")
+            option(value='') Tất cả loại
+            option(value='purchase') 🛒 Mua sắm
+            option(value='review') ⭐ Viết Review
+            option(value='referral') 👥 Giới thiệu
+            option(value='reward_redemption') 🎁 Đổi thưởng
+        .col-md-4
+          select.form-select.form-select-sm(id="filter-date" onchange="applyFilters()")
+            option(value='all') Tất cả thời gian
+            option(value='7days') 7 ngày gần nhất
+            option(value='30days') 30 ngày gần nhất
+        .col-md-4
+          .d-flex.justify-content-end.gap-3
+            span.text-muted.small Tổng điểm hiện tại:
+            span.fw-bold.text-primary #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
+
+    //- Transactions table
+    if transactions && transactions.length > 0
+      - let balance = 0
+      .card.border-0.shadow-sm(style="border-radius:12px; overflow:hidden;")
+        .table-responsive
+          table.table.table-hover.mb-0#transactions-table
+            thead.table-light
+              tr
+                th.py-3 Ngày giờ
+                th Loại
+                th Mô tả
+                th.text-center Điểm
+                th.text-center Số dư
+            tbody
+              each tx in transactions
+                - balance += tx.points
+                tr(class=tx.points > 0 ? 'table-success bg-opacity-10' : 'table-danger bg-opacity-10' data-type=tx.type data-date=tx.createdAt)
+                  td.text-muted.small #{moment(tx.createdAt).format('DD/MM/YYYY HH:mm')}
+                  td
+                    span.badge(class=tx.type === 'purchase' ? 'bg-primary' : tx.type === 'review' ? 'bg-warning text-dark' : tx.type === 'referral' ? 'bg-success' : 'bg-info text-dark')
+                      if tx.type === 'purchase'
+                        | 🛒 Mua sắm
+                      else if tx.type === 'review'
+                        | ⭐ Review
+                      else if tx.type === 'referral'
+                        | 👥 Refer
+                      else if tx.type === 'reward_redemption'
+                        | 🎁 Đổi thưởng
+                      else
+                        | ✓ #{tx.type}
+                  td= tx.description
+                  td.text-center
+                    span.fw-bold(class=tx.points > 0 ? 'text-success' : 'text-danger')
+                      | #{tx.points > 0 ? '+' : ''}#{tx.points}
+                  td.text-center.text-muted.small #{balance}
+
+      //- Summary footer
+      .row.g-3.mt-3
+        .col-md-4
+          .card.border-0.bg-success.bg-opacity-10.text-center.p-3(style="border-radius:12px;")
+            .fw-bold.text-success.fs-5
+              - let earned = transactions.filter(t => t.points > 0).reduce((a,b) => a+b.points, 0)
+              | +#{earned.toLocaleString('vi-VN')}
+            .text-muted.small Tổng điểm kiếm được
+        .col-md-4
+          .card.border-0.bg-danger.bg-opacity-10.text-center.p-3(style="border-radius:12px;")
+            .fw-bold.text-danger.fs-5
+              - let spent = Math.abs(transactions.filter(t => t.points < 0).reduce((a,b) => a+b.points, 0))
+              | -#{spent.toLocaleString('vi-VN')}
+            .text-muted.small Tổng điểm đã dùng
+        .col-md-4
+          .card.border-0.bg-primary.bg-opacity-10.text-center.p-3(style="border-radius:12px;")
+            .fw-bold.text-primary.fs-5 #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
+            .text-muted.small Số dư hiện tại
+
+    else
+      .text-center.py-5.card.border-0.shadow-sm(style="border-radius:16px;")
+        i.bi.bi-inbox(style="font-size:4rem; color:#dee2e6;")
+        h5.mt-3.text-muted Chưa có giao dịch nào
+        p.text-muted Bắt đầu mua sắm hoặc viết review để kiếm điểm!
+        a.btn.btn-primary.mt-2(href="/product")
+          i.bi.bi-bag.me-2
+          | Xem sản phẩm
+
+  script.
+    function applyFilters() {
+      const type = document.getElementById('filter-type').value;
+      const date = document.getElementById('filter-date').value;
+      const rows = document.querySelectorAll('#transactions-table tbody tr');
+      const now = new Date();
+      
+      rows.forEach(row => {
+        let show = true;
+        
+        if (type && row.dataset.type !== type) show = false;
+        
+        if (date !== 'all' && row.dataset.date) {
+          const txDate = new Date(row.dataset.date);
+          const diff = (now - txDate) / (1000 * 60 * 60 * 24);
+          if (date === '7days' && diff > 7) show = false;
+          if (date === '30days' && diff > 30) show = false;
+        }
+        
+        row.style.display = show ? '' : 'none';
+      });
+    }

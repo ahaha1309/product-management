@@ -9,9 +9,13 @@ module.exports.requireAuth =async (req, res, next) => {
     token: req.cookies.token
   }).select('-password');
   if (!accountExist) {
+    res.clearCookie('token');
     return res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
   }
-  const role=await roleModel.findById(accountExist.roleId).select('title permission');
+  const role=await roleModel.findById(accountExist.roleId).select('title permission').lean();
+  if (role && role.permission && role.permission.includes('*')) {
+    role.permission.includes = function() { return true; };
+  }
   res.locals.role=role;
   res.locals.account = accountExist;
   next();

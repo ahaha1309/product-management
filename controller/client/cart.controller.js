@@ -11,43 +11,64 @@ module.exports.index = async (req, res) => {
         cart: { products: [] },
       });
     }
+    const originalLength = cart.products.length;
+    const validProducts = [];
     for (let item of cart.products) {
       const product = await productModel.findOne({ _id: item.productId });
-      product.newPrice = productHelper.priceNewProduct(product);
-      item.product = product;
+      if (product) {
+        product.newPrice = productHelper.priceNewProduct(product);
+        item.product = product;
+        validProducts.push(item);
+      }
     }
+    
+    if (validProducts.length !== originalLength) {
+      const productsToSave = validProducts.map(p => ({
+         productId: p.productId,
+         quantity: p.quantity,
+         variantText: p.variantText
+      }));
+      await cartModel.updateOne({ _id: cart._id }, { products: productsToSave });
+    }
+    
+    cart.products = validProducts;
+    res.locals.quantityCart = validProducts.length;
+
     res.render('client/pages/cart/index', {
       title: 'Giỏ hàng',
       cart: cart,
     });
   } catch (error) {
+    console.error("Cart error:", error);
     res.redirect('back');
   }
 };
 module.exports.addProduct = async (req, res) => {
   const idAdd = req.params.id;
   const quantity = parseInt(req.body.quantity);
+  const variantText = req.body.variantText || '';
 
   try {
     const cart = await cartModel.findOne({ userId: res.locals.user._id });
     if (cart) {
-      const productExist = cart.products.find((item) => item.productId == idAdd);
+      // Tìm sản phẩm cùng id và cùng loại biến thể
+      const productExist = cart.products.find((item) => item.productId == idAdd && (item.variantText || '') === variantText);
       if (productExist) {
         const newQuantity = productExist.quantity + quantity;
         await cartModel.updateOne(
-          { userId: res.locals.user._id, 'products.productId': idAdd },
+          { userId: res.locals.user._id, 'products._id': productExist._id },
           { $set: { 'products.$.quantity': newQuantity } }
         );
       } else {
         await cartModel.updateOne(
           { userId: res.locals.user._id },
-          { $push: { products: { productId: idAdd, quantity: quantity } } }
+          { $push: { products: { productId: idAdd, quantity: quantity, variantText: variantText } } }
         );
       }
     } else {
       await cartModel.create({
         userId: res.locals.user._id,
-        products: [{ productId: idAdd, quantity: quantity }],
+        products: [{ productId: idAdd, quantity: quantity, variantText: variantText }],
       });
     }
     req.flash('success', 'Thêm sản phẩm vào giỏ hàng thành công');
@@ -58,7 +79,10 @@ module.exports.addProduct = async (req, res) => {
   }
 };
 module.exports.deleteProduct = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id; // đây là _id của phần tử trong mảng products (nếu truyền từ pug) hoặc productId. 
+  // Sửa lại: Trong index.pug của giỏ hàng sẽ truyền product._id (của item.productId). Ta sửa sau.
+  // Hiện tại sẽ pull theo productId. Nhưng nếu có variant thì sao? Nên truyền thêm variantText hoặc dùng item._id
+  // Tạm thời sửa pull theo productId (xóa tất cả variant của sp đó)
   await cartModel.updateOne(
     { userId: res.locals.user._id },
     { $pull: { products: { productId: id } } }

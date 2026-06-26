@@ -1,6 +1,6 @@
 mixin chatbot()
         .chatbot-floating-btn#chatbotBtn
-            i.bi.bi-chat-dots
+            i.bi.bi-chat-dots-fill
             .badge.badge-dot
                 span New
         
@@ -8,20 +8,25 @@ mixin chatbot()
         #chatbotModal.chatbot-modal
             .chatbot-container
                 .chatbot-header
-                    h5.mb-0 AI Customer Support
-                    button.btn-close#closeChatbot(type="button" aria-label="Close")
+                    h5.mb-0 
+                        i.bi.bi-headset.me-2
+                        | Chăm sóc khách hàng
+                    button.btn-close.btn-close-white#closeChatbot(type="button" aria-label="Close")
                 
                 #chatbotMessages.chatbot-messages
                     .chat-message.bot-message
                         .message-content
-                            p Xin chào! 👋 Tôi là trợ lý AI. Tôi có thể giúp bạn với bất kỳ câu hỏi nào về sản phẩm. Hãy nhập câu hỏi của bạn!
+                            p Xin chào! 👋 Tôi là trợ lý AI thông minh của shop. Bạn cần tôi hỗ trợ gì nào?
                 
                 .chatbot-input-area
                     .input-group
+                        if user
+                            input#chat-userid(type="hidden" value=(user.id || user._id))
                         input.form-control#chatInput(
                             type="text" 
                             placeholder="Nhập câu hỏi của bạn..." 
                             aria-label="Chat input"
+                            autocomplete="off"
                         )
                         button.btn.btn-primary#sendBtn(type="button")
-                            i.bi.bi-send
+                            i.bi.bi-send-fill

@@ -3,58 +3,481 @@ html(lang="vi")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title Đăng nhập Admin
-
-    link(
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    )
-
+    title Đăng nhập Admin | ShopVN
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet")
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet")
     style.
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        height: 100vh;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        background: #0a0a1a;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
       }
-      .login-card {
-        width: 400px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+      /* Animated gradient background */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: 
+          radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.35) 0%, transparent 55%),
+          radial-gradient(ellipse at 80% 20%, rgba(30, 100, 255, 0.3) 0%, transparent 50%),
+          radial-gradient(ellipse at 60% 80%, rgba(0, 200, 180, 0.2) 0%, transparent 45%);
+        animation: bgShift 8s ease-in-out infinite alternate;
+        z-index: 0;
+      }
+
+      @keyframes bgShift {
+        0% { opacity: 0.8; transform: scale(1); }
+        100% { opacity: 1; transform: scale(1.05); }
+      }
+
+      /* Floating orbs */
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.15;
+        animation: floatOrb 10s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .orb-1 { width: 500px; height: 500px; background: #7c3aed; top: -100px; left: -150px; animation-delay: 0s; }
+      .orb-2 { width: 400px; height: 400px; background: #2563eb; bottom: -100px; right: -100px; animation-delay: -3s; }
+      .orb-3 { width: 300px; height: 300px; background: #06b6d4; top: 50%; right: 20%; animation-delay: -6s; }
+
+      @keyframes floatOrb {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(30px, -30px) scale(1.05); }
+        66% { transform: translate(-20px, 20px) scale(0.95); }
+      }
+
+      /* Grid overlay */
+      .grid-overlay {
+        position: fixed;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* Main wrapper */
+      .auth-wrapper {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 480px;
+        padding: 20px;
+      }
+
+      /* Card */
+      .auth-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 28px;
+        padding: 48px 44px;
+        box-shadow: 
+          0 25px 60px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+          0 1px 0 rgba(255, 255, 255, 0.1) inset;
+        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      @keyframes slideUp {
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Logo */
+      .logo-area {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+
+      .logo-icon {
+        width: 72px;
+        height: 72px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
+        animation: pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4); }
+        50% { box-shadow: 0 8px 48px rgba(124, 58, 237, 0.7); }
+      }
+
+      .logo-name {
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+      }
+
+      .logo-sub {
+        font-size: 13px;
+        color: rgba(255,255,255,0.45);
+        font-weight: 400;
+        margin-top: 4px;
+        letter-spacing: 0.5px;
+      }
+
+      /* Title */
+      .auth-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+      }
+
+      .auth-subtitle {
+        font-size: 14px;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 32px;
+      }
+
+      /* Alerts */
+      .alert-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-size: 13.5px;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+      .alert-error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+
+      .alert-success {
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
+      }
+
+      /* Form */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255,255,255,0.65);
+        margin-bottom: 8px;
+        letter-spacing: 0.3px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255,255,255,0.3);
+        font-size: 17px;
+        z-index: 2;
+        transition: color 0.2s;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 14px 16px 14px 46px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 15px;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.25s ease;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .form-input::placeholder { color: rgba(255,255,255,0.25); }
+
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(124, 58, 237, 0.6);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+      }
+
+      .form-input:focus + .input-icon,
+      .input-wrapper:focus-within .input-icon {
+        color: #a78bfa;
+      }
+
+      /* Password toggle */
+      .toggle-pw {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: rgba(255,255,255,0.3);
+        font-size: 17px;
+        z-index: 2;
+        transition: color 0.2s;
+        background: none;
+        border: none;
+        padding: 2px;
+      }
+
+      .toggle-pw:hover { color: rgba(255,255,255,0.7); }
+
+      .pw-input { padding-right: 46px !important; }
+
+      /* Remember / forgot row */
+      .row-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+
+      .remember-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 13.5px;
+        color: rgba(255,255,255,0.5);
+        user-select: none;
+      }
+
+      .remember-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #7c3aed;
+        cursor: pointer;
+      }
+
+      .forgot-link {
+        font-size: 13.5px;
+        color: #a78bfa;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .forgot-link:hover { color: #c4b5fd; }
+
+      /* Submit button */
+      .btn-login {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        letter-spacing: 0.3px;
+      }
+
+      .btn-login::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #6d28d9, #1d4ed8);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .btn-login:hover::before { opacity: 1; }
+      .btn-login:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45); }
+      .btn-login:active { transform: translateY(0); }
+
+      .btn-login span { position: relative; z-index: 1; }
+
+      /* Loading spinner inside button */
+      .btn-login .spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255,255,255,0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        position: relative;
+        z-index: 1;
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .btn-login.loading .btn-text { display: none; }
+      .btn-login.loading .spinner { display: inline-block; }
+
+      /* Divider */
+      .divider {
+        text-align: center;
+        margin: 28px 0 0;
+        font-size: 13.5px;
+        color: rgba(255,255,255,0.35);
+      }
+
+      .divider a {
+        color: #a78bfa;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 4px;
+        transition: color 0.2s;
+      }
+
+      .divider a:hover { color: #c4b5fd; }
+
+      /* Badge admin */
+      .admin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(124, 58, 237, 0.2);
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #a78bfa;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+      }
+
+      /* Responsive */
+      @media (max-width: 520px) {
+        .auth-card { padding: 36px 24px; border-radius: 20px; }
       }
 
   body
-    include ../../mixins/alert.pug
-    +alert-error(messages.error)
-    .card.login-card.p-4
-      h3.text-center.mb-4 Đăng nhập Admin
+    .orb.orb-1
+    .orb.orb-2
+    .orb.orb-3
+    .grid-overlay
 
-      form(action="/admin/auth/login" method="POST")
+    .auth-wrapper
+      .auth-card
+        .logo-area
+          .logo-icon ⚡
+          .logo-name ShopVN
+          .logo-sub Admin Management System
 
-        .mb-3
-          label.form-label Email
-          input.form-control(
-            type="email"
-            name="email"
-            placeholder="Nhập email"
-            required
-          )
+        .admin-badge
+          i.bi.bi-shield-lock-fill
+          span  Admin Portal
 
-        .mb-3
-          label.form-label Mật khẩu
-          input.form-control(
-            type="password"
-            name="password"
-            placeholder="Nhập mật khẩu"
-            required
-          )
+        p.auth-title Chào mừng trở lại
+        p.auth-subtitle Đăng nhập để quản lý hệ thống
 
-        .mb-3.form-check
-          input.form-check-input(type="checkbox" id="remember")
-          label.form-check-label(for="remember") Ghi nhớ đăng nhập
+        - if(messages && messages.error)
+          .alert-box.alert-error
+            i.bi.bi-exclamation-circle-fill
+            span= messages.error
 
-        button.btn.btn-primary.w-100(type="submit") Đăng nhập
+        - if(messages && messages.success)
+          .alert-box.alert-success
+            i.bi.bi-check-circle-fill
+            span= messages.success
 
-        .text-center.mt-3
-          a(href="#") Quên mật khẩu?
+        form#loginForm(action="/admin/auth/login" method="POST")
+          .form-group
+            label.form-label(for="email") Địa chỉ Email
+            .input-wrapper
+              input#email.form-input(
+                type="email"
+                name="email"
+                placeholder="admin@example.com"
+                required
+                autocomplete="email"
+              )
+              i.bi.bi-envelope.input-icon
+
+          .form-group
+            label.form-label(for="password") Mật khẩu
+            .input-wrapper
+              input#password.form-input.pw-input(
+                type="password"
+                name="password"
+                placeholder="Nhập mật khẩu"
+                required
+                autocomplete="current-password"
+              )
+              i.bi.bi-lock.input-icon
+              button.toggle-pw(type="button" id="togglePw" title="Hiện/ẩn mật khẩu")
+                i.bi.bi-eye(id="eyeIcon")
+
+          .row-meta
+            label.remember-label
+              input(type="checkbox" name="remember")
+              | Ghi nhớ đăng nhập
+
+          button.btn-login#submitBtn(type="submit")
+            span.btn-text
+              i.bi.bi-box-arrow-in-right(style="margin-right:8px")
+              | Đăng nhập
+            .spinner
+
+        .divider
+          span Chưa có tài khoản Admin?
+          a(href="#" title="Liên hệ quản trị viên") Liên hệ quản trị
+
+    script.
+      // Toggle password visibility
+      const togglePw = document.getElementById('togglePw');
+      const pwInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+
+      togglePw.addEventListener('click', function () {
+        const isHidden = pwInput.type === 'password';
+        pwInput.type = isHidden ? 'text' : 'password';
+        eyeIcon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+      });
+
+      // Loading state on submit
+      const form = document.getElementById('loginForm');
+      const submitBtn = document.getElementById('submitBtn');
+
+      form.addEventListener('submit', function () {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+      });

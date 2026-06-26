@@ -3,7 +3,7 @@ extends ../../layout/default
 block main
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  if(role.permission.includes('roles_permission'))
+  if(role.permission.includes('roles_permission') || role.permission.includes('*'))
     h1.mb-4 Phân quyền
 
     div.text-right

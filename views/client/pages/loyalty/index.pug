@@ -1,0 +1,194 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.mt-5.mb-5
+    //- Page Title
+    .text-center.mb-5
+      h2.fw-bold
+        span.me-2 🎁
+        | Chương Trình Thành Viên
+      p.text-muted.fs-5 Kiếm điểm từ mỗi lần mua sắm & nhận thưởng tuyệt vời
+
+    if loyalty
+      .row.g-4
+        //- Left: Tier Card
+        .col-lg-4
+          .card.border-0.shadow-sm.text-center.p-4.h-100(
+            style="border-radius:16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;"
+          )
+            .mb-3
+              if loyalty.currentLevel === 'PLATINUM'
+                span(style="font-size:4rem;") 💎
+              else if loyalty.currentLevel === 'GOLD'
+                span(style="font-size:4rem;") 🥇
+              else if loyalty.currentLevel === 'SILVER'
+                span(style="font-size:4rem;") 🥈
+              else
+                span(style="font-size:4rem;") 🥉
+
+            h3.fw-bold.mb-1 #{loyalty.currentLevel || 'BRONZE'}
+            p.mb-3(style="opacity:0.85") Hạng thành viên của bạn
+
+            .display-5.fw-bold.mb-1 #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
+            p.mb-4(style="opacity:0.85") Điểm tích lũy
+
+            if tierInfo && tierInfo.nextTier
+              .mb-2
+                small Tiến tới hạng
+                strong.ms-1 #{tierInfo.nextTier}
+              .progress.mb-2(style="height:10px; background:rgba(255,255,255,0.3);")
+                .progress-bar.bg-warning(style=`width: ${tierInfo.progress || 0}%`)
+              small #{tierInfo.pointsToNextTier} điểm nữa để lên hạng
+            else
+              .badge.bg-warning.text-dark.fs-6.p-2 🏆 Đã đạt hạng cao nhất!
+
+        //- Right: Benefits
+        .col-lg-8
+          .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
+            h5.fw-bold.mb-3
+              i.bi.bi-star-fill.text-warning.me-2
+              | Lợi ích hạng #{loyalty.currentLevel || 'BRONZE'}
+            .row.row-cols-2.row-cols-md-4.g-3
+              .col
+                .text-center.p-3.bg-light.rounded
+                  .fs-2.mb-2 💳
+                  .fw-semibold.small Giảm giá
+                  .text-primary.fw-bold #{tierInfo ? tierInfo.discount : 0}%
+              .col
+                .text-center.p-3.bg-light.rounded
+                  .fs-2.mb-2 🎁
+                  .fw-semibold.small Quà tặng
+                  .text-primary.fw-bold Độc quyền
+              .col
+                .text-center.p-3.bg-light.rounded
+                  .fs-2.mb-2 🚚
+                  .fw-semibold.small Vận chuyển
+                  .text-primary.fw-bold Ưu tiên
+              .col
+                .text-center.p-3.bg-light.rounded
+                  .fs-2.mb-2 👑
+                  .fw-semibold.small Hỗ trợ
+                  .text-primary.fw-bold VIP
+
+          //- Earn Methods
+          .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
+            h5.fw-bold.mb-3
+              i.bi.bi-plus-circle-fill.text-success.me-2
+              | Cách Kiếm Điểm
+            .row.row-cols-2.row-cols-md-4.g-3
+              .col
+                .d-flex.align-items-center.gap-2.p-3.border.rounded
+                  span.fs-4 🛒
+                  div
+                    .fw-semibold.small Mua sắm
+                    .text-muted.small 1 điểm/10k
+              .col
+                .d-flex.align-items-center.gap-2.p-3.border.rounded
+                  span.fs-4 ⭐
+                  div
+                    .fw-semibold.small Viết Review
+                    .text-muted.small 5 điểm
+              .col
+                .d-flex.align-items-center.gap-2.p-3.border.rounded
+                  span.fs-4 👥
+                  div
+                    .fw-semibold.small Giới thiệu
+                    .text-muted.small 50 điểm
+              .col
+                .d-flex.align-items-center.gap-2.p-3.border.rounded
+                  span.fs-4 📤
+                  div
+                    .fw-semibold.small Chia sẻ
+                    .text-muted.small 3 điểm
+
+      //- Rewards Section
+      if availableRewards && availableRewards.length > 0
+        .mt-4
+          h5.fw-bold.mb-3
+            i.bi.bi-gift-fill.text-danger.me-2
+            | Đổi Thưởng
+          .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-3
+            each reward in availableRewards
+              .col
+                .card.border-0.shadow-sm.h-100(
+                  style=`border-radius:12px; ${reward.available ? 'border-left: 4px solid #667eea !important;' : 'opacity:0.7;'}`
+                )
+                  .card-body.text-center
+                    .fs-2.mb-2 #{reward.icon}
+                    h6.fw-bold #{reward.name}
+                    p.text-muted.small #{reward.description}
+                    .fw-bold.text-primary.mb-3 #{reward.pointsRequired} điểm
+                    if reward.available
+                      button.btn.btn-primary.btn-sm.w-100(onclick=`redeemReward('${reward.id}', ${reward.pointsRequired})`)
+                        | Đổi ngay
+                    else
+                      button.btn.btn-secondary.btn-sm.w-100(disabled)
+                        | Cần #{reward.pointsRequired - (loyalty.totalPoints || 0)} điểm nữa
+
+      //- Recent Transactions
+      .mt-4
+        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
+          .d-flex.justify-content-between.align-items-center.mb-3
+            h5.fw-bold.mb-0
+              i.bi.bi-clock-history.text-primary.me-2
+              | Hoạt Động Gần Đây
+            a.btn.btn-outline-primary.btn-sm(href="/loyalty/history") Xem tất cả
+
+          if loyalty.transactions && loyalty.transactions.length > 0
+            each tx in loyalty.transactions.slice(0, 5)
+              .d-flex.align-items-center.py-3.border-bottom
+                .fs-4.me-3
+                  if tx.type === 'purchase'
+                    span 🛒
+                  else if tx.type === 'review'
+                    span ⭐
+                  else if tx.type === 'referral'
+                    span 👥
+                  else if tx.type === 'reward_redemption'
+                    span 🎁
+                  else
+                    span ✓
+                .flex-grow-1
+                  .fw-semibold #{tx.description}
+                  .text-muted.small #{moment(tx.createdAt).format('DD/MM/YYYY HH:mm')}
+                .fw-bold(class=tx.points > 0 ? 'text-success' : 'text-danger')
+                  | #{tx.points > 0 ? '+' : ''}#{tx.points} điểm
+          else
+            .text-center.text-muted.py-3
+              i.bi.bi-inbox.fs-4
+              p.mt-2.mb-0 Chưa có hoạt động nào
+
+      //- Action buttons
+      .mt-4.text-center.d-flex.justify-content-center.gap-3
+        a.btn.btn-outline-primary.px-4(href="/loyalty/dashboard")
+          i.bi.bi-bar-chart.me-2
+          | Dashboard Chi Tiết
+        a.btn.btn-primary.px-4(href="/product")
+          i.bi.bi-bag.me-2
+          | Tiếp tục mua sắm
+
+    else
+      .text-center.py-5
+        i.bi.bi-person-x(style="font-size:4rem; color:#dee2e6;")
+        h4.mt-3.text-muted Vui lòng đăng nhập để xem điểm thành viên
+        a.btn.btn-primary.mt-3(href="/auth/login") Đăng nhập ngay
+
+  script.
+    function redeemReward(rewardId, points) {
+      if (confirm(`Bạn muốn dùng ${points} điểm để nhận thưởng này?`)) {
+        fetch('/loyalty/redeem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rewardId, pointsToRedeem: points })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === '00') {
+            alert('✅ ' + data.message);
+            location.reload();
+          } else {
+            alert('❌ ' + (data.message || 'Đổi thưởng thất bại'));
+          }
+        });
+      }
+    }

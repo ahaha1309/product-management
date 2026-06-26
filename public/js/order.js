@@ -50,36 +50,35 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // Apply voucher
   // ==========================================
-  document.getElementById('applyVoucher').addEventListener('click', async () => {
+  document.getElementById('applyVoucher').addEventListener('click', () => {
     const code = document.getElementById('voucherCode').value.trim();
     if (!code) {
       showToast('Vui lòng nhập mã voucher', 'error');
       return;
     }
+    
+    // Redirect with query param
+    const url = new URL(window.location.href);
+    url.searchParams.set('voucherCode', code);
+    window.location.href = url.toString();
+  });
 
-    try {
-      const res = await fetch('/order/apply-voucher', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      });
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        showToast(`✓ Áp dụng voucher "${code}" thành công!`);
-        location.reload();
-      } else {
-        showToast(data.message || 'Mã voucher không hợp lệ', 'error');
-      }
-    } catch (err) {
-      showToast('Lỗi kết nối, vui lòng thử lại', 'error');
-    }
+  // Select voucher from list
+  document.querySelectorAll('.voucher-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const code = tag.dataset.code;
+      const url = new URL(window.location.href);
+      url.searchParams.set('voucherCode', code);
+      window.location.href = url.toString();
+    });
   });
 
   // Remove voucher
   if (document.querySelector('.btn-remove-voucher')) {
     document.querySelector('.btn-remove-voucher').addEventListener('click', () => {
-      location.reload();
+      const url = new URL(window.location.href);
+      url.searchParams.delete('voucherCode');
+      window.location.href = url.toString();
     });
   }
   //chỉnh sửa thông tin cá nhân;
@@ -153,10 +152,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .querySelector('.product-quantity span')
         .textContent.replace('x', '');
       const quantity = parseInt(quantityText, 10) || 1;
+      
+      const variantTextEl = item.querySelector('.product-variant');
+      let variantText = '';
+      if (variantTextEl) {
+        variantText = variantTextEl.textContent.replace('Phân loại:', '').trim();
+        if (variantText === 'Mặc định') variantText = '';
+      }
 
       return {
-        productId: id, // Đổi thành product_id hoặc id tùy thuộc vào model Database của bạn
+        productId: id,
         quantity: quantity,
+        variantText: variantText
       };
     });
     const totalPrice = document.querySelector('.price-total').textContent;
@@ -170,8 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       products: products,
       voucherCode: voucherCode,
       amount: totalPriceNumber,
-      orderCode: 'ORD' + '-' + Date.now(),
-      // Nếu bạn cần gửi thêm thông tin khác (shippingFee, total...) thêm vào đây
+      // orderCode sẽ do server tự sinh
     };
 
     // Disable nút tránh double-click

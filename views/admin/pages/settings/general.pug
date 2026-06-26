@@ -1,0 +1,132 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+
+  h1(class="mb-4") Cài đặt chung
+
+  form(
+    action=`${prefixAdmin}/settings/general?_method=PATCH`
+    method="POST"
+    enctype="multipart/form-data"
+  )
+    .form-group.mb-3
+      label(for="websiteName") Tên website
+      input(
+        type="text"
+        class="form-control"
+        id="websiteName"
+        name="websiteName"
+        value=(settingGeneral ? settingGeneral.websiteName : "")
+      )
+    .form-group.mb-3(upload-image)
+      label(for="logo") Logo
+      input(
+        type="file"
+        class="form-control-file"
+        id="logo"
+        name="logo"
+        accept="image/*"
+        upload-image-input
+      )
+      img(
+        src=(settingGeneral ? settingGeneral.logo : "")
+        class="image-preview"
+        upload-image-preview
+        style="width: 150px; display: block; margin-top: 10px;"
+      )
+    .form-group.mb-3
+      label(for="phone") Số điện thoại
+      input(
+        type="text"
+        class="form-control"
+        id="phone"
+        name="phone"
+        value=(settingGeneral ? settingGeneral.phone : "")
+      )
+    .form-group.mb-3
+      label(for="email") Email
+      input(
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        value=(settingGeneral ? settingGeneral.email : "")
+      )
+    .form-group.mb-3
+      label(for="address") Địa chỉ
+      input(
+        type="text"
+        class="form-control"
+        id="address"
+        name="address"
+        value=(settingGeneral ? settingGeneral.address : "")
+      )
+    .form-group.mb-3
+      label(for="shortDescription") Slogan / Giới thiệu ngắn
+      textarea(
+        class="form-control"
+        id="shortDescription"
+        name="shortDescription"
+        rows="3"
+      ) #{settingGeneral ? settingGeneral.shortDescription : ""}
+    .form-group.mb-3
+      label(for="copyright") Copyright
+      input(
+        type="text"
+        class="form-control"
+        id="copyright"
+        name="copyright"
+        value=(settingGeneral ? settingGeneral.copyright : "")
+      )
+    
+    h3(class="mt-4 mb-3") Mạng xã hội
+    .row
+      .col-md-6
+        .form-group.mb-3
+          label(for="facebook") Facebook
+          input(
+            type="text"
+            class="form-control"
+            id="facebook"
+            name="facebook"
+            value=(settingGeneral ? settingGeneral.facebook : "")
+          )
+      .col-md-6
+        .form-group.mb-3
+          label(for="youtube") Youtube
+          input(
+            type="text"
+            class="form-control"
+            id="youtube"
+            name="youtube"
+            value=(settingGeneral ? settingGeneral.youtube : "")
+          )
+      .col-md-6
+        .form-group.mb-3
+          label(for="instagram") Instagram
+          input(
+            type="text"
+            class="form-control"
+            id="instagram"
+            name="instagram"
+            value=(settingGeneral ? settingGeneral.instagram : "")
+          )
+      .col-md-6
+        .form-group.mb-3
+          label(for="tiktok") TikTok
+          input(
+            type="text"
+            class="form-control"
+            id="tiktok"
+            name="tiktok"
+            value=(settingGeneral ? settingGeneral.tiktok : "")
+          )
+          
+    .form-group.mt-4
+      button(
+        type="submit"
+        class="btn btn-primary"
+      ) Cập nhật

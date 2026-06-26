@@ -3,15 +3,15 @@ include ../../mixins/select-tree.pug
 block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
-  if(role.permission.includes('roles_edit'))
+  if(role.permission.includes('roles_edit') || role.permission.includes('*'))
     h1 Sửa nhóm quyền
-    form(action=`${prefixAdmin}/roles/edit/${role.id}?_method=PATCH` method="POST" )
+    form(action=`${prefixAdmin}/roles/edit/${dataRole.id}?_method=PATCH` method="POST" )
       .mb-3
         label.form-label Tiêu đề
-        input.form-control(type="text" value=role.title name="title" placeholder="Nhập tiêu đề nhóm quyền" required)
+        input.form-control(type="text" value=dataRole.title name="title" placeholder="Nhập tiêu đề nhóm quyền" required)
       .mb-3 
         label.form-label Mô tả
-        textarea.form-control(name="description" id='' placeholder="Nhập mô tả nhóm quyền" )= role.description
+        textarea.form-control(name="description" id='' placeholder="Nhập mô tả nhóm quyền" )= dataRole.description
       button.btn.btn-success(type="submit") Cập nhật
   else
     .alert.alert-danger Bạn không có quyền chỉnh sửa nhóm quyền

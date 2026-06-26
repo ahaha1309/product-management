@@ -1,0 +1,74 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
+
+block main
+  if(role.permission.includes('articles-category_create') || role.permission.includes('*'))
+    h1.mb-4 Thêm mới danh mục bài viết
+
+    +alert-error(5000)
+    form( action=`${prefixAdmin}/category-article/create` method="POST" enctype='multipart/form-data' )
+      // Tiêu đề danh mục
+      .form-group.mb-3
+        label(for="title") Tiêu đề
+        input.form-control(
+          type="text"
+          id="title"
+          name="title"
+          placeholder="Nhập tiêu đề danh mục bài viết"
+          required 
+        )
+      .mb-3 
+        label.form-label Mô tả
+        textarea.form-control(name="description" id='des' placeholder="Nhập mô tả danh mục" rows="3") 
+      // Danh mục cha
+      .form-group.mb-3
+        label(for="parent_id") Danh mục cha
+        select.form-select(name="parent_id" id="parent_id")
+          option(value="") -- Không có --
+          if(categories && categories.length > 0)
+            +select-tree(categories)
+      .form-group.mb-3(upload-image)
+        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=``  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+
+      // Vị trí
+      .form-group.mb-3
+        label(for="position") Vị trí
+        input.form-control(
+          type="number"
+          id="position"
+          name="position"
+          placeholder="Tự động tăng"
+          min="1"
+        )
+
+      // Trạng thái
+      .form-group.mb-3
+        label Trạng thái
+        .form-check.form-check-inline.mx-3
+          input.form-check-input(
+            type="radio"
+            id="statusActive"
+            name="status"
+            value="active"
+            checked
+          )
+          label.form-check-label(for="statusActive") Hoạt động
+        .form-check.form-check-inline
+          input.form-check-input(
+            type="radio"
+            id="statusInactive"
+            name="status"
+            value="inactive"
+          )
+          label.form-check-label(for="statusInactive") Dừng hoạt động
+
+      // Submit
+      .form-group.mt-4
+        button.btn.btn-primary(type="submit") Thêm mới
+  else
+    .alert.alert-danger Bạn không có quyền tạo danh mục bài viết
+  script(src='/admin/js/product.js')

@@ -1,0 +1,91 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+  +alert-success(5000)
+
+  .container.my-5
+    .row.justify-content-center
+      .col-md-6.col-lg-5
+        .card.shadow-sm.border-0.rounded-4
+          .card-body.p-4.p-sm-5
+            .text-center.mb-4
+              h2.fw-bold MÃ XÁC THỰC OTP
+              p.text-muted Vui lòng nhập mã gồm 6 chữ số đã được gửi đến #{email || phone}
+            form(action="/auth/verify-otp" method="POST")
+              if email
+                input(type="hidden" name="email" value=email)
+              if phone
+                input(type="hidden" name="phone" value=phone)
+              input(type="hidden" name="action" value=action)
+
+              .form-group.mb-4
+                label(for="otp" class="form-label") Mã OTP
+                input#otp.form-control.form-control-lg(
+                  type="text"
+                  name="otp"
+                  required
+                  placeholder="Nhập mã 6 số"
+                  maxlength="6"
+                  pattern="[0-9]{6}"
+                  style="letter-spacing: 5px; text-align: center; font-size: 24px;"
+                )
+              .d-grid
+                button.btn.btn-primary.btn-lg.rounded-3(type="submit") XÁC NHẬN
+            
+            .text-center.mt-4
+              p.text-muted Mã OTP có hiệu lực trong <span id="countdown" class="fw-bold text-danger">05:00</span> phút
+              form(action="/auth/resend-otp" method="POST" id="resendForm" style="display: none;")
+                if email
+                  input(type="hidden" name="email" value=email)
+                if phone
+                  input(type="hidden" name="phone" value=phone)
+                input(type="hidden" name="action" value=action)
+                button.btn.btn-link.text-decoration-none.p-0(type="submit") Gửi lại mã
+              
+              p.text-muted#resendText(style="margin-top: 10px;") Bạn chưa nhận được mã? Gửi lại sau <span id="resendCountdown">60</span>s
+            
+            if action === 'register'
+              .text-center.mt-2
+                p.text-muted Sai thông tin? 
+                  a(href="/auth/register" class="text-decoration-none") Đăng ký lại
+            else if action === 'forgotPassword'
+              .text-center.mt-2
+                p.text-muted Quên thông tin? 
+                  a(href="/auth/forgot-password" class="text-decoration-none") Quay lại
+
+  script.
+    // OTP Expiry Countdown (5 minutes)
+    let expiryTime = 5 * 60;
+    const countdownEl = document.getElementById('countdown');
+    
+    const expiryInterval = setInterval(() => {
+      expiryTime--;
+      if(expiryTime <= 0) {
+        clearInterval(expiryInterval);
+        countdownEl.innerText = "00:00";
+        countdownEl.innerHTML += " (Đã hết hạn)";
+      } else {
+        const m = Math.floor(expiryTime / 60).toString().padStart(2, '0');
+        const s = (expiryTime % 60).toString().padStart(2, '0');
+        countdownEl.innerText = `${m}:${s}`;
+      }
+    }, 1000);
+
+    // Resend Countdown (60 seconds)
+    let resendTime = 60;
+    const resendCountdownEl = document.getElementById('resendCountdown');
+    const resendTextEl = document.getElementById('resendText');
+    const resendFormEl = document.getElementById('resendForm');
+    
+    const resendInterval = setInterval(() => {
+      resendTime--;
+      if(resendTime <= 0) {
+        clearInterval(resendInterval);
+        resendTextEl.style.display = 'none';
+        resendFormEl.style.display = 'block';
+      } else {
+        resendCountdownEl.innerText = resendTime;
+      }
+    }, 1000);

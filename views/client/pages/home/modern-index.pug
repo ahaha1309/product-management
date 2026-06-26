@@ -1,0 +1,175 @@
+extends /layout/default
+
+block content
+  // ===== HERO BANNER =====
+  .hero
+    .hero-content
+      h1 Khám phá những sản phẩm tuyệt vời
+      p Mua sắm hàng triệu sản phẩm chính hãng với giá tốt nhất
+      .hero-buttons
+        a.btn.btn-primary.btn-large(href='/search/advanced') Mua sắm ngay
+        a.btn.btn-secondary.btn-large(href='#trending') Xem trending
+
+  .container
+    // ===== SEARCH & TRENDING =====
+    .search-section
+      .search-box
+        input#searchKeyword(
+          type='text'
+          placeholder='Tìm kiếm sản phẩm, danh mục...'
+          onkeyup='setupSearchAutocomplete()'
+        )
+        #searchSuggestions.suggestions-dropdown
+      
+      .trending-section
+        h4 🔥 Tìm kiếm hôm nay
+        #trendingSearches
+
+    // ===== LIVE ORDERS & TRUST SIGNALS =====
+    .trust-banner
+      .trust-item
+        .icon ⭐
+        .text
+          .number= (generalStats?.averageRating || 4.7).toFixed(1) + '/5'
+          .label Đánh giá trung bình
+      
+      .trust-item
+        .icon 💬
+        .text
+          .number= (generalStats?.totalReviews || 500).toLocaleString('vi-VN')
+          .label Đánh giá từ khách hàng
+      
+      .trust-item
+        .icon 🛍️
+        .text
+          .number= (generalStats?.totalOrders || 10000).toLocaleString('vi-VN')
+          .label Đơn hàng hoàn thành
+      
+      .trust-item
+        .icon ✓
+        .text
+          .number 100%
+          .label Bảo mật thanh toán
+
+    // ===== FEATURED CATEGORIES =====
+    section.featured-categories
+      h2 🏷️ Danh mục nổi bật
+      .categories-grid
+        each cat in categories || []
+          a.category-card(href=`/search/advanced?category=${cat._id}`)
+            img(src=cat.icon alt=cat.title)
+            h4= cat.title
+            p= cat.productCount + ' sản phẩm'
+
+    // ===== FLASH SALE / HOT DEALS =====
+    section.flash-sale
+      .section-header
+        h2 🔥 Flash Sale
+        a(href='/search/advanced?onSale=true') Xem thêm →
+      
+      .products-grid
+        each product in flashSaleProducts || []
+          .product-card
+            .product-image
+              img(src=product.thumbnail alt=product.title)
+              if product.discountPercentage
+                .product-badge.badge-hot -#{product.discountPercentage}%
+              .product-actions
+                button.product-action-btn(onclick=`addToCart('${product._id}')`) 🛒 Giỏ
+                button.product-action-btn(onclick=`toggleCompare('${product._id}')`, data-product-id=product._id) ⚖️ So sánh
+
+            .product-info
+              .product-category= product.category?.title || 'Khác'
+              .product-title= product.title
+              .product-rating
+                span.stars ⭐ #{product.rating || 0}/5
+                span.rating-count (#{product.reviewCount || 0})
+              
+              .product-price
+                span.price-current= (product.newPrice || 0).toLocaleString('vi-VN') + 'đ'
+                if product.price > product.newPrice
+                  span.price-original= (product.price || 0).toLocaleString('vi-VN') + 'đ'
+              
+              button.add-to-cart-btn(onclick=`addToCart('${product._id}')`) + Thêm vào giỏ
+
+    // ===== BEST SELLERS =====
+    section.best-sellers(id='trending')
+      .section-header
+        h2 🏆 Bán chạy nhất
+        .filters-row
+          .filter-group
+            button.filter-tag(onclick="filterByRating(5)") ⭐ 5 sao
+            button.filter-tag(onclick="filterByRating(4)") ⭐⭐⭐⭐ 4+ sao
+            button.filter-tag(onclick="filterByPrice(0, 500000)") Dưới 500K
+            button.filter-tag(onclick="filterByPrice(500000, 2000000)") 500K - 2M
+      
+      .products-grid
+        each product in bestSellers || []
+          .product-card
+            .product-image
+              img(src=product.thumbnail alt=product.title)
+              if product.isFeatured
+                .product-badge.badge-new ⭐ Nổi bật
+            
+            .product-info
+              .product-title= product.title
+              .product-rating
+                span.stars ⭐ #{product.rating || 0}/5
+                span.rating-count (#{product.totalSold || 0} lượt mua)
+              
+              .product-price
+                span.price-current= (product.newPrice || 0).toLocaleString('vi-VN') + 'đ'
+              
+              button.add-to-cart-btn(onclick=`addToCart('${product._id}')`) Thêm giỏ
+
+    // ===== NEW ARRIVALS =====
+    section.new-arrivals
+      .section-header
+        h2 🆕 Hàng mới về
+      
+      .products-grid
+        each product in newArrivals || []
+          .product-card
+            .product-image
+              img(src=product.thumbnail alt=product.title)
+              .product-badge.badge-new MỚI
+            
+            .product-info
+              .product-title= product.title
+              .product-price
+                span.price-current= (product.newPrice || 0).toLocaleString('vi-VN') + 'đ'
+              
+              button.add-to-cart-btn(onclick=`addToCart('${product._id}')`) Mua ngay
+
+    // ===== PERSONALIZED RECOMMENDATIONS =====
+    if isLogin
+      section.personalized
+        .section-header
+          h2 👤 Dành riêng cho bạn
+        
+        .products-grid#personalizedRecommendations
+
+    // ===== LIVE ORDERS WIDGET =====
+    .live-orders-widget
+      h4 🔔 Hoạt động gần đây
+      #liveOrdersList
+
+    // ===== PROMO SECTION =====
+    section.promo-section
+      .promo-card
+        h3 Tham gia chương trình VIP
+        p Nhận điểm, mua hàng giảm giá, và nhiều ưu đãi khác
+        a.btn.btn-primary(href='/loyalty') Tìm hiểu thêm →
+
+block scripts
+  script(src='/js/modern-features.js')
+  script.
+    // Load recommendations and widgets
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTrendingSearches();
+      loadPersonalizedRecommendations();
+      loadLiveOrders();
+      
+      // Refresh live orders every 30 seconds
+      setInterval(loadLiveOrders, 30000);
+    });

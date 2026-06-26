@@ -1,0 +1,57 @@
+extends ../../layout/default.pug
+
+block main
+  .analytics-reviews-container
+    .page-header.d-flex.align-items-center.gap-2.mb-4
+      a.btn.btn-sm.btn-outline-secondary(href='/admin/analytics') &larr; Quay lại
+      h2.mb-0 ⭐ Phân Tích Đánh Giá
+
+    .review-stats(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;")
+      .stat.card.p-4.text-center
+        .label.text-muted.text-uppercase.fw-bold.mb-2 Tổng đánh giá
+        .value.fs-3.fw-bold= (reviewAnalytics.totalReviews || 0).toLocaleString('vi-VN')
+      
+      .stat.card.p-4.text-center
+        .label.text-muted.text-uppercase.fw-bold.mb-2 Đã duyệt
+        .value.fs-3.fw-bold.text-success= (reviewAnalytics.approvedReviews || 0).toLocaleString('vi-VN')
+      
+      .stat.card.p-4.text-center
+        .label.text-muted.text-uppercase.fw-bold.mb-2 Chờ duyệt
+        .value.fs-3.fw-bold.text-warning= (reviewAnalytics.pendingReviews || 0).toLocaleString('vi-VN')
+      
+      .stat.card.p-4.text-center
+        .label.text-muted.text-uppercase.fw-bold.mb-2 Rating trung bình
+        .value.fs-3.fw-bold= Number(reviewAnalytics.averageRating || 0).toFixed(1) + '⭐'
+
+    .bottom-section(style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;")
+      .rating-distribution.card.p-4
+        h3.border-bottom.pb-3.mb-4 Phân Bố Rating
+        div(style="height: 350px; width: 100%; position: relative; display: flex; justify-content: center;")
+          canvas#ratingDistributionChart
+
+      .pending-reviews.card.p-4.d-flex.flex-column.justify-content-center.align-items-center
+        h3.mb-4 Reviews Chờ Duyệt
+        i.bi.bi-chat-dots.text-muted.mb-3(style="font-size: 3rem;")
+        p.text-muted.text-center Hiện đang có #{reviewAnalytics.pendingReviews || 0} đánh giá cần bạn kiểm duyệt.
+        a.btn.btn-primary.mt-3(href='/admin/reviews/pending') Xem và duyệt &rarr;
+
+block scripts
+  script(src='https://cdn.jsdelivr.net/npm/chart.js')
+  script.
+    const ratingCtx = document.getElementById('ratingDistributionChart')?.getContext('2d');
+    if (ratingCtx) {
+      new Chart(ratingCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['5⭐', '4⭐', '3⭐', '2⭐', '1⭐'],
+          datasets: [{
+            data: [45, 30, 15, 7, 3],
+            backgroundColor: ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    }

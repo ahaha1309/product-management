@@ -1,0 +1,153 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.my-5
+    .add-review-container
+    .review-form-wrapper
+      h2 Viết đánh giá cho "#{product.title}"
+      
+      if !verifiedPurchase
+        .alert.warning
+          i.icon-info
+          p ⚠️ Bạn chưa mua sản phẩm này. Đánh giá của bạn sẽ không được đánh dấu "Xác thực mua hàng"
+
+      form#reviewForm.review-form
+        // Rating
+        .form-group
+          label.required Rating
+          .rating-selector
+            - for (let i = 1; i <= 5; i++)
+              input(type='radio' name='rating' value=i id=`rating-${i}`)
+              label(for=`rating-${i}`)
+                .star ★
+
+        // Title
+        .form-group
+          label(for='title').required Tiêu đề
+          input(type='text' id='title' name='title' placeholder='Ví dụ: Tuyệt vời!' required maxlength='100')
+          .char-count
+            span#titleCount 0
+            | /100
+
+        // Comment
+        .form-group
+          label(for='comment').required Bình luận
+          textarea(id='comment' name='comment' placeholder='Chia sẻ trải nghiệm của bạn...' required maxlength='2000' rows='5')
+          .char-count
+            span#commentCount 0
+            | /2000
+
+        // Images
+        .form-group
+          label(for='images') Hình ảnh (tối đa 5 ảnh)
+          .image-upload
+            input(type='file' id='images' name='images' multiple accept='image/*' onchange='previewImages(event)')
+            .upload-hint 📸 Thêm hình ảnh sản phẩm để giúp khách khác hiểu rõ hơn
+            
+            if images && images.length
+              .preview-images
+                each img, idx in images
+                  .preview-item
+                    img(src=img alt='Preview')
+                    button.btn-remove(type='button' onclick=`removeImage(${idx})`) ×
+
+        // Submit
+        .form-actions
+          button.btn.btn-primary(type='submit') Gửi đánh giá
+          a.btn.btn-secondary(href='javascript:history.back()') Hủy
+
+  script.
+    const titleInput = document.getElementById('title');
+    const commentInput = document.getElementById('comment');
+
+    titleInput.addEventListener('input', function() {
+      document.getElementById('titleCount').textContent = this.value.length;
+    });
+
+    commentInput.addEventListener('input', function() {
+      document.getElementById('commentCount').textContent = this.value.length;
+    });
+
+    // Star rating
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const stars = document.querySelectorAll('.star-rating-item .star');
+
+    ratingInputs.forEach((input, idx) => {
+      input.addEventListener('change', function() {
+        stars.forEach((star, i) => {
+          if (i <= idx) {
+            star.classList.add('selected');
+          } else {
+            star.classList.remove('selected');
+          }
+        });
+      });
+    });
+
+    function previewImages(event) {
+      const files = Array.from(event.target.files).slice(0, 5);
+      const container = document.querySelector('.preview-images');
+      
+      if (!container) {
+        const preview = document.createElement('div');
+        preview.className = 'preview-images';
+        event.target.parentElement.appendChild(preview);
+      }
+      
+      files.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement('div');
+          div.className = 'preview-item';
+          div.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button class="btn-remove" type="button" onclick="removeImage(${idx})">×</button>
+          `;
+          document.querySelector('.preview-images').appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeImage(idx) {
+      const preview = document.querySelectorAll('.preview-item')[idx];
+      preview.remove();
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const rating = document.querySelector('input[name="rating"]:checked')?.value;
+      if (!rating) {
+        alert('Vui lòng chọn rating');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('rating', rating);
+      formData.append('title', document.getElementById('title').value);
+      formData.append('comment', document.getElementById('comment').value);
+
+      // Add images
+      const imageFiles = document.getElementById('images').files;
+      Array.from(imageFiles).forEach(file => {
+        formData.append('images', file);
+      });
+
+      const productId = window.location.pathname.split('/').pop();
+      
+      fetch(`/review/add/${productId}`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === '00') {
+          alert('✅ ' + data.message);
+          setTimeout(() => window.history.back(), 1500);
+        } else {
+          alert('❌ ' + data.message);
+        }
+      })
+      .catch(err => alert('Lỗi: ' + err.message));
+    });

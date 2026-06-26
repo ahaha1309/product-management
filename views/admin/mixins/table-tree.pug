@@ -1,4 +1,4 @@
-mixin table-tree(items, level=1)
+mixin table-tree(items, level=1, urlPrefix="category-product")
   if items && items.length
     each Item in items
       - const prefix = Array(level + 1).join('--')
@@ -39,17 +39,17 @@ mixin table-tree(items, level=1)
 
         td
           a(
-            href=`${prefixAdmin}/category-product/detail/${Item.id}`
+            href=`${prefixAdmin}/${urlPrefix}/detail/${Item.id}`
             class="btn btn-secondary btn-sm mx-1"
             button-change-activity="fix"
           ) Chi tiết
-          if(role.permission.includes('products-category_edit'))
+          if(role.permission.includes('products-category_edit') || role.permission.includes('articles-category_edit'))
             a(
-              href=`${prefixAdmin}/category-product/edit/${Item.id}`
+              href=`${prefixAdmin}/${urlPrefix}/edit/${Item.id}`
               class="btn btn-warning btn-sm"
               button-change-activity="fix"
             ) Sửa
-          if(role.permission.includes('products-category_delete'))
+          if(role.permission.includes('products-category_delete') || role.permission.includes('articles-category_delete'))
             button(
               class="btn btn-danger btn-sm ms-1"
               button-change-activity="delete"
@@ -57,4 +57,4 @@ mixin table-tree(items, level=1)
             ) Xóa
 
       if Item.children && Item.children.length > 0
-        +table-tree(Item.children, level + 1)
+        +table-tree(Item.children, level + 1, urlPrefix)

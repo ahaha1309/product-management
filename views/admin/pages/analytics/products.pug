@@ -1,0 +1,52 @@
+extends ../../layout/default.pug
+
+block main
+  .analytics-products-container
+    .page-header.d-flex.align-items-center.gap-2.mb-4
+      a.btn.btn-sm.btn-outline-secondary(href='/admin/analytics') &larr; Quay lại
+      h2.mb-0 🛍️ Phân Tích Sản Phẩm
+
+    .top-products.card.mb-4
+      h3.card-header Top Sản Phẩm Bán Chạy
+      .card-body
+        table.table.table-hover
+          thead
+            tr
+              th Hình ảnh
+              th Sản phẩm
+              th Số lượng bán
+              th Doanh thu
+              th Rating
+          tbody
+            each item in productPerformance || []
+              - var productInfo = item.product && item.product.length > 0 ? item.product[0] : {}
+              tr
+                td
+                  if productInfo.thumbnail
+                    img(src=productInfo.thumbnail alt=productInfo.title style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;")
+                  else
+                    span N/A
+                td= productInfo.title || item._id
+                td.number= (item.sold || 0).toLocaleString('vi-VN')
+                td= (item.revenue || 0).toLocaleString('vi-VN') + 'đ'
+                td ⭐⭐⭐⭐⭐
+
+    .category-analysis.card
+      h3.card-header Phân Tích Theo Danh Mục
+      .card-body
+        table.table.table-hover
+          thead
+            tr
+              th Danh mục
+              th Doanh thu
+              th Sản phẩm bán
+          tbody
+            each category in topCategories || []
+              tr
+                td= category.categoryTitle || category._id || 'Không xác định'
+                td= (category.revenue || 0).toLocaleString('vi-VN') + 'đ'
+                td= (category.quantity || 0).toLocaleString('vi-VN')
+
+block scripts
+  script.
+    // Thêm biểu đồ phân tích sản phẩm nếu cần

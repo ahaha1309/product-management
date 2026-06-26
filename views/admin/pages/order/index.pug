@@ -25,6 +25,9 @@ block main
                 td #{index + 1}
                 td 
                   strong #{item.orderCode}
+                  if item.cancelRequest
+                    br
+                    span.badge.badge-warning(style="color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; margin-top: 4px;") ⏳ Yêu cầu hủy
                 td.text-danger.font-weight-bold #{item.amount.toLocaleString('vi-VN')}₫
                 td 
                   span.badge.badge-secondary #{item.paymentMethod}
@@ -37,7 +40,7 @@ block main
 
                 td
                   select.form-control.form-control-sm.select-status(data-id=item._id)
-                    option(value="" selected=(item.status === '')) Chờ xử lý
+                    option(value="pending" selected=(item.status === 'pending' || item.status === '')) Chờ xử lý
                     option(value="confirm" selected=(item.status === 'confirm')) Đã xác nhận
                     option(value="finish" selected=(item.status === 'finish')) Hoàn thành
                     option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
@@ -99,4 +102,5 @@ block main
         .modal-footer
           button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Đóng
 
+block scripts
   script(src="/admin/js/order.js")

@@ -1,0 +1,102 @@
+extends ../../layouts/default.pug
+
+block main
+  //- Hero
+  .articles-hero
+    .container
+      .text-center
+        .hero-badge
+          i.bi.bi-newspaper.me-2
+          | Tin tức & Kiến thức
+        h1.articles-hero-title Blog VanHa Tech
+        p.articles-hero-subtitle Cập nhật xu hướng công nghệ, mẹo mua sắm thông minh và tin tức mới nhất
+
+  .container.py-5
+
+    //- Category tabs
+    .articles-category-tabs.mb-4
+      a.cat-tab(href="/articles" class=(!currentCategory ? 'active' : ''))
+        | Tất cả
+      if categories && categories.length > 0
+        each cat in categories
+          a.cat-tab(href=`/articles?category=${cat._id}` class=(currentCategory == cat._id.toString() ? 'active' : ''))
+            | #{cat.title}
+
+    if articles && articles.length > 0
+      .row.g-4
+        each article in articles
+          .col-md-6.col-lg-4
+            a.article-card(href=`/articles/${article.slug}`)
+              .article-thumb
+                img(src=article.thumbnail || '/image/logo.png' alt=article.title style="width:100%;height:200px;object-fit:cover;")
+                .article-date
+                  i.bi.bi-calendar3.me-1
+                  span #{moment ? moment(article.createdAt).format('DD/MM/YYYY') : 'N/A'}
+              .article-body
+                h5.article-title #{article.title}
+                p.article-excerpt #{article.description ? article.description.substring(0, 120) + '...' : 'Nhấn để đọc thêm...'}
+                .article-footer
+                  .article-read-more
+                    | Đọc thêm
+                    i.bi.bi-arrow-right.ms-1
+    else
+      .text-center.py-5
+        i.bi.bi-newspaper(style="font-size:4rem;opacity:0.2;")
+        h5.text-muted.mt-3 Chưa có bài viết nào
+        p.text-muted Hãy quay lại sau để đọc những bài viết thú vị nhất!
+        a.btn.btn-primary.mt-2(href="/product") Mua sắm ngay
+
+  style.
+    .articles-hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 60px 0;
+      color: white;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    .articles-hero-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+    .articles-hero-subtitle { opacity: 0.8; font-size: 1rem; }
+    .articles-category-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cat-tab {
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: #f5f5f5;
+      color: #666;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .cat-tab:hover, .cat-tab.active {
+      background: linear-gradient(135deg,#667eea,#764ba2);
+      color: white;
+    }
+    .article-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+      height: 100%;
+    }
+    .article-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); color: inherit; }
+    .article-thumb { position: relative; overflow: hidden; }
+    .article-thumb img { transition: transform 0.3s; }
+    .article-card:hover .article-thumb img { transform: scale(1.05); }
+    .article-date {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+    }
+    .article-body { padding: 20px; }
+    .article-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .article-excerpt { font-size: 0.85rem; color: #666; margin-bottom: 16px; line-height: 1.6; }
+    .article-footer { display: flex; justify-content: flex-end; }
+    .article-read-more { color: #667eea; font-size: 0.85rem; font-weight: 600; }

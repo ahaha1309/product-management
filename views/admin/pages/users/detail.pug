@@ -1,0 +1,29 @@
+extends ../../layout/default.pug
+block main
+  h1 Chi tiết Khách Hàng
+  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/users`) &larr; Quay lại
+  if user
+    .card
+      .card-header
+        h3= user.fullName
+      .card-body
+        if user.avatar
+          .mb-3
+            img(src=user.avatar alt=user.fullName style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;")
+        p.mb-2 
+          strong Email: 
+          | #{user.email}
+        p.mb-2 
+          strong Số điện thoại: 
+          | #{user.phone || 'Chưa cập nhật'}
+        p.mb-2 
+          strong Địa chỉ: 
+          | #{user.address || 'Chưa cập nhật'}
+        p.mb-2 
+          strong Ngày tham gia: 
+          | #{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : 'Không rõ'}
+        p.mb-2 
+          strong Trạng thái: 
+          span(class=`badge text-bg-${user.status == "active" ? "success" : "danger"}`) #{user.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
+  else
+    p.text-danger Không tìm thấy khách hàng.

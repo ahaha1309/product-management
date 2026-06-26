@@ -21,6 +21,15 @@ const userSchema = new mongoose.Schema({
     default:false
   },
   deletedAt: Date,
+  totalSpent: {
+    type: Number,
+    default: 0
+  },
+  tier: {
+    type: String,
+    enum: ['Bronze', 'Silver', 'Gold', 'Diamond'],
+    default: 'Bronze'
+  }
 },
 {
   timestamps:true

@@ -1,0 +1,186 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  .admin-loyalty-page
+    //- Header
+    .page-header-admin
+      .header-info
+        h4.page-title
+          i.bi.bi-award.me-2
+          | Quản lý Loyalty & Điểm thưởng
+        p.page-subtitle Xem và quản lý điểm thưởng của khách hàng thân thiết
+
+    //- Stats Row
+    .loyalty-stats-row
+      .loyalty-stat-card.bronze
+        .loyalty-stat-icon 🥉
+        .loyalty-stat-num #{stats.bronze}
+        .loyalty-stat-lbl Bronze
+      .loyalty-stat-card.silver
+        .loyalty-stat-icon 🥈
+        .loyalty-stat-num #{stats.silver}
+        .loyalty-stat-lbl Silver
+      .loyalty-stat-card.gold
+        .loyalty-stat-icon 🥇
+        .loyalty-stat-num #{stats.gold}
+        .loyalty-stat-lbl Gold
+      .loyalty-stat-card.platinum
+        .loyalty-stat-icon 💎
+        .loyalty-stat-num #{stats.platinum}
+        .loyalty-stat-lbl Platinum
+      .loyalty-stat-card.total-points
+        .loyalty-stat-icon ⭐
+        .loyalty-stat-num #{(stats.totalPoints || 0).toLocaleString('vi-VN')}
+        .loyalty-stat-lbl Tổng điểm đã phát
+
+    //- Members Table
+    .admin-card.mt-4
+      .admin-card-header
+        h6.admin-card-title
+          i.bi.bi-people.me-2
+          | Danh sách thành viên (#{loyalties.length})
+        .header-actions
+          input.form-control.form-control-sm(type="search" placeholder="Tìm kiếm..." id="loyalty-search" style="width:200px;")
+      
+      .table-responsive
+        table.admin-data-table#loyalty-table
+          thead
+            tr
+              th STT
+              th Khách hàng
+              th Email
+              th Điểm hiện tại
+              th Hạng thành viên
+              th Tổng giao dịch
+              th Thao tác
+          tbody
+            if loyalties && loyalties.length > 0
+              each item, idx in loyalties
+                tr
+                  td #{idx + 1}
+                  td
+                    .d-flex.align-items-center.gap-2
+                      if item.user && item.user.avatar
+                        img(src=item.user.avatar style="width:32px;height:32px;border-radius:50%;object-fit:cover;")
+                      else
+                        .avatar-placeholder(style="width:32px;height:32px;background:#e8eeff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#667eea;font-weight:700;")
+                          | #{item.user && item.user.fullName ? item.user.fullName.charAt(0).toUpperCase() : '?'}
+                      strong #{item.user ? item.user.fullName : 'Không xác định'}
+                  td.text-muted #{item.user ? item.user.email : 'N/A'}
+                  td
+                    span.fw-bold.text-primary #{(item.totalPoints || 0).toLocaleString('vi-VN')}
+                    span.text-muted.ms-1 điểm
+                  td
+                    - const tierColors = {BRONZE:'#cd7f32', SILVER:'#c0c0c0', GOLD:'#ffd700', PLATINUM:'#667eea'}
+                    - const tierIcons = {BRONZE:'🥉', SILVER:'🥈', GOLD:'🥇', PLATINUM:'💎'}
+                    span.tier-badge(style=`background:${tierColors[item.currentLevel] || '#ccc'}20;color:${tierColors[item.currentLevel] || '#666'};border:1px solid ${tierColors[item.currentLevel] || '#ccc'};`)
+                      | #{tierIcons[item.currentLevel]} #{item.currentLevel || 'BRONZE'}
+                  td.text-muted #{(item.transactions || []).length} giao dịch
+                  td
+                    button.btn.btn-sm.btn-success.me-1(
+                      data-bs-toggle="modal"
+                      data-bs-target="#addPointsModal"
+                      onclick=`setPointsTarget('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'add')`
+                      title="Cộng điểm"
+                    )
+                      i.bi.bi-plus-circle
+                    button.btn.btn-sm.btn-warning(
+                      data-bs-toggle="modal"
+                      data-bs-target="#addPointsModal"
+                      onclick=`setPointsTarget('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'deduct')`
+                      title="Trừ điểm"
+                    )
+                      i.bi.bi-dash-circle
+            else
+              tr
+                td(colspan="7")
+                  .text-center.py-4.text-muted
+                    i.bi.bi-inbox(style="font-size:2rem;")
+                    p.mt-2 Chưa có thành viên nào đăng ký chương trình loyalty
+
+  //- Modal Add/Deduct Points
+  .modal.fade#addPointsModal(tabindex="-1")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title#modal-title Cộng điểm cho thành viên
+          button.btn-close(data-bs-dismiss="modal")
+        form#points-form(method="POST")
+          .modal-body
+            input(type="hidden" name="userId" id="modal-userId")
+            .mb-3
+              label.form-label.fw-semibold Thành viên
+              input.form-control#modal-userName(type="text" readonly)
+            .mb-3
+              label.form-label.fw-semibold Số điểm
+              input.form-control(type="number" name="points" min="1" max="10000" required placeholder="Nhập số điểm...")
+            .mb-3
+              label.form-label.fw-semibold Lý do
+              input.form-control(type="text" name="description" placeholder="Ghi chú lý do...")
+          .modal-footer
+            button.btn.btn-secondary(data-bs-dismiss="modal") Hủy
+            button.btn.btn-primary#modal-submit-btn(type="submit") Xác nhận
+
+  style.
+    .admin-loyalty-page { padding: 24px; }
+    .page-header-admin { margin-bottom: 24px; }
+    .page-title { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .page-subtitle { color: #888; font-size: 0.9rem; }
+    .loyalty-stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .loyalty-stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+    }
+    .loyalty-stat-icon { font-size: 2rem; margin-bottom: 8px; }
+    .loyalty-stat-num { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
+    .loyalty-stat-lbl { font-size: 0.8rem; color: #888; }
+    .admin-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      overflow: hidden;
+    }
+    .admin-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .admin-card-title { font-size: 1rem; font-weight: 600; margin: 0; }
+    .admin-data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .admin-data-table th { background: #f8f9fa; padding: 12px 16px; text-align: left; font-weight: 600; color: #555; border-bottom: 2px solid #e9ecef; }
+    .admin-data-table td { padding: 12px 16px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+    .admin-data-table tr:hover td { background: #fafafa; }
+    .tier-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    @media(max-width:992px) { .loyalty-stats-row { grid-template-columns: repeat(3, 1fr); } }
+
+  script.
+    function setPointsTarget(userId, userName, action) {
+      const isAdd = action === 'add';
+      document.getElementById('modal-title').textContent = isAdd ? 'Cộng điểm cho thành viên' : 'Trừ điểm thành viên';
+      document.getElementById('modal-userId').value = userId;
+      document.getElementById('modal-userName').value = userName;
+      document.getElementById('modal-submit-btn').className = isAdd ? 'btn btn-success' : 'btn btn-warning';
+      document.getElementById('modal-submit-btn').textContent = isAdd ? 'Cộng điểm' : 'Trừ điểm';
+      document.getElementById('points-form').action = isAdd ? '/#{prefixAdmin}/loyalty/add-points' : '/#{prefixAdmin}/loyalty/deduct-points';
+    }
+
+    // Search
+    document.getElementById('loyalty-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#loyalty-table tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });

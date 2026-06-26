@@ -168,3 +168,17 @@ module.exports.editPost = async (req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/accounts/edit/${id}`);
   }
 };
+
+module.exports.detail = async (req, res) => {
+  try {
+    const acc = await account.findOne({ _id: req.params.id, deleted: false }).select('-password -token');
+    const roleData = await role.findOne({ _id: acc.roleId, deleted: false });
+    res.render('admin/pages/accounts/detail', {
+      title: 'Chi tiết tài khoản',
+      account: acc,
+      roleData: roleData
+    });
+  } catch (error) {
+    res.redirect('back');
+  }
+};

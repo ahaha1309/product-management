@@ -1,37 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const btnCancel = document.getElementById('btnCancelOrder');
-  const statusOrder=document.querySelectorAll('.shopee-tabs a.tab-item')
+  // ===== HỦY ĐƠN HÀNG =====
+  // Xử lý nút hủy trên trang lịch sử (nhiều nút) và trang chi tiết (1 nút)
+  const cancelButtons = document.querySelectorAll('.btn-cancel-order, #btnCancelOrder');
 
-  if (btnCancel) {
-    btnCancel.addEventListener('click', async () => {
-      const orderId = btnCancel.getAttribute('data-id');
-      
-      if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
-        try {
-          btnCancel.disabled = true;
-          btnCancel.textContent = 'Đang xử lý...';
+  cancelButtons.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const orderId = btn.getAttribute('data-id');
 
-          const res = await fetch(`/order/cancel/${orderId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-          });
+      if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
 
-          const data = await res.json();
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Đang xử lý...';
 
-          if (res.ok) {
-            alert('✓ Hủy đơn hàng thành công!');
-            window.location.reload(); // Load lại trang để cập nhật trạng thái mới
-          } else {
-            alert(data.message || 'Không thể hủy đơn hàng');
-            btnCancel.disabled = false;
-            btnCancel.textContent = 'Hủy đơn hàng';
-          }
-        } catch (err) {
-          alert('Lỗi kết nối, vui lòng thử lại');
-          btnCancel.disabled = false;
-          btnCancel.textContent = 'Hủy đơn hàng';
+        const res = await fetch(`/order/cancel/${orderId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('✓ ' + (data.message || 'Hủy đơn hàng thành công!'));
+          window.location.reload();
+        } else {
+          alert(data.message || 'Không thể hủy đơn hàng');
+          btn.disabled = false;
+          btn.textContent = 'Hủy đơn';
         }
+      } catch (err) {
+        alert('Lỗi kết nối, vui lòng thử lại');
+        btn.disabled = false;
+        btn.textContent = 'Hủy đơn';
       }
     });
-  }
+  });
 });

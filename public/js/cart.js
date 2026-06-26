@@ -53,9 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     currentTotal = Math.round(currentTotal);
-    const formatted = currentTotal.toLocaleString('vi-VN') + ' $';
-    tempAmount.innerText = formatted;
-    totalAmount.innerText = formatted;
+    const formatted = '₫' + currentTotal.toLocaleString('vi-VN');
+    if (tempAmount) tempAmount.innerText = formatted;
+    if (totalAmount) totalAmount.innerText = formatted;
   };
 
   // 👉 Gắn sự kiện +
@@ -81,17 +81,23 @@ document.addEventListener('DOMContentLoaded', () => {
   itemChecks.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
       const slug = checkbox.getAttribute('slug');
+      const variant = checkbox.getAttribute('variant') || '';
+      const itemVal = variant ? `${slug}|${variant}` : slug;
+
       const allChecked = Array.from(itemChecks).every((c) => c.checked);
       if (checkAll) checkAll.checked = allChecked;
       calculateTotal();
 
       if (checkbox.checked) {
-        listProduct.value += slug + ',';
+        // add itemVal
+        const currentVals = listProduct.value ? listProduct.value.split(',').filter(v => v) : [];
+        if (!currentVals.includes(itemVal)) currentVals.push(itemVal);
+        listProduct.value = currentVals.join(',');
       } else {
-        const slugs = listProduct.value
-          .split(',')
-          .filter((slug) => slug && slug != checkbox.getAttribute('slug'));
-        listProduct.value = slugs.join(',') + (slugs.length > 0 ? ',' : '');
+        // remove itemVal
+        let currentVals = listProduct.value ? listProduct.value.split(',').filter(v => v) : [];
+        currentVals = currentVals.filter(v => v !== itemVal);
+        listProduct.value = currentVals.join(',');
       }
     });
   });

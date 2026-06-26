@@ -25,7 +25,7 @@ module.exports.changeStatus = async (req, res) => {
     const id = req.params.id;
     const status = req.body.status;
 
-    const updateData = { status: status };
+    const updateData = { status: status, cancelRequest: false };
     
     if (status === 'canceled') {
       updateData.canceledAt = new Date();
@@ -50,6 +50,49 @@ module.exports.changeStatus = async (req, res) => {
           mailHelper.sendOrderConfirmationEmail(order, user).catch(err => {
              console.log("Lỗi gửi mail ngầm:", err);
           });
+        }
+      }
+    }
+
+    if (status === 'canceled') {
+      const order = await Order.findById(id);
+      if (order && order.userId) {
+        const user = await User.findById(order.userId);
+        if (user && user.email) {
+          mailHelper.sendOrderCancellationEmail(order, user).catch(err => {
+             console.log("Lỗi gửi mail báo hủy (admin):", err);
+          });
+        }
+      }
+    }
+
+    // ==========================================
+    // 3. LOGIC TÍCH LŨY CHI TIÊU & THĂNG HẠNG
+    // ==========================================
+    if (status === 'finish') {
+      const order = await Order.findById(id);
+      if (order && order.userId) {
+        const user = await User.findById(order.userId);
+        if (user) {
+          // Cộng dồn chi tiêu
+          user.totalSpent = (user.totalSpent || 0) + order.amount;
+          
+          // Tính toán hạng mới
+          let newTier = 'Bronze';
+          if (user.totalSpent >= 50000000) {
+            newTier = 'Diamond';
+          } else if (user.totalSpent >= 20000000) {
+            newTier = 'Gold';
+          } else if (user.totalSpent >= 5000000) {
+            newTier = 'Silver';
+          }
+
+          // Cấp voucher nếu lên hạng
+          if (user.tier !== newTier) {
+            user.tier = newTier;
+            // TODO: (Optional) Tạo voucher chúc mừng lên hạng
+          }
+          await user.save();
         }
       }
     }
@@ -86,19 +129,36 @@ module.exports.changePaymentStatus = async (req, res) => {
 module.exports.detail = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    const user=await User.findById(order.userId)
+    const user = await User.findById(order.userId);
+    
+    const Product = require('../../models/product.model');
+    const productsInfo = await Promise.all(order.products.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      const itemObj = typeof item.toObject === 'function' ? item.toObject() : { ...item };
+      return {
+        ...itemObj,
+        title: product?.title || 'Sản phẩm không xác định',
+        thumbnail: product?.thumbnail || '',
+        newPrice: product ? Math.round(product.price * (1 - (product.discountPercentage || 0)/100)) : (item.price || 0)
+      };
+    }));
+
+    const orderObj = order.toObject();
+    orderObj.products = productsInfo;
+
     // Nếu là yêu cầu lấy dữ liệu cho Pop-up
     if (req.query.type === 'json') {
       return res.json({
         code: 200,
-        order: order,
-        user:user
+        order: orderObj,
+        user: user || { fullName: 'Khách vãng lai', phone: 'N/A', address: 'N/A' }
       });
     }
 
     // Nếu vẫn muốn có trang riêng thì render bình thường
-    res.render('admin/pages/order/detail', { order: order });
+    res.render('admin/pages/order/detail', { order: orderObj, user: user });
   } catch (error) {
+    console.log(error);
     res.status(404).json({ code: 404, message: "Không tìm thấy" });
   }
 };

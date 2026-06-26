@@ -10,23 +10,26 @@ block main
 
     //- Thanh tab trạng thái (Giả lập giao diện Shopee)
     .shopee-tabs
-      a.tab-item(href="/order/history" class=`${status==' '?'active':''}`) Tất cả
-      a.tab-item(href="/order/history?status=confirm" class=`${status=='confirm'?'active':''}`) Chờ xác nhận
-      a.tab-item(href="/order/history?status=finish" type='finish') Hoàn thành
+      a.tab-item(href="/order/history" class=`${!status?'active':''}`) Tất cả
+      a.tab-item(href="/order/history?status=pending" class=`${status=='pending'?'active':''}`) Chờ xác nhận
+      a.tab-item(href="/order/history?status=confirm" class=`${status=='confirm'?'active':''}`) Đang xử lý
+      a.tab-item(href="/order/history?status=finish" class=`${status=='finish'?'active':''}`) Hoàn thành
       a.tab-item(href="/order/history?status=canceled" class=`${status=='canceled'?'active':''}`) Đã hủy
-
     if orders && orders.length > 0
       .orders-list
         each order in orders
           //- Thẻ card đơn hàng
+          - var statusMap = { 'pending': {label: 'Chờ xác nhận', color: '#f59e0b'}, 'confirm': {label: 'Đang xử lý', color: '#3b82f6'}, 'finish': {label: 'Hoàn thành', color: '#10b981'}, 'canceled': {label: 'Đã hủy', color: '#ef4444'} }
+          - var statusInfo = statusMap[order.status] || {label: 'Chờ xác nhận', color: '#f59e0b'}
+          - var paymentInfo = order.paymentStatus === 'success' ? '✅ Đã thanh toán' : (order.paymentStatus === 'failed' ? '❌ Thanh toán thất bại' : '⏳ Chờ thanh toán')
           .shopee-card
             //- Header: Tên Shop / Mã đơn & Trạng thái
             .card-header
               .shop-info
-                span.badge Yêu thích
-                span.shop-name Đơn hàng: #{order.orderCode}
+                span.shop-name 🛒 Đơn hàng: #{order.orderCode}
+              span.order-status-badge(style=`background: ${statusInfo.color}20; color: ${statusInfo.color}; border: 1px solid ${statusInfo.color}40; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;`) #{statusInfo.label}
 
-            //- Body: Danh sách sản phẩm (Click vào khu vực này để xem chi tiết)
+            //- Body: Danh sách sản phẩm
             a.card-body(href=`/order/detail/${order._id}`)
               each item in order.products
                 .shopee-product
@@ -38,24 +41,102 @@ block main
                       p.product-variant Phân loại: #{item.variant}
                     span.product-qty x#{item.quantity}
                   .product-price
-                    //- Có thể thêm giá gốc gạch ngang nếu DB của bạn có lưu
                     span.new-price #{Number(item.newPrice).toLocaleString('vi-VN')}₫
 
             //- Footer: Tổng tiền và Nút hành động
             .card-footer
               .total-amount
                 - var totalQty = order.products.reduce((sum, p) => sum + p.quantity, 0)
-                span Thành tiền (#{totalQty} sản phẩm): 
+                span Thành tiền (#{totalQty} sản phẩm):&nbsp;
                 span.amount-highlight #{order.amount.toLocaleString('vi-VN')}₫
+              .payment-note(style="font-size:12px; color:#6b7280; margin-top:4px;") #{paymentInfo}
               
               .card-actions
                 a.btn-outline(href=`/order/detail/${order._id}`) Xem chi tiết
-                if order.paymentStatus === 'success' || order.status === 'canceled'
-                  a.btn-primary(href=`/order/${order._id}`) Mua lại
+                if order.status === 'finish' || order.status === 'canceled'
+                  a.btn-primary.btn-rebuy(href=`/order/rebuy/${order._id}`) Mua lại
+                if order.cancelRequest
+                  button.btn-cancel-request(disabled style="background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-weight: 500; cursor: not-allowed;") ⏳ Đang chờ duyệt hủy
+                else if order.status !== 'canceled' && order.paymentStatus === 'pending' && order.status !== 'finish'
+                  button.btn-cancel-order(data-id=`${order._id}`) Hủy đơn
 
     else
       .empty-orders
-        img(src="/images/empty-cart.png", alt="Chưa có đơn hàng")
-        p Bạn chưa có đơn hàng nào.
-        a.btn-shopping(href="/product") Tiếp tục mua sắm
+        .empty-orders-animation
+          svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="160" height="160")
+            // Nền tròn
+            circle(cx="100" cy="100" r="90" fill="#f0f4ff" stroke="#e0e7ff" stroke-width="2")
+            // Hộp đơn hàng
+            g(class="box-group")
+              rect(x="55" y="75" width="90" height="70" rx="8" fill="#7c3aed" opacity="0.15")
+              rect(x="60" y="70" width="80" height="65" rx="8" fill="white" stroke="#7c3aed" stroke-width="2")
+              // Nắp hộp
+              path(d="M60 78 Q100 60 140 78" fill="#7c3aed" opacity="0.8")
+              rect(x="60" y="70" width="80" height="12" rx="4" fill="#7c3aed")
+              // Dây nơ
+              line(x1="100" y1="70" x2="100" y2="135" stroke="white" stroke-width="2" stroke-dasharray="3 2")
+              // Dấu hỏi bên trong
+              text(x="100" y="117" text-anchor="middle" font-size="28" fill="#7c3aed" opacity="0.5" font-weight="bold") ?
+            // Dấu sao nhấp nháy
+            circle(cx="45" cy="55" r="4" fill="#fbbf24" class="star star-1")
+            circle(cx="160" cy="65" r="3" fill="#f472b6" class="star star-2")
+            circle(cx="150" cy="150" r="4" fill="#34d399" class="star star-3")
+            circle(cx="50" cy="148" r="3" fill="#60a5fa" class="star star-4")
+        style.
+          .empty-orders {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+          }
+          .empty-orders-animation {
+            margin-bottom: 20px;
+            animation: floatBox 3s ease-in-out infinite;
+          }
+          @keyframes floatBox {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+          }
+          .star { animation: blink 1.5s ease-in-out infinite; }
+          .star-1 { animation-delay: 0s; }
+          .star-2 { animation-delay: 0.4s; }
+          .star-3 { animation-delay: 0.8s; }
+          .star-4 { animation-delay: 1.2s; }
+          @keyframes blink {
+            0%, 100% { opacity: 1; r: 4px; }
+            50% { opacity: 0.2; r: 2px; }
+          }
+          .empty-orders p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 8px;
+          }
+          .empty-orders small {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 20px;
+            display: block;
+          }
+          .btn-shopping {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.25s;
+            box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+          }
+          .btn-shopping:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+          }
+        p Chưa có đơn hàng nào
+        small Hãy khám phá và chọn mua những sản phẩm yêu thích nhé! 🛍️
+        a.btn-shopping(href="/product") Mua sắm ngay →
   script(src='/js/orderHistory.js')

@@ -1,0 +1,110 @@
+extends ../../layouts/default.pug
+
+block main
+  link(rel="stylesheet" href="/css/style.css")
+  .container.mt-5.mb-5
+    //- Header
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h2.fw-bold.mb-1
+          i.bi.bi-heart-fill.text-danger.me-2
+          | Danh sách yêu thích
+        p.text-muted.mb-0 #{products.length} sản phẩm đã lưu
+
+      .d-flex.gap-2
+        button.btn.btn-outline-secondary.btn-sm#btn-grid(onclick="switchView('grid')" title="Grid view")
+          i.bi.bi-grid
+        button.btn.btn-outline-secondary.btn-sm#btn-list(onclick="switchView('list')" title="List view")
+          i.bi.bi-list-ul
+
+    if products && products.length > 0
+      //- Sort bar
+      .d-flex.justify-content-between.align-items-center.mb-3.p-3.bg-light.rounded
+        span.text-muted
+          strong #{products.length}
+          |  sản phẩm
+        .d-flex.align-items-center.gap-2
+          label.text-muted.mb-0 Sắp xếp:
+          select.form-select.form-select-sm(style="width:auto" onchange="sortWishlist(this.value)")
+            option(value='newest') Mới nhất
+            option(value='oldest') Cũ nhất
+            option(value='price-asc') Giá thấp → cao
+            option(value='price-desc') Giá cao → thấp
+
+      //- Product grid
+      .row.row-cols-2.row-cols-md-3.row-cols-lg-4.g-4#wishlist-items
+        each product in products
+          .col
+            .wishlist-card.card.h-100.shadow-sm.border-0(style="border-radius:12px; overflow:hidden; transition: all 0.3s;")
+              //- Image
+              .position-relative
+                a(href=`/product/detail/${product.slug}`)
+                  img.card-img-top(src=product.thumbnail alt=product.title style="height:200px; object-fit:cover;")
+                if product.discountPercentage > 0
+                  .position-absolute.top-0.start-0.m-2
+                    span.badge.bg-danger -#{product.discountPercentage}%
+                //- Remove from wishlist
+                button.position-absolute.top-0.end-0.m-2.btn.btn-sm.btn-danger.rounded-circle(
+                  onclick=`removeFromWishlist('${product._id}')` title="Xóa khỏi yêu thích"
+                  style="width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center;"
+                )
+                  i.bi.bi-x-lg
+
+              .card-body.d-flex.flex-column
+                h6.card-title.fw-semibold.mb-2(style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;")
+                  a.text-dark.text-decoration-none(href=`/product/detail/${product.slug}`) #{product.title}
+
+                .mt-auto
+                  if product.discountPercentage > 0
+                    .d-flex.align-items-center.gap-2.mb-2
+                      span.fw-bold.text-danger.fs-6 #{product.newPrice ? Number(product.newPrice).toLocaleString('vi-VN') : 0}₫
+                      span.text-muted.text-decoration-line-through.small #{Number(product.price).toLocaleString('vi-VN')}₫
+                  else
+                    span.fw-bold.text-danger.fs-6.mb-2.d-block #{product.newPrice ? Number(product.newPrice).toLocaleString('vi-VN') : 0}₫
+
+                  form(action=`/cart/add/${product._id}` method="POST")
+                    input(type="hidden" name="quantity" value="1")
+                    button.btn.btn-primary.w-100.btn-sm(type="submit")
+                      i.bi.bi-cart-plus.me-1
+                      | Thêm vào giỏ
+
+    else
+      //- Empty state
+      .text-center.py-5.my-5
+        i.bi.bi-heartbreak(style="font-size: 5rem; color: #dee2e6;")
+        h4.mt-4.text-muted Danh sách yêu thích trống
+        p.text-muted.mb-4 Hãy lưu những sản phẩm bạn yêu thích để không bỏ lỡ!
+        a.btn.btn-primary.px-4.py-2(href="/product")
+          i.bi.bi-grid.me-2
+          | Khám phá sản phẩm
+
+  script.
+    function removeFromWishlist(productId) {
+      if (confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) {
+        fetch(`/wishlist/${productId}`, { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.code === '00') {
+              location.reload();
+            } else {
+              alert('❌ Không thể xóa. Vui lòng thử lại!');
+            }
+          }).catch(() => location.reload());
+      }
+    }
+
+    function switchView(view) {
+      const container = document.getElementById('wishlist-items');
+      if (!container) return;
+      if (view === 'list') {
+        container.className = 'row row-cols-1 g-3';
+      } else {
+        container.className = 'row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4';
+      }
+    }
+
+    function sortWishlist(by) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort', by);
+      window.location.href = url.toString();
+    }

@@ -233,6 +233,25 @@
       align-items: center;
     }
 
+    .voucher-tag {
+      border: 1px solid #e5e7eb;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s;
+    }
+    
+    .voucher-tag:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .voucher-tag.active {
+      border-color: #0369a1;
+      background: #e0f2fe;
+    }
+
     .voucher-code {
       background: white;
       padding: 4px 8px;

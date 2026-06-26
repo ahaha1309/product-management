@@ -2,7 +2,7 @@ extends ../../layout/default.pug
 block main 
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  if(role.permission.includes('roles_view'))
+  if(role.permission.includes('roles_view') || role.permission.includes('*'))
     h1 Danh sách nhóm quyền
     .card.mb-2
       .card-header Danh sách
@@ -10,7 +10,7 @@ block main
         .row.pb-2 
             .col-8
             .col-4 
-              if(role.permission.includes('roles_create'))
+              if(role.permission.includes('roles_create') || role.permission.includes('*'))
                 a(href=`${prefixAdmin}/roles/create` class="btn btn-outline-success float-end ") Thêm mới
 
         table.table.table-hover.table-sm
@@ -29,9 +29,9 @@ block main
                 td #{Item.description}
                 td
                   a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="btn btn-secondary btn-sm mx-1" button-change-activity="fix" btn-id=Item.id) Chi tiết
-                  if(role.permission.includes('roles_edit'))
+                  if(role.permission.includes('roles_edit') || role.permission.includes('*'))
                     a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=Item.id) Sửa 
-                  if(role.permission.includes('roles_delete'))
+                  if(role.permission.includes('roles_delete') || role.permission.includes('*'))
                       button(class="btn btn-danger btn-sm ms-1" button-change-activity="delete" btn-id=Item.id) Xóa
 
     //-   include ../../mixins/pagination 

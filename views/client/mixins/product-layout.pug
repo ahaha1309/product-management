@@ -3,3 +3,13 @@ mixin product-grid(product)
     .row
        each Item in product
          +product-item(Item)
+
+mixin product-slider(product, sliderId)
+    .product-slider-wrapper.position-relative
+      button.slider-btn.prev(onclick=`document.getElementById('${sliderId}').scrollBy(-300, 0)`)
+        i.bi.bi-chevron-left
+      button.slider-btn.next(onclick=`document.getElementById('${sliderId}').scrollBy(300, 0)`)
+        i.bi.bi-chevron-right
+      .product-slider-container(id=sliderId)
+         each Item in product
+           +product-item(Item)

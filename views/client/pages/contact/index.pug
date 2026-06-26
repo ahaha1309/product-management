@@ -1,0 +1,136 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(messages.success)
+
+  //- Hero Contact
+  .contact-hero
+    .container.text-center
+      h1.contact-hero-title
+        i.bi.bi-telephone-fill.me-3
+        | Liên hệ với chúng tôi
+      p.contact-hero-subtitle Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7
+
+  .container.py-5
+
+    //- Contact Cards
+    .row.g-4.mb-5
+      .col-md-4
+        .contact-card.text-center
+          .contact-card-icon.bg-primary
+            i.bi.bi-geo-alt-fill
+          h5.fw-bold.mt-3 Địa chỉ
+          p.text-muted Số 22 Đường Cái Trống Quân
+            br
+            | Hạ Lôi, Mê Linh, Hà Nội
+          a.btn.btn-outline-primary.btn-sm(href="#map") Xem bản đồ
+      .col-md-4
+        .contact-card.text-center
+          .contact-card-icon.bg-success
+            i.bi.bi-telephone-fill
+          h5.fw-bold.mt-3 Điện thoại
+          p.text-muted
+            a.text-muted.text-decoration-none(href="tel:+84886911791") 0886 911 791
+          p.text-muted.small.mb-0 T2 - T7: 8:00 - 22:00
+      .col-md-4
+        .contact-card.text-center
+          .contact-card-icon.bg-warning
+            i.bi.bi-envelope-fill
+          h5.fw-bold.mt-3 Email
+          p.text-muted
+            a.text-muted.text-decoration-none(href="mailto:vanhanguyen2k4@gmail.com") vanhanguyen2k4@gmail.com
+          p.text-muted.small.mb-0 Phản hồi trong 24h
+
+    //- Main Content
+    .row.g-5
+      //- Contact Form
+      .col-lg-7
+        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
+          h4.fw-bold.mb-4
+            i.bi.bi-chat-dots-fill.text-primary.me-2
+            | Gửi tin nhắn cho chúng tôi
+          form#contact-form(action="/contact" method="POST")
+            .row.g-3
+              .col-md-6
+                label.form-label.fw-semibold Họ và tên *
+                input.form-control(type="text" name="name" placeholder="Nguyễn Văn A" required)
+              .col-md-6
+                label.form-label.fw-semibold Email *
+                input.form-control(type="email" name="email" placeholder="email@example.com" required)
+              .col-md-6
+                label.form-label.fw-semibold Số điện thoại
+                input.form-control(type="tel" name="phone" placeholder="0886 911 791")
+              .col-md-6
+                label.form-label.fw-semibold Chủ đề
+                select.form-select(name="subject")
+                  option(value="order") Hỏi về đơn hàng
+                  option(value="product") Hỏi về sản phẩm
+                  option(value="return") Đổi/trả hàng
+                  option(value="payment") Thanh toán
+                  option(value="other") Khác
+              .col-12
+                label.form-label.fw-semibold Nội dung *
+                textarea.form-control(name="message" rows="5" placeholder="Nhập nội dung cần hỗ trợ..." required)
+              .col-12
+                button.btn.btn-primary.w-100.py-3.fw-bold(type="submit")
+                  i.bi.bi-send.me-2
+                  | Gửi tin nhắn
+
+      //- Info + Social
+      .col-lg-5
+        //- Working hours
+        .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
+          h5.fw-bold.mb-3
+            i.bi.bi-clock-fill.text-success.me-2
+            | Giờ làm việc
+          .d-flex.justify-content-between.py-2.border-bottom
+            span.text-muted Thứ 2 - Thứ 6
+            span.fw-semibold 8:00 - 22:00
+          .d-flex.justify-content-between.py-2.border-bottom
+            span.text-muted Thứ 7
+            span.fw-semibold 9:00 - 20:00
+          .d-flex.justify-content-between.py-2.border-bottom
+            span.text-muted Chủ nhật
+            span.fw-semibold 10:00 - 18:00
+          .d-flex.justify-content-between.py-2
+            span.text-muted Chat hỗ trợ
+            span.badge.bg-success.align-self-center 24/7
+
+        //- Social Media
+        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
+          h5.fw-bold.mb-3
+            i.bi.bi-share-fill.text-primary.me-2
+            | Kết nối với chúng tôi
+          .d-flex.flex-column.gap-2
+            a.social-contact-item(href="https://facebook.com" target="_blank")
+              .social-contact-icon.bg-primary
+                i.bi.bi-facebook
+              div
+                .fw-semibold VanHa Tech Official
+                .text-muted.small Facebook
+            a.social-contact-item(href="https://instagram.com" target="_blank")
+              .social-contact-icon(style="background:#e1306c;")
+                i.bi.bi-instagram
+              div
+                .fw-semibold @vanhatech
+                .text-muted.small Instagram
+            a.social-contact-item(href="https://youtube.com" target="_blank")
+              .social-contact-icon.bg-danger
+                i.bi.bi-youtube
+              div
+                .fw-semibold VanHa Tech Store
+                .text-muted.small YouTube
+
+    //- Map iframe
+    #map.mt-5
+      .card.border-0.shadow-sm(style="border-radius:16px; overflow:hidden;")
+        iframe(
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.265147573909!2d105.72937187600867!3d21.141852080536214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134fff67b84f2bb%3A0x8e83fcfce9c09054!2zSOG6oSBMw7RpLCBNw6ogTGluaCwgSGFub2ksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1704123456789!5m2!1sen!2s" 
+          width="100%" 
+          height="400" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+        )

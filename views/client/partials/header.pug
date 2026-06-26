@@ -1,93 +1,208 @@
 include ../mixins/sub-menu.pug
 
-header.header 
+//- Top Heading Bar (USP)
+.top-heading
   .container
-    .row.align-items-center
+    .d-flex.justify-content-between.align-items-center
+      .top-heading-left.d-flex.gap-4
+        a(href="#")
+          i.bi.bi-clock-history
+          span GIAO HÀNG TRONG 2 GIỜ
+        a(href="#")
+          i.bi.bi-arrow-repeat
+          span BẢO HÀNH ĐỔI MỚI 365 NGÀY
+      .top-heading-right.d-flex.gap-4
+        a(href="#")
+          i.bi.bi-shield-check
+          span CHÍNH HÃNG 100%
+        a(href="#")
+          i.bi.bi-headset
+          span TƯ VẤN MIỄN PHÍ 24/7
+
+header.header
+  .container
+    .row.align-items-center.flex-nowrap.justify-content-between
       //- Logo
-      .col-3
-        .inner-logo 
-          a(href="/")
-            img(src="/image/logo.png", alt="Logo", class="logo")
+      .col-auto
+        .inner-logo
+          a.art-logo(href="/")
+            if settingGeneral && settingGeneral.logo
+              img(src=settingGeneral.logo alt="Logo" style="height: 40px; margin-right: 8px; border-radius: 4px;")
+            else
+              i.bi.bi-lightning-charge-fill
+            if settingGeneral && settingGeneral.websiteName
+              span #{settingGeneral.websiteName}
+            else
+              span VanHa
+              span.highlight Tech
       
       //- Search Bar
-      .col-4 
+      .col.d-none.d-lg-block
         form(action='/search', id="form-search", method='GET')
-          .input-group 
+          .input-group
             input(
               type="text",
-              placeholder="Nhập từ khóa...",
+              placeholder="Tìm kiếm sản phẩm, thương hiệu...",
               name="keyword",
               value=keyword,
               class="form-control search-input"
             )
+            button.btn.btn-search(type="submit")
+              i.bi.bi-search
+              
+      //- Mobile Icons & Hamburger
+      .col-auto.d-lg-none.d-flex.align-items-center.gap-2
+        button.btn.btn-light.btn-sm.mobile-search-btn(type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch")
+          i.bi.bi-search
+        a.btn.btn-light.btn-sm(href="/cart" style="position: relative;")
+          i.bi.bi-cart3
+          if(quantityCart)
+            span.badge.bg-danger.rounded-pill(style="position: absolute; top: -5px; right: -5px; font-size: 10px;")= quantityCart
+        button.btn.btn-light.btn-sm(type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu")
+          i.bi.bi-list.fs-5
+      
+      //- Menu (Desktop standard, Mobile Offcanvas)
+      .col-auto
+        .offcanvas-lg.offcanvas-end#mobileMenu(tabindex="-1")
+          .offcanvas-header.d-lg-none.border-bottom
+            h5.offcanvas-title
+              i.bi.bi-lightning-charge-fill.text-warning.me-2
+              | VanHa Tech
+            button.btn-close(type="button" data-bs-dismiss="offcanvas" data-bs-target="#mobileMenu")
+          .offcanvas-body
+            .inner-menu
+              ul
+                //- Cart Button (Desktop only)
+                li.cart-item.d-none.d-lg-block
+                  form(action="/cart", method='GET', id='form-cart')
+                    button.btn-cart-icon(type="submit" title="Giỏ hàng")
+                      i.bi.bi-cart3
+                      if(quantityCart)
+                        .inner-quantity= quantityCart
+
+                //- Wishlist
+                if(user)
+                  li
+                    a.mobile-nav-link(href="/wishlist")
+                      span.position-relative(style="display: inline-block;")
+                        i.bi.bi-heart
+                        if(quantityWishlist !== undefined && quantityWishlist > 0)
+                          .inner-quantity(style="top: -8px; right: -12px;")= quantityWishlist
+                      span.nav-text.ms-2  Yêu thích
+
+                //- Home
+                li
+                  a.mobile-nav-link(href="/")
+                    i.bi.bi-house-fill
+                    span.nav-text  Trang chủ
+
+                //- Products
+                li.sub-menu
+                  - const path='/product'
+                  a.mobile-nav-link(href="/product")
+                    i.bi.bi-grid
+                    span.nav-text  Sản phẩm
+                  if(category && category.length > 0)
+                    +sub-menu(category, path)
+
+                //- Blog / News
+                li
+                  a.mobile-nav-link(href="/articles")
+                    i.bi.bi-newspaper
+                    span.nav-text  Tin tức
+
+                //- Contact
+                li
+                  a.mobile-nav-link(href="/contact")
+                    i.bi.bi-telephone
+                    span.nav-text  Liên hệ
+
+                //- Order history (only when logged in)
+                if(user)
+                  li
+                    a.mobile-nav-link(href="/order/history")
+                      i.bi.bi-bag-check
+                      span.nav-text  Đơn hàng
+
+                //- Auth Section
+                if (user)
+                  li.auth-section#userMenuTrigger
+                    a.btn-user-info.mobile-nav-link(href="javascript:void(0)" id="userMenuBtn")
+                      if user.avatar
+                        img.user-avatar-mini(src=user.avatar alt="avatar")
+                      else
+                        i.bi.bi-person-circle
+                      span.nav-text.username  Chào #{user.fullName.split(' ').pop()} 👋
+                      i.bi.bi-chevron-down.dropdown-arrow.d-none.d-lg-inline-block(id="dropdownArrow")
+                    .user-dropdown.d-lg-block#userDropdown
+                      //- User info header
+                      .dropdown-user-info
+                        .dropdown-user-avatar
+                          if user.avatar
+                            img(src=user.avatar alt="avatar")
+                          else
+                            | #{user.fullName.charAt(0).toUpperCase()}
+                        div
+                          .dropdown-user-name #{user.fullName}
+                          .dropdown-user-email #{user.email}
+                      //- Menu items
+                      a.text-dark(href=`/my-account/${user._id}`)
+                        i.bi.bi-person
+                        span.ms-2 Tài khoản của tôi
+                      a.text-dark(href="/loyalty")
+                        i.bi.bi-star
+                        span.ms-2 Điểm thưởng
+                      a.text-dark(href="/order/history")
+                        i.bi.bi-bag
+                        span.ms-2 Đơn hàng
+                      a.text-dark(href="/wishlist")
+                        i.bi.bi-heart
+                        span.ms-2 Yêu thích
+                      .dropdown-divider
+                      a.text-danger(href="/auth/logout")
+                        i.bi.bi-box-arrow-right
+                        | Đăng xuất
+                else
+                  li
+                    a.btn.btn-auth-primary.w-100(href="/auth/login")
+                      i.bi.bi-box-arrow-in-right
+                      span.nav-text  Đăng nhập
+    //- Mobile Search Collapse
+    .collapse#mobileSearch.d-lg-none
+      .container.py-2.bg-white
+        form(action='/search', method='GET')
+          .input-group
+            input.form-control(type="text" placeholder="Tìm kiếm..." name="keyword" value=keyword)
             button.btn.btn-primary(type="submit")
               i.bi.bi-search
-              |  Tìm
-      
-      //- Menu
-      .col-5
-        .inner-menu
-          ul  
-            //- Cart Button
-            li.cart-item
-              form(action="/cart", method='GET', id='form-cart')
-                button.btn-cart-icon(type="submit")
-                  i.bi.bi-cart3
-                  if(quantityCart)
-                    .inner-quantity= quantityCart
-            
-            //- Home
-            li
-              a(href="/") 
-                i.bi.bi-house-fill
-                |  Trang chủ
-            
-            //- Products with Submenu
-            li.sub-menu
-              - const path='/product'
-              a(href="/product")
-                i.bi.bi-box-seam
-                |  Sản phẩm
-              if(category && category.length > 0)
-                +sub-menu(category, path)
-            
-            //- Blog
-            li
-              a(href="/contact")
-                i.bi.bi-file-text
-                |  Bài viết
-            //- Blog
-            if(user)
-              li
-                a(href="/order/history")
-                  i.bi.bi-file-text
-                  |  Đơn hàng
-            
-            //- Auth Section
-            if (user)
-              li.auth-section
-                a.btn.btn-auth-primary(href=`/my-account/${user._id}`)
-                  i.bi.bi-person-circle
-                  |  #{user.fullName}
-                a.btn.btn-auth-danger(href="/auth/logout")
-                  i.bi.bi-box-arrow-right
-                  |  Đăng xuất
-            else 
-              li
-                a.btn.btn-auth-primary(href="/auth/login")
-                  i.bi.bi-box-arrow-in-right
-                  |  Đăng nhập
+
+  style.
+    .user-avatar-mini {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .dropdown-arrow {
+      font-size: 11px;
+      transition: transform 0.25s ease;
+      margin-left: 2px;
+    }
+    .dropdown-arrow.open {
+      transform: rotate(180deg);
+    }
 
   script.
     document.addEventListener('DOMContentLoaded', function () {
+      // ===== Cart click =====
       const isLogin = !{JSON.stringify(isLogin)};
       const formCart = document.querySelector("#form-cart");
-      const btn = document.querySelector('ul li form .btn-cart-icon');
+      const cartBtn = document.querySelector('ul li form .btn-cart-icon');
       
-      if (btn && formCart) {
-        btn.addEventListener('click', function (e) {
+      if (cartBtn && formCart) {
+        cartBtn.addEventListener('click', function (e) {
           e.preventDefault();
-
           if (!isLogin) {
             alert('Bạn cần đăng nhập để xem giỏ hàng!');
             return;

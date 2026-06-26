@@ -1,0 +1,123 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.mt-5.mb-5
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/loyalty") Thành viên
+        li.breadcrumb-item.active Dashboard
+
+    h4.fw-bold.mb-4
+      i.bi.bi-bar-chart-fill.text-primary.me-2
+      | Loyalty Dashboard
+
+    //- Stats top bar
+    .row.g-3.mb-4
+      .col-6.col-md-3
+        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px; background:linear-gradient(135deg,#667eea,#764ba2); color:white;")
+          .fs-3.fw-bold #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
+          .small.opacity-75 Điểm hiện tại
+      .col-6.col-md-3
+        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
+          .fs-3.fw-bold.text-warning #{loyalty.currentLevel || 'BRONZE'}
+          .small.text-muted Hạng hiện tại
+      .col-6.col-md-3
+        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
+          .fs-3.fw-bold.text-success #{(loyalty.transactions || []).filter(t => t.points > 0).reduce((a,b) => a+b.points, 0).toLocaleString('vi-VN')}
+          .small.text-muted Tổng điểm kiếm
+      .col-6.col-md-3
+        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
+          .fs-3.fw-bold.text-danger #{Math.abs((loyalty.transactions || []).filter(t => t.points < 0).reduce((a,b) => a+b.points, 0)).toLocaleString('vi-VN')}
+          .small.text-muted Điểm đã dùng
+
+    .row.g-4
+      //- Tier progression
+      .col-lg-8
+        .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
+          h6.fw-bold.mb-3 So Sánh Các Hạng
+          .row.g-2
+            - const tiers = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
+            - const tierData = { BRONZE: {min: 0, discount: 0, icon: '🥉', color: '#cd7f32'}, SILVER: {min: 100, discount: 5, icon: '🥈', color: '#c0c0c0'}, GOLD: {min: 300, discount: 10, icon: '🥇', color: '#ffd700'}, PLATINUM: {min: 500, discount: 15, icon: '💎', color: '#667eea'} }
+            each tier in tiers
+              - const td = tierData[tier]
+              .col-6.col-md-3
+                .card.text-center.p-3.border-2(
+                  class=tier === (loyalty.currentLevel || 'BRONZE') ? 'border-primary' : 'border-light'
+                  style=`border-radius:10px; ${tier === (loyalty.currentLevel || 'BRONZE') ? 'background:#f0f4ff;' : ''}`
+                )
+                  .fs-2 #{td.icon}
+                  .fw-bold.small #{tier}
+                  .text-muted.small #{td.min}+ điểm
+                  .text-primary.small #{td.discount}% giảm
+                  if tier === (loyalty.currentLevel || 'BRONZE')
+                    span.badge.bg-primary.mt-1 Hiện tại
+
+        //- Available Rewards
+        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
+          h6.fw-bold.mb-3
+            i.bi.bi-gift.me-2
+            | Thưởng Có Thể Đổi
+          if availableRewards && availableRewards.length
+            .row.g-2
+              each reward in availableRewards
+                if reward.available
+                  .col-md-6
+                    .card.border.p-3(style="border-radius:10px; border-color:#667eea !important;")
+                      .d-flex.align-items-center.gap-3
+                        span.fs-3 #{reward.icon}
+                        div
+                          .fw-semibold #{reward.name}
+                          .text-muted.small #{reward.description}
+                          .text-primary.fw-bold #{reward.pointsRequired} điểm
+                      button.btn.btn-primary.btn-sm.mt-2.w-100(onclick=`quickRedeem('${reward.id}', ${reward.pointsRequired})`)
+                        | Đổi Ngay
+          else
+            .text-center.text-muted.py-3 Không có thưởng khả dụng
+
+      //- FAQ
+      .col-lg-4
+        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
+          h6.fw-bold.mb-3
+            i.bi.bi-question-circle.me-2
+            | FAQ
+          .accordion#faqAccordion
+            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
+              h2.accordion-header
+                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq1")
+                  | Điểm có hết hạn không?
+              .accordion-collapse.collapse#faq1
+                .accordion-body.text-muted.small Điểm không bao giờ hết hạn, nhưng thưởng đổi có thể hết hạn 30 ngày.
+            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
+              h2.accordion-header
+                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq2")
+                  | Làm sao lên tier?
+              .accordion-collapse.collapse#faq2
+                .accordion-body.text-muted.small Tiếp tục mua sắm để kiếm điểm. Hệ thống tự động nâng tier của bạn.
+            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
+              h2.accordion-header
+                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq3")
+                  | Có thể hoàn lại điểm không?
+              .accordion-collapse.collapse#faq3
+                .accordion-body.text-muted.small Không, điểm không thể hoàn lại sau khi đổi thưởng.
+
+  script.
+    function quickRedeem(rewardId, points) {
+      if (confirm(`Dùng ${points} điểm để nhận thưởng này?`)) {
+        fetch('/loyalty/redeem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rewardId, pointsToRedeem: points })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === '00') {
+            alert('✅ ' + data.message);
+            location.reload();
+          } else {
+            alert('❌ ' + (data.message || 'Thất bại'));
+          }
+        });
+      }
+    }

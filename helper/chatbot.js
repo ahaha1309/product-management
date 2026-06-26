@@ -247,7 +247,7 @@ async function searchProducts(keyword, limit = 15) {
             const description = (p.description || '').toLowerCase();
             const category = (p.category || '').toLowerCase();
 
-            // Kiểm tra mỗi pattern
+            // Kiểm tra mỗi pattern cho full keyword
             for (const { regex, score } of patterns) {
                 if (regex.test(title)) {
                     maxScore = Math.max(maxScore, score + 30);
@@ -261,6 +261,19 @@ async function searchProducts(keyword, limit = 15) {
                     maxScore = Math.max(maxScore, score + 10);
                     matchedFields.push('category');
                 }
+            }
+
+            // 🌟 NEW: Token-based matching (giúp tìm "Đồng hồ thông minh" từ "tôi cần mua đồng hồ thông minh")
+            const tokens = normalizedKeyword.split(/\s+/).filter(t => t.length >= 2);
+            let tokenMatches = 0;
+            for (const token of tokens) {
+                if (title.includes(token) || description.includes(token) || category.includes(token)) {
+                    tokenMatches++;
+                }
+            }
+            if (tokenMatches > 0) {
+                maxScore += (tokenMatches * 10);
+                matchedFields.push(`tokens:${tokenMatches}`);
             }
 
             return {
@@ -315,16 +328,20 @@ async function getProductContext(questionType, session = {}, history = [], curre
 case 'search': {
     console.log('🔍 SEARCH: Starting search...');
     
-    const keywords = extractKeywords(currentQuestion);
-    console.log('📝 Raw question:', currentQuestion);
-    console.log('📝 Keywords extracted:', keywords);
-    
-    if (keywords.length > 0) {
-        const searchKeyword = keywords[0];
-        console.log(`\n🔎 ════════════════════════════`);
-        console.log(`   Searching for: "${searchKeyword}"`);
-        console.log(`════════════════════════════\n`);
+    let searchKeyword = currentQuestion.toLowerCase()
+        .replace(/tôi|cần|tư vấn|về|sản phẩm|cái|chiếc|này|cho|hỏi|mua|xem|có/g, ' ')
+        .replace(/[:!?.,]/g, ' ')
+        .trim();
         
+    if (!searchKeyword) searchKeyword = currentQuestion; // Fallback
+    
+    console.log('📝 Raw question:', currentQuestion);
+    console.log(`\n🔎 ════════════════════════════`);
+    console.log(`   Searching for: "${searchKeyword}"`);
+    console.log(`════════════════════════════\n`);
+    
+    // Luôn luôn search
+    if (true) {
         searchResults = await searchProducts(searchKeyword, 10);
         
         console.log(`\n📊 ════════════════════════════`);
@@ -709,15 +726,15 @@ ${finalProductContext}`;
             const errorData = await response.json();
             console.error('❌ API Error:', errorData);
             
-            if (errorData.error?.message?.includes('quota')) {
+            if (errorData.error?.message?.includes('quota') || errorData.error?.message?.includes('high demand')) {
                 return {
-                    response: '⏸️ API đang bận. Vui lòng chờ một chút rồi thử lại!',
+                    response: 'Xin lỗi, hiện tại hệ thống AI đang quá tải (High Demand). Hãy đợi một chút nhé!',
                     updatedHistory: conversationHistory
                 };
             }
             
             return {
-                response: `Lỗi: ${errorData.error?.message || 'Unknown error'}`,
+                response: `Xin lỗi, tôi đang gặp lỗi kết nối: ${errorData.error?.message || 'Unknown error'}`,
                 updatedHistory: conversationHistory
             };
         }

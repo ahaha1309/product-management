@@ -16,7 +16,9 @@ block main
             p Ngày đặt: 
               +formatDateTime(order.createdAt)
             p Trạng thái đơn hàng: 
-              strong(class=order.status === '' ? 'text-warning' : (order.status === 'confirm' ? 'text-warning' : (order.status === 'finish' ? 'text-success' : 'text-danger'))) #{order.status === '' ? 'Chờ xác nhân' : (order.status === 'confirm' ? 'Đã xác nhận' : (order.status === 'finish' ? 'Đã giao hàng' : 'Đã hủy'))}
+              - var statusLabel = (order.status === 'pending' || order.status === '') ? 'Chờ xác nhận' : (order.status === 'confirm' ? 'Đang xử lý' : (order.status === 'finish' ? 'Hoàn thành' : 'Đã hủy'))
+              - var statusClass = (order.status === 'pending' || order.status === '') ? 'text-warning' : (order.status === 'confirm' ? 'text-primary' : (order.status === 'finish' ? 'text-success' : 'text-danger'))
+              strong(class=statusClass style="font-size:15px;") #{statusLabel}
 
           // Section 1: Thông tin giao hàng (Chỉ hiển thị)
           .checkout-section
@@ -93,13 +95,14 @@ block main
                 //- Nút quay lại
             a.btn-checkout(href="/order/history" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;") Quay lại danh sách đơn
 
-                //- Thêm nút Hủy đơn hàng (Chỉ hiện khi trạng thái là pending)
-            if order.status == ''
-                button#btnCancelOrder.btn-outline(
-                    type="button" 
-                    data-id=order._id 
-                    style="width: 100%; color: #ee4d2d; border-color: #ee4d2d; padding: 10px; cursor: pointer;"
-                ) Hủy đơn hàng
+            if order.cancelRequest
+              button.btn-outline(disabled style="width: 100%; color: #6b7280; border-color: #d1d5db; padding: 10px; cursor: not-allowed; border: 1px solid; border-radius: 8px; background: #f3f4f6;") ⏳ Đang chờ duyệt hủy
+            else if order.status === 'pending' || order.status === 'confirm' || order.status === ''
+              button#btnCancelOrder.btn-outline(
+                type="button" 
+                data-id=order._id 
+                style="width: 100%; color: #ee4d2d; border-color: #ee4d2d; padding: 10px; cursor: pointer; border: 1px solid; border-radius: 8px; background: transparent;"
+              ) Hủy đơn hàng
 
             #checkoutToast.checkout-toast(style="display:none;")
             span#toastMessage

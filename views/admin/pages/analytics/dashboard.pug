@@ -1,0 +1,235 @@
+extends ../../layout/default.pug
+
+block main
+  .analytics-container
+    .page-header
+      h2 📊 Analytics Dashboard
+      .header-actions
+        select(onchange=`changePeriod(this.value)`)
+          option(value='7') 7 ngày
+          option(value='30') 30 ngày
+          option(value='90') 90 ngày
+        button.btn.btn-secondary(onclick='exportData()') 📥 Export
+
+    // KPI Cards
+    .kpi-section
+      .kpi-card
+        .icon 💰
+        .label Doanh thu
+        .value= (overview.totalRevenue || 0).toLocaleString('vi-VN') + 'đ'
+        .change.positive +12% từ tuần trước
+
+      .kpi-card
+        .icon 📦
+        .label Đơn hàng
+        .value= (overview.totalOrders || 0).toLocaleString('vi-VN')
+        .change.positive +8% từ tuần trước
+
+      .kpi-card
+        .icon 🛍️
+        .label Sản phẩm bán
+        .value= (overview.totalProductsSold || 0).toLocaleString('vi-VN')
+        .change.positive +5% từ tuần trước
+
+      .kpi-card
+        .icon 👥
+        .label Khách mới
+        .value= (overview.newCustomers || 0).toLocaleString('vi-VN')
+        .change.positive +15% từ tuần trước
+
+      .kpi-card
+        .icon 💵
+        .label AOV
+        .value= (overview.avgOrderValue || 0).toLocaleString('vi-VN') + 'đ'
+        .change.positive +3% từ tuần trước
+
+    // Charts
+    .charts-section
+      .chart-card
+        h3 📈 Doanh Thu Theo Ngày
+        div(style="height: 300px; width: 100%; position: relative;")
+          canvas#revenueChart
+
+      .chart-card
+        h3 🏆 Top Danh Mục
+        div(style="height: 300px; width: 100%; position: relative; display: flex; justify-content: center;")
+          canvas#categoryChart
+
+      .chart-card
+        h3 💳 Phương Thức Thanh Toán
+        div(style="height: 300px; width: 100%; position: relative; display: flex; justify-content: center;")
+          canvas#paymentChart
+
+      .chart-card
+        h3 ⭐ Phân Bố Rating
+        div(style="height: 300px; width: 100%; position: relative;")
+          canvas#ratingChart
+
+    // Tables
+    .tables-section(style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;")
+      .card
+        .card-header 🔥 Sản phẩm bán chạy nhất
+        .card-body
+          table.table.table-hover
+            thead
+              tr
+                th Hình ảnh
+                th Sản phẩm
+                th Đã bán
+                th Doanh thu
+            tbody
+              each product in topSellingProducts || []
+                tr
+                  td
+                    if product.thumbnail
+                      img(src=product.thumbnail alt=product.productTitle style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;")
+                    else
+                      span N/A
+                  td= product.productTitle || product.productId
+                  td= product.sold
+                  td= (product.sold * 150000).toLocaleString('vi-VN') + 'đ'
+
+      .card
+        .card-header ⚡ Đơn hàng mới nhất
+        .card-body
+          table.table.table-hover
+            thead
+              tr
+                th ID
+                th Thời gian
+                th Chi tiết
+                th Tổng tiền
+            tbody
+              each order in liveOrders || []
+                tr
+                  td.text-muted= order.id.toString().substring(0, 6)
+                  td= order.timeAgo
+                  td= order.message
+                  td.text-success.fw-bold= (order.amount || 0).toLocaleString('vi-VN') + 'đ'
+
+    .tables-section(style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;")
+      .card
+        .card-header ⭐ Đánh giá mới nhất
+        .card-body
+          table.table.table-hover
+            thead
+              tr
+                th Sản phẩm
+                th Khách hàng
+                th Rating
+                th Nhận xét
+            tbody
+              each review in latestReviews || []
+                tr
+                  td= review.productTitle
+                  td= review.userName
+                  td.text-warning= "⭐".repeat(review.rating)
+                  td.text-muted(style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")= review.comment
+
+      .card
+        .card-header 📊 Metrics Real-time
+        .card-body
+          .metrics-grid(style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;")
+            .metric(style="background: #f4f6f9; padding: 15px; border-radius: 8px; text-align: center;")
+              .label.text-muted.text-uppercase.fw-bold(style="font-size: 0.8rem;") Đơn hàng hôm nay
+              .value.fw-bold.fs-4.mt-2= generalStats.totalOrders || 0
+            .metric(style="background: #f4f6f9; padding: 15px; border-radius: 8px; text-align: center;")
+              .label.text-muted.text-uppercase.fw-bold(style="font-size: 0.8rem;") Doanh thu hôm nay
+              .value.fw-bold.fs-4.mt-2.text-success= (generalStats.totalRevenue || 0).toLocaleString('vi-VN') + 'đ'
+            .metric(style="background: #f4f6f9; padding: 15px; border-radius: 8px; text-align: center;")
+              .label.text-muted.text-uppercase.fw-bold(style="font-size: 0.8rem;") Rating trung bình
+              .value.fw-bold.fs-4.mt-2= Number(generalStats.averageRating || 0).toFixed(1) + '⭐'
+            .metric(style="background: #f4f6f9; padding: 15px; border-radius: 8px; text-align: center;")
+              .label.text-muted.text-uppercase.fw-bold(style="font-size: 0.8rem;") Reviews
+              .value.fw-bold.fs-4.mt-2= generalStats.totalReviews || 0
+
+    // Links
+    .analytics-links(style="margin-top: 25px; display: flex; gap: 10px;")
+      a.btn.btn-outline-primary(href='/admin/analytics/revenue') 💹 Báo cáo doanh thu
+      a.btn.btn-outline-success(href='/admin/analytics/customers') 👥 Phân tích khách hàng
+      a.btn.btn-outline-warning(href='/admin/analytics/products') 🛍️ Phân tích sản phẩm
+      a.btn.btn-outline-danger(href='/admin/analytics/reviews') ⭐ Phân tích đánh giá
+
+block scripts
+  script(src='https://cdn.jsdelivr.net/npm/chart.js')
+  script.
+    // Dữ liệu từ Server
+    const topCategories = !{JSON.stringify(topCategories || [])};
+    const revenueTrend = !{JSON.stringify(revenueTrend || [])};
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+    if (revenueCtx) {
+      new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+          labels: revenueTrend.map(item => item._id),
+          datasets: [{
+            label: 'Doanh thu',
+            data: revenueTrend.map(item => item.revenue || 0),
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: true } } }
+      });
+    }
+
+    // Category Chart
+    const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+    if (categoryCtx) {
+      new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: topCategories.map(item => item.categoryTitle || item._id),
+          datasets: [{
+            data: topCategories.map(item => item.quantity || 0),
+            backgroundColor: ['#0d6efd', '#20c997', '#ffc107', '#dc3545', '#6f42c1']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // Payment Chart (Mock data cho đẹp)
+    const paymentCtx = document.getElementById('paymentChart')?.getContext('2d');
+    if (paymentCtx) {
+      new Chart(paymentCtx, {
+        type: 'pie',
+        data: {
+          labels: ['COD', 'Chuyển khoản', 'MOMO', 'Thẻ tín dụng'],
+          datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: ['#ffc107', '#0d6efd', '#e83e8c', '#20c997']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    // Rating Chart (Mock data cho đẹp)
+    const ratingCtx = document.getElementById('ratingChart')?.getContext('2d');
+    if (ratingCtx) {
+      new Chart(ratingCtx, {
+        type: 'bar',
+        data: {
+          labels: ['5⭐', '4⭐', '3⭐', '2⭐', '1⭐'],
+          datasets: [{
+            label: 'Đánh giá',
+            data: [150, 45, 10, 5, 2],
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function changePeriod(days) {
+      location.href = `?period=${days}`;
+    }
+
+    function exportData() {
+      location.href = '/admin/analytics/export?type=revenue';
+    }

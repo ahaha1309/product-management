@@ -1,0 +1,19 @@
+extends ../../layout/default.pug
+block main
+  h1 Chi tiết Danh mục Bài Viết
+  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/category-article`) &larr; Quay lại
+  if category
+    .card
+      .card-header
+        h3= category.title
+      .card-body
+        if category.thumbnail
+          img.img-fluid.mb-3(src=category.thumbnail alt=category.title style="max-height: 200px; object-fit: cover;")
+        p.mb-2 
+          strong Mô tả: 
+          | !{category.description || 'Chưa có mô tả'}
+        p.mb-2 
+          strong Trạng thái: 
+          span(class=`badge text-bg-${category.status == "active" ? "success" : "danger"}`) #{category.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
+  else
+    p.text-danger Không tìm thấy danh mục.

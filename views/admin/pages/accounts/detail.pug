@@ -1,0 +1,25 @@
+extends ../../layout/default.pug
+block main
+  h1 Chi tiết Tài Khoản
+  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/accounts`) &larr; Quay lại
+  if account
+    .card
+      .card-header
+        h3= account.fullname
+      .card-body
+        if account.avatar
+          img.img-fluid.mb-3.rounded-circle(src=account.avatar alt=account.fullname style="width: 100px; height: 100px; object-fit: cover;")
+        p.mb-2 
+          strong Email: 
+          | #{account.email}
+        p.mb-2 
+          strong Số điện thoại: 
+          | #{account.phone || 'Chưa cập nhật'}
+        p.mb-2 
+          strong Phân quyền: 
+          | #{roleData ? roleData.title : 'Chưa phân quyền'}
+        p.mb-2 
+          strong Trạng thái: 
+          span(class=`badge text-bg-${account.status == "active" ? "success" : "danger"}`) #{account.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
+  else
+    p.text-danger Không tìm thấy tài khoản.

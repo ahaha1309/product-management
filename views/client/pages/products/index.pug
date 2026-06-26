@@ -1,14 +1,101 @@
-extends ../../layouts/default.pug 
+extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
 include ../../mixins/sort.pug
-block main 
-  .container.my-3
-    +sort()
-    .row 
-       .col-12 
-          if(!keyword)
-            +box-head("Danh sách sản phẩm")
-          else
-            +box-head("Kết quả tìm kiếm")
-    +product-grid(product)
+
+block main
+  .container.my-4
+
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Trang chủ
+        li.breadcrumb-item.active #{title}
+
+    .row.g-4
+      //- Mobile Filter Trigger
+      .col-12.d-lg-none
+        button.btn.btn-outline-primary.w-100(type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas")
+          i.bi.bi-funnel.me-2
+          | Lọc & Sắp xếp
+
+      //- Sidebar Filter
+      .col-lg-3
+        .offcanvas-lg.offcanvas-start#filterOffcanvas(tabindex="-1")
+          .offcanvas-header.d-lg-none.border-bottom
+            h5.offcanvas-title
+              i.bi.bi-funnel.me-2
+              | Lọc & Sắp xếp
+            button.btn-close(type="button" data-bs-dismiss="offcanvas" data-bs-target="#filterOffcanvas")
+          .offcanvas-body
+            .filter-sidebar.w-100
+
+              //- Sort
+              .filter-group
+                h6.filter-title
+                  i.bi.bi-sort-down.me-2
+                  | Sắp xếp
+                .d-flex.flex-column.gap-1
+                  a.filter-option(href="/product?sortKey=position&value=desc" class=(!type || type === 'position-desc') ? 'active' : '') Mới nhất
+                  a.filter-option(href="/product?sortKey=price&value=asc" class=type === 'price-asc' ? 'active' : '') Giá thấp → cao
+                  a.filter-option(href="/product?sortKey=price&value=desc" class=type === 'price-desc' ? 'active' : '') Giá cao → thấp
+                  a.filter-option(href="/product?sortKey=featured&value=true" class=type === 'featured-true' ? 'active' : '') Nổi bật
+
+              //- Category Filter
+              if categories && categories.length > 0
+                .filter-group
+                  h6.filter-title
+                    i.bi.bi-grid.me-2
+                    | Danh Mục
+                  .d-flex.flex-column.gap-1
+                    each cat in categories
+                      a.filter-option(href=`/product?category=${cat._id}` class=currentCategory === cat._id.toString() ? 'active' : '') #{cat.title}
+                      
+              //- Rating Filter
+              .filter-group
+                h6.filter-title
+                  i.bi.bi-star.me-2
+                  | Đánh Giá
+                .d-flex.flex-column.gap-1
+                  a.filter-option(href="/product?rating=5" class=currentRating === '5' ? 'active' : '')
+                    .star-rating.small
+                      - for(let i=1; i<=5; i++)
+                        i.bi.bi-star-fill.text-warning
+                  a.filter-option(href="/product?rating=4" class=currentRating === '4' ? 'active' : '')
+                    .star-rating.small
+                      - for(let i=1; i<=5; i++)
+                        if i<=4
+                          i.bi.bi-star-fill.text-warning
+                        else
+                          i.bi.bi-star.text-warning
+                      span.ms-1 trở lên
+
+              //- Reset
+              a.btn.btn-outline-secondary.w-100.btn-sm.mt-2(href="/product")
+                i.bi.bi-x-circle.me-1
+                | Xóa bộ lọc
+
+      //- Product List
+      .col-lg-9
+        //- Results bar
+        .d-flex.justify-content-between.align-items-center.mb-4.p-3.bg-light.rounded
+          .d-flex.align-items-center.gap-2
+            if(!keyword)
+              span.text-muted Hiển thị
+              strong  #{product ? product.length : 0}
+              span.text-muted  sản phẩm
+            else
+              span.text-muted Kết quả cho "
+              strong #{keyword}
+              span.text-muted " -
+              strong  #{product ? product.length : 0}
+              span.text-muted  sản phẩm
+          .d-flex.align-items-center.gap-2
+            span.text-muted.small Hiển thị:
+            button.btn.btn-sm.btn-outline-secondary#view-grid(title="Grid view")
+              i.bi.bi-grid
+            button.btn.btn-sm.btn-outline-secondary#view-list(title="List view")
+              i.bi.bi-list-ul
+
+        +product-grid(product)

@@ -146,6 +146,42 @@
     font-size: 16px;
 }
 
+/* ===== VARIANTS ===== */
+.variant-btn {
+    border: 1px solid #e5e7eb !important;
+    background: white !important;
+    color: #374151 !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+}
+
+.variant-btn:hover {
+    border-color: #4f46e5 !important;
+    color: #4f46e5 !important;
+}
+
+.variant-btn.active {
+    border-color: #4f46e5 !important;
+    color: #4f46e5 !important;
+    background: rgba(79, 70, 229, 0.05) !important;
+    font-weight: 600 !important;
+    position: relative;
+}
+
+.variant-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 14px 14px;
+    border-color: transparent transparent #4f46e5 transparent;
+}
+
+
 /* ===== FORM - ADD TO CART ===== */
 .form-add-cart {
     display: flex;
@@ -405,4 +441,91 @@ hr.my-5 {
 
 .desc-content {
     animation-delay: 0.2s;
+}
+
+/* ===== MISSING BUTTONS (SHOPEE STYLE) ===== */
+.btn-shopee-solid {
+    background: #ee4d2d !important;
+    color: white !important;
+    border: 1px solid #ee4d2d !important;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.btn-shopee-solid:hover {
+    background: #f05d40 !important;
+}
+
+.btn-shopee-outline {
+    background: rgba(255,87,34,0.1) !important;
+    color: #ee4d2d !important;
+    border: 1px solid #ee4d2d !important;
+    font-weight: 500;
+}
+.btn-shopee-outline:hover {
+    background: rgba(255,87,34,0.15) !important;
+}
+
+/* ===== WISHLIST BUTTON ===== */
+.wishlist-btn-main {
+    background: white;
+    color: #555;
+    border: 1px solid #ccc;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.wishlist-btn-main.active i {
+    color: #ee4d2d;
+}
+.wishlist-btn-main:hover {
+    background: #f8f9fa;
+    border-color: #ee4d2d;
+    color: #ee4d2d;
+}
+
+/* ===== IMAGE GALLERY ===== */
+.product-thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+.thumbnail-item {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    object-fit: cover;
+    transition: border-color 0.2s;
+}
+.thumbnail-item:hover, .thumbnail-item.active {
+    border-color: #ee4d2d;
+}
+
+/* ===== MODAL VARIANT ===== */
+.variant-modal-header {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.variant-modal-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+.variant-modal-price {
+    font-size: 24px;
+    color: #ee4d2d;
+    font-weight: bold;
+    margin-bottom: 5px;
 }

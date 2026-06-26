@@ -1,0 +1,17 @@
+extends ../layouts/default.pug
+
+block main
+  .not-found-page
+    .not-found-content
+      .not-found-number 404
+      .not-found-icon
+        i.bi.bi-emoji-dizzy
+      h2.not-found-title Trang không tìm thấy
+      p.not-found-desc Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc không tồn tại.
+      .not-found-actions
+        a.btn-home(href="/")
+          i.bi.bi-house-fill.me-2
+          | Về trang chủ
+        a.btn-products(href="/product")
+          i.bi.bi-grid.me-2
+          | Xem sản phẩm

@@ -1,0 +1,86 @@
+extends ../../layout/default.pug
+
+block main
+  .admin-reviews-container
+    h2 📝 Quản Lý Reviews
+
+    .filter-bar
+      select(onchange=`filterByStatus(this.value)`)
+        option(value='approved') Đã duyệt
+        option(value='pending') Chờ duyệt
+        option(value='rejected') Bị từ chối
+
+    .reviews-list
+      each review in reviews || []
+        .review-item
+          .review-header
+            .info
+              strong= review.userName
+              span.date= moment(review.createdAt).format('DD/MM/YYYY HH:mm')
+              if review.verifiedPurchase
+                span.badge ✓ Xác thực
+            
+            .rating
+              - for (let i = 1; i <= 5; i++)
+                if i <= review.rating
+                  span.star ★
+                else
+                  span.star ☆
+
+          .review-content
+            if review.title
+              h4= review.title
+            p= review.comment
+
+          .review-actions
+            if currentStatus === 'pending'
+              button.btn.btn-success(onclick=`approveReview('${review._id}')`) ✓ Duyệt
+              button.btn.btn-danger(onclick=`rejectReview('${review._id}')`) ✗ Từ chối
+            
+            button.btn.btn-danger(onclick=`deleteReview('${review._id}')`) Xóa
+
+block scripts
+  script.
+    function approveReview(reviewId) {
+      fetch(`/admin/reviews/${reviewId}/approve`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'approved' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === '00') {
+          location.reload();
+        }
+      });
+    }
+
+    function rejectReview(reviewId) {
+      fetch(`/admin/reviews/${reviewId}/approve`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'rejected' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === '00') {
+          location.reload();
+        }
+      });
+    }
+
+    function deleteReview(reviewId) {
+      if (confirm('Xóa review này?')) {
+        fetch(`/admin/reviews/${reviewId}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === '00') {
+            location.reload();
+          }
+        });
+      }
+    }
+
+    function filterByStatus(status) {
+      location.href = `?status=${status}`;
+    }

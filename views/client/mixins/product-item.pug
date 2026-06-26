@@ -12,7 +12,8 @@ mixin product-item(Item)
                         i.bi.bi-star-fill
                         |  Nổi bật
                 
-                .inner-discount= Item.discountPercentage + '%'
+                if Item.discountPercentage > 0
+                    .inner-discount= '-' + Item.discountPercentage + '%'
             
             .inner-info 
                 a.title(href=`/product/detail/${Item.slug}`, title=Item.title) 

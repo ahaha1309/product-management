@@ -55,7 +55,5 @@ block main
        ) #{category.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
     
     // Submit
-    if(role.permission.includes('products-category_edit'))
+    if(role.permission.includes('products-category_edit') || role.permission.includes('*'))
       a.btn.btn-primary(href=`${prefixAdmin}/category-product/edit/${category._id}`) Chỉnh sửa
-  else
-    .alert.alert-danger Bạn không có quyền xem danh mục sản phẩm

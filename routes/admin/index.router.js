@@ -10,6 +10,9 @@ const articleRouter=require('./article.router');
 const categoryArticleRouter=require('./category-article.router');
 const myAccountRouter=require('./my-account.router');
 const orderRouter=require('./order.router')
+const analyticsRouter = require('./analytics.router');
+const loyaltyRouter = require('./loyalty.router');
+
 module.exports = (app) => {
   const path_admin = systemConfig.prefixAdmin;
   app.use(path_admin + '/dashboard',authMiddleware.requireAuth, dashboardRouter);
@@ -25,4 +28,11 @@ module.exports = (app) => {
   app.use(path_admin + '/auth', authRouter);
   app.use(path_admin + '/my-account',authMiddleware.requireAuth, myAccountRouter);
   app.use(path_admin + '/orders', authMiddleware.requireAuth, orderRouter);
+  app.use(path_admin + '/analytics', authMiddleware.requireAuth, analyticsRouter);
+  app.use(path_admin + '/reviews', authMiddleware.requireAuth, require('./reviews.router'));
+  // ✅ NEW: Loyalty management
+  app.use(path_admin + '/users', authMiddleware.requireAuth, require('./user.router'));
+  app.use(path_admin + '/loyalty', authMiddleware.requireAuth, loyaltyRouter);
+  app.use(path_admin + '/chats', authMiddleware.requireAuth, require('./chat.route'));
+  app.use(path_admin + '/settings', authMiddleware.requireAuth, require('./setting.router'));
 };

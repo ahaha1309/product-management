@@ -1,73 +1,645 @@
 extends ../../layouts/default.pug
-include ../../mixins/alert.pug 
+include ../../mixins/alert.pug
 
 block main
   link(rel="stylesheet", href="/css/product-detail.css")
   +alert-success(messages.success)
-  .container.mt-5
-    .row
-      //- Cột trái: Ảnh sản phẩm
-      .col-md-4
-        .product-image
-          img.img-fluid(src=product.thumbnail alt=product.title)
-          
-      //- Cột phải: Thông tin & Form
-      .col-md-6
-        .product-info
-          h1.title #{product.title}
-          
-          .category.gap-2.d-flex.align-items-center
-            span Danh mục: 
+
+  .container.mt-4.mb-5
+
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Trang chủ
+        li.breadcrumb-item
+          a(href="/product") Sản phẩm
+        if product.category
+          li.breadcrumb-item
             a(href=`/product/c/${product.category.slug}`) #{product.category.title}
-          .d-flex.align-items-center.mb-3.gap-1
-             .price-new #{product.newPrice}$
-             span -
-             .price-old #{product.price}$
+        li.breadcrumb-item.active(style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;") #{product.title}
 
-          .discount-box.gap-2.d-flex.align-items-center
-            span.label Giảm tới
-            span.badge-discount #{product.discountPercentage}%
+    .row.g-5
+      //- Left: Product Image
+      .col-md-5
+        .product-gallery
+          .main-image-wrap
+            img#main-image.img-fluid(src=product.thumbnail alt=product.title style="border-radius:12px; width:100%; object-fit:cover;")
+            if product.discountPercentage > 0
+              .gallery-badge -#{product.discountPercentage}%
+            if product.stock <= 0
+              .gallery-out-badge Hết hàng
 
-          form.form-add-cart(action=`/cart/add/${product._id}` method="POST" formSubmit)
-            input.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock slug=product.slug)
+          //- Thumbnails
+          if variants && variants.length > 0
+            .product-thumbnails
+              each v, index in variants
+                - const vImg = (v.images && v.images[0]) ? v.images[0].url : product.thumbnail
+                - const vColor = (v.attributes && v.attributes.color) ? v.attributes.color : ''
+                img.thumbnail-item(src=vImg alt=vColor title=vColor class=(index === 0 ? 'active' : '') onclick=`selectVariantImage(this, '${vImg}', '${vColor}')`)
+          else if product.images && product.images.length > 0
+            .product-thumbnails
+              each img, index in product.images
+                img.thumbnail-item(src=img alt=product.title class=(index === 0 ? 'active' : '') onclick=`changeMainImage(this, '${img}')`)
+
+      //- Right: Product Info
+      .col-md-7
+        .product-info-panel
+
+          //- Category badge
+          if product.category
+            a.category-badge(href=`/product/c/${product.category.slug}`)
+              i.bi.bi-tag.me-1
+              | #{product.category.title}
+
+          //- Title
+          h1.product-title #{product.title}
+
+          //- Rating & Reviews
+          .d-flex.align-items-center.gap-3.mb-3
+            .star-rating
+              - for(let i=1; i<=5; i++)
+                if i <= Math.round(averageRating || 5)
+                  i.bi.bi-star-fill.text-warning
+                else
+                  i.bi.bi-star.text-warning
+            span.text-muted.small (#{averageRating || 5}/5 · #{reviews ? reviews.length : 0} đánh giá)
+            if product.stock > 0
+              span.badge.bg-success-subtle.text-success
+                i.bi.bi-check-circle.me-1
+                | Còn hàng
+            else
+              span.badge.bg-danger-subtle.text-danger
+                i.bi.bi-x-circle.me-1
+                | Hết hàng
+
+          //- Price
+          .shopee-price-panel
+            .d-flex.align-items-baseline.gap-3
+              if product.discountPercentage > 0
+                span.shopee-old-price ₫#{product.price.toLocaleString('vi-VN')}
+              span.shopee-new-price ₫#{product.newPrice.toLocaleString('vi-VN')}
+              if product.discountPercentage > 0
+                span.badge.bg-danger -#{product.discountPercentage}% GIẢM
+
+          //- Loyalty Points
+          .d-flex.align-items-center.mb-3
+            span.text-muted.me-3(style="width: 100px;") Thưởng
+            div.d-flex.align-items-center
+              i.bi.bi-coin.text-warning.me-2(style="font-size:1.2rem;")
+              span Nhận <b class="text-warning" style="color: #f6a700 !important;">#{Math.floor(product.newPrice * 0.01).toLocaleString('vi-VN')}</b> Xu (Tương đương ₫#{Math.floor(product.newPrice * 0.01).toLocaleString('vi-VN')})
+
+          //- Vouchers
+          .d-flex.align-items-center.mb-3
+            span.text-muted.me-3(style="width: 100px;") Mã Giảm Giá
+            div
+              span.shopee-voucher-tag Giảm 10k
+              span.shopee-voucher-tag Giảm 5%
+              span.shopee-voucher-tag Giảm 20k
+
+          //- Key features / Vận chuyển
+          .d-flex.align-items-start.mb-4
+            span.text-muted.me-3(style="width: 100px;") Vận Chuyển
+            div
+              .mb-1
+                i.bi.bi-box-seam.text-primary.me-2(style="font-size:1.2rem;")
+                span Xử lý đơn hàng bởi Cửa Hàng
+              .mb-1
+                i.bi.bi-truck.text-success.me-2
+                span Miễn phí vận chuyển
+              .text-muted.small.ms-4 Phí vận chuyển: ₫0
+
+          .w-100.mt-4.mt-md-0
+            //- Shop Info
+            .shop-info-card.d-flex.align-items-center.p-3.mb-4.border.rounded.w-100
+              img.rounded-circle.me-3(src="https://ui-avatars.com/api/?name=VanHa+Tech+Store&background=ee4d2d&color=fff" alt="Shop Avatar" width="60" height="60")
+              div
+                .fw-bold 
+                  span.shopee-badge-mall.me-1 Chính Hãng
+                  | VanHa Tech Store
+                .text-muted.small Online 5 phút trước
+              .shopee-shop-buttons.ms-auto
+                button.btn.btn-shopee-outline(onclick=`openProductChat('${product.title.replace(/'/g, "\\'")}')`) 
+                  i.bi.bi-chat-dots.me-1 
+                  | Chat Ngay
+                a.btn.btn-outline-secondary.ms-2(href="/") 
+                  i.bi.bi-shop.me-1 
+                  | Xem Shop
+
+          //- Variants moved to modal
+
+          //- Form add to cart
+          if product.stock > 0
+            form.form-add-cart(action=`/cart/add/${product._id}` method="POST" formSubmit id="addCartForm")
+              input(type="hidden" name="variantText" id="variantInputVal" value="")
+              .d-flex.align-items-center.mb-4
+                span.text-muted.me-3(style="width: 100px;") Số lượng
+                .qty-wrapper
+                  button.qty-btn(type="button" onclick="changeQty(-1)")
+                    i.bi.bi-dash
+                  input.qty-input(
+                    type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    max=product.stock
+                    slug=product.slug
+                    id="qty-input"
+                  )
+                  button.qty-btn(type="button" onclick="changeQty(1)")
+                    i.bi.bi-plus
+                span.stock-info.ms-3.text-muted.small #{product.stock} sản phẩm có sẵn
+
+              .action-buttons-row.d-flex.gap-3.flex-wrap
+                button.btn.btn-shopee-outline.btn-action-main(type="button" action-type="cart" style="padding: 12px 20px; font-size: 16px;")
+                  i.bi.bi-cart-plus.me-2
+                  | Thêm Vào Giỏ Hàng
+                button.btn.btn-shopee-solid.btn-action-main(type="button" action-type="checkout" style="padding: 12px 20px; font-size: 16px; min-width: 150px;")
+                  | Mua Ngay
+                button.btn.wishlist-btn-main(type="button" class=(isWishlisted ? "active" : "") onclick=`toggleWishlist('${product._id}')`)
+                  i.bi.me-1(class=(isWishlisted ? "bi-heart-fill text-danger" : "bi-heart"))
+                  | Yêu Thích
+                div#debug-wishlist(style="display:none;") #{debugWishlist}
+          else
+            .alert.alert-warning
+              i.bi.bi-exclamation-triangle.me-2
+              | Sản phẩm tạm thời hết hàng
+
+    //- Tabs Section
+    .mt-5
+      ul.nav.nav-tabs.product-tabs#product-tabs
+        li.nav-item
+          button.nav-link.active(data-bs-toggle="tab" data-bs-target="#tab-desc") Mô tả sản phẩm
+        li.nav-item
+          button.nav-link(data-bs-toggle="tab" data-bs-target="#tab-specs") Thông số kỹ thuật
+        li.nav-item
+          button.nav-link(data-bs-toggle="tab" data-bs-target="#tab-installment") Tính Trả Góp
+        li.nav-item
+          button.nav-link(data-bs-toggle="tab" data-bs-target="#tab-reviews") Đánh giá (#{product.reviewCount || 0})
+        li.nav-item
+          button.nav-link(data-bs-toggle="tab" data-bs-target="#tab-ship") Vận chuyển & Đổi trả
+
+      .tab-content.p-4.border.border-top-0.rounded-bottom(style="background:#fff;")
+        //- Description Tab
+        #tab-desc.tab-pane.fade.show.active
+          .product-description
+            p !{product.description}
+
+        //- Specs & FPS Tab
+        #tab-specs.tab-pane.fade
+          .row
+            .col-md-12
+              h5 Thông số kỹ thuật
+              table.table.table-striped.mt-3
+                tbody
+                  tr
+                    th(width="30%") Vi xử lý (CPU)
+                    td Core i7 / M3 / Snapdragon 8 Gen 3
+                  tr
+                    th RAM
+                    td 16GB / 32GB
+                  tr
+                    th Lưu trữ
+                    td 512GB SSD / 1TB SSD
+                  tr
+                    th Màn hình
+                    td 2K / 4K OLED 120Hz
+
+        //- Installment Tab
+        #tab-installment.tab-pane.fade
+          .installment-calculator.p-4
+            h5 Tính toán trả góp
+            p.text-muted Chọn ngân hàng và thời hạn để xem số tiền trả mỗi tháng.
+            .row.mt-4
+              .col-md-4
+                label Giá sản phẩm:
+                input.form-control#instPrice(type="text" value=`${product.newPrice.toLocaleString('vi-VN')}đ` readonly)
+              .col-md-4
+                label Trả trước (30%):
+                input.form-control#instPrepay(type="text" value=`${(product.newPrice * 0.3).toLocaleString('vi-VN')}đ` readonly)
+              .col-md-4
+                label Kỳ hạn (Tháng):
+                select.form-select#instMonths
+                  option(value="6") 6 Tháng
+                  option(value="9") 9 Tháng
+                  option(value="12") 12 Tháng
+            .row.mt-4
+              .col-12.text-center
+                .p-3.border.rounded.bg-light
+                  h6 Mỗi tháng trả khoảng:
+                  .display-6.text-danger.fw-bold#instMonthly #{Math.round((product.newPrice * 0.7) / 6).toLocaleString('vi-VN')}đ
+                  p.small.text-muted *Đã bao gồm lãi suất 0% (áp dụng thẻ tín dụng)
+
+        //- Reviews Tab
+        #tab-reviews.tab-pane.fade
+          .reviews-section
+            if reviews && reviews.length > 0
+              each review in reviews
+                .review-item.border-bottom.py-3
+                  .d-flex.gap-3
+                    img.rounded-circle(src="https://ui-avatars.com/api/?name=User&background=random" width="40" height="40")
+                    div
+                      .fw-bold.mb-1 Người dùng ẩn danh
+                      .star-rating.small.mb-2
+                        - for(let i=1; i<=5; i++)
+                          if i <= review.rating
+                            i.bi.bi-star-fill.text-warning
+                          else
+                            i.bi.bi-star.text-warning
+                      if review.variantText
+                        .text-muted.small.mb-1 Phân loại: #{review.variantText}
+                      p.mb-1 #{review.content || review.comment}
+                      if review.images && review.images.length > 0
+                        .d-flex.gap-2.mt-2.mb-2.flex-wrap
+                          each img in review.images
+                            img.rounded(src=img style="width: 70px; height: 70px; object-fit: cover; border: 1px solid #ddd;")
+                      .text-muted.small(style="font-size:11px;") #{new Date(review.createdAt).toLocaleDateString('vi-VN')}
+            else
+              .text-center.py-4.text-muted
+                i.bi.bi-chat-dots(style="font-size:3rem; opacity:0.3;")
+                p.mt-2 Chưa có đánh giá nào. Hãy là người đầu tiên!
             
-            //- Cụm 2 nút bấm
-            .button-group
-              button.btn-add-cart(type="submit") Thêm vào giỏ
-              button.btn-buy-now(type="button" checkout) Mua ngay
+            if isLogin
+              button.btn.btn-primary.btn-sm.mt-3(data-bs-toggle="modal" data-bs-target="#reviewModal")
+                i.bi.bi-pencil.me-1
+                | Viết đánh giá
+            else
+              a.btn.btn-outline-primary.btn-sm.mt-3(href="/auth/login") Đăng nhập để đánh giá
 
-    //- Đường gạch ngang phân cách
-    hr.my-5
+        //- Shipping Tab
+        #tab-ship.tab-pane.fade
+          .row.g-3
+            .col-md-6
+              .d-flex.gap-3
+                i.bi.bi-truck.text-primary.fs-4
+                div
+                  h6.fw-bold Giao hàng nhanh
+                  p.text-muted.small 2-5 ngày làm việc toàn quốc
+            .col-md-6
+              .d-flex.gap-3
+                i.bi.bi-arrow-counterclockwise.text-success.fs-4
+                div
+                  h6.fw-bold Đổi trả miễn phí
+                  p.text-muted.small Trong vòng 30 ngày nếu hàng lỗi
+            .col-md-6
+              .d-flex.gap-3
+                i.bi.bi-shield-check.text-warning.fs-4
+                div
+                  h6.fw-bold Bảo hành chính hãng
+                  p.text-muted.small 12 tháng tại trung tâm
+            .col-md-6
+              .d-flex.gap-3
+                i.bi.bi-headset.text-danger.fs-4
+                div
+                  h6.fw-bold Hỗ trợ 24/7
+                  p.text-muted.small Liên hệ ngay khi cần
 
-    //- Phần Mô tả sản phẩm
-    .row
-      .col-12
-        h2.desc-title Mô tả sản phẩm
-        .desc-content
-           //- Dùng !{} để in ra HTML thuần từ database
-           p !{product.description}
+    //- Review Modal
+    if isLogin
+      #reviewModal.modal.fade(tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered
+          .modal-content
+            .modal-header
+              h5.modal-title#reviewModalLabel Đánh giá sản phẩm
+              button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+            .modal-body
+              form#popupReviewForm
+                input(type="hidden" name="productId" value=product._id)
+                input(type="hidden" name="rating" id="ratingInput" value="5")
+                .mb-4.text-center
+                  label.form-label.fw-bold Vui lòng chọn đánh giá
+                  .interactive-stars.fs-1.text-warning(style="cursor: pointer; display:flex; justify-content:center; gap:5px;")
+                    i.bi.bi-star-fill.star-item(data-val="1")
+                    i.bi.bi-star-fill.star-item(data-val="2")
+                    i.bi.bi-star-fill.star-item(data-val="3")
+                    i.bi.bi-star-fill.star-item(data-val="4")
+                    i.bi.bi-star-fill.star-item(data-val="5")
+                .mb-3
+                  label.form-label.fw-bold Chia sẻ thêm cảm nhận
+                  textarea.form-control(name="comment" rows="4" required placeholder="Sản phẩm có giống mô tả không? Chất lượng thế nào?")
+                .mb-3
+                  label.form-label.fw-bold Thêm hình ảnh (Tối đa 5 ảnh)
+                  input.form-control(type="file" name="images" multiple accept="image/*")
+                .d-grid
+                  button.btn.btn-primary.btn-lg(type="submit") Gửi đánh giá
+
+    //- Variant Modal
+    if variantAttributes && (variantAttributes.colors.length > 0 || variantAttributes.storages.length > 0 || variantAttributes.sizes.length > 0)
+      #variantModal.modal.fade(tabindex="-1" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered.modal-dialog-scrollable
+          .modal-content
+            .modal-header.border-0
+              button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+            .modal-body.pt-0
+              .variant-modal-header
+                img.variant-modal-img#modal-img(src=product.thumbnail alt=product.title)
+                div
+                  .variant-modal-price ₫#{product.newPrice.toLocaleString('vi-VN')}
+                  .text-muted Kho: #{product.stock}
+              
+              .variants-section.mt-3
+                if variantAttributes.storages.length > 0
+                  .mb-3
+                    .fw-bold.mb-2 Dung Lượng
+                    .d-flex.flex-wrap.gap-2
+                      each storage in variantAttributes.storages
+                        button.btn.btn-outline-secondary.variant-btn(type="button") #{storage}
+                
+                if variantAttributes.sizes.length > 0
+                  .mb-3
+                    .fw-bold.mb-2 Kích Thước
+                    .d-flex.flex-wrap.gap-2
+                      each size in variantAttributes.sizes
+                        button.btn.btn-outline-secondary.variant-btn(type="button") #{size}
+                        
+                if variantAttributes.colors.length > 0
+                  .mb-3
+                    .fw-bold.mb-2 Màu Sắc
+                    .d-flex.flex-wrap.gap-2
+                      each color in variantAttributes.colors
+                        button.btn.btn-outline-secondary.variant-btn(type="button") #{color}
+                        
+            .modal-footer.border-0
+              button.btn.btn-shopee-solid.w-100.py-2.fs-5#confirmVariantBtn(type="button") Xác Nhận
+
   script.
     document.addEventListener('DOMContentLoaded', function () {
-      const isLogin = !{JSON.stringify(isLogin)}
+      const isLogin = !{JSON.stringify(isLogin)};
 
-      const btn = document.querySelectorAll('.button-group button');
+      // Quantity buttons
+      window.changeQty = function(delta) {
+        // Change both main and modal inputs to keep them in sync
+        const inputMain = document.getElementById('qty-input');
+        const inputModal = document.getElementById('qty-modal-input');
+        
+        let max = 99;
+        let val = 1;
+        
+        if (inputMain) {
+          max = parseInt(inputMain.getAttribute('max')) || 99;
+          val = parseInt(inputMain.value) + delta;
+        } else if (inputModal) {
+          max = parseInt(inputModal.getAttribute('max')) || 99;
+          val = parseInt(inputModal.value) + delta;
+        }
+        
+        if (val < 1) val = 1;
+        if (val > max) val = max;
+        
+        if (inputMain) inputMain.value = val;
+        if (inputModal) inputModal.value = val;
+      };
 
-      if (btn) {
-        btn.forEach(btn=>{
-          btn.addEventListener('click', (e)=> {
+      // Change Main Image
+      window.changeMainImage = function(element, src) {
+        document.getElementById('main-image').src = src;
+        const modalImg = document.getElementById('modal-img');
+        if (modalImg) modalImg.src = src;
+        document.querySelectorAll('.thumbnail-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+      };
+
+      // Select Variant via thumbnail
+      window.selectVariantImage = function(element, src, colorText) {
+        window.changeMainImage(element, src);
+        
+        const vInput = document.getElementById('variantInputVal');
+        if (vInput) vInput.value = colorText;
+        
+        // Update modal variant buttons if they exist
+        const colorBtns = document.querySelectorAll('.variant-btn');
+        colorBtns.forEach(btn => {
+           if(btn.innerText.trim() === colorText) {
+              btn.classList.add('active');
+           } else {
+              btn.classList.remove('active');
+           }
+        });
+      };
+
+
+      // Variant selection logic
+      const variantBtns = document.querySelectorAll('.variant-btn');
+      variantBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const siblings = this.parentElement.querySelectorAll('.variant-btn');
+          siblings.forEach(s => s.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Gộp các variant đang được chọn
+          const activeVariants = document.querySelectorAll('.variant-btn.active');
+          const variantText = Array.from(activeVariants).map(b => b.innerText.trim()).join(', ');
+          
+          // Đẩy vào form Add to Cart
+          const vInput = document.getElementById('variantInputVal');
+          if (vInput) vInput.value = variantText;
+        });
+      });
+
+      // Actions
+      let currentAction = '';
+      const hasVariants = document.querySelectorAll('.variants-section .d-flex.flex-wrap').length > 0;
+      
+      const btns = document.querySelectorAll('.btn-action-main');
+      btns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
           if (!isLogin) {
             e.preventDefault();
-            alert('Bạn cần đăng nhập!');
-          }
-          if(btn.hasAttribute('checkout')){
-            const product = document.querySelector('.quantity-input');
-            const quantity = product.value;
-            const slug = product.getAttribute('slug');
-
-            window.location.href = `/order?product=${slug}&quantity=${quantity}`;
+            alert('Bạn cần đăng nhập để mua hàng!');
             return;
           }
-          })
-         })
+          
+          currentAction = btn.getAttribute('action-type');
+          
+          if (hasVariants) {
+            // Open modal
+            const myModal = new bootstrap.Modal(document.getElementById('variantModal'));
+            myModal.show();
+          } else {
+            // No variants, execute directly
+            executeAction();
+          }
+        });
+      });
+      
+      const confirmBtn = document.getElementById('confirmVariantBtn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          // Validate variants
+          const variantSections = document.querySelectorAll('.variants-section .d-flex.flex-wrap');
+          const activeVariants = document.querySelectorAll('.variant-btn.active');
+          if (variantSections.length > 0 && activeVariants.length < variantSections.length) {
+            alert('Vui lòng chọn đầy đủ Phân loại sản phẩm (Màu sắc, Size...)!');
+            return;
+          }
+          executeAction();
+        });
+      }
+      
+      function executeAction() {
+        if (currentAction === 'cart') {
+          document.getElementById('addCartForm').submit();
+        } else if (currentAction === 'checkout') {
+          const input = document.getElementById('qty-input');
+          const quantity = input ? input.value : 1;
+          const slug = input ? input.getAttribute('slug') : '';
+          const variantText = document.getElementById('variantInputVal') ? document.getElementById('variantInputVal').value : '';
+          window.location.href = `/order?product=${slug}&quantity=${quantity}&variant=${encodeURIComponent(variantText)}`;
         }
-      })
+      }
+
+      // Wishlist toggle
+      window.toggleWishlist = function(productId) {
+        if (!isLogin) {
+          alert('Bạn cần đăng nhập để thêm vào yêu thích!');
+          return;
+        }
+        const btn = document.querySelector('.wishlist-btn-main') || document.querySelector('.wishlist-btn');
+        fetch(`/wishlist/toggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.code === '00') {
+            btn.classList.toggle('active');
+            btn.querySelector('i').className = btn.classList.contains('active') ? 'bi bi-heart-fill me-1 text-danger' : 'bi bi-heart me-1';
+          }
+        });
+      };
+
+      // Cập nhật trạng thái wishlist mỗi khi load/hiển thị lại trang (tránh lỗi cache khi back lại)
+      window.addEventListener('pageshow', function() {
+        if (typeof isLogin !== 'undefined' && isLogin) {
+          fetch(`/wishlist/check/#{product._id}`)
+            .then(r => r.json())
+            .then(data => {
+              const btn = document.querySelector('.wishlist-btn-main') || document.querySelector('.wishlist-btn');
+              if (btn && data.code === '00') {
+                if (data.inWishlist) {
+                  btn.classList.add('active');
+                  btn.querySelector('i').className = 'bi bi-heart-fill me-1 text-danger';
+                } else {
+                  btn.classList.remove('active');
+                  btn.querySelector('i').className = 'bi bi-heart me-1';
+                }
+              }
+            })
+            .catch(e => console.error(e));
+        }
+      });
+
+      // Interactive stars logic
+      const stars = document.querySelectorAll('.interactive-stars .star-item');
+      const ratingInput = document.getElementById('ratingInput');
+      
+      if (stars.length > 0) {
+        stars.forEach(star => {
+          // Xử lý khi hover chuột
+          star.addEventListener('mouseover', function() {
+            const val = parseInt(this.getAttribute('data-val'));
+            stars.forEach(s => {
+              if(parseInt(s.getAttribute('data-val')) <= val) {
+                s.className = 'bi bi-star-fill star-item';
+              } else {
+                s.className = 'bi bi-star star-item';
+              }
+            });
+          });
+
+          // Xử lý khi kéo chuột ra khỏi khu vực sao
+          star.parentElement.addEventListener('mouseleave', function() {
+            const currentVal = parseInt(ratingInput.value);
+            stars.forEach(s => {
+              if(parseInt(s.getAttribute('data-val')) <= currentVal) {
+                s.className = 'bi bi-star-fill star-item';
+              } else {
+                s.className = 'bi bi-star star-item';
+              }
+            });
+          });
+
+          // Xử lý khi click
+          star.addEventListener('click', function() {
+            const val = parseInt(this.getAttribute('data-val'));
+            ratingInput.value = val;
+            stars.forEach(s => {
+              if(parseInt(s.getAttribute('data-val')) <= val) {
+                s.className = 'bi bi-star-fill star-item';
+              } else {
+                s.className = 'bi bi-star star-item';
+              }
+            });
+          });
+        });
+      }
+
+      // Handle Review Form Submission
+      const reviewForm = document.getElementById('popupReviewForm');
+      if (reviewForm) {
+        reviewForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const formData = new FormData(reviewForm);
+          const productId = formData.get('productId');
+
+          fetch(`/review/add/${productId}`, {
+            method: 'POST',
+            body: formData
+          })
+          .then(res => res.json())
+          .then(result => {
+            if (result.code === '00') {
+              alert(result.message || 'Cảm ơn bạn đã đánh giá!');
+              window.location.reload();
+            } else {
+              alert(result.message || 'Có lỗi xảy ra!');
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Lỗi kết nối!');
+          });
+        });
+      }
+
+
+
+      // ----------------------------------------
+      // Installment Calculator Logic
+      // ----------------------------------------
+      const instMonths = document.getElementById('instMonths');
+      if (instMonths) {
+        instMonths.addEventListener('change', () => {
+          const months = parseInt(instMonths.value);
+          const priceText = document.getElementById('instPrice').value.replace(/[^\d]/g, '');
+          const price = parseInt(priceText) || 0;
+          
+          // 30% prepay -> 70% remaining
+          const remaining = price * 0.7;
+          const monthly = Math.round(remaining / months);
+          
+          document.getElementById('instMonthly').textContent = monthly.toLocaleString('vi-VN') + 'đ';
+        });
+      }
+
+    });
+    
+    function openProductChat(productTitle) {
+      const chatBtn = document.getElementById('chat-toggle-btn');
+      if (chatBtn) {
+        const chatWindow = document.getElementById('chat-window');
+        if (chatWindow && chatWindow.classList.contains('d-none')) {
+          chatBtn.click();
+        }
+        setTimeout(() => {
+          const chatInput = document.getElementById('chat-input');
+          if (chatInput) {
+            chatInput.value = 'Tôi cần tư vấn về sản phẩm: ' + productTitle;
+            chatInput.focus();
+          }
+        }, 100);
+      } else {
+        alert('Vui lòng đăng nhập để sử dụng tính năng chat!');
+      }
+    }

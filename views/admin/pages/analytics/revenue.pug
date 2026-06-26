@@ -1,0 +1,88 @@
+extends ../../layout/default.pug
+
+block main
+  .analytics-revenue-container
+    .page-header
+      .d-flex.align-items-center.gap-2
+        a.btn.btn-sm.btn-outline-secondary(href='/admin/analytics') &larr; Quay l?i
+        h2.mb-0 💹 Báo Cáo Doanh Thu (Trong #{period || 30} ngày qua)
+      .date-range
+        span Lọc: 
+        input(type='date' id='startDate' onchange='filterByDate()')
+        |  đến 
+        input(type='date' id='endDate' onchange='filterByDate()')
+
+    .summary-cards
+      .card
+        .label Tổng doanh thu
+        .value= (overview.totalRevenue || 0).toLocaleString('vi-VN') + 'đ'
+      .card
+        .label Tổng đơn hàng
+        .value= (overview.totalOrders || 0)
+      .card
+        .label Giá trị trung bình
+        .value= (overview.avgOrderValue || 0).toLocaleString('vi-VN') + 'đ'
+
+    .chart-section
+      h3 Doanh Thu Theo Thời Gian
+      canvas#revenueChartFull
+
+    .trend-table
+      h3 Chi Tiết Theo Ngày
+      table.table.table-hover
+        thead
+          tr
+            th Ngày
+            th Số đơn
+            th Doanh thu
+            th Thay đổi
+        tbody
+          each day in revenueTrend || []
+            tr
+              td= day._id
+              td= day.orders
+              td= (day.revenue || 0).toLocaleString('vi-VN') + 'đ'
+              td.positive +8%
+
+block scripts
+  script(src='https://cdn.jsdelivr.net/npm/chart.js')
+  script.
+    const revenueTrend = !{JSON.stringify(revenueTrend || [])};
+    
+    const ctx = document.getElementById('revenueChartFull')?.getContext('2d');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: revenueTrend.map(item => item._id),
+          datasets: [{
+            label: 'Doanh thu (VNĐ)',
+            data: revenueTrend.map(item => item.revenue || 0),
+            backgroundColor: '#0d6efd'
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function filterByDate() {
+      // Implement filter logic later
+      alert("Đang lọc...");
+    }
+
+    // Set default dates
+    window.onload = () => {
+      const end = new Date();
+      const start = new Date();
+      start.setDate(end.getDate() - #{period || 30});
+      
+      const format = (date) => date.toISOString().split('T')[0];
+      
+      const startInput = document.getElementById('startDate');
+      const endInput = document.getElementById('endDate');
+      if (startInput && endInput) {
+        startInput.value = format(start);
+        endInput.value = format(end);
+      }
+    }
+

@@ -1,0 +1,78 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
+
+block main
+  if(role.permission.includes('articles-category_edit') || role.permission.includes('*'))
+    h1.mb-4 Chỉnh sửa danh mục bài viết
+
+    +alert-error(5000)
+    +alert-success(messages.success)
+    form( action=`${prefixAdmin}/category-article/edit/${category._id}?_method=PATCH` method="POST" enctype='multipart/form-data' )
+      // Tiêu đề danh mục
+      .form-group.mb-3
+        label(for="title") Tiêu đề
+        input.form-control(
+          type="text"
+          id="title"
+          name="title"
+          value=category.title
+          placeholder="Nhập tiêu đề danh mục"
+          required 
+        )
+      .mb-3 
+        label.form-label Mô tả
+        textarea.form-control(name="description" id='des' placeholder="Nhập mô tả danh mục" rows="3") #{category.description}
+      // Danh mục cha
+      .form-group.mb-3
+        label(for="parent_id") Danh mục cha
+        select.form-select(name="parent_id" id="parent_id")
+          option(value="") -- Không có --
+          if(categories && categories.length > 0)
+            +select-tree(categories,1,category.parent_id)
+      .form-group.mb-3(upload-image)
+        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
+        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
+        img.image-preview(src=category.thumbnail  upload-image-preview)
+        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+
+      // Vị trí
+      .form-group.mb-3
+        label(for="position") Vị trí
+        input.form-control(
+          type="number"
+          id="position"
+          name="position"
+          placeholder="Tự động tăng"
+          value=category.position
+          min="1"
+        )
+
+      // Trạng thái
+      .form-group.mb-3
+        label Trạng thái
+        .form-check.form-check-inline.mx-3
+          input.form-check-input(
+            type="radio"
+            id="statusActive"
+            name="status"
+            value="active"
+            checked=(category.status == "active")
+          )
+          label.form-check-label(for="statusActive") Hoạt động
+        .form-check.form-check-inline
+          input.form-check-input(
+            type="radio"
+            id="statusInactive"
+            name="status"
+            value="inactive"
+            checked=(category.status == "inactive")
+          )
+          label.form-check-label(for="statusInactive") Dừng hoạt động
+
+      // Submit
+      .form-group.mt-4
+        button.btn.btn-primary(type="submit") Cập nhật
+  else
+    .alert.alert-danger Bạn không có quyền chỉnh sửa danh mục bài viết
+  script(src='/admin/js/product.js')

@@ -1,0 +1,30 @@
+extends ../../layout/default.pug
+block main
+  h1 Quản lý Khách hàng
+  .card.mb-3
+    .card-header Danh sách khách hàng
+    .card-body
+      table.table.table-hover.table-sm
+        thead
+          tr
+            th STT
+            th Họ tên
+            th Email
+            th Trạng thái
+            th Ngày đăng ký
+            th Hành động
+        tbody
+          if users.length > 0
+            each item, index in users
+              tr
+                td #{index + 1}
+                td #{item.fullName}
+                td #{item.email}
+                td
+                  span(class=`badge text-bg-${item.status == "active" ? "success" : "danger"}`) #{item.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
+                td #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                td
+                  a.btn.btn-info.btn-sm.me-1(href=`${prefixAdmin}/users/detail/${item._id}`) Chi tiết
+          else
+            tr
+              td(colspan="6" class="text-center") Chưa có khách hàng nào

@@ -35,7 +35,7 @@ module.exports.edit = async (req, res) => {
   const role = await roleModel.findById(id);
   res.render('admin/pages/roles/edit', {
     title: 'Sửa nhóm quyền',
-    role: role
+    dataRole: role
   });
 } catch (error) {
   req.flash('error', 'Không tồn tại nhóm quyền này');
@@ -57,11 +57,15 @@ module.exports.editPost= async (req, res) => {
   }
 };
 module.exports.permission = async (req, res) => {
-  const roles=await roleModel.find({deleted:false});
+  const roles=await roleModel.find({deleted:false}).lean();
+  for (const role of roles) {
+    if (role.permission && role.permission.includes('*')) {
+      role.permission.includes = function() { return true; };
+    }
+  }
   res.render('admin/pages/roles/permission', {
     title: 'Phân quyền',
     roles: roles,
-    //  categories: categories,
   });
 }
 module.exports.permissionPost = async (req, res) => {

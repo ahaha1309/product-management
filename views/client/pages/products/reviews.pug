@@ -1,0 +1,104 @@
+extends /layout/default
+
+block content
+  .review-list-container
+    .review-header
+      h2 Đánh giá sản phẩm
+      .rating-summary
+        .rating-big= averageRating || 0
+        .rating-stars
+          - for (let i = 1; i <= 5; i++)
+            if i <= Math.round(averageRating)
+              span.star.filled ★
+            else
+              span.star ☆
+        .rating-count= ratingCount + ' đánh giá'
+      
+      // Rating distribution
+      .rating-distribution
+        - const ratings = [5, 4, 3, 2, 1]
+        each rating in ratings
+          .rating-item
+            span.label #{rating}★
+            .bar
+              .fill(style=`width: ${(ratingDistribution[rating] / Math.max(1, ratingCount)) * 100}%`)
+            span.count= ratingDistribution[rating] || 0
+
+    .reviews-body
+      each review in reviews
+        .review-card
+          .review-header-card
+            .user-info
+              img.avatar(src=review.userAvatar || '/image/default-avatar.jpg' alt=review.userName)
+              .user-details
+                .name= review.userName
+                if review.verifiedPurchase
+                  .badge.verified ✓ Đã mua hàng
+                .date= moment(review.createdAt).format('DD/MM/YYYY')
+            
+            .rating
+              - for (let i = 1; i <= 5; i++)
+                if i <= review.rating
+                  span.star ★
+                else
+                  span.star ☆
+          
+          .review-content
+            if review.title
+              .title= review.title
+            .comment= review.comment
+            
+            if review.images && review.images.length
+              .images
+                each img in review.images.slice(0, 3)
+                  img.review-image(src=img alt='Review image' onclick=`openImageModal('${img}')`)
+                  
+          .review-actions
+            .helpful
+              button.btn-helpful(onclick=`markHelpful('${review._id}', 'helpful')`)
+                i.icon-thumbs-up
+                | Hữu ích (#{review.helpful})
+              button.btn-unhelpful(onclick=`markHelpful('${review._id}', 'unhelpful')`)
+                i.icon-thumbs-down
+                | Không hữu ích (#{review.unhelpful})
+
+      // Pagination
+      if totalPages > 1
+        .pagination
+          - for (let page = 1; page <= totalPages; page++)
+            if page === currentPage
+              span.page.active= page
+            else
+              a.page(href=`?page=${page}`)= page
+
+    .review-footer
+      if isLogin
+        a.btn.btn-primary(href=`/review/add/${productId}`) Viết đánh giá
+
+block scripts
+  script.
+    function markHelpful(reviewId, type) {
+      fetch(`/review/${reviewId}/helpful`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: type })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === '00') {
+          location.reload();
+        }
+      });
+    }
+
+    function openImageModal(imageSrc) {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <img src="${imageSrc}" alt="Review image" style="max-width: 100%;">
+          <button class="btn-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }

@@ -1,16 +1,439 @@
-extends ../../layouts/default.pug 
+extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
 include ../../mixins/alert.pug
 
-block main 
-    .container.my-3
-        +alert-success(messages.success)
+block main
+  +alert-success(messages.success)
+  
+  .container.mt-3
+    .row
+      //- ==============================
+      //- MAIN CONTENT (100% WIDTH)
+      //- ==============================
+      .col-12
+        //- ===== HERO CAROUSEL =====
+        #heroCarousel.carousel.slide.mb-4(data-bs-ride="carousel")
+          .carousel-indicators
+            button(type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active")
+            button(type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1")
+            button(type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2")
+          .carousel-inner.hero-carousel(style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);")
+            .carousel-item.active
+              a(href="/product/detail/iphone-15-pro-max")
+                img.d-block.w-100(src="/image/hero_banner_1.png" alt="Banner 1" style="height: 350px; object-fit: cover; border-radius: 8px;")
+            .carousel-item
+              a(href="/articles/su-kien-ra-mat-san-pham-moi-nhat")
+                img.d-block.w-100(src="/image/hero_banner_2.png" alt="Banner 2" style="height: 350px; object-fit: cover; border-radius: 8px;")
+            .carousel-item
+              a(href="/articles/chuong-trinh-khuyen-mai-giam-gia-cuc-soc")
+                img.d-block.w-100(src="/image/hero_banner_3.png" alt="Banner 3" style="height: 350px; object-fit: cover; border-radius: 8px;")
+          button.carousel-control-prev(type="button" data-bs-target="#heroCarousel" data-bs-slide="prev")
+            span.carousel-control-prev-icon
+            span.visually-hidden Previous
+          button.carousel-control-next(type="button" data-bs-target="#heroCarousel" data-bs-slide="next")
+            span.carousel-control-next-icon
+            span.visually-hidden Next
+
+        //- ===== QUICK SALES BANNERS (HOANG HA STYLE) =====
+        .row.quick-sales-banners.mb-4
+          .col-md-3.col-6.mb-3
+            a(href="/articles/su-kien-ra-mat-san-pham-moi-nhat")
+              img.w-100(src="https://images.unsplash.com/photo-1607082350899-7e105aa886ae?w=600&q=80", alt="Promo 1", style="border-radius: 8px;")
+          .col-md-3.col-6.mb-3
+            a(href="/articles/chuong-trinh-khuyen-mai-giam-gia-cuc-soc")
+              img.w-100(src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=600&q=80", alt="Promo 2", style="border-radius: 8px;")
+          .col-md-3.col-6.mb-3
+            a(href="/articles/su-kien-ra-mat-san-pham-moi-nhat")
+              img.w-100(src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&q=80", alt="Promo 3", style="border-radius: 8px;")
+          .col-md-3.col-6.mb-3
+            a(href="/articles/chuong-trinh-khuyen-mai-giam-gia-cuc-soc")
+              img.w-100(src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80", alt="Promo 4", style="border-radius: 8px;")
+
+        //- ===== HORIZONTAL CATEGORY GRID =====
+        if categories && categories.length > 0
+          .category-row-wrapper
+            each item in categories
+              a.category-item(href=`/product/c/${item.slug}`)
+                img(src=(item.thumbnail || 'https://dummyimage.com/60x60/efefef/333.png') alt=item.title onerror="this.src='https://dummyimage.com/60x60/efefef/333.png'")
+                span #{item.title}
+
+        //- ===== TRUST BADGES =====
+        .row.mb-5.trust-badges-wrapper(style="margin-left: 0; margin-right: 0;")
+          .col-md-3.col-6.text-center.mb-3.mt-2
+            .trust-badge-item
+              i.bi.bi-shield-check(style="font-size: 30px; color: #d0011b;")
+              .trust-badge-text 100% Chính Hãng
+          .col-md-3.col-6.text-center.mb-3.mt-2
+            .trust-badge-item
+              i.bi.bi-truck(style="font-size: 30px; color: #d0011b;")
+              .trust-badge-text Free Ship
+          .col-md-3.col-6.text-center.mb-3.mt-2
+            .trust-badge-item
+              i.bi.bi-cash-coin(style="font-size: 30px; color: #d0011b;")
+              .trust-badge-text Hoàn Tiền 111%
+          .col-md-3.col-6.text-center.mb-3.mt-2
+            .trust-badge-item
+              i.bi.bi-arrow-return-left(style="font-size: 30px; color: #d0011b;")
+              .trust-badge-text Đổi Trả 15 Ngày
+
+        //- ===== HORIZONTAL PROMO BANNER (HOANG HA STYLE) =====
+        .promo-horizontal-banner.mb-5
+          a(href="/articles/chuong-trinh-khuyen-mai-giam-gia-cuc-soc")
+            img.w-100(src="/image/promo_banner.png", alt="Promo Banner", style="border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-height: 250px; object-fit: cover; object-position: center;")
+
+        //- ===== FLASH SALE =====
+        if flashSaleProducts && flashSaleProducts.length > 0
+          .flash-sale-wrapper.mb-5
+            .flash-sale-header
+              .flash-sale-title
+                img(src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/flashsale/fb1088de81e42c4e538967ec12cb5caa.png" alt="Flash Sale" style="height: 24px;")
+                .flash-sale-timer
+                  span.timer-box#h 02
+                  span :
+                  span.timer-box#m 15
+                  span :
+                  span.timer-box#s 43
+              a.flash-sale-see-all(href="/product?discount=true") Xem tất cả &gt;
+            
+            .flash-sale-products-container
+              button.flash-sale-prev(type="button") <i class="bi bi-chevron-left"></i>
+              button.flash-sale-next(type="button") <i class="bi bi-chevron-right"></i>
+              .flash-sale-products
+                each item in flashSaleProducts
+                  a.flash-item(href=`/product/detail/${item.slug}`)
+                    .product-image
+                      .inner-image
+                        img(src=item.thumbnail alt=item.title onerror="this.src='https://dummyimage.com/200x200/efefef/333333.png&text=Sản+Phẩm'")
+                      if item.discountPercentage > 0
+                        .inner-discount -#{item.discountPercentage}%
+                    .flash-price #{Number(item.priceNew).toLocaleString('vi-VN')}đ
+                    .flash-progress
+                      .flash-progress-bar(style=`width: ${Math.floor(Math.random() * 50) + 50}%`)
+                      .flash-progress-text Đang bán chạy
+
+        //- ===== FEATURED PRODUCTS =====
+        if productFeatured && productFeatured.length > 0
+          .discovery-wrapper.mb-5
+            .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
+              .discovery-header(style="margin: 0; border: none; color: #f53d2d;") <i class="bi bi-star-fill me-2"></i>SẢN PHẨM NỔI BẬT
+              a.text-danger.fw-bold(href="/product" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
+            +product-grid(productFeatured.slice(0, 6))
+
+        //- ===== JUST FOR YOU (Dành Riêng Cho Bạn) =====
+        if personalizedProducts && personalizedProducts.length > 0
+          .discovery-wrapper.mb-5
+            .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2(style="border-bottom-color: #10b981 !important;")
+              .discovery-header(style="color: #10b981; margin: 0; border: none;") <i class="bi bi-person-heart me-2"></i>DÀNH RIÊNG CHO BẠN
+              a.text-success.fw-bold(href="/product?filter=personalized" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
+            +product-grid(personalizedProducts.slice(0, 12))
+
+        //- ===== RECENTLY VIEWED (Sản phẩm vừa xem) =====
+        if recentlyViewedProducts && recentlyViewedProducts.length > 0
+          .discovery-wrapper.mb-5
+            .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2(style="border-bottom-color: #6366f1 !important;")
+              .discovery-header(style="color: #6366f1; margin: 0; border: none;") <i class="bi bi-clock-history me-2"></i>SẢN PHẨM VỪA XEM
+            +product-grid(recentlyViewedProducts.slice(0, 12))
+
+        //- ===== DAILY DISCOVERY (Gợi Ý Hôm Nay) =====
+        .discovery-wrapper.mb-5
+          .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
+            .discovery-header(style="margin: 0; border: none;") GỢI Ý HÔM NAY
+            a.text-primary.fw-bold(href="/product?filter=daily" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
+          +product-grid(dailyDiscoveryProducts.slice(0, 12))
+
+        //- ===== TIN TỨC MỚI NHẤT =====
+        if latestArticles && latestArticles.length > 0
+          .discovery-wrapper.mb-5
+            .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
+              .discovery-header(style="margin: 0; border: none; color: #17a2b8;") <i class="bi bi-newspaper me-2"></i>TIN TỨC MỚI NHẤT
+              a.text-info.fw-bold(href="/articles" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
+            .row
+              each article in latestArticles.slice(0, 4)
+                .col-md-3.col-6.mb-3
+                  a.text-decoration-none(href=`/articles/${article.slug}`)
+                    .card.h-100.border-0.shadow-sm.article-card-hover
+                      img.card-img-top(src=(article.thumbnail || 'https://dummyimage.com/300x200/efefef/333.png') alt=article.title style="height: 150px; object-fit: cover;")
+                      .card-body
+                        h6.card-title.text-dark.fw-bold(style="font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;") #{article.title}
+
+    //- ===== SEO FOOTER TEXT (Bottom of full container) =====
+    .seo-footer-text.mt-5.mb-4(style="border-top: 1px solid #e5e5e5; padding-top: 30px; text-align: justify;")
+      h2.reveal.fade-left(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") VANHA TECH - THẾ GIỚI MUA SẮM TRỰC TUYẾN DÀNH CHO BẠN
+      p.reveal.fade-left.delay-100(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px;") VanHa Tech mang đến cho bạn không gian mua sắm trực tuyến thú vị, tin cậy và hoàn toàn an toàn! Là một trong những điểm đến mua sắm uy tín, VanHa Tech cam kết cung cấp trải nghiệm giao dịch trực tuyến liền mạch, đáp ứng mọi nhu cầu mua sắm của bạn. Với sự bảo vệ và giám sát chặt chẽ từ chúng tôi, bạn có thể hoàn toàn yên tâm chọn lựa và đặt hàng nhanh chóng hơn bao giờ hết.
+
+      h2.reveal.fade-left(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") MUA SẮM ONLINE ĐƠN GIẢN, NHANH CHÓNG VÀ ĐẢM BẢO
+      p.reveal.fade-left.delay-100(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 10px;") Nếu bạn đang tìm kiếm một nền tảng thương mại điện tử uy tín để mua sắm các sản phẩm công nghệ, điện tử và tiêu dùng, VanHa Tech chính là sự lựa chọn tuyệt vời. Chúng tôi xây dựng một môi trường giao dịch minh bạch, giúp người dùng dễ dàng tìm kiếm thông tin chi tiết về sản phẩm, đánh giá từ khách hàng và các chương trình khuyến mãi hấp dẫn. Hệ thống tư vấn trực tuyến luôn sẵn sàng giải đáp mọi thắc mắc của bạn về cấu hình, công năng và chính sách bảo hành của từng mặt hàng.
+      p.reveal.fade-left.delay-200(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px;") Bên cạnh đó, VanHa Tech đã hợp tác chặt chẽ với các đơn vị vận chuyển uy tín hàng đầu nhằm mang đến dịch vụ giao hàng tận nơi nhanh chóng, nguyên vẹn và tiết kiệm chi phí. Chúng tôi tự tin mang lại sự thuận tiện và an tâm tuyệt đối trên mỗi đơn hàng của bạn.
+
+      h2.reveal.fade-left(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") TRẢI NGHIỆM MUA SẮM THÔNG MINH MỌI LÚC, MỌI NƠI
+      p.reveal.fade-left.delay-100(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 10px;") Mua sắm tại VanHa Tech không bị giới hạn bởi không gian và thời gian. Nền tảng của chúng tôi được tối ưu hóa cho cả máy tính và điện thoại di động với những ưu điểm nổi bật:
+      ul.reveal.fade-left.delay-200(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px; padding-left: 20px;")
+        li Giao diện thân thiện, tinh tế và cực kỳ dễ sử dụng. Bạn có thể nhanh chóng tra cứu sản phẩm nổi bật, tìm kiếm danh mục yêu thích và theo dõi giỏ hàng chỉ với vài thao tác cơ bản.
+        li Hệ thống quản lý tài khoản và đơn hàng thông minh giúp bạn chủ động theo dõi hành trình vận chuyển một cách chi tiết.
+        li Liên tục cập nhật các chương trình Flash Sale, mã giảm giá và voucher quà tặng giá trị cao.
+        li Hệ thống chăm sóc khách hàng sẵn sàng hỗ trợ trực tuyến để giải quyết mọi sự cố hay yêu cầu bảo hành.
+
+      h2.reveal.fade-left(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") HÀNG CHÍNH HÃNG TỪ CÁC THƯƠNG HIỆU LỚN VỚI GIÁ ƯU ĐÃI
+      p.reveal.fade-left.delay-100(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px;") Mua sắm thiết bị công nghệ hay đồ gia dụng thông minh tại VanHa Tech là một quyết định đầu tư an toàn. Chúng tôi tự hào là đối tác bán lẻ của nhiều thương hiệu danh tiếng toàn cầu. Bạn có thể dễ dàng tìm thấy các sản phẩm đỉnh cao từ Apple, Samsung, Sony, Xiaomi cho đến các dòng phụ kiện thời thượng. Không chỉ cam kết 100% hàng chính hãng, VanHa Tech còn mang đến những mức giá cạnh tranh nhất thị trường nhờ các chương trình Trợ giá, xả kho hay Lễ hội mua sắm hàng tháng.
+
+      h2.reveal.fade-left(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") AN TÂM THANH TOÁN VÀ BẢO HÀNH CHU ĐÁO
+      p.reveal.fade-left.delay-100(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 10px;") Mọi giao dịch tại VanHa Tech đều được áp dụng các chuẩn mã hóa bảo mật cấp độ cao nhất. Chúng tôi tuyệt đối bảo vệ dữ liệu cá nhân cũng như thông tin thanh toán của khách hàng. Số tiền thanh toán trực tuyến sẽ được bảo vệ an toàn cho đến khi đơn hàng được giao nhận thành công và khách hàng hoàn toàn hài lòng.
+      p.reveal.fade-left.delay-200(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px;") Chính sách đổi trả linh hoạt và bảo hành tận tâm từ đội ngũ kỹ thuật của chúng tôi đảm bảo rằng quyền lợi của bạn luôn được đặt lên hàng đầu. Khám phá ngay vô vàn sản phẩm độc đáo với ưu đãi giao hàng tận nơi tại website chính thức của VanHa Tech!
+
+  style.
+    .sidebar-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .sidebar-title {
+      font-weight: bold;
+      font-size: 15px;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      color: #333;
+    }
+    .sidebar-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-list li {
+      margin-bottom: 12px;
+    }
+    .sidebar-list a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .sidebar-list a:hover {
+      color: var(--primary-color);
+    }
+    .sidebar-list img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+    .sidebar-product-item, .sidebar-article-item {
+      display: flex;
+      align-items: flex-start;
+      text-decoration: none;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .sidebar-product-item:last-child, .sidebar-article-item:last-child {
+      margin-bottom: 0;
+    }
+    .sidebar-product-item img, .sidebar-article-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 10px;
+      border: 1px solid #eee;
+    }
+    .sidebar-article-item img {
+      width: 80px;
+      height: 50px;
+    }
+    .sidebar-product-item .info, .sidebar-article-item .title {
+      flex: 1;
+    }
+    .sidebar-product-item .title {
+      font-size: 13px;
+      font-weight: 500;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    .sidebar-article-item .title {
+      font-size: 12px;
+      font-weight: 500;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      color: #333;
+    }
+    .sidebar-product-item .price {
+      font-size: 14px;
+      font-weight: bold;
+      color: #ee4d2d;
+    }
+    .sidebar-product-item .old-price {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
+    .sidebar-product-item:hover .title, .sidebar-article-item:hover .title {
+      color: var(--primary-color);
+    }
+    .trust-badges-wrapper {
+      background: #fff;
+      padding: 15px 0 5px 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .trust-badge-item {
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .trust-badge-item:hover {
+      transform: translateY(-5px);
+    }
+    .trust-badge-text {
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 8px;
+      color: #333;
+    }
+    .flash-sale-wrapper {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .flash-price {
+      color: #ffeb3b; 
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .discovery-header {
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .btn-view-more {
+      background: linear-gradient(90deg, #ff4d4f, #ff7875);
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(255, 77, 79, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .btn-view-more:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 77, 79, 0.5);
+      color: white;
+    }
+    
+    /* Shopee style product grid uses 6 items per row, which matches col-xl-2 col-lg-2 natively. No overrides needed. */
+
+  script.
+    // Init Bootstrap Carousel for auto-slide
+    document.addEventListener('DOMContentLoaded', function () {
+      var myCarousel = document.querySelector('#heroCarousel');
+      if (myCarousel) {
+        var carousel = new bootstrap.Carousel(myCarousel, {
+          interval: 3000,
+          ride: 'carousel'
+        });
+      }
+    });
+
+    // Flash Sale Timer Animation
+    function startTimer() {
+      const elH = document.getElementById('h');
+      const elM = document.getElementById('m');
+      const elS = document.getElementById('s');
+      if (!elH || !elM || !elS) return;
+
+      // Tính toán thời gian đến cuối ngày hiện tại
+      const now = new Date();
+      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      let diffSeconds = Math.floor((endOfDay - now) / 1000);
+
+      setInterval(() => {
+        if (diffSeconds > 0) {
+          diffSeconds--;
+        } else {
+          // Reset sang ngày mới nếu đếm ngược kết thúc
+          diffSeconds = 24 * 60 * 60 - 1;
+        }
+
+        const h = Math.floor(diffSeconds / 3600);
+        const m = Math.floor((diffSeconds % 3600) / 60);
+        const s = diffSeconds % 60;
         
-        // ✅ FEATURED PRODUCTS
-        +box-head("⭐ Sản phẩm nổi bật")
-        +product-grid(productFeatured)
+        elH.innerText = h.toString().padStart(2, '0');
+        elM.innerText = m.toString().padStart(2, '0');
+        elS.innerText = s.toString().padStart(2, '0');
+      }, 1000);
+    }
+    startTimer();
+
+    // Flash Sale Slider Logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const flashSaleContainer = document.querySelector('.flash-sale-products');
+      const flashNextBtn = document.querySelector('.flash-sale-next');
+      const flashPrevBtn = document.querySelector('.flash-sale-prev');
+      
+      if (flashSaleContainer) {
+        const scrollAmt = 220; // Độ dài scroll
+        let autoScrollInterval;
+
+        const autoScroll = () => {
+          // Tự động cuộn sang phải (hiển thị các item tiếp theo) -> Sản phẩm trượt sang trái
+          if (flashSaleContainer.scrollLeft + flashSaleContainer.clientWidth >= flashSaleContainer.scrollWidth - 10) {
+            flashSaleContainer.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            flashSaleContainer.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+          }
+        };
+
+        const startAutoScroll = () => {
+          clearInterval(autoScrollInterval); // Đảm bảo không bị chồng interval
+          if (flashSaleContainer.scrollWidth > flashSaleContainer.clientWidth) {
+            autoScrollInterval = setInterval(autoScroll, 3000);
+          }
+        };
+        const stopAutoScroll = () => { clearInterval(autoScrollInterval); };
+
+        if(flashNextBtn) {
+          flashNextBtn.addEventListener('click', () => {
+            stopAutoScroll();
+            flashSaleContainer.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+            startAutoScroll();
+          });
+        }
         
-        // ✅ NEW PRODUCTS
-        +box-head("🆕 Sản phẩm mới nhất")
-        +product-grid(productNew)
+        if(flashPrevBtn) {
+          flashPrevBtn.addEventListener('click', () => {
+            stopAutoScroll();
+            flashSaleContainer.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+            startAutoScroll();
+          });
+        }
+
+        // Tạm dừng tự cuộn khi rê chuột vào
+        flashSaleContainer.addEventListener('mouseenter', stopAutoScroll);
+        flashSaleContainer.addEventListener('mouseleave', startAutoScroll);
+        
+        // Cập nhật lại khi resize cửa sổ
+        window.addEventListener('resize', () => {
+          stopAutoScroll();
+          startAutoScroll();
+        });
+
+        startAutoScroll();
+      }
+    });

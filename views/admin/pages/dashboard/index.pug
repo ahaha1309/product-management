@@ -1,3 +1,351 @@
-extends ../../layout/default.pug 
-block main 
-  h1 #{message}
+extends ../../layout/default.pug
+
+block main
+  .admin-dashboard
+    //- Welcome banner
+    .dashboard-welcome
+      .welcome-content
+        h1.welcome-title
+          i.bi.bi-speedometer2.me-3
+          | Dashboard Quản Trị
+        p.welcome-subtitle Xin chào Admin! Đây là tổng quan hệ thống VanHa Tech Store.
+      .welcome-meta
+        span.meta-badge
+          i.bi.bi-calendar3.me-1
+          span#current-date
+
+    //- Stats Cards Row 1
+    .stats-row
+      .stat-card.stat-revenue
+        .stat-icon
+          i.bi.bi-currency-dollar
+        .stat-info
+          .stat-label Doanh thu (30 ngày)
+          .stat-value#stat-revenue --
+          .stat-trend
+            i.bi.bi-arrow-up.text-success
+            span.text-success Đang tải...
+
+      .stat-card.stat-orders
+        .stat-icon
+          i.bi.bi-bag-check
+        .stat-info
+          .stat-label Đơn hàng hôm nay
+          .stat-value#stat-orders --
+          .stat-trend
+            i.bi.bi-clock
+            span Đang tải...
+
+      .stat-card.stat-users
+        .stat-icon
+          i.bi.bi-people
+        .stat-info
+          .stat-label Tổng khách hàng
+          .stat-value#stat-users --
+          .stat-trend
+            i.bi.bi-arrow-up.text-success
+            span.text-success Đang tải...
+
+      .stat-card.stat-products
+        .stat-icon
+          i.bi.bi-box-seam
+        .stat-info
+          .stat-label Sản phẩm active
+          .stat-value#stat-products --
+          .stat-trend
+            i.bi.bi-check-circle.text-success
+            span.text-success Đang tải...
+
+    //- Main content grid
+    .dashboard-grid
+      //- Left column
+      .dashboard-main
+
+        //- Recent Orders
+        .dashboard-card
+          .card-header-admin
+            h6.card-title-admin
+              i.bi.bi-bag-check.me-2
+              | Đơn hàng gần đây
+            a.card-action(href=`${prefixAdmin}/orders`) Xem tất cả →
+          .table-responsive
+            table.admin-table
+              thead
+                tr
+                  th Mã đơn
+                  th Khách hàng
+                  th Sản phẩm
+                  th Số tiền
+                  th Trạng thái
+                  th Thanh toán
+              tbody#recent-orders-body
+                tr
+                  td(colspan="6")
+                    .text-center.py-3.text-muted
+                      i.bi.bi-hourglass-split.me-2
+                      | Đang tải đơn hàng...
+
+        //- Top Products
+        .dashboard-card.mt-4
+          .card-header-admin
+            h6.card-title-admin
+              i.bi.bi-trophy.me-2
+              | Sản phẩm bán chạy
+            a.card-action(href=`${prefixAdmin}/analytics`) Phân tích →
+          #top-products-list
+            .text-center.py-3.text-muted
+              i.bi.bi-hourglass-split.me-2
+              | Đang tải...
+
+      //- Right column
+      .dashboard-side
+
+        //- Quick links
+        .dashboard-card
+          .card-header-admin
+            h6.card-title-admin
+              i.bi.bi-lightning-fill.me-2
+              | Truy cập nhanh
+          .quick-links-grid
+            a.quick-link-item(href=`${prefixAdmin}/product/create`)
+              i.bi.bi-plus-circle
+              span Thêm SP
+            a.quick-link-item(href=`${prefixAdmin}/product`)
+              i.bi.bi-box-seam
+              span Sản phẩm
+            a.quick-link-item(href=`${prefixAdmin}/orders`)
+              i.bi.bi-bag-check
+              span Đơn hàng
+            a.quick-link-item(href=`${prefixAdmin}/accounts`)
+              i.bi.bi-people
+              span Tài khoản
+            a.quick-link-item(href=`${prefixAdmin}/reviews`)
+              i.bi.bi-star
+              span Reviews
+            a.quick-link-item(href=`${prefixAdmin}/analytics`)
+              i.bi.bi-graph-up
+              span Thống kê
+            a.quick-link-item(href=`${prefixAdmin}/loyalty`)
+              i.bi.bi-award
+              span Loyalty
+            a.quick-link-item(href=`${prefixAdmin}/articles`)
+              i.bi.bi-newspaper
+              span Bài viết
+
+        //- Review summary
+        .dashboard-card.mt-4
+          .card-header-admin
+            h6.card-title-admin
+              i.bi.bi-star.me-2
+              | Reviews mới
+            a.card-action(href=`${prefixAdmin}/reviews`) Duyệt →
+          #latest-reviews-list
+            .text-center.py-3.text-muted
+              i.bi.bi-hourglass-split.me-2
+              | Đang tải...
+
+        //- System status
+        .dashboard-card.mt-4
+          .card-header-admin
+            h6.card-title-admin
+              i.bi.bi-shield-check.me-2
+              | Trạng thái hệ thống
+          .status-list
+            .status-item
+              .status-dot.status-ok
+              span Database MongoDB
+              span.ms-auto.badge.bg-success Online
+            .status-item
+              .status-dot.status-ok
+              span VNPAY Gateway
+              span.ms-auto.badge.bg-success Active
+            .status-item
+              .status-dot.status-ok
+              span Email Service
+              span.ms-auto.badge.bg-warning Kiểm tra
+            .status-item
+              .status-dot.status-ok
+              span Chatbot AI
+              span.ms-auto.badge.bg-success Active
+
+  style.
+    .admin-dashboard { padding: 0; }
+    .dashboard-welcome {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .welcome-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+    .welcome-subtitle { opacity: 0.85; margin: 0; }
+    .meta-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 24px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+    }
+    .stat-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .stat-revenue .stat-icon { background: #e8f5e9; color: #2e7d32; }
+    .stat-orders .stat-icon { background: #e3f2fd; color: #1565c0; }
+    .stat-users .stat-icon { background: #fce4ec; color: #c62828; }
+    .stat-products .stat-icon { background: #fff3e0; color: #e65100; }
+    .stat-label { font-size: 0.8rem; color: #666; margin-bottom: 4px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
+    .stat-trend { font-size: 0.78rem; margin-top: 4px; }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      padding: 0 24px 24px;
+    }
+    .dashboard-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+    }
+    .card-header-admin {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .card-title-admin { font-size: 1rem; font-weight: 600; margin: 0; color: #1a1a2e; }
+    .card-action { font-size: 0.85rem; color: #667eea; text-decoration: none; }
+    .card-action:hover { color: #764ba2; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .admin-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #666; border-bottom: 2px solid #e9ecef; }
+    .admin-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+    .admin-table tr:hover td { background: #fafafa; }
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .quick-link-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 8px;
+      border-radius: 10px;
+      background: #f8f9fa;
+      text-decoration: none;
+      color: #333;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .quick-link-item i { font-size: 1.2rem; color: #667eea; }
+    .quick-link-item:hover { background: #e8eeff; transform: translateY(-2px); }
+    .status-list { display: flex; flex-direction: column; gap: 10px; }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+    @media (max-width: 1200px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+  script.
+    // Set current date
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Load dashboard stats via API
+    async function loadDashboardData() {
+      try {
+        const resp = await fetch('#{prefixAdmin}/analytics/api/metrics');
+        const data = await resp.json();
+        if (data.code !== '00') return;
+        const stats = data.data;
+
+        // Update stats
+        if (stats.generalStats) {
+          const g = stats.generalStats;
+          document.getElementById('stat-revenue').textContent = (g.totalRevenue || 0).toLocaleString('vi-VN') + 'đ';
+          document.getElementById('stat-orders').textContent = (g.todayOrders || g.totalOrders || 0).toLocaleString('vi-VN');
+          document.getElementById('stat-users').textContent = (g.totalUsers || 0).toLocaleString('vi-VN');
+          document.getElementById('stat-products').textContent = (g.totalProducts || 0).toLocaleString('vi-VN');
+        }
+
+        // Recent orders
+        if (stats.liveOrders && stats.liveOrders.length > 0) {
+          const tbody = document.getElementById('recent-orders-body');
+          tbody.innerHTML = stats.liveOrders.map(order => `
+            <tr>
+              <td><strong>#${order.orderCode || 'N/A'}</strong></td>
+              <td>${order.userName || 'N/A'}</td>
+              <td>${order.products ? order.products.length : 0} SP</td>
+              <td>${(order.amount || 0).toLocaleString('vi-VN')}đ</td>
+              <td><span class="badge bg-${order.status === 'finish' ? 'success' : order.status === 'canceled' ? 'danger' : order.status === 'confirm' ? 'primary' : 'warning'}">${order.status || 'pending'}</span></td>
+              <td><span class="badge bg-${order.paymentStatus === 'success' ? 'success' : order.paymentStatus === 'failed' ? 'danger' : 'warning'}">${order.paymentStatus || 'pending'}</span></td>
+            </tr>
+          `).join('');
+        } else {
+          document.getElementById('recent-orders-body').innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Không có đơn hàng nào</td></tr>';
+        }
+
+        // Latest reviews
+        if (stats.latestReviews && stats.latestReviews.length > 0) {
+          const reviewsList = document.getElementById('latest-reviews-list');
+          reviewsList.innerHTML = stats.latestReviews.slice(0, 4).map(r => `
+            <div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong style="font-size:0.85rem;">${r.userName || 'Ẩn danh'}</strong>
+                <span style="color:#ffc107;">${'★'.repeat(r.rating || 5)}</span>
+              </div>
+              <p style="font-size:0.8rem;color:#666;margin:4px 0 0;">${(r.comment || '').substring(0, 60)}${r.comment && r.comment.length > 60 ? '...' : ''}</p>
+            </div>
+          `).join('');
+        }
+
+        // Top products
+        if (stats.topSellingProducts && stats.topSellingProducts.length > 0) {
+          const topList = document.getElementById('top-products-list');
+          topList.innerHTML = stats.topSellingProducts.map((p, i) => `
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+              <span style="width:24px;height:24px;background:#667eea;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">${i+1}</span>
+              <img src="${p.thumbnail || '/image/logo.png'}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'N/A'}</div>
+                <div style="font-size:0.75rem;color:#666;">Đã bán: ${p.totalSold || 0}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+      } catch(e) {
+        console.log('Dashboard load error:', e);
+      }
+    }
+    loadDashboardData();

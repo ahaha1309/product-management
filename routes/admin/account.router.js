@@ -1,7 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const upload = multer();
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Chỉ cho phép tải lên hình ảnh!'), false);
+    }
+  }
+});
 const uploadMiddleware=require('../../middleware/admin/upload.cloud')
 const Controller = require('../../controller/admin/account.controller');
 const validate = require('../../validate/admin/account.validate');
@@ -26,5 +35,5 @@ router.patch(
   validate.editPatch,
   Controller.editPost
 );
-// router.get('/detail/:id', Controller.detail);
+router.get('/detail/:id', Controller.detail);
 module.exports = router;

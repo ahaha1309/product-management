@@ -9,6 +9,8 @@ router.get('/history',orderController.historyOrder)
 router.get('/detail/:id',orderController.detailOrder)
 //hủy đơn hàng
 router.post('/cancel/:id',orderController.cancelOrder)
+//mua lại
+router.get('/rebuy/:id',orderController.rebuyOrder)
 //post update infouser
 router.post('/update-info',orderController.editInfo)
 // POST đặt hàng

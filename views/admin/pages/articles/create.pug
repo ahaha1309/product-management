@@ -4,7 +4,7 @@ block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
   +alert-success(messages.success)
-  if(role.permission.includes('articles_create'))
+  if(role.permission.includes('articles_create') || role.permission.includes('*'))
     h1 Tạo mới bài viết
     form(action=`${prefixAdmin}/articles/create` method="POST" enctype='multipart/form-data')
       .mb-3
@@ -17,8 +17,8 @@ block main
         label(for="article_category_id") Danh mục bài viết
         select.form-select(name="article_category_id" id="article_category_id")
           option(value="") -- Không có --
-          if(categories && categories.length > 0)
-            +select-tree(categories)
+          if(categoryArticle && categoryArticle.length > 0)
+            +select-tree(categoryArticle)
         label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
         input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
         img.image-preview(src=``  upload-image-preview)

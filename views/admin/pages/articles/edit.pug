@@ -4,9 +4,9 @@ block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
   +alert-success(messages.success)
-  if(role.permission.includes('articles_edit'))
+  if(role.permission.includes('articles_edit') || role.permission.includes('*'))
     h1 Chỉnh sửa bài viết
-    form(action=`${prefixAdmin}/articles/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
+    form(action=`${prefixAdmin}/articles/edit/${article._id}?_method=PATCH` method="POST" enctype='multipart/form-data')
       .mb-3
         label.form-label Tiêu đề
         input.form-control(type="text" name="title" value=article.title placeholder="Nhập tiêu đề bài viết" required)
@@ -17,8 +17,8 @@ block main
         label(for="article_category_id") Danh mục bài viết
         select.form-select(name="article_category_id" id="article_category_id")
           option(value="") -- Không có --
-          if(categories && categories.length > 0)
-            +select-tree(categories,1,article.article_category_id)
+          if(categoryArticle && categoryArticle.length > 0)
+            +select-tree(categoryArticle,1,article.article_category_id)
         label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
         input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
         img.image-preview(src=`${article.thumbnail}`  upload-image-preview)

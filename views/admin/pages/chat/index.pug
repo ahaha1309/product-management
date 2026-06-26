@@ -1,0 +1,68 @@
+extends ../../layout/default.pug
+
+block main
+  h1 #{pageTitle}
+  
+  .row.mt-4
+    .col-md-4
+      .card
+        .card-header Danh sách khách hàng
+        .list-group.list-group-flush#chat-user-list
+          if chatUsers && chatUsers.length > 0
+            each user in chatUsers
+              a.list-group-item.list-group-item-action.chat-user-item(href="#" data-userid=user._id data-fullname=user.fullName)
+                div.d-flex.align-items-center
+                  img.rounded-circle.me-2(src=(user.avatar || 'https://dummyimage.com/40x40/ccc/fff') width="40" height="40")
+                  div
+                    strong #{user.fullName}
+                    br
+                    small.text-muted #{user.email}
+          else
+            .p-3.text-center.text-muted Chưa có khách hàng nào nhắn tin.
+    
+    .col-md-8
+      .card#admin-chat-window.d-none
+        .card-header.bg-primary.text-white
+          strong#current-chat-name Đang chat với...
+          input#current-chat-userid(type="hidden" value="")
+        .card-body#admin-chat-messages(style="height: 500px; overflow-y: auto; background: #f8f9fa;")
+          //- Lịch sử tin nhắn sẽ được load bằng JS
+          .text-center.text-muted Chọn một khách hàng để xem tin nhắn
+        .card-footer
+          form#admin-chat-form.d-flex(action="")
+            input#admin-chat-input.form-control.me-2(type="text" placeholder="Nhập câu trả lời..." required autocomplete="off")
+            button.btn.btn-primary(type="submit") 
+              i.bi.bi-send-fill
+              |  Gửi
+
+  style.
+    .chat-message {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-message .bubble {
+      padding: 10px 15px;
+      border-radius: 15px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .chat-message.self {
+      align-items: flex-end;
+    }
+    .chat-message.self .bubble {
+      background: #0d6efd;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-message.client {
+      align-items: flex-start;
+    }
+    .chat-message.client .bubble {
+      background: #e9ecef;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+    
+  script(src="/socket.io/socket.io.js")
+  script(src="/admin/js/chat.js")

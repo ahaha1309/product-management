@@ -1,10 +1,16 @@
-header.header 
-  .container-fluid 
+header.header.admin-header
+  .container-fluid
     .row.align-items-center
       .col-3
-         .inner-logo 
-             a(href="/admin/dashboard") ADMIN  
+        .inner-logo
+          a(href="/admin/dashboard") 
+            i.bi.bi-grid-fill.me-2
+            span ADMIN PANEL
       .col-9
-         .text-right.float-end.mx-5 
-              a(href=`${prefixAdmin}/my-account` class="btn btn-primary btn-sm me-2") #{account.fullname}
-              a(href=`${prefixAdmin}/auth/logout` class="btn btn-danger") Đăng xuất
+        .text-end.header-actions
+          a.btn.btn-light.btn-sm.me-3.user-badge(href=`${prefixAdmin}/my-account`)
+            i.bi.bi-person-circle.me-2
+            span #{account.fullname}
+          a.btn.btn-outline-danger.btn-sm(href=`${prefixAdmin}/auth/logout`)
+            i.bi.bi-box-arrow-right.me-1
+            span Đăng xuất

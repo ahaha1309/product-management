@@ -1,5 +1,132 @@
-footer.footer 
-   .container 
-      .row 
-          .justify-content-center.pt-2.pb-2 Copyright © 2026. All rights reserved. Designed by 
-              a(href="https://www.facebook.com/duyquang.dev" target="_blank" style="color: #e5e7ea; text-decoration: none;") Van Ha
+footer.footer-main
+  .footer-top
+    .container
+      .footer-grid
+        //- Col 1: Brand
+        .footer-col.footer-brand-col
+          .footer-logo
+            a.art-logo(href="/")
+              if settingGeneral && settingGeneral.logo
+                img(src=settingGeneral.logo alt="Logo" style="height: 40px; margin-right: 8px; border-radius: 4px;")
+              else
+                i.bi.bi-lightning-charge-fill
+              if settingGeneral && settingGeneral.websiteName
+                span #{settingGeneral.websiteName}
+              else
+                span VanHa
+                span.highlight Tech
+          p.footer-tagline #{settingGeneral && settingGeneral.shortDescription ? settingGeneral.shortDescription : 'Mua sắm thông minh - Tiết kiệm tối đa. Hàng nghìn sản phẩm chính hãng đến tay bạn mỗi ngày.'}
+          .footer-social
+            a.social-link(href=(settingGeneral && settingGeneral.facebook ? settingGeneral.facebook : "https://facebook.com") target="_blank" title="Facebook")
+              i.bi.bi-facebook
+            a.social-link(href=(settingGeneral && settingGeneral.instagram ? settingGeneral.instagram : "https://instagram.com") target="_blank" title="Instagram")
+              i.bi.bi-instagram
+            a.social-link(href=(settingGeneral && settingGeneral.youtube ? settingGeneral.youtube : "https://youtube.com") target="_blank" title="YouTube")
+              i.bi.bi-youtube
+            a.social-link(href=(settingGeneral && settingGeneral.tiktok ? settingGeneral.tiktok : "https://tiktok.com") target="_blank" title="TikTok")
+              i.bi.bi-tiktok
+
+        //- Col 2: Quick Links
+        .footer-col
+          h5.footer-heading Liên kết nhanh
+          ul.footer-links
+            li
+              a(href="/")
+                i.bi.bi-chevron-right.me-1
+                | Trang chủ
+            li
+              a(href="/product")
+                i.bi.bi-chevron-right.me-1
+                | Sản phẩm
+            li
+              a(href="/articles")
+                i.bi.bi-chevron-right.me-1
+                | Tin tức & Blog
+            li
+              a(href="/about")
+                i.bi.bi-chevron-right.me-1
+                | Giới thiệu
+            li
+              a(href="/contact")
+                i.bi.bi-chevron-right.me-1
+                | Liên hệ
+            li
+              a(href="/auth/login")
+                i.bi.bi-chevron-right.me-1
+                | Đăng nhập
+            li
+              a(href="/auth/register")
+                i.bi.bi-chevron-right.me-1
+                | Đăng ký
+
+        //- Col 3: Customer Service
+        .footer-col
+          h5.footer-heading Hỗ trợ khách hàng
+          ul.footer-links
+            li
+              a(href="/order/history")
+                i.bi.bi-chevron-right.me-1
+                | Theo dõi đơn hàng
+            li
+              a(href="/loyalty")
+                i.bi.bi-chevron-right.me-1
+                | Chương trình điểm thưởng
+            li
+              a(href="/wishlist")
+                i.bi.bi-chevron-right.me-1
+                | Danh sách yêu thích
+            li
+              a(href="/policy/return")
+                i.bi.bi-chevron-right.me-1
+                | Chính sách đổi trả
+            li
+              a(href="/policy/privacy")
+                i.bi.bi-chevron-right.me-1
+                | Bảo mật thông tin
+
+        //- Col 4: Contact Info
+        .footer-col
+          h5.footer-heading Thông tin liên hệ
+          .footer-contact-list
+            .footer-contact-item
+              i.bi.bi-geo-alt-fill
+              span #{settingGeneral && settingGeneral.address ? settingGeneral.address : 'Số 22 Đường Cái Trống Quân, Hạ Lôi, Mê Linh, Hà Nội'}
+            .footer-contact-item
+              i.bi.bi-telephone-fill
+              a(href=`tel:${settingGeneral && settingGeneral.phone ? settingGeneral.phone : '+84886911791'}`) #{settingGeneral && settingGeneral.phone ? settingGeneral.phone : '0886 911 791'}
+            .footer-contact-item
+              i.bi.bi-envelope-fill
+              a(href=`mailto:${settingGeneral && settingGeneral.email ? settingGeneral.email : 'vanhanguyen2k4@gmail.com'}`) #{settingGeneral && settingGeneral.email ? settingGeneral.email : 'vanhanguyen2k4@gmail.com'}
+            .footer-contact-item
+              i.bi.bi-clock-fill
+              span T2 - T7: 8:00 - 22:00
+
+          //- Newsletter
+          .footer-newsletter.mt-3
+            p.small.text-muted Nhận ưu đãi độc quyền qua email:
+            .newsletter-form
+              input#newsletter-email.newsletter-input(type="email" placeholder="Email của bạn")
+              button.newsletter-btn(type="button" onclick="subscribeNewsletter()")
+                i.bi.bi-send
+
+  //- Footer Bottom
+  .footer-bottom
+    .container
+      .footer-bottom-inner
+        p.mb-0 #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : '© 2026 VanHa Tech Store. Bảo lưu mọi quyền. Thiết kế bởi Van Ha'}
+        .footer-payment
+          span.payment-badge COD
+          span.payment-badge Chuyển khoản
+          span.payment-badge VNPAY
+          span.payment-badge Momo
+
+  script.
+    function subscribeNewsletter() {
+      const email = document.getElementById('newsletter-email').value;
+      if (!email || !email.includes('@')) {
+        alert('Vui lòng nhập email hợp lệ!');
+        return;
+      }
+      // TODO: POST to /newsletter/subscribe
+      alert('Cảm ơn bạn đã đăng ký! Chúng tôi sẽ gửi ưu đãi đến ' + email);
+    }

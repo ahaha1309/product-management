@@ -1,0 +1,77 @@
+extends ../../layout/default.pug
+
+block main
+  .analytics-customers-container
+    .page-header.d-flex.align-items-center.gap-2.mb-4
+      a.btn.btn-sm.btn-outline-secondary(href='/admin/analytics') &larr; Quay l?i
+      h2.mb-0 👥 Phân Tích Khách Hàng
+
+    .metrics-section
+      .metric
+        .icon 👤
+        .label Tổng khách hàng
+        .value= (customerMetrics.totalCustomers || 0).toLocaleString('vi-VN')
+      
+      .metric
+        .icon 🆕
+        .label Khách mới (30 ngày)
+        .value= (customerMetrics.newCustomersMonth || 0).toLocaleString('vi-VN')
+      
+      .metric
+        .icon 🔄
+        .label Khách lặp lại
+        .value= (customerMetrics.repeatCustomers || 0).toLocaleString('vi-VN')
+      
+      .metric
+        .icon 📊
+        .label Tỷ lệ lặp lại
+        .value= (customerMetrics.repeatRate || 0) + '%'
+
+    .conversion-section
+      h3 Funnel Chuyển Đổi
+      canvas#conversionChart
+
+    .retention-section.card
+      h3 Retention Rate
+      table.table.table-hover
+        thead
+          tr
+            th Tuần
+            th Khách hiện tại
+            th Retention %
+        tbody
+          tr
+            td Tuần 1
+            td 1,234
+            td 100%
+          tr
+            td Tuần 2
+            td 987
+            td 80%
+          tr
+            td Tuần 3
+            td 654
+            td 53%
+
+block scripts
+  script(src='https://cdn.jsdelivr.net/npm/chart.js')
+  script.
+    const conversionCtx = document.getElementById('conversionChart')?.getContext('2d');
+    if (conversionCtx) {
+      new Chart(conversionCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Visitors', 'Add to Cart', 'Checkout', 'Purchase'],
+          datasets: [{
+            label: 'Lượt tương tác',
+            data: [10000, 3000, 1500, 750],
+            backgroundColor: ['#0d6efd', '#0b5ed7', '#0a58ca', '#084298']
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true
+        }
+      });
+    }
+

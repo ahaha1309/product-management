@@ -1,0 +1,156 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  .container.py-5
+
+    //- Breadcrumb
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Trang chủ
+        li.breadcrumb-item
+          a(href="/articles") Tin tức
+        li.breadcrumb-item.active #{article.title}
+
+    .row.g-5
+      //- Article content
+      .col-lg-8
+        .article-detail-card
+          if article.thumbnail
+            img.article-detail-thumb(src=article.thumbnail alt=article.title)
+          .article-detail-body
+            h1.article-detail-title #{article.title}
+            .article-meta
+              span.meta-item
+                i.bi.bi-calendar3.me-1
+                | #{moment ? moment(article.createdAt).format('DD/MM/YYYY') : 'N/A'}
+              span.meta-divider |
+              span.meta-item
+                i.bi.bi-clock.me-1
+                | 5 phút đọc
+            .article-detail-content
+              p !{article.description}
+
+            //- Share
+            .article-share.mt-5.pt-4.border-top
+              h6.fw-bold.mb-3 Chia sẻ bài viết:
+              .d-flex.gap-2
+                a.btn.btn-primary.btn-sm(href="https://www.facebook.com/sharer/sharer.php" target="_blank")
+                  i.bi.bi-facebook.me-1
+                  | Facebook
+                a.btn.btn-info.btn-sm.text-white(href="#")
+                  i.bi.bi-twitter.me-1
+                  | Twitter
+                a.btn.btn-success.btn-sm(href="#")
+                  i.bi.bi-whatsapp.me-1
+                  | WhatsApp
+
+            //- Comments Section
+            .article-comments.mt-5.pt-4.border-top
+              h4.fw-bold.mb-4 Bình luận (2)
+              .comment-form.mb-4
+                textarea.form-control.mb-2(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết...")
+                button.btn.btn-primary(type="button" onclick="alert('Đã gửi bình luận!')") Gửi bình luận
+              
+              .comment-list
+                .comment-item.d-flex.gap-3.mb-4
+                  img.rounded-circle(src="https://ui-avatars.com/api/?name=Khach+Hang&background=random" width="45" height="45")
+                  div
+                    .fw-bold Khách hàng
+                    .text-muted.small 2 giờ trước
+                    p.mt-1 Bài viết rất hữu ích, cảm ơn shop!
+                .comment-item.d-flex.gap-3.mb-4
+                  img.rounded-circle(src="https://ui-avatars.com/api/?name=Thanh+Vien&background=random" width="45" height="45")
+                  div
+                    .fw-bold Thành viên
+                    .text-muted.small 5 giờ trước
+                    p.mt-1 Mình cũng đang định mua sản phẩm này theo tư vấn.
+
+      //- Sidebar
+      .col-lg-4
+        .article-sidebar
+          //- Recent articles
+          if recentArticles && recentArticles.length > 0
+            .sidebar-card
+              h6.sidebar-title
+                i.bi.bi-clock.me-2
+                | Bài viết gần đây
+              .recent-articles-list
+                each recent in recentArticles
+                  a.recent-article-item(href=`/articles/${recent.slug}`)
+                    if recent.thumbnail
+                      img.recent-thumb(src=recent.thumbnail alt=recent.title)
+                    else
+                      .recent-thumb-placeholder
+                        i.bi.bi-image
+                    .recent-info
+                      .recent-title #{recent.title}
+                      .recent-date #{moment ? moment(recent.createdAt).format('DD/MM/YYYY') : ''}
+
+          //- CTA
+          .sidebar-card.mt-4
+            .sidebar-cta
+              i.bi.bi-bag-heart.sidebar-cta-icon
+              h6.fw-bold Mua sắm ngay!
+              p.text-muted.small Hàng nghìn sản phẩm chính hãng đang chờ bạn
+              a.btn.btn-primary.w-100.mt-2(href="/product")
+                i.bi.bi-shop.me-2
+                | Xem sản phẩm
+
+  style.
+    .article-detail-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .article-detail-thumb {
+      width: 100%;
+      height: 360px;
+      object-fit: cover;
+    }
+    .article-detail-body { padding: 32px; }
+    .article-detail-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
+    .article-meta { display: flex; align-items: center; gap: 12px; color: #888; font-size: 0.85rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+    .meta-divider { color: #ddd; }
+    .article-detail-content { font-size: 1rem; line-height: 1.8; color: #444; }
+    .article-sidebar { position: sticky; top: 80px; }
+    .sidebar-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+    }
+    .sidebar-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; color: #1a1a2e; }
+    .recent-articles-list { display: flex; flex-direction: column; gap: 12px; }
+    .recent-article-item {
+      display: flex;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      align-items: flex-start;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .recent-article-item:hover { background: #f8f9ff; }
+    .recent-thumb {
+      width: 60px; height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .recent-thumb-placeholder {
+      width: 60px; height: 60px;
+      background: #e8eeff;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #667eea; font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .recent-title { font-size: 0.85rem; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+    .recent-date { font-size: 0.75rem; color: #888; }
+    .sidebar-cta { text-align: center; }
+    .sidebar-cta-icon { font-size: 2.5rem; color: #667eea; display: block; margin-bottom: 8px; }

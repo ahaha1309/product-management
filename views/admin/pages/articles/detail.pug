@@ -1,0 +1,17 @@
+extends ../../layout/default.pug
+block main
+  h1 Chi tiết Bài Viết
+  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/articles`) &larr; Quay lại
+  if article
+    .card
+      .card-header
+        h3= article.title
+      .card-body
+        if article.thumbnail
+          img.img-fluid.mb-3(src=article.thumbnail alt=article.title style="max-height: 300px; object-fit: cover;")
+        .content !{article.description}
+        hr
+        p.text-muted Tác giả: #{article.author || 'Admin'}
+        p.text-muted Tạo lúc: #{new Date(article.createdAt).toLocaleString('vi-VN')}
+  else
+    p.text-danger Không tìm thấy bài viết.

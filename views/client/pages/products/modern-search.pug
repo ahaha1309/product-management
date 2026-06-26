@@ -1,0 +1,177 @@
+extends /layout/default
+
+block content
+  .container
+    .search-header
+      h1 🔍 Tìm kiếm sản phẩm
+      p Lọc và tìm kiếm những sản phẩm bạn yêu thích
+    
+    // ===== FILTERS SIDEBAR =====
+    .search-container
+      .filters-sidebar
+        // Search box
+        .filter-section
+          h3 Tìm kiếm
+          input.search-input(
+            type='text'
+            placeholder='Nhập từ khóa...'
+            id='searchInput'
+            onchange='performAdvancedSearch()'
+          )
+        
+        // Price range filter
+        .filter-section
+          h3 Giá tiền
+          .price-inputs
+            input.price-input(
+              type='number'
+              placeholder='Từ'
+              id='filterMinPrice'
+              onchange='performAdvancedSearch()'
+            )
+            span -
+            input.price-input(
+              type='number'
+              placeholder='Đến'
+              id='filterMaxPrice'
+              onchange='performAdvancedSearch()'
+            )
+          
+          .price-ranges
+            button.price-range(onclick="filterByPrice(0, 500000)") Dưới 500K
+            button.price-range(onclick="filterByPrice(500000, 1000000)") 500K - 1M
+            button.price-range(onclick="filterByPrice(1000000, 5000000)") 1M - 5M
+            button.price-range(onclick="filterByPrice(5000000, 999999999)") 5M+
+        
+        // Category filter
+        .filter-section
+          h3 Danh mục
+          select#filterCategory(onchange='performAdvancedSearch()')
+            option(value='') Tất cả danh mục
+            each cat in categories || []
+              option(value=cat._id)= cat.title
+        
+        // Rating filter
+        .filter-section
+          h3 Đánh giá
+          .rating-options
+            - for (let i = 5; i >= 1; i--)
+              button.rating-option(onclick=`filterByRating(${i})`)
+                - for (let j = 0; j < i; j++)
+                  span ⭐
+                span #{i} sao trở lên
+        
+        // Attributes filter
+        if attributes
+          .filter-section
+            h3 Màu sắc
+            .attribute-options
+              each color in attributes.colors || []
+                button.color-option(
+                  style=`background-color: ${color.toLowerCase()};`
+                  onclick=`filterByAttribute('color', '${color}')`
+                  title=color
+                )
+          
+          .filter-section
+            h3 Kích cỡ
+            .size-options
+              each size in attributes.sizes || []
+                button.size-option(onclick=`filterByAttribute('size', '${size}')`) #{size}
+        
+        // Other filters
+        .filter-section
+          .filter-tag(onclick='performAdvancedSearch()')
+            input(type='checkbox' id='inStock')
+            label(for='inStock') Còn hàng
+          
+          .filter-tag(onclick='performAdvancedSearch()')
+            input(type='checkbox' id='onSale')
+            label(for='onSale') Đang giảm giá
+        
+        button.btn.btn-outline(onclick='clearFilters()') Xóa bộ lọc
+
+      // ===== PRODUCTS GRID =====
+      .products-section
+        .filters-toolbar
+          .sort-group
+            label Sắp xếp:
+            select#sortBy(onchange='performAdvancedSearch()')
+              option(value='newest') Mới nhất
+              option(value='price-asc') Giá: Thấp → Cao
+              option(value='price-desc') Giá: Cao → Thấp
+              option(value='rating') Đánh giá cao
+              option(value='best-seller') Bán chạy
+          
+          .view-toggle
+            button#gridView.view-btn(onclick='switchView("grid")') ⊞
+            button#listView.view-btn(onclick='switchView("list")') ☰
+
+        #searchResults.products-grid
+          // Will be populated by search results
+          each product in products || []
+            .product-card
+              .product-image
+                img(src=product.thumbnail alt=product.title)
+                if product.discountPercentage
+                  .product-badge -#{product.discountPercentage}%
+                .product-actions
+                  button.product-action-btn(onclick=`addToCart('${product._id}')`) 🛒
+                  button.product-action-btn(onclick=`toggleCompare('${product._id}')`) ⚖️
+                  button.product-action-btn(onclick=`addToWishlist('${product._id}')`) ❤️
+              
+              .product-info
+                .product-title= product.title
+                .product-rating
+                  span ⭐ #{product.rating || 0}/5
+                  span (#{product.reviewCount || 0})
+                
+                .product-price
+                  span.price-current= (product.newPrice || 0).toLocaleString('vi-VN') + 'đ'
+                  if product.price > product.newPrice
+                    span.price-original= (product.price || 0).toLocaleString('vi-VN') + 'đ'
+                
+                button.add-to-cart-btn(onclick=`addToCart('${product._id}')`) + Thêm vào giỏ
+
+        // ===== PAGINATION =====
+        if pagination
+          .pagination
+            - const maxPage = pagination.totalPages
+            - const currentPage = pagination.currentPage
+            
+            if currentPage > 1
+              a.page-btn(href=`?page=1`) « Đầu
+              a.page-btn(href=`?page=${currentPage - 1}`) ‹ Trước
+            
+            - for (let i = Math.max(1, currentPage - 2); i <= Math.min(maxPage, currentPage + 2); i++)
+              if i === currentPage
+                span.page-btn.active= i
+              else
+                a.page-btn(href=`?page=${i}`)= i
+            
+            if currentPage < maxPage
+              a.page-btn(href=`?page=${currentPage + 1}`) Sau ›
+              a.page-btn(href=`?page=${maxPage}`) Cuối »
+
+block scripts
+  script(src='/js/modern-features.js')
+  script.
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterMinPrice').value = '';
+      document.getElementById('filterMaxPrice').value = '';
+      document.getElementById('filterCategory').value = '';
+      performAdvancedSearch();
+    }
+    
+    function switchView(view) {
+      const grid = document.getElementById('searchResults');
+      if (view === 'list') {
+        grid.classList.add('list-view');
+      } else {
+        grid.classList.remove('list-view');
+      }
+    }
+    
+    performAdvancedSearch();
+  

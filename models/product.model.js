@@ -12,6 +12,10 @@ const Productschema = new mongoose.Schema({
   discountPercentage: Number,
   stock: Number,
   thumbnail: String,
+  images: {
+    type: Array,
+    default: []
+  },
   status: String,
   position: Number,
   createdBy: {

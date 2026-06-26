@@ -1,0 +1,259 @@
+extends ../../layouts/default.pug
+
+block main
+  //- Hero Section
+  .about-hero
+    .container
+      .about-hero-content
+        .about-badge.reveal.fade-left
+          i.bi.bi-info-circle.me-2
+          | Về chúng tôi
+        h1.about-hero-title.reveal.fade-left.delay-100 VanHa Tech Store
+        p.about-hero-subtitle.reveal.fade-left.delay-200 Chúng tôi không chỉ bán hàng - chúng tôi mang đến trải nghiệm mua sắm tuyệt vời nhất cho từng khách hàng.
+        .about-hero-cta.reveal.fade-left.delay-300
+          a.btn-hero-primary(href="/product")
+            i.bi.bi-bag-fill.me-2
+            | Mua sắm ngay
+          a.btn-hero-secondary(href="/contact")
+            i.bi.bi-telephone.me-2
+            | Liên hệ chúng tôi
+
+  //- Stats section
+  section.about-stats
+    .container
+      .about-stats-grid
+        .about-stat-item.reveal.zoom-in
+          .about-stat-number 5+
+          .about-stat-label Năm kinh nghiệm
+        .about-stat-divider
+        .about-stat-item.reveal.zoom-in.delay-100
+          .about-stat-number 10K+
+          .about-stat-label Sản phẩm
+        .about-stat-divider
+        .about-stat-item.reveal.zoom-in.delay-200
+          .about-stat-number 50K+
+          .about-stat-label Khách hàng hài lòng
+        .about-stat-divider
+        .about-stat-item.reveal.zoom-in.delay-300
+          .about-stat-number 4.8★
+          .about-stat-label Đánh giá trung bình
+
+  .container.py-5
+
+    //- Story Section
+    .row.g-5.align-items-center.mb-5
+      .col-lg-6.reveal.fade-left
+        .about-story-badge Câu chuyện của chúng tôi
+        h2.fw-bold.mb-4 Từ đam mê công nghệ đến cửa hàng đa ngành hàng đầu
+        p.text-muted.mb-3 VanHa Tech Store được thành lập với sứ mệnh đơn giản: mang đến cho người Việt những sản phẩm chất lượng cao với mức giá cạnh tranh nhất, kèm theo dịch vụ hậu mãi tận tâm.
+        p.text-muted.mb-4 Từ những ngày đầu chỉ chuyên về điện tử, chúng tôi đã không ngừng mở rộng danh mục để phục vụ đa dạng nhu cầu của khách hàng - từ thời trang, gia dụng, mỹ phẩm đến đồ thể thao.
+        .about-features-list
+          .about-feature-item
+            i.bi.bi-check-circle-fill.text-primary
+            span Sản phẩm chính hãng 100%
+          .about-feature-item
+            i.bi.bi-check-circle-fill.text-primary
+            span Bảo hành dài hạn, hỗ trợ 24/7
+          .about-feature-item
+            i.bi.bi-check-circle-fill.text-primary
+            span Giao hàng nhanh toàn quốc
+          .about-feature-item
+            i.bi.bi-check-circle-fill.text-primary
+            span Đổi trả dễ dàng trong 30 ngày
+
+      .col-lg-6.reveal.fade-right.delay-200
+        .about-image-grid
+          .about-img-main(style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;height:320px;display:flex;align-items:center;justify-content:center;color:white;font-size:5rem;")
+            i.bi.bi-shop
+          .about-img-cards
+            .about-mini-card
+              i.bi.bi-truck.text-primary.mb-2
+              .fw-bold Free Ship
+              .text-muted.small Đơn từ 300K
+            .about-mini-card
+              i.bi.bi-shield-check.text-success.mb-2
+              .fw-bold Chính hãng
+              .text-muted.small 100% đảm bảo
+            .about-mini-card
+              i.bi.bi-headset.text-warning.mb-2
+              .fw-bold Hỗ trợ
+              .text-muted.small 24/7
+            .about-mini-card
+              i.bi.bi-star.text-danger.mb-2
+              .fw-bold VIP
+              .text-muted.small Thành viên
+
+    //- Core Values
+    .text-center.mb-5.reveal
+      h2.fw-bold Giá trị cốt lõi
+      p.text-muted Những gì chúng tôi cam kết với mỗi khách hàng
+
+    .row.g-4.mb-5
+      .col-md-4.reveal.delay-100
+        .about-value-card
+          .value-icon(style="background:linear-gradient(135deg,#667eea,#764ba2)")
+            i.bi.bi-award
+          h5.fw-bold.mt-3 Chất lượng hàng đầu
+          p.text-muted Mọi sản phẩm đều được kiểm định kỹ lưỡng trước khi đến tay khách hàng. Chúng tôi chỉ hợp tác với các nhà cung cấp uy tín.
+      .col-md-4.reveal.delay-200
+        .about-value-card
+          .value-icon(style="background:linear-gradient(135deg,#f093fb,#f5576c)")
+            i.bi.bi-heart
+          h5.fw-bold.mt-3 Khách hàng là trọng tâm
+          p.text-muted Sự hài lòng của khách hàng là ưu tiên số 1. Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giải quyết mọi vấn đề.
+      .col-md-4.reveal.delay-300
+        .about-value-card
+          .value-icon(style="background:linear-gradient(135deg,#4facfe,#00f2fe)")
+            i.bi.bi-lightning
+          h5.fw-bold.mt-3 Đổi mới liên tục
+          p.text-muted Chúng tôi không ngừng cải thiện dịch vụ, cập nhật công nghệ mới nhất để mang đến trải nghiệm mua sắm tốt nhất.
+
+    //- Team section
+    .text-center.mb-5.reveal
+      h2.fw-bold Đội ngũ của chúng tôi
+      p.text-muted Những con người tận tâm phía sau VanHa Tech Store
+
+    .row.g-4.mb-5
+      .col-md-4.reveal.delay-100
+        .team-card.text-center
+          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
+            i.bi.bi-person
+          h5.fw-bold Nguyễn Văn Hà
+          p.text-muted.small Nhà sáng lập & CEO
+          p.text-muted.small Đam mê công nghệ và thương mại điện tử
+      .col-md-4.reveal.delay-200
+        .team-card.text-center
+          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
+            i.bi.bi-person
+          h5.fw-bold Đội hỗ trợ khách hàng
+          p.text-muted.small Customer Success
+          p.text-muted.small Luôn sẵn sàng giúp bạn 24/7
+      .col-md-4.reveal.delay-300
+        .team-card.text-center
+          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#4facfe,#00f2fe);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
+            i.bi.bi-person
+          h5.fw-bold Đội vận chuyển
+          p.text-muted.small Logistics Team
+          p.text-muted.small Giao hàng nhanh, an toàn
+
+    //- CTA
+    .about-cta-section.reveal.zoom-in
+      .about-cta-content
+        h3.fw-bold.text-white Bắt đầu trải nghiệm mua sắm ngay hôm nay!
+        p.text-white.opacity-75 Hàng nghìn sản phẩm chính hãng đang chờ bạn. Miễn phí vận chuyển cho đơn hàng từ 300K.
+        .d-flex.gap-3.justify-content-center.mt-4
+          a.btn.btn-light.fw-bold.px-5.py-3(href="/product")
+            i.bi.bi-bag-fill.me-2
+            | Mua sắm ngay
+          a.btn.btn-outline-light.fw-bold.px-5.py-3(href="/auth/register")
+            i.bi.bi-person-plus.me-2
+            | Đăng ký miễn phí
+
+  style.
+    .about-hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 80px 0;
+      color: white;
+    }
+    .about-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(102,126,234,0.3);
+      border: 1px solid rgba(102,126,234,0.5);
+      color: #a5b4fc;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .about-hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .about-hero-subtitle { font-size: 1.1rem; opacity: 0.8; max-width: 600px; margin-bottom: 32px; }
+    .about-hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-hero-primary {
+      background: linear-gradient(135deg,#667eea,#764ba2);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-hero-secondary {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .about-stats {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 0;
+    }
+    .about-stats-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .about-stat-item { text-align: center; color: white; }
+    .about-stat-number { font-size: 2.5rem; font-weight: 800; }
+    .about-stat-label { font-size: 0.9rem; opacity: 0.85; }
+    .about-stat-divider { width: 1px; height: 60px; background: rgba(255,255,255,0.3); }
+    .about-story-badge {
+      display: inline-block;
+      background: #e8eeff;
+      color: #667eea;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .about-features-list { display: flex; flex-direction: column; gap: 10px; }
+    .about-feature-item { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
+    .about-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .about-img-main { grid-column: 1 / -1; }
+    .about-mini-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      font-size: 0.85rem;
+    }
+    .about-mini-card i { font-size: 1.5rem; }
+    .about-value-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      transition: all 0.3s;
+    }
+    .about-value-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+    .value-icon {
+      width: 70px; height: 70px;
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: white;
+      margin: 0 auto 16px;
+    }
+    .team-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .about-cta-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 24px;
+      padding: 60px 40px;
+      text-align: center;
+      margin: 60px 0;
+    }
+    }
