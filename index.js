@@ -177,7 +177,11 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(port, () => {
-  console.log(`tao dang chay o port ${port} voi socket.io`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  server.listen(port, () => {
+    console.log(`tao dang chay o port ${port} voi socket.io`);
+  });
+}
+
+module.exports = app;
 
