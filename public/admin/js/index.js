@@ -102,6 +102,40 @@ document.addEventListener(
         alertElement.classList.add('alert-hidden');
       });
     }
+
+    // --- Mobile Sidebar Toggle Logic ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const adminSidebar = document.getElementById('admin-sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+    if (mobileMenuBtn && adminSidebar && sidebarBackdrop) {
+      const toggleSidebar = () => {
+        const isClosed = adminSidebar.classList.contains('-translate-x-full');
+        if (isClosed) {
+          // Open sidebar
+          adminSidebar.classList.remove('-translate-x-full');
+          sidebarBackdrop.classList.remove('hidden');
+          // Add small delay for transition
+          setTimeout(() => {
+            sidebarBackdrop.classList.remove('opacity-0');
+            sidebarBackdrop.classList.add('opacity-100');
+          }, 10);
+        } else {
+          // Close sidebar
+          adminSidebar.classList.add('-translate-x-full');
+          sidebarBackdrop.classList.remove('opacity-100');
+          sidebarBackdrop.classList.add('opacity-0');
+          setTimeout(() => {
+            sidebarBackdrop.classList.add('hidden');
+          }, 300); // Wait for transition
+        }
+      };
+
+      mobileMenuBtn.addEventListener('click', toggleSidebar);
+      sidebarBackdrop.addEventListener('click', toggleSidebar);
+    }
+    // ------------------------------------
+
   },
   false
 );

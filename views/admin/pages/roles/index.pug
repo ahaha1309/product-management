@@ -29,7 +29,7 @@ block main
           table(class="w-full text-left border-collapse whitespace-nowrap")
             thead
               tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
-                th(class="px-4 py-3 text-center w-16") STT
+                th(class="px-4 py-3 text-center w-16 hidden md:table-cell") STT
                 th(class="px-4 py-3") Nhóm quyền
                 th(class="px-4 py-3") Mô tả ngắn
                 th(class="px-4 py-3 text-right w-32") Hành động 
@@ -38,7 +38,7 @@ block main
               if(roles && roles.length > 0)
                 each Item, Index in roles
                   tr(class="hover:bg-surface-50 transition-colors group")
-                    td(class="px-4 py-3 text-center text-surface-500 font-medium") #{(Index+1)}
+                    td(class="px-4 py-3 text-center text-surface-500 font-medium hidden md:table-cell") #{(Index+1)}
                     
                     td(class="px-4 py-3")
                       div(class="flex items-center gap-2")

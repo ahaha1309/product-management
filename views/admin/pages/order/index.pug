@@ -19,19 +19,19 @@ block main
         table(class="w-full text-left border-collapse whitespace-nowrap")
           thead
             tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
-              th(class="px-4 py-3 text-center") STT
+              th(class="px-4 py-3 text-center hidden md:table-cell") STT
               th(class="px-4 py-3") Mã đơn hàng
               th(class="px-4 py-3") Tổng tiền
-              th(class="px-4 py-3 text-center") Phương thức TT
-              th(class="px-4 py-3") Trạng thái TT
+              th(class="px-4 py-3 text-center hidden lg:table-cell") Phương thức TT
+              th(class="px-4 py-3 hidden md:table-cell") Trạng thái TT
               th(class="px-4 py-3") Trạng thái Đơn
-              th(class="px-4 py-3") Ngày tạo
+              th(class="px-4 py-3 hidden lg:table-cell") Ngày tạo
               th(class="px-4 py-3 text-right") Hành động
           tbody(class="divide-y divide-surface-100 text-sm")
             if orders.length > 0
               each item, index in orders
                 tr(class="hover:bg-surface-50 transition-colors group")
-                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{index + 1}
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium hidden md:table-cell") #{index + 1}
                   td(class="px-4 py-3")
                     span(class="font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-md border border-brand-100") #{item.orderCode}
                     if item.cancelRequest
@@ -42,10 +42,10 @@ block main
                   
                   td(class="px-4 py-3 font-bold text-rose-500") #{item.amount.toLocaleString('vi-VN')}₫
                   
-                  td(class="px-4 py-3 text-center")
+                  td(class="px-4 py-3 text-center hidden lg:table-cell")
                     span(class="px-2 py-1 text-xs font-semibold rounded-lg bg-surface-100 text-surface-600 border border-surface-200") #{item.paymentMethod}
                   
-                  td(class="px-4 py-3")
+                  td(class="px-4 py-3 hidden md:table-cell")
                     select(class="select-payment-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
                       option(value="pending" selected=(item.paymentStatus === 'pending')) ⏳ Chờ thanh toán
                       option(value="success" selected=(item.paymentStatus === 'success')) ✅ Đã thanh toán
@@ -58,7 +58,7 @@ block main
                       option(value="finish" selected=(item.status === 'finish')) Hoàn thành
                       option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
 
-                  td(class="px-4 py-3 text-surface-500 text-xs") #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                  td(class="px-4 py-3 text-surface-500 text-xs hidden lg:table-cell") #{new Date(item.createdAt).toLocaleString('vi-VN')}
                   
                   td(class="px-4 py-3 text-right")
                     button(class="btn-detail w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm" data-id=item._id title="Xem chi tiết")

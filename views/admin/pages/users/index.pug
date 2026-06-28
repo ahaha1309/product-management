@@ -18,16 +18,16 @@ block main
         table(class="w-full text-left border-collapse whitespace-nowrap")
           thead
             tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
-              th(class="px-4 py-3 text-center w-16") STT
+              th(class="px-4 py-3 text-center w-16 hidden md:table-cell") STT
               th(class="px-4 py-3") Khách hàng
               th(class="px-4 py-3") Trạng thái
-              th(class="px-4 py-3") Ngày đăng ký
+              th(class="px-4 py-3 hidden lg:table-cell") Ngày đăng ký
               th(class="px-4 py-3 text-right w-32") Hành động
           tbody(class="divide-y divide-surface-100 text-sm")
             if users.length > 0
               each item, index in users
                 tr(class="hover:bg-surface-50 transition-colors group")
-                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{index + 1}
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium hidden md:table-cell") #{index + 1}
                   td(class="px-4 py-3")
                     div(class="flex items-center gap-3")
                       div(class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-inner")
@@ -37,7 +37,7 @@ block main
                         div(class="text-xs text-surface-500") #{item.email}
                   td(class="px-4 py-3")
                     span(class=`px-3 py-1 text-xs font-semibold rounded-full border ${item.status == "active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{item.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
-                  td(class="px-4 py-3 text-surface-500 text-xs") #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                  td(class="px-4 py-3 text-surface-500 text-xs hidden lg:table-cell") #{new Date(item.createdAt).toLocaleString('vi-VN')}
                   td(class="px-4 py-3 text-right")
                     a(href=`${prefixAdmin}/users/detail/${item._id}` class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm" title="Xem chi tiết")
                       i.bi.bi-eye

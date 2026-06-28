@@ -1,5 +1,5 @@
 mixin product-item(Item)
-    div(class="snap-start shrink-0 w-[280px]")
+    div(class="snap-start shrink-0 w-[160px] md:w-[240px] lg:w-[280px]")
         div(class="bg-white border border-slate-200/50 rounded-[2rem] p-4 flex flex-col h-full group hover:border-brand-500 hover:shadow-diffusion transition-all duration-500 cursor-pointer relative overflow-hidden")
             div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
                 a(href=`/product/detail/${Item.slug}`, title=Item.title, class="block w-full h-full") 

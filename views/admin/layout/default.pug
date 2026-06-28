@@ -10,8 +10,10 @@ html
         link(rel="stylesheet", href="/admin/css/style.css?v=4")
         link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css")
     body(class="bg-surface-50 font-sans text-surface-900 min-h-screen flex flex-col md:flex-row overflow-hidden")
+        //- Mobile Sidebar Backdrop
+        div(id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden md:hidden transition-opacity opacity-0")
         include ../partials/sider.pug
-        div(class="flex-1 flex flex-col h-screen overflow-hidden")
+        div(class="flex-1 flex flex-col h-screen overflow-hidden w-full relative")
             include ../partials/header.pug
             main(class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8")
                 block main 
