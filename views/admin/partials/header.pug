@@ -1,16 +1,49 @@
-header.header.admin-header
-  .container-fluid
-    .row.align-items-center
-      .col-3
-        .inner-logo
-          a(href="/admin/dashboard") 
-            i.bi.bi-grid-fill.me-2
-            span ADMIN PANEL
-      .col-9
-        .text-end.header-actions
-          a.btn.btn-light.btn-sm.me-3.user-badge(href=`${prefixAdmin}/my-account`)
-            i.bi.bi-person-circle.me-2
-            span #{account.fullname}
-          a.btn.btn-outline-danger.btn-sm(href=`${prefixAdmin}/auth/logout`)
-            i.bi.bi-box-arrow-right.me-1
-            span Đăng xuất
+header(class="h-16 bg-white border-b border-surface-200 flex items-center justify-between px-4 md:px-8 shrink-0 z-10")
+  //- Left
+  div(class="flex items-center gap-4")
+    button(class="md:hidden text-surface-600 hover:text-brand-500 transition-colors" id="mobile-menu-btn")
+      i.bi.bi-list.text-2xl
+    
+    //- Global Search Placeholder (Stripe-like)
+    div(class="hidden md:flex items-center bg-surface-100 hover:bg-surface-200 transition-colors rounded-lg px-3 py-1.5 border border-surface-200/50 cursor-text w-64 group")
+      i.bi.bi-search.text-surface-400.text-sm
+      input(type="text" placeholder="Tìm kiếm (Ctrl+K)..." class="bg-transparent border-none outline-none text-sm text-surface-700 ml-2 w-full placeholder-surface-400")
+      div(class="flex items-center gap-1 text-[10px] font-mono text-surface-400 bg-white px-1.5 py-0.5 rounded border border-surface-200")
+        | ⌘K
+        
+  //- Right
+  div(class="flex items-center gap-4")
+    
+    //- Action Icons
+    a(href="/" target="_blank" class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors" title="Xem website")
+      i.bi.bi-globe.text-lg
+      
+    button(class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors relative" title="Thông báo")
+      i.bi.bi-bell.text-lg
+      span(class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white")
+    
+    div(class="w-px h-6 bg-surface-200 mx-1")
+    
+    //- User Dropdown
+    div(class="relative group")
+      button(class="flex items-center gap-2 hover:bg-surface-50 py-1 px-2 rounded-lg transition-colors")
+        div(class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs")
+          | #{account.fullname ? account.fullname.charAt(0).toUpperCase() : 'A'}
+        div(class="hidden md:flex flex-col items-start")
+          span(class="text-sm font-semibold text-surface-900 leading-tight") #{account.fullname}
+          span(class="text-xs text-surface-500") Admin
+        i.bi.bi-chevron-down.text-xs.text-surface-400.ml-1.transition-transform(class="group-hover:rotate-180")
+        
+      //- Dropdown Menu
+      div(class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-diffusion border border-surface-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100")
+        div(class="p-2")
+          a(href=`${prefixAdmin}/my-account` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors")
+            i.bi.bi-person
+            | Hồ sơ cá nhân
+          a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors")
+            i.bi.bi-gear
+            | Cài đặt
+          div(class="h-px bg-surface-100 my-1")
+          a(href=`${prefixAdmin}/auth/logout` class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition-colors")
+            i.bi.bi-box-arrow-right
+            | Đăng xuất

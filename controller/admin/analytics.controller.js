@@ -13,7 +13,7 @@ module.exports.index = async (req, res) => {
 
     // Social proof
     const liveOrders = await socialProofHelper.getLiveOrders(5);
-    const topSellingProducts = await socialProofHelper.getTopSellingProducts(3);
+    const topSellingProducts = await socialProofHelper.getTopSellingProducts(3, 30);
     const latestReviews = await socialProofHelper.getLatestReviews(5);
     const generalStats = await socialProofHelper.getGeneralStats();
 
@@ -174,7 +174,7 @@ module.exports.apiMetrics = async (req, res) => {
   try {
     const metrics = {
       liveOrders: await socialProofHelper.getLiveOrders(5),
-      topSellingProducts: await socialProofHelper.getTopSellingProducts(3),
+      topSellingProducts: await socialProofHelper.getTopSellingProducts(3, 30),
       latestReviews: await socialProofHelper.getLatestReviews(5),
       generalStats: await socialProofHelper.getGeneralStats(),
       timestamp: new Date()

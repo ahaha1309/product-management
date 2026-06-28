@@ -2,160 +2,172 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 
 block main
-  link(rel="stylesheet", href="/css/order.css")
-  .checkout-page
-    +alert-success(messages.success)
+  +alert-success(messages.success)
+  
+  div(class="container mx-auto px-4 max-w-6xl py-8 mb-20 checkout-page")
     
-    .container
-      .checkout-wrapper
-        .checkout-left
-          // Section 1: Thông tin giao hàng
-          .checkout-section
-            .section-header
-              h2 1. Thông tin giao hàng
-              a.edit-link(href="#") Chỉnh sửa
-            
-            .shipping-info
-              .info-row
-                span.info-label Người nhận:
-                span.info-value= `${user.fullName} | ${user.phone}`
-              .info-row
-                span.info-label Địa chỉ giao:
-                span.info-value= user.address
-            
-            .edit-form(style="display: none;" idUser=user._id)
-              input.input-field(
-                type="text",
-                id="editFullName",
-                value=user.fullName,
-                placeholder="Họ và tên"
-              )
-              input.input-field(
-                type="tel",
-                id="editPhone",
-                value=user.phone,
-                placeholder="Số điện thoại"
-              )
-              input.input-field(
-                type="text",
-                id="editAddress",
-                value=user.address,
-                placeholder="Địa chỉ"
-              )
-              .form-actions
-                button.btn-save(type="button") Lưu
-                button.btn-cancel(type="button") Hủy
+    div(class="mb-8")
+      h1(class="text-3xl font-black text-surface-950 tracking-tight") Thanh Toán
+      p(class="text-surface-500 mt-2") Hoàn tất đơn hàng của bạn một cách nhanh chóng và an toàn.
 
-          // Section 2: Danh sách sản phẩm
-          .checkout-section
-            .section-header
-              h2 2. Danh sách sản phẩm (#{products.length})
-            
-            .products-list
-              each product in products
-                .product-item
-                  .product-image-detail
-                    img(src=product.thumbnail, alt=product.title, loading="lazy")
-                  
-                  .product-info
-                    h4= product.title
-                    p.product-variant= `Phân loại: ${product.variantText || 'Mặc định'}`
-                    p.product-price= `${Number(product.newPrice).toLocaleString('vi-VN')}₫`
-                  
-                  .product-quantity
-                    span= `x${product.quantity}`
-                  
-                  .product-total
-                    span= `${(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫`
-                  
-                  .product-remove
-                    button.btn-remove(type="button", data-product-id=product._id) ✕
+    div(class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12")
+      //- Left Column: Checkout Sections
+      div(class="lg:col-span-8 flex flex-col gap-8")
+        
+        //- Section 1: Shipping Info
+        div(class="bento-card relative overflow-hidden checkout-section")
+          div(class="flex justify-between items-center mb-6")
+            h2(class="text-xl font-bold text-surface-900 flex items-center gap-3")
+              div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 1
+              | Thông tin giao hàng
+            a(href="#" class="edit-link text-brand-600 text-sm font-semibold hover:text-brand-700 transition-colors px-3 py-1.5 bg-brand-50 rounded-lg") Chỉnh sửa
+          
+          div(class="shipping-info bg-surface-50 rounded-2xl p-5 border border-slate-100")
+            div(class="flex items-start gap-4 mb-3")
+              i(class="bi bi-person-circle text-surface-400 text-xl mt-0.5")
+              div
+                div(class="text-xs text-surface-500 uppercase font-semibold tracking-wider mb-0.5") Người nhận
+                div(class="font-medium text-surface-900 info-value") #{user.fullName} | #{user.phone}
+            div(class="flex items-start gap-4")
+              i(class="bi bi-geo-alt-fill text-surface-400 text-xl mt-0.5")
+              div
+                div(class="text-xs text-surface-500 uppercase font-semibold tracking-wider mb-0.5") Địa chỉ giao hàng
+                div(class="font-medium text-surface-900 info-value leading-relaxed") #{user.address}
 
-          // Section 3: Voucher
-          .checkout-section
-            .section-header
-              h2 3. Mã khuyến mãi
+          div(class="edit-form hidden mt-4 bg-white border border-brand-200 rounded-2xl p-5 shadow-inner" style="display: none;" idUser=user._id)
+            div(class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4")
+              div
+                label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Họ và tên
+                input.input-field(type="text" id="editFullName" value=user.fullName placeholder="Họ và tên" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+              div
+                label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Số điện thoại
+                input.input-field(type="tel" id="editPhone" value=user.phone placeholder="Số điện thoại" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+            div(class="mb-6")
+              label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Địa chỉ chi tiết
+              input.input-field(type="text" id="editAddress" value=user.address placeholder="Địa chỉ chi tiết" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+            div(class="flex justify-end gap-3 form-actions")
+              button.btn-cancel(type="button" class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-600 hover:bg-surface-50 transition-colors") Hủy
+              button.btn-save(type="button" class="btn-premium btn-premium-primary px-6 py-2.5 text-sm") Lưu thông tin
+
+        //- Section 2: Products List
+        div(class="bento-card checkout-section")
+          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
+            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 2
+            | Sản phẩm (#{products.length})
+          
+          div(class="flex flex-col gap-4 products-list")
+            each product in products
+              div(class="product-item flex items-start sm:items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-brand-200 bg-surface-50/50 transition-colors relative group")
+                img(src=product.thumbnail alt=product.title class="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-white")
+                div(class="flex-1")
+                  h4(class="font-bold text-surface-900 text-sm leading-tight line-clamp-2 pr-8")= product.title
+                  if product.variantText
+                    p(class="text-xs text-surface-500 mt-1") Phân loại: #{product.variantText}
+                  div(class="flex items-center gap-4 mt-2")
+                    span(class="font-bold text-brand-600") #{Number(product.newPrice).toLocaleString('vi-VN')}₫
+                    span(class="text-xs font-medium text-surface-500 bg-surface-200 px-2 py-0.5 rounded-md") x#{product.quantity}
+                div(class="text-right font-black text-surface-900 hidden sm:block")
+                  | #{(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫
+                button.btn-remove(type="button" data-product-id=product._id class="absolute top-4 right-4 text-surface-400 hover:text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors")
+                  i.bi.bi-x-lg
+
+        //- Section 3: Voucher
+        div(class="bento-card checkout-section")
+          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
+            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 3
+            | Mã khuyến mãi
+          
+          div(class="voucher-section")
+            div(class="flex gap-3 mb-4")
+              div(class="relative flex-1")
+                i.bi.bi-ticket-perforated.absolute.left-4.top-1.translate-y-1.text-surface-400
+                input#voucherCode.input-field(type="text" placeholder="Nhập mã voucher" value=appliedVoucher ? appliedVoucher.code : '' class="w-full bg-surface-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm uppercase font-semibold focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+              button#applyVoucher.btn-apply(type="button" class="btn-premium bg-surface-900 text-white hover:bg-surface-800 px-6 whitespace-nowrap") Áp dụng
+
+            if availableVouchers && availableVouchers.length > 0
+              div(class="mt-4 available-vouchers")
+                h5(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-3") Voucher có sẵn:
+                div(class="flex gap-3 overflow-x-auto pb-2 hide-scrollbar")
+                  each v in availableVouchers
+                    div.voucher-tag(data-code=v.code class=`shrink-0 cursor-pointer border ${appliedVoucher && appliedVoucher.code === v.code ? 'border-brand-500 bg-brand-50' : 'border-slate-200 hover:border-brand-300'} rounded-xl p-3 flex flex-col gap-1 transition-all`)
+                      span(class="font-bold text-surface-900 text-sm tracking-wide uppercase")= v.code
+                      span(class="text-xs text-brand-600 font-medium") Giảm #{v.discountPercentage}%
             
-            .voucher-section
-              .voucher-input-group
-                input#voucherCode.input-field(
-                  type="text",
-                  placeholder="Nhập mã voucher",
-                  value=appliedVoucher ? appliedVoucher.code : ''
-                )
-                button#applyVoucher.btn-apply(type="button") Áp dụng
-              
-              if availableVouchers && availableVouchers.length > 0
-                .available-vouchers.mt-3
-                  h5 Hoặc chọn mã có sẵn:
-                  .voucher-list.d-flex.gap-2.flex-wrap
-                    each v in availableVouchers
-                      .voucher-tag(data-code=v.code, class=(appliedVoucher && appliedVoucher.code === v.code ? 'active' : ''))
-                        span.fw-bold= v.code
-                        span.text-muted(style="font-size: 11px; display: block;") Giảm #{v.discountPercentage}%
+            if appliedVoucher
+              div(class="mt-4 p-4 rounded-xl border border-emerald-200 bg-emerald-50 flex items-center justify-between voucher-applied")
+                div(class="flex items-center gap-3")
+                  div(class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center")
+                    i.bi.bi-check-lg
+                  div
+                    div(class="font-bold text-emerald-800 text-sm") #{appliedVoucher.code}
+                    div(class="text-xs text-emerald-600") Giảm #{appliedVoucher.discount}% (Tối đa #{appliedVoucher.maxDiscountAmount.toLocaleString('vi-VN')}đ)
+                button.btn-remove-voucher(type="button" class="text-xs font-semibold text-rose-500 hover:underline px-2 py-1") Xóa
+
+        //- Section 4: Payment Methods
+        div(class="bento-card checkout-section")
+          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
+            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 4
+            | Phương thức thanh toán
+          
+          div(class="grid grid-cols-1 sm:grid-cols-2 gap-4 payment-methods")
+            each method in paymentMethods
+              label.payment-method(data-method-id=method.id class="relative cursor-pointer group")
+                input(type="radio" name="paymentMethod" value=method.id checked=method.id === 'credit_card' class="peer sr-only")
+                div.method-card(class="p-4 rounded-2xl border-2 border-slate-100 hover:border-brand-200 peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all flex items-center gap-4 h-full")
+                  div.method-icon(class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-2xl shadow-sm text-brand-500 group-hover:scale-110 transition-transform")
+                    != method.icon
+                  div(class="flex-1")
+                    h4(class="font-bold text-surface-900 text-sm mb-0.5")= method.name
+                    p(class="text-xs text-surface-500 leading-tight")= method.description
+                  div.method-check(class="w-5 h-5 rounded-full border-2 border-slate-300 peer-checked:border-brand-500 peer-checked:bg-brand-500 text-white flex items-center justify-center text-xs opacity-0 peer-checked:opacity-100 transition-opacity")
+                    i.bi.bi-check-lg
+
+      //- Right Column: Order Summary (Sticky)
+      div(class="lg:col-span-4")
+        div(class="sticky top-24")
+          div(class="bg-surface-950 text-white rounded-[2rem] p-8 shadow-diffusion order-summary")
+            h3(class="text-lg font-bold mb-6 flex items-center justify-between")
+              | Tóm tắt đơn hàng
+              i.bi.bi-receipt.text-brand-400
+            
+            div(class="space-y-4 mb-6 text-sm")
+              div(class="flex justify-between items-center")
+                span(class="text-surface-400") Tổng tiền hàng
+                span(class="font-semibold text-surface-50") #{subtotal.toLocaleString('vi-VN')}₫
               
               if appliedVoucher
-                .voucher-applied.mt-3
-                  .voucher-info
-                    span.voucher-code= appliedVoucher.code
-                    span.voucher-discount= `Giảm ${appliedVoucher.discount}% (Tối đa ${appliedVoucher.maxDiscountAmount.toLocaleString('vi-VN')}đ)`
-                  button.btn-remove-voucher(type="button") Xóa
-
-          // Section 4: Phương thức thanh toán
-          .checkout-section
-            .section-header
-              h2 4. Phương thức thanh toán
+                div(class="flex justify-between items-center discount text-emerald-400")
+                  span Giảm giá (#{appliedVoucher.discount}%)
+                  span(class="font-semibold") -#{discountAmount.toLocaleString('vi-VN')}₫
+              
+              div(class="flex justify-between items-center shipping")
+                span(class="text-surface-400") Phí vận chuyển
+                span(class="font-semibold text-surface-50") #{shippingFee === 0 ? 'Miễn phí' : shippingFee.toLocaleString('vi-VN') + '₫'}
             
-            .payment-methods
-              each method in paymentMethods
-                label.payment-method(data-method-id=method.id)
-                  input(
-                    type="radio",
-                    name="paymentMethod",
-                    value=method.id,
-                    checked=method.id === 'credit_card'
-                  )
-                  .method-card
-                    .method-icon= method.icon
-                    .method-info
-                      h4= method.name
-                      p= method.description
-                    .method-check ✓
-
-        // Sidebar: Tổng hợp giá
-        .checkout-right
-          .order-summary
-            .summary-header
-              h3 Tóm tắt đơn hàng
-
-            .summary-item
-              span Tổng tiền hàng:
-              span.price= `${subtotal.toLocaleString('vi-VN')}₫`
-
-            if appliedVoucher
-              .summary-item.discount
-                span Giảm giá (#{appliedVoucher.discount}%):
-                span.price= `-${discountAmount.toLocaleString('vi-VN')}₫`
-
-            .summary-item.shipping
-              span Phí vận chuyển:
-              span.price= `${shippingFee.toLocaleString('vi-VN')}₫`
-
-            .summary-divider
-
-            .summary-item.total
-              span Tổng thanh toán:
-              span.price-total= `${total.toLocaleString('vi-VN')}₫`
-
-            button#checkoutBtn.btn-checkout(type="button") Đặt hàng
-
-            //- Toast notification
-            #checkoutToast.checkout-toast(style="display:none;")
+            div(class="h-px bg-surface-800 w-full mb-6")
+            
+            div(class="flex justify-between items-end mb-8 total")
+              div
+                span(class="text-sm text-surface-400 block mb-1") Tổng thanh toán
+                span(class="text-[10px] text-surface-500 uppercase tracking-wider") Đã bao gồm VAT
+              span(class="text-3xl font-black text-brand-400 price-total tracking-tight") #{total.toLocaleString('vi-VN')}₫
+            
+            button#checkoutBtn.btn-checkout(type="button" class="w-full bg-brand-500 text-white font-bold text-lg py-4 rounded-xl hover:bg-brand-400 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95")
+              | Đặt hàng ngay
+            
+            //- Toast
+            #checkoutToast.checkout-toast(style="display:none;" class="mt-4 p-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-center text-sm font-medium")
               span#toastMessage
 
-            .payment-info
-              p ✓ Bảo mật 100%
-              p ✓ Miễn phí hoàn đơn
-              p ✓ Hỗ trợ 24/7
+            div(class="mt-6 space-y-2 text-xs text-surface-500 font-medium")
+              div(class="flex items-center gap-2")
+                i.bi.bi-shield-check.text-brand-400
+                | Bảo mật thanh toán 100%
+              div(class="flex items-center gap-2")
+                i.bi.bi-arrow-return-left.text-brand-400
+                | Hoàn tiền trong 30 ngày
+              div(class="flex items-center gap-2")
+                i.bi.bi-headset.text-brand-400
+                | Hỗ trợ kỹ thuật 24/7
 
   script(src='/js/order.js')

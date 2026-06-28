@@ -1,18 +1,42 @@
 extends ../../layout/default.pug
-include ../../mixins/select-tree.pug
+
 block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
+  
   if(role.permission.includes('roles_create'))
-    h1 Thêm nhóm quyền
-    form(action=`${prefixAdmin}/roles/create` method="POST" )
-      .mb-3
-        label.form-label Tiêu đề
-        input.form-control(type="text" name="title" placeholder="Nhập tiêu đề nhóm quyền" required)
-      .mb-3 
-        label.form-label Mô tả
-        textarea.form-control(name="description" id='' placeholder="Nhập mô tả nhóm quyền" )
-      button.btn.btn-success(type="submit") Thêm mới
+    div(class="max-w-3xl mx-auto")
+      //- Header
+      div(class="flex items-center justify-between mb-6")
+        div(class="flex items-center gap-3")
+          a(href=`${prefixAdmin}/roles` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+            i.bi.bi-arrow-left.text-lg
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Thêm nhóm quyền mới
+        
+        button(type="submit" form="create-role-form" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-check2-circle.text-lg
+          | Tạo nhóm quyền
+
+      form(id="create-role-form" action=`${prefixAdmin}/roles/create` method="POST" class="space-y-6")
+        
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+          h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+            i.bi.bi-shield-check.text-brand-500
+            | Thông tin nhóm quyền
+            
+          div(class="space-y-5")
+            div
+              label(class="block text-sm font-semibold text-surface-700 mb-1.5") Tiêu đề <span class="text-rose-500">*</span>
+              input(type="text" name="title" placeholder="VD: Quản trị viên, Biên tập viên..." required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+            
+            div
+              label(class="block text-sm font-semibold text-surface-700 mb-1.5") Mô tả chi tiết
+              textarea(name="description" id='' placeholder="Nhập mô tả về phạm vi quyền hạn của nhóm này..." rows="4" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+
   else
-    .alert.alert-danger Bạn không có quyền tạo mới nhóm quyền
+    div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+      i.bi.bi-shield-lock.text-4xl.mb-3
+      h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+      p(class="text-sm") Bạn không được cấp quyền để tạo mới nhóm quyền.
+
   script(src='/admin/js/product.js')

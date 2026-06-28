@@ -1,17 +1,51 @@
 extends ../layouts/default.pug
 
 block main
-  .not-found-page
-    .not-found-content
-      .not-found-number 404
-      .not-found-icon
-        i.bi.bi-emoji-dizzy
-      h2.not-found-title Trang không tìm thấy
-      p.not-found-desc Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc không tồn tại.
-      .not-found-actions
-        a.btn-home(href="/")
-          i.bi.bi-house-fill.me-2
-          | Về trang chủ
-        a.btn-products(href="/product")
-          i.bi.bi-grid.me-2
-          | Xem sản phẩm
+  //- 404 Split Layout Wrapper
+  div(class="min-h-[85vh] flex flex-col lg:flex-row items-center justify-center bg-surface-50 px-4 md:px-12 py-16")
+    
+    //- Left Side (Visuals & Funny GIF)
+    div(class="w-full lg:w-1/2 flex flex-col items-center lg:items-end justify-center pr-0 lg:pr-16 mb-12 lg:mb-0")
+      div(class="relative")
+        //- Decorative Background
+        div(class="absolute inset-0 bg-brand-500/20 blur-[80px] rounded-full")
+        
+        //- 404 Illustration (using local icon to avoid broken external links)
+        div(class="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-white shadow-2xl bg-white flex items-center justify-center animate-[float_6s_ease-in-out_infinite]")
+          i(class="bi bi-bag-x text-[120px] text-brand-500 drop-shadow-md")
+          
+        //- Badge
+        div(class="absolute -bottom-6 -right-6 bg-rose-500 text-white font-black text-2xl md:text-3xl px-6 py-4 rounded-3xl shadow-xl shadow-rose-500/30 rotate-12") 404
+
+    //- Right Side (Content & CTAs)
+    div(class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left pl-0 lg:pl-16 border-t lg:border-t-0 lg:border-l border-slate-200/60 pt-12 lg:pt-0")
+      
+      div(class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-50 text-brand-600 font-bold text-sm mb-6")
+        i.bi.bi-compass
+        span Bạn đã đi quá xa rồi!
+
+      h1(class="text-4xl md:text-5xl font-black text-surface-900 mb-6 leading-tight tracking-tight")
+        | Không tìm thấy
+        br
+        span(class="text-brand-500") lối đi này...
+
+      p(class="text-lg text-surface-500 mb-10 max-w-md leading-relaxed")
+        | Có vẻ như bạn đang tìm kiếm một sản phẩm hoặc trang web không tồn tại. Đừng lo, hãy để chúng tôi đưa bạn về đúng hướng!
+
+      //- Action Buttons
+      div(class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto")
+        a(href="/" class="btn-premium btn-premium-primary w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base")
+          i.bi.bi-house-door-fill
+          | Về Trang Chủ
+
+        a(href="/product" class="btn-premium bg-white text-surface-700 border border-slate-200 hover:border-brand-500 hover:text-brand-500 w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base shadow-sm")
+          i.bi.bi-bag-heart
+          | Tiếp tục mua sắm
+
+      //- Quick Links
+      div(class="mt-12 w-full max-w-md")
+        p(class="text-sm font-semibold text-surface-400 uppercase tracking-wider mb-4") Hoặc xem nhanh:
+        div(class="flex flex-wrap items-center justify-center lg:justify-start gap-3")
+          a(href="/articles" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 📰 Tin tức
+          a(href="/contact" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 🎧 Hỗ trợ
+          a(href="/loyalty" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 🎁 Điểm thưởng

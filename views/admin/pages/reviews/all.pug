@@ -1,49 +1,65 @@
 extends ../../layout/default.pug
 
 block main
-  h1= title
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") #{title}
+        p(class="text-surface-500 text-sm mt-1") Quản lý các đánh giá sản phẩm từ người dùng.
 
-  .card.mb-3
-    .card-header Lọc trạng thái
-    .card-body
-      a.btn.btn-sm.me-2(href="?status=approved" class=(currentStatus === 'approved' ? 'btn-primary' : 'btn-outline-primary')) Đã duyệt
-      a.btn.btn-sm.me-2(href="?status=pending" class=(currentStatus === 'pending' ? 'btn-warning' : 'btn-outline-warning')) Chờ duyệt
-      a.btn.btn-sm(href="?status=rejected" class=(currentStatus === 'rejected' ? 'btn-danger' : 'btn-outline-danger')) Đã từ chối
+    //- Filter
+    div(class="bg-white p-2 rounded-xl border border-surface-200 shadow-sm inline-flex gap-2")
+      a(href="?status=approved" class=`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${currentStatus === 'approved' ? 'bg-emerald-500 text-white shadow-md' : 'text-surface-600 hover:bg-surface-100'}`) Đã duyệt
+      a(href="?status=pending" class=`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${currentStatus === 'pending' ? 'bg-amber-500 text-white shadow-md' : 'text-surface-600 hover:bg-surface-100'}`) Chờ duyệt
+      a(href="?status=rejected" class=`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${currentStatus === 'rejected' ? 'bg-rose-500 text-white shadow-md' : 'text-surface-600 hover:bg-surface-100'}`) Đã từ chối
 
-  .card
-    .card-header Danh sách Review
-    .card-body
-      table.table.table-hover.table-sm
-        thead
-          tr
-            th STT
-            th Sản phẩm
-            th Người dùng
-            th Đánh giá
-            th Nội dung
-            th Trạng thái
-            th Hành động
-        tbody
-          each review, index in reviews
-            tr
-              td #{index + 1}
-              td #{review.productTitle || review.productId}
-              td #{review.userName}
-              td 
-                span.text-warning #{'⭐'.repeat(review.rating)}
-              td #{review.comment}
-              td
-                if review.status === 'approved'
-                  span.badge.bg-success Đã duyệt
-                else if review.status === 'pending'
-                  span.badge.bg-warning Chờ duyệt
-                else
-                  span.badge.bg-danger Đã từ chối
-              td
-                if review.status !== 'approved'
-                  button.btn.btn-success.btn-sm.me-1(onclick=`approveReview('${review._id}', 'approved')`) Duyệt
-                if review.status !== 'rejected'
-                  button.btn.btn-danger.btn-sm(onclick=`approveReview('${review._id}', 'rejected')`) Từ chối
+    //- List
+    div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse whitespace-nowrap")
+          thead
+            tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-4 py-3 text-center w-16") STT
+              th(class="px-4 py-3") Sản phẩm
+              th(class="px-4 py-3") Người dùng
+              th(class="px-4 py-3") Đánh giá
+              th(class="px-4 py-3") Nội dung
+              th(class="px-4 py-3 text-center") Trạng thái
+              th(class="px-4 py-3 text-right w-32") Hành động
+          tbody(class="divide-y divide-surface-100 text-sm")
+            if reviews && reviews.length > 0
+              each review, index in reviews
+                tr(class="hover:bg-surface-50 transition-colors group")
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{index + 1}
+                  td(class="px-4 py-3 font-semibold text-surface-900 truncate max-w-[150px]") #{review.productTitle || review.productId}
+                  td(class="px-4 py-3 text-surface-600 font-medium") #{review.userName}
+                  td(class="px-4 py-3") 
+                    div(class="flex items-center text-amber-400 gap-0.5 text-xs")
+                      - for (let i = 1; i <= 5; i++)
+                        if i <= review.rating
+                          i.bi.bi-star-fill
+                        else
+                          i.bi.bi-star.text-surface-300
+                  td(class="px-4 py-3 text-surface-700 whitespace-normal line-clamp-2 max-w-[200px]") #{review.comment}
+                  td(class="px-4 py-3 text-center")
+                    if review.status === 'approved'
+                      span(class="px-2 py-1 text-[10px] font-bold uppercase rounded-full bg-emerald-100 text-emerald-700") Đã duyệt
+                    else if review.status === 'pending'
+                      span(class="px-2 py-1 text-[10px] font-bold uppercase rounded-full bg-amber-100 text-amber-700") Chờ duyệt
+                    else
+                      span(class="px-2 py-1 text-[10px] font-bold uppercase rounded-full bg-rose-100 text-rose-700") Đã từ chối
+                  td(class="px-4 py-3 text-right")
+                    div(class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
+                      if review.status !== 'approved'
+                        button(onclick=`approveReview('${review._id}', 'approved')` class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors" title="Duyệt")
+                          i.bi.bi-check-lg
+                      if review.status !== 'rejected'
+                        button(onclick=`approveReview('${review._id}', 'rejected')` class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors" title="Từ chối")
+                          i.bi.bi-x-lg
+            else
+              tr
+                td(colspan="7" class="px-5 py-8 text-center text-surface-500") Không có đánh giá nào phù hợp.
 
   script.
     function approveReview(id, status) {

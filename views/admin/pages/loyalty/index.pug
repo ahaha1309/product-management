@@ -2,185 +2,182 @@ extends ../../layout/default.pug
 include ../../mixins/alert.pug
 
 block main
-  .admin-loyalty-page
+  div(class="max-w-7xl mx-auto space-y-6")
     //- Header
-    .page-header-admin
-      .header-info
-        h4.page-title
-          i.bi.bi-award.me-2
-          | Quản lý Loyalty & Điểm thưởng
-        p.page-subtitle Xem và quản lý điểm thưởng của khách hàng thân thiết
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+          i.bi.bi-award.text-brand-500
+          | Loyalty & Điểm thưởng
+        p(class="text-surface-500 text-sm mt-1") Quản lý hạng thành viên và điểm thưởng khách hàng.
 
     //- Stats Row
-    .loyalty-stats-row
-      .loyalty-stat-card.bronze
-        .loyalty-stat-icon 🥉
-        .loyalty-stat-num #{stats.bronze}
-        .loyalty-stat-lbl Bronze
-      .loyalty-stat-card.silver
-        .loyalty-stat-icon 🥈
-        .loyalty-stat-num #{stats.silver}
-        .loyalty-stat-lbl Silver
-      .loyalty-stat-card.gold
-        .loyalty-stat-icon 🥇
-        .loyalty-stat-num #{stats.gold}
-        .loyalty-stat-lbl Gold
-      .loyalty-stat-card.platinum
-        .loyalty-stat-icon 💎
-        .loyalty-stat-num #{stats.platinum}
-        .loyalty-stat-lbl Platinum
-      .loyalty-stat-card.total-points
-        .loyalty-stat-icon ⭐
-        .loyalty-stat-num #{(stats.totalPoints || 0).toLocaleString('vi-VN')}
-        .loyalty-stat-lbl Tổng điểm đã phát
+    div(class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4")
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center relative overflow-hidden")
+        div(class="absolute top-0 right-0 p-2 opacity-10 text-5xl") 🥉
+        div(class="text-3xl mb-2") 🥉
+        div(class="text-2xl font-bold text-surface-900 mb-1") #{stats.bronze}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Bronze
+        
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center relative overflow-hidden")
+        div(class="absolute top-0 right-0 p-2 opacity-10 text-5xl") 🥈
+        div(class="text-3xl mb-2") 🥈
+        div(class="text-2xl font-bold text-surface-900 mb-1") #{stats.silver}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Silver
+        
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center relative overflow-hidden")
+        div(class="absolute top-0 right-0 p-2 opacity-10 text-5xl") 🥇
+        div(class="text-3xl mb-2") 🥇
+        div(class="text-2xl font-bold text-surface-900 mb-1") #{stats.gold}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Gold
+        
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center relative overflow-hidden")
+        div(class="absolute top-0 right-0 p-2 opacity-10 text-5xl") 💎
+        div(class="text-3xl mb-2") 💎
+        div(class="text-2xl font-bold text-surface-900 mb-1") #{stats.platinum}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Platinum
+        
+      div(class="bg-gradient-to-br from-brand-500 to-indigo-600 rounded-2xl border border-brand-400 shadow-lg shadow-brand-500/20 p-5 text-center relative overflow-hidden text-white")
+        div(class="absolute top-0 right-0 p-2 opacity-10 text-5xl") ⭐
+        div(class="text-3xl mb-2") ⭐
+        div(class="text-2xl font-bold mb-1") #{(stats.totalPoints || 0).toLocaleString('vi-VN')}
+        div(class="text-xs font-semibold text-white/80 uppercase tracking-wider") Tổng điểm đã phát
 
     //- Members Table
-    .admin-card.mt-4
-      .admin-card-header
-        h6.admin-card-title
-          i.bi.bi-people.me-2
+    div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+      div(class="p-5 border-b border-surface-100 bg-surface-50/50 flex flex-col sm:flex-row justify-between items-center gap-4")
+        h2(class="text-lg font-bold text-surface-900 flex items-center gap-2")
+          i.bi.bi-people-fill.text-brand-500
           | Danh sách thành viên (#{loyalties.length})
-        .header-actions
-          input.form-control.form-control-sm(type="search" placeholder="Tìm kiếm..." id="loyalty-search" style="width:200px;")
+        div(class="relative w-full sm:w-64")
+          input(type="search" id="loyalty-search" placeholder="Tìm kiếm thành viên..." class="w-full bg-white border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-10 pr-4 py-2 transition-all outline-none")
+          i.bi.bi-search.absolute.left-4.top-1.translate-y-1.text-surface-400
       
-      .table-responsive
-        table.admin-data-table#loyalty-table
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse whitespace-nowrap" id="loyalty-table")
           thead
-            tr
-              th STT
-              th Khách hàng
-              th Email
-              th Điểm hiện tại
-              th Hạng thành viên
-              th Tổng giao dịch
-              th Thao tác
-          tbody
+            tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-4 py-3 text-center w-16") STT
+              th(class="px-4 py-3") Khách hàng
+              th(class="px-4 py-3 text-right") Điểm hiện tại
+              th(class="px-4 py-3 text-center") Hạng thành viên
+              th(class="px-4 py-3 text-center") Giao dịch
+              th(class="px-4 py-3 text-right w-32") Thao tác
+          tbody(class="divide-y divide-surface-100 text-sm")
             if loyalties && loyalties.length > 0
               each item, idx in loyalties
-                tr
-                  td #{idx + 1}
-                  td
-                    .d-flex.align-items-center.gap-2
+                tr(class="hover:bg-surface-50 transition-colors group")
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{idx + 1}
+                  
+                  td(class="px-4 py-3")
+                    div(class="flex items-center gap-3")
                       if item.user && item.user.avatar
-                        img(src=item.user.avatar style="width:32px;height:32px;border-radius:50%;object-fit:cover;")
+                        img(src=item.user.avatar class="w-10 h-10 rounded-full object-cover border border-surface-200 shrink-0")
                       else
-                        .avatar-placeholder(style="width:32px;height:32px;background:#e8eeff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#667eea;font-weight:700;")
+                        div(class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0")
                           | #{item.user && item.user.fullName ? item.user.fullName.charAt(0).toUpperCase() : '?'}
-                      strong #{item.user ? item.user.fullName : 'Không xác định'}
-                  td.text-muted #{item.user ? item.user.email : 'N/A'}
-                  td
-                    span.fw-bold.text-primary #{(item.totalPoints || 0).toLocaleString('vi-VN')}
-                    span.text-muted.ms-1 điểm
-                  td
-                    - const tierColors = {BRONZE:'#cd7f32', SILVER:'#c0c0c0', GOLD:'#ffd700', PLATINUM:'#667eea'}
-                    - const tierIcons = {BRONZE:'🥉', SILVER:'🥈', GOLD:'🥇', PLATINUM:'💎'}
-                    span.tier-badge(style=`background:${tierColors[item.currentLevel] || '#ccc'}20;color:${tierColors[item.currentLevel] || '#666'};border:1px solid ${tierColors[item.currentLevel] || '#ccc'};`)
-                      | #{tierIcons[item.currentLevel]} #{item.currentLevel || 'BRONZE'}
-                  td.text-muted #{(item.transactions || []).length} giao dịch
-                  td
-                    button.btn.btn-sm.btn-success.me-1(
-                      data-bs-toggle="modal"
-                      data-bs-target="#addPointsModal"
-                      onclick=`setPointsTarget('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'add')`
-                      title="Cộng điểm"
-                    )
-                      i.bi.bi-plus-circle
-                    button.btn.btn-sm.btn-warning(
-                      data-bs-toggle="modal"
-                      data-bs-target="#addPointsModal"
-                      onclick=`setPointsTarget('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'deduct')`
-                      title="Trừ điểm"
-                    )
-                      i.bi.bi-dash-circle
+                      div
+                        div(class="font-bold text-surface-900") #{item.user ? item.user.fullName : 'Không xác định'}
+                        div(class="text-xs text-surface-500") #{item.user ? item.user.email : 'N/A'}
+                        
+                  td(class="px-4 py-3 text-right")
+                    span(class="font-bold text-brand-600 text-base") #{(item.totalPoints || 0).toLocaleString('vi-VN')}
+                    span(class="text-xs text-surface-500 ml-1") pt
+                    
+                  td(class="px-4 py-3 text-center")
+                    - const tierColors = {BRONZE: 'bg-amber-100 text-amber-800 border-amber-200', SILVER: 'bg-slate-100 text-slate-700 border-slate-300', GOLD: 'bg-yellow-100 text-yellow-800 border-yellow-300', PLATINUM: 'bg-indigo-100 text-indigo-800 border-indigo-200'}
+                    - const tierIcons = {BRONZE: '🥉', SILVER: '🥈', GOLD: '🥇', PLATINUM: '💎'}
+                    span(class=`inline-flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase rounded-full border ${tierColors[item.currentLevel] || 'bg-surface-100 text-surface-600 border-surface-200'}`)
+                      span #{tierIcons[item.currentLevel]}
+                      | #{item.currentLevel || 'BRONZE'}
+                      
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{(item.transactions || []).length}
+                  
+                  td(class="px-4 py-3 text-right")
+                    div(class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
+                      button(class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors border border-emerald-100" onclick=`openPointsModal('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'add')` title="Cộng điểm")
+                        i.bi.bi-plus-lg
+                      button(class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors border border-rose-100" onclick=`openPointsModal('${item.userId}', '${item.user ? item.user.fullName : 'N/A'}', 'deduct')` title="Trừ điểm")
+                        i.bi.bi-dash-lg
             else
               tr
-                td(colspan="7")
-                  .text-center.py-4.text-muted
-                    i.bi.bi-inbox(style="font-size:2rem;")
-                    p.mt-2 Chưa có thành viên nào đăng ký chương trình loyalty
+                td(colspan="6" class="px-5 py-12 text-center text-surface-500")
+                  div(class="w-16 h-16 bg-surface-100 rounded-full flex items-center justify-center text-surface-400 text-2xl mx-auto mb-4")
+                    i.bi.bi-inbox
+                  p(class="text-sm font-medium") Chưa có thành viên nào đăng ký chương trình loyalty.
 
-  //- Modal Add/Deduct Points
-  .modal.fade#addPointsModal(tabindex="-1")
-    .modal-dialog
-      .modal-content
-        .modal-header
-          h5.modal-title#modal-title Cộng điểm cho thành viên
-          button.btn-close(data-bs-dismiss="modal")
-        form#points-form(method="POST")
-          .modal-body
-            input(type="hidden" name="userId" id="modal-userId")
-            .mb-3
-              label.form-label.fw-semibold Thành viên
-              input.form-control#modal-userName(type="text" readonly)
-            .mb-3
-              label.form-label.fw-semibold Số điểm
-              input.form-control(type="number" name="points" min="1" max="10000" required placeholder="Nhập số điểm...")
-            .mb-3
-              label.form-label.fw-semibold Lý do
-              input.form-control(type="text" name="description" placeholder="Ghi chú lý do...")
-          .modal-footer
-            button.btn.btn-secondary(data-bs-dismiss="modal") Hủy
-            button.btn.btn-primary#modal-submit-btn(type="submit") Xác nhận
-
-  style.
-    .admin-loyalty-page { padding: 24px; }
-    .page-header-admin { margin-bottom: 24px; }
-    .page-title { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
-    .page-subtitle { color: #888; font-size: 0.9rem; }
-    .loyalty-stats-row {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .loyalty-stat-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      border: 1px solid #f0f0f0;
-    }
-    .loyalty-stat-icon { font-size: 2rem; margin-bottom: 8px; }
-    .loyalty-stat-num { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
-    .loyalty-stat-lbl { font-size: 0.8rem; color: #888; }
-    .admin-card {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      border: 1px solid #f0f0f0;
-      overflow: hidden;
-    }
-    .admin-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .admin-card-title { font-size: 1rem; font-weight: 600; margin: 0; }
-    .admin-data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .admin-data-table th { background: #f8f9fa; padding: 12px 16px; text-align: left; font-weight: 600; color: #555; border-bottom: 2px solid #e9ecef; }
-    .admin-data-table td { padding: 12px 16px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
-    .admin-data-table tr:hover td { background: #fafafa; }
-    .tier-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
-    @media(max-width:992px) { .loyalty-stats-row { grid-template-columns: repeat(3, 1fr); } }
+  //- Modal Add/Deduct Points Custom UI
+  div(id="loyaltyModal" class="fixed inset-0 z-50 hidden bg-surface-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300")
+    div(class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300" id="loyaltyModalContent")
+      div(class="p-5 border-b border-surface-100 flex justify-between items-center")
+        h3(class="text-lg font-bold text-surface-900" id="modal-title") Cộng điểm
+        button(type="button" class="text-surface-400 hover:text-rose-500 transition-colors" onclick="closePointsModal()")
+          i.bi.bi-x-lg.text-xl
+          
+      form(id="points-form" method="POST" class="p-6 space-y-4")
+        input(type="hidden" name="userId" id="modal-userId")
+        
+        div
+          label(class="block text-sm font-semibold text-surface-700 mb-1.5") Thành viên
+          input(type="text" id="modal-userName" readonly class="w-full bg-surface-100 border border-surface-200 text-surface-600 font-bold text-sm rounded-xl px-4 py-3 outline-none cursor-not-allowed")
+          
+        div
+          label(class="block text-sm font-semibold text-surface-700 mb-1.5") Số điểm
+          input(type="number" name="points" min="1" max="10000" required placeholder="Nhập số điểm (VD: 100)" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+          
+        div
+          label(class="block text-sm font-semibold text-surface-700 mb-1.5") Lý do / Ghi chú
+          input(type="text" name="description" placeholder="Ghi chú lý do..." class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+          
+        div(class="pt-4 flex gap-3")
+          button(type="button" class="flex-1 px-4 py-2.5 bg-surface-100 text-surface-700 hover:bg-surface-200 font-semibold rounded-xl transition-colors" onclick="closePointsModal()") Hủy bỏ
+          button(type="submit" id="modal-submit-btn" class="flex-1 px-4 py-2.5 bg-brand-500 text-white hover:bg-brand-600 font-semibold rounded-xl transition-colors") Xác nhận
 
   script.
-    function setPointsTarget(userId, userName, action) {
-      const isAdd = action === 'add';
-      document.getElementById('modal-title').textContent = isAdd ? 'Cộng điểm cho thành viên' : 'Trừ điểm thành viên';
-      document.getElementById('modal-userId').value = userId;
-      document.getElementById('modal-userName').value = userName;
-      document.getElementById('modal-submit-btn').className = isAdd ? 'btn btn-success' : 'btn btn-warning';
-      document.getElementById('modal-submit-btn').textContent = isAdd ? 'Cộng điểm' : 'Trừ điểm';
-      document.getElementById('points-form').action = isAdd ? '/#{prefixAdmin}/loyalty/add-points' : '/#{prefixAdmin}/loyalty/deduct-points';
-    }
-
-    // Search
+    // Search function
     document.getElementById('loyalty-search').addEventListener('input', function() {
       const q = this.value.toLowerCase();
       document.querySelectorAll('#loyalty-table tbody tr').forEach(row => {
         row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
+    });
+
+    // Custom Modal Logic
+    const modal = document.getElementById('loyaltyModal');
+    const modalContent = document.getElementById('loyaltyModalContent');
+    
+    function openPointsModal(userId, userName, action) {
+      const isAdd = action === 'add';
+      document.getElementById('modal-title').textContent = isAdd ? 'Cộng điểm thành viên' : 'Trừ điểm thành viên';
+      document.getElementById('modal-title').className = `text-lg font-bold ${isAdd ? 'text-emerald-600' : 'text-rose-600'}`;
+      
+      document.getElementById('modal-userId').value = userId;
+      document.getElementById('modal-userName').value = userName;
+      
+      const submitBtn = document.getElementById('modal-submit-btn');
+      submitBtn.className = `flex-1 px-4 py-2.5 text-white font-semibold rounded-xl transition-colors ${isAdd ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-rose-500 hover:bg-rose-600'}`;
+      submitBtn.innerHTML = isAdd ? '<i class="bi bi-plus-circle mr-2"></i>Cộng điểm' : '<i class="bi bi-dash-circle mr-2"></i>Trừ điểm';
+      
+      document.getElementById('points-form').action = isAdd ? '/#{prefixAdmin}/loyalty/add-points' : '/#{prefixAdmin}/loyalty/deduct-points';
+      
+      // Show modal
+      modal.classList.remove('hidden');
+      // Trigger reflow
+      void modal.offsetWidth;
+      modal.classList.remove('opacity-0');
+      modalContent.classList.remove('scale-95');
+    }
+    
+    function closePointsModal() {
+      modal.classList.add('opacity-0');
+      modalContent.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('points-form').reset();
+      }, 300);
+    }
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closePointsModal();
     });

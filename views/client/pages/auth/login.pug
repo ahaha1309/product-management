@@ -4,555 +4,105 @@ html(lang="vi")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title Đăng nhập | ShopVN
+    title Đăng nhập | VanHa Tech
     link(rel="icon" href="/image/logo.png" type="image/x-icon")
-    link(rel="preconnect" href="https://fonts.googleapis.com")
-    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
-    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet")
+    link(rel="stylesheet", href="/css/tailwind.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/geist@1.0.3/dist/fonts/geist-sans/style.css")
     link(href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet")
     style.
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        min-height: 100vh;
-        background: #f5f3ff;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      /* ===== LEFT PANEL ===== */
-      .panel-left {
-        background: linear-gradient(145deg, #6d28d9 0%, #4f46e5 40%, #0ea5e9 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 48px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .panel-left::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: 
-          radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12) 0%, transparent 60%),
-          radial-gradient(circle at 20% 80%, rgba(0,0,0,0.15) 0%, transparent 50%);
-      }
-
-      .panel-left::after {
-        content: '';
-        position: absolute;
-        bottom: -80px;
-        right: -80px;
-        width: 300px;
-        height: 300px;
-        border: 60px solid rgba(255,255,255,0.08);
-        border-radius: 50%;
-      }
-
-      .brand-area { position: relative; z-index: 1; text-align: center; }
-
-      .brand-logo-big {
-        font-size: 52px;
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: -2px;
-        line-height: 1;
-        margin-bottom: 12px;
-        text-shadow: 0 4px 24px rgba(0,0,0,0.2);
-      }
-
-      .brand-logo-big span { color: rgba(255,255,255,0.6); }
-
-      .brand-tagline {
-        font-size: 15px;
-        color: rgba(255,255,255,0.7);
-        font-weight: 400;
-        margin-bottom: 48px;
-        letter-spacing: 0.3px;
-      }
-
-      .feature-list {
-        list-style: none;
-        text-align: left;
-        width: 100%;
-        max-width: 300px;
-      }
-
-      .feature-list li {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 0;
-        color: rgba(255,255,255,0.85);
-        font-size: 14.5px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-      }
-
-      .feature-list li:last-child { border-bottom: none; }
-
-      .feature-icon {
-        width: 36px;
-        height: 36px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-
-      /* Floating shapes */
-      .shape {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.12;
-        animation: floatShape 8s ease-in-out infinite;
-      }
-
-      .shape-1 { width: 180px; height: 180px; background: #fff; top: -40px; left: -40px; animation-delay: 0s; }
-      .shape-2 { width: 120px; height: 120px; background: #fff; bottom: 80px; left: 40px; animation-delay: -3s; }
-
-      @keyframes floatShape {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
-      }
-
-      /* ===== RIGHT PANEL ===== */
-      .panel-right {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 48px;
-        background: #fff;
-      }
-
-      .auth-box {
-        width: 100%;
-        max-width: 400px;
-        animation: fadeSlide 0.5s ease forwards;
-      }
-
-      @keyframes fadeSlide {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-
-      .auth-box h2 {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1e1b4b;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-      }
-
-      .auth-box .subtitle {
-        font-size: 14.5px;
-        color: #6b7280;
-        margin-bottom: 32px;
-      }
-
-      /* Alerts */
-      .alert-msg {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        font-size: 13.5px;
-        font-weight: 500;
-        animation: pop 0.3s ease;
-      }
-
-      @keyframes pop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-
-      .alert-err { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-      .alert-ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
-
-      /* Form */
-      .form-group { margin-bottom: 18px; }
-
-      .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 7px;
-      }
-
-      .input-wrap { position: relative; }
-
-      .input-icon {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-        font-size: 16px;
-      }
-
-      .form-control-custom {
-        width: 100%;
-        padding: 13px 14px 13px 42px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 14.5px;
-        font-family: 'Inter', sans-serif;
-        color: #111827;
-        background: #f9fafb;
-        transition: all 0.2s;
-        outline: none;
-      }
-
-      .form-control-custom::placeholder { color: #9ca3af; }
-
-      .form-control-custom:focus {
-        background: #fff;
-        border-color: #7c3aed;
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
-      }
-
-      .pw-right {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #9ca3af;
-        background: none;
-        border: none;
-        font-size: 17px;
-        transition: color 0.2s;
-      }
-
-      .pw-right:hover { color: #6d28d9; }
-      .has-right { padding-right: 44px; }
-
-      .row-bottom {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .check-label {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        font-size: 13.5px;
-        color: #6b7280;
-        cursor: pointer;
-      }
-
-      .check-label input { accent-color: #7c3aed; }
-
-      .link-forgot {
-        font-size: 13.5px;
-        color: #7c3aed;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s;
-      }
-
-      .link-forgot:hover { color: #5b21b6; }
-
-      /* Login button */
-      .btn-submit {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #7c3aed, #4f46e5);
-        border: none;
-        border-radius: 10px;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        font-family: 'Inter', sans-serif;
-        cursor: pointer;
-        transition: all 0.25s;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .btn-submit::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: rgba(255,255,255,0);
-        transition: background 0.25s;
-      }
-
-      .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.35); }
-      .btn-submit:hover::after { background: rgba(255,255,255,0.08); }
-      .btn-submit:active { transform: none; }
-
-      .btn-submit.loading { opacity: 0.85; cursor: not-allowed; }
-
-      .spinner-sm {
-        display: none;
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255,255,255,0.4);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin: 0 auto;
-      }
-
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      .btn-submit.loading .btn-label { display: none; }
-      .btn-submit.loading .spinner-sm { display: block; }
-
-      /* Divider */
-      .or-divider {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 24px 0;
-        color: #d1d5db;
-        font-size: 13px;
-      }
-
-      .or-divider::before, .or-divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #e5e7eb;
-      }
-
-      .or-divider span { color: #9ca3af; white-space: nowrap; }
-
-      /* Register link */
-      .register-row {
-        text-align: center;
-        font-size: 14px;
-        color: #6b7280;
-      }
-
-      .register-row a {
-        color: #7c3aed;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .register-row a:hover { color: #5b21b6; }
-
-      /* Admin link */
-      .admin-link-area {
-        text-align: center;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #f3f4f6;
-      }
-
-      .admin-link-area a {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 13px;
-        color: #9ca3af;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .admin-link-area a:hover { color: #7c3aed; }
-
-      /* ===== SOCIAL LOGIN ===== */
-      .social-login-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 4px;
-      }
-
-      .btn-social {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
-        padding: 12px 16px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.22s ease;
-        font-family: 'Inter', sans-serif;
-        position: relative;
-        overflow: hidden;
-        letter-spacing: 0.2px;
-      }
-
-      .btn-social::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        transition: opacity 0.22s;
-      }
-
-      .btn-social:hover::after { opacity: 1; }
-
-      /* Google button */
-      .btn-google {
-        background: #ffffff;
-        border: 1.5px solid #e2e8f0;
-        color: #1f2937;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      }
-
-      .btn-google::after {
-        background: linear-gradient(135deg, rgba(66,133,244,0.06), rgba(52,168,83,0.04));
-      }
-
-      .btn-google:hover {
-        border-color: #4285F4;
-        color: #1f2937;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(66,133,244,0.2);
-      }
-
-      .btn-google span { position: relative; z-index: 1; }
-      .btn-google svg { position: relative; z-index: 1; flex-shrink: 0; }
-
-      /* Facebook button */
-      .btn-facebook {
-        background: #1877F2;
-        border: 1.5px solid #1877F2;
-        color: #ffffff;
-        box-shadow: 0 1px 3px rgba(24,119,242,0.25);
-      }
-
-      .btn-facebook::after {
-        background: rgba(0,0,0,0.08);
-      }
-
-      .btn-facebook:hover {
-        background: #166fe5;
-        border-color: #166fe5;
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(24,119,242,0.35);
-      }
-
-      .btn-facebook span { position: relative; z-index: 1; }
-      .btn-facebook svg { position: relative; z-index: 1; flex-shrink: 0; }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        body { grid-template-columns: 1fr; }
-        .panel-left { display: none; }
-        .panel-right { padding: 40px 24px; }
-      }
-
-      @media (max-width: 480px) {
-        .social-login-row { flex-direction: column; }
-        .btn-social { width: 100%; }
-      }
-
-
-  body
-    .panel-left
-      .shape.shape-1
-      .shape.shape-2
-      .brand-area
-        .brand-logo-big ShopVN
-        p.brand-tagline Mua sắm thông minh — Giá tốt mỗi ngày
-        ul.feature-list
-          li
-            .feature-icon 🛒
-            span Hàng nghìn sản phẩm chính hãng
-          li
-            .feature-icon 🚀
-            span Giao hàng nhanh toàn quốc
-          li
-            .feature-icon 💎
-            span Ưu đãi thành viên độc quyền
-          li
-            .feature-icon 🔒
-            span Thanh toán an toàn & bảo mật
-
-    .panel-right
-      .auth-box
-        h2 Đăng nhập
-        p.subtitle Chào mừng! Hãy đăng nhập để tiếp tục mua sắm.
-
+      body { font-family: 'Geist Sans', sans-serif; }
+
+  body(class="bg-surface-50 min-h-screen grid grid-cols-1 md:grid-cols-2")
+    
+    //- Left Panel: Hero Graphic
+    div(class="hidden md:flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-blue-900 p-12")
+      div(class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10")
+      div(class="absolute w-96 h-96 bg-brand-500/30 blur-[100px] rounded-full top-[-10%] left-[-10%]")
+      div(class="absolute w-96 h-96 bg-blue-500/30 blur-[100px] rounded-full bottom-[-10%] right-[-10%]")
+      
+      div(class="relative z-10 w-full max-w-md text-center")
+        div(class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 shadow-diffusion")
+          i(class="bi bi-box-seam text-4xl text-white")
+        h1(class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-4") Chào mừng trở lại.
+        p(class="text-brand-100 text-lg mb-12") Đăng nhập để truy cập ưu đãi độc quyền, theo dõi đơn hàng và tận hưởng trải nghiệm mua sắm đẳng cấp.
+        
+        div(class="space-y-4 text-left bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl shadow-xl")
+          div(class="flex items-center gap-4 text-white")
+            i(class="bi bi-check-circle-fill text-brand-400 text-xl")
+            span(class="font-medium") Tích điểm mọi đơn hàng
+          div(class="flex items-center gap-4 text-white")
+            i(class="bi bi-check-circle-fill text-brand-400 text-xl")
+            span(class="font-medium") Miễn phí vận chuyển toàn quốc
+          div(class="flex items-center gap-4 text-white")
+            i(class="bi bi-check-circle-fill text-brand-400 text-xl")
+            span(class="font-medium") Ưu tiên hỗ trợ 24/7
+
+    //- Right Panel: Form
+    div(class="flex items-center justify-center p-6 md:p-12 bg-white relative")
+      a(href="/" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-surface-50 flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-brand-500 transition-colors")
+        i(class="bi bi-x-lg")
+        
+      div(class="w-full max-w-md")
+        div(class="text-center mb-8")
+          h2(class="text-3xl font-black text-surface-950 tracking-tight mb-2") Đăng nhập
+          p(class="text-surface-500 font-medium") Chưa có tài khoản? <a href="/auth/register" class="text-brand-600 hover:text-brand-700 hover:underline">Đăng ký ngay</a>
+        
         - if(messages && messages.error)
-          .alert-msg.alert-err
-            i.bi.bi-exclamation-circle-fill
+          div(class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-600 font-medium text-sm animate-fade-in")
+            i(class="bi bi-exclamation-circle-fill text-lg")
             span= messages.error
 
         - if(messages && messages.success)
-          .alert-msg.alert-ok
-            i.bi.bi-check-circle-fill
+          div(class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-600 font-medium text-sm animate-fade-in")
+            i(class="bi bi-check-circle-fill text-lg")
             span= messages.success
 
-        form#loginForm(action="/auth/login" method="POST")
-          .form-group
-            label.form-label(for="email") Email
-            .input-wrap
-              i.bi.bi-envelope.input-icon
-              input#email.form-control-custom(
-                type="email"
-                name="email"
-                placeholder="email@example.com"
-                required
-                autocomplete="email"
-              )
+        form#loginForm(action="/auth/login" method="POST" class="space-y-5")
+          div
+            label(class="block text-sm font-bold text-surface-700 mb-1.5") Email
+            div(class="relative")
+              i(class="bi bi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#email(type="email" name="email" placeholder="Nhập địa chỉ email" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
 
-          .form-group
-            label.form-label(for="password") Mật khẩu
-            .input-wrap
-              i.bi.bi-lock.input-icon
-              input#password.form-control-custom.has-right(
-                type="password"
-                name="password"
-                placeholder="Nhập mật khẩu"
-                required
-              )
-              button.pw-right(type="button" id="togglePw")
-                i.bi.bi-eye(id="eyeIcon")
+          div
+            div(class="flex items-center justify-between mb-1.5")
+              label(class="block text-sm font-bold text-surface-700") Mật khẩu
+              a(href="/auth/forgot-password" class="text-xs font-bold text-brand-600 hover:text-brand-700 hover:underline") Quên mật khẩu?
+            div(class="relative")
+              i(class="bi bi-lock absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#password(type="password" name="password" placeholder="Nhập mật khẩu" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-11 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              button#togglePw(type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
+                i#eyeIcon(class="bi bi-eye")
 
-          .row-bottom
-            label.check-label
-              input(type="checkbox" name="remember")
-              | Ghi nhớ đăng nhập
-            a.link-forgot(href="/auth/forgot-password") Quên mật khẩu?
+          div(class="flex items-center gap-2")
+            input#remember(type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+            label(for="remember" class="text-sm text-surface-600 font-medium cursor-pointer select-none") Ghi nhớ đăng nhập
 
-          button.btn-submit#submitBtn(type="submit")
-            span.btn-label
-              i.bi.bi-box-arrow-in-right(style="margin-right:7px")
+          button#submitBtn(type="submit" class="btn-premium btn-premium-primary w-full py-3.5 text-base shadow-brand-500/30 group relative overflow-hidden")
+            span.btn-label(class="flex items-center justify-center gap-2 relative z-10")
               | Đăng nhập
-            .spinner-sm
+              i(class="bi bi-arrow-right group-hover:translate-x-1 transition-transform")
+            div.spinner-sm(class="hidden absolute inset-0 m-auto w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin z-10")
 
-        .register-row
-          span Chưa có tài khoản? &nbsp;
-          a(href="/auth/register") Đăng ký ngay
+        div(class="mt-8 relative")
+          div(class="absolute inset-0 flex items-center")
+            div(class="w-full border-t border-slate-200")
+          div(class="relative flex justify-center text-sm")
+            span(class="px-4 bg-white text-surface-400 font-semibold") Hoặc đăng nhập bằng
 
-        .or-divider
-          span Hoặc đăng nhập với
-
-        .social-login-row
-          a.btn-social.btn-google(href="/auth/google")
-            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20")
+        div(class="grid grid-cols-2 gap-4 mt-6")
+          a(href="/auth/google" class="flex items-center justify-center gap-3 px-4 py-3 border border-slate-200 rounded-xl hover:bg-surface-50 hover:border-slate-300 transition-all font-semibold text-surface-700 text-sm")
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18")
               path(d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4")
               path(d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853")
               path(d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05")
               path(d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335")
-            span Google
-
-          a.btn-social.btn-facebook(href="/auth/facebook")
-            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20")
-              path(d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2")
-            span Facebook
-
-
+            | Google
+          
+          a(href="/auth/facebook" class="flex items-center justify-center gap-3 px-4 py-3 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-xl transition-all font-semibold text-sm shadow-sm shadow-[#1877F2]/30")
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18")
+              path(d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#ffffff")
+            | Facebook
 
     script.
       const togglePw = document.getElementById('togglePw');
@@ -567,7 +117,12 @@ html(lang="vi")
 
       const form = document.getElementById('loginForm');
       const btn = document.getElementById('submitBtn');
+      const btnLabel = btn.querySelector('.btn-label');
+      const spinner = btn.querySelector('.spinner-sm');
+
       form.addEventListener('submit', () => {
-        btn.classList.add('loading');
+        btnLabel.style.display = 'none';
+        spinner.style.display = 'block';
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
         btn.disabled = true;
       });

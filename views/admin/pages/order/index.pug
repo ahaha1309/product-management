@@ -1,106 +1,142 @@
 extends ../../layout/default.pug
 
 block main
-  h1.mb-4 Quản lý đơn hàng
-  link(rel="stylesheet", href="/admin/css/order.css")
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Quản lý Đơn hàng
+        p(class="text-surface-500 text-sm mt-1") Theo dõi, xử lý và cập nhật trạng thái đơn hàng.
 
-  .card.mb-3
-    .card-header Danh sách đơn hàng
-    .card-body
-      table.table.table-hover.table-sm
-        thead
-          tr
-            th STT
-            th Mã đơn hàng
-            th Tổng tiền
-            th P.Thức TT
-            th Trạng thái TT
-            th Trạng thái Đơn
-            th Ngày tạo
-            th Hành động
-        tbody
-          if orders.length > 0
-            each item, index in orders
+    //- List
+    div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+      div(class="p-5 border-b border-surface-100 bg-surface-50/50 flex justify-between items-center")
+        h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2")
+          i.bi.bi-receipt.text-brand-500
+          | Danh sách đơn hàng
+          
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse whitespace-nowrap")
+          thead
+            tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-4 py-3 text-center") STT
+              th(class="px-4 py-3") Mã đơn hàng
+              th(class="px-4 py-3") Tổng tiền
+              th(class="px-4 py-3 text-center") Phương thức TT
+              th(class="px-4 py-3") Trạng thái TT
+              th(class="px-4 py-3") Trạng thái Đơn
+              th(class="px-4 py-3") Ngày tạo
+              th(class="px-4 py-3 text-right") Hành động
+          tbody(class="divide-y divide-surface-100 text-sm")
+            if orders.length > 0
+              each item, index in orders
+                tr(class="hover:bg-surface-50 transition-colors group")
+                  td(class="px-4 py-3 text-center text-surface-500 font-medium") #{index + 1}
+                  td(class="px-4 py-3")
+                    span(class="font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-md border border-brand-100") #{item.orderCode}
+                    if item.cancelRequest
+                      div(class="mt-1.5")
+                        span(class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-100 text-amber-700 border border-amber-200 inline-flex items-center gap-1")
+                          i.bi.bi-hourglass-split
+                          | Yêu cầu hủy
+                  
+                  td(class="px-4 py-3 font-bold text-rose-500") #{item.amount.toLocaleString('vi-VN')}₫
+                  
+                  td(class="px-4 py-3 text-center")
+                    span(class="px-2 py-1 text-xs font-semibold rounded-lg bg-surface-100 text-surface-600 border border-surface-200") #{item.paymentMethod}
+                  
+                  td(class="px-4 py-3")
+                    select(class="select-payment-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
+                      option(value="pending" selected=(item.paymentStatus === 'pending')) ⏳ Chờ thanh toán
+                      option(value="success" selected=(item.paymentStatus === 'success')) ✅ Đã thanh toán
+                      option(value="failed" selected=(item.paymentStatus === 'failed')) ❌ Thất bại
+
+                  td(class="px-4 py-3")
+                    select(class="select-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
+                      option(value="pending" selected=(item.status === 'pending' || item.status === '')) Chờ xử lý
+                      option(value="confirm" selected=(item.status === 'confirm')) Đã xác nhận
+                      option(value="finish" selected=(item.status === 'finish')) Hoàn thành
+                      option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
+
+                  td(class="px-4 py-3 text-surface-500 text-xs") #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                  
+                  td(class="px-4 py-3 text-right")
+                    button(class="btn-detail w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm" data-id=item._id title="Xem chi tiết")
+                      i.bi.bi-eye
+
+            else
               tr
-                td #{index + 1}
-                td 
-                  strong #{item.orderCode}
-                  if item.cancelRequest
-                    br
-                    span.badge.badge-warning(style="color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; margin-top: 4px;") ⏳ Yêu cầu hủy
-                td.text-danger.font-weight-bold #{item.amount.toLocaleString('vi-VN')}₫
-                td 
-                  span.badge.badge-secondary #{item.paymentMethod}
+                td(colspan="8" class="px-5 py-8 text-center text-surface-500") Chưa có đơn hàng nào.
+
+  //- Modal Chi Tiết Đơn Hàng Tailwind
+  div(id="orderDetailModal" class="hidden fixed inset-0 z-[9999] bg-surface-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-100 transition-opacity")
+    div(class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform scale-100 transition-transform")
+      //- Header
+      div(class="px-6 py-4 border-b border-surface-100 flex items-center justify-between bg-surface-50")
+        h3(class="text-lg font-bold text-surface-900 flex items-center gap-2")
+          i.bi.bi-receipt-cutoff.text-brand-500
+          | Chi tiết đơn hàng: 
+          span(id="modalOrderCode" class="text-brand-600")
+        button(type="button" data-bs-dismiss="modal" class="text-surface-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50")
+          i.bi.bi-x-lg.text-lg
+      
+      //- Body
+      div(class="p-6 overflow-y-auto flex-1 custom-scrollbar")
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8")
+          //- Customer Info
+          div(class="bg-surface-50 rounded-xl p-5 border border-surface-100")
+            h6(class="text-sm font-bold text-surface-900 mb-4 uppercase tracking-wider flex items-center gap-2")
+              i.bi.bi-person-badge.text-blue-500
+              | Thông tin khách hàng
+            div(class="space-y-2 text-sm")
+              p(class="flex justify-between")
+                span(class="text-surface-500") Họ tên:
+                span(id="modalCustomerName" class="font-medium text-surface-900")
+              p(class="flex justify-between")
+                span(class="text-surface-500") Điện thoại:
+                span(id="modalCustomerPhone" class="font-medium text-surface-900")
+              p(class="flex justify-between")
+                span(class="text-surface-500") Địa chỉ:
+                span(id="modalCustomerAddress" class="font-medium text-surface-900 text-right max-w-[200px] truncate")
                 
-                td
-                  select.form-control.form-control-sm.select-payment-status(data-id=item._id)
-                    option(value="pending" selected=(item.paymentStatus === 'pending')) ⏳ Chờ thanh toán
-                    option(value="success" selected=(item.paymentStatus === 'success')) ✅ Đã thanh toán
-                    option(value="failed" selected=(item.paymentStatus === 'failed')) ❌ Thất bại
-
-                td
-                  select.form-control.form-control-sm.select-status(data-id=item._id)
-                    option(value="pending" selected=(item.status === 'pending' || item.status === '')) Chờ xử lý
-                    option(value="confirm" selected=(item.status === 'confirm')) Đã xác nhận
-                    option(value="finish" selected=(item.status === 'finish')) Hoàn thành
-                    option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
-
-                td #{new Date(item.createdAt).toLocaleString('vi-VN')}
+          //- Payment Info
+          div(class="bg-surface-50 rounded-xl p-5 border border-surface-100")
+            h6(class="text-sm font-bold text-surface-900 mb-4 uppercase tracking-wider flex items-center gap-2")
+              i.bi.bi-credit-card.text-emerald-500
+              | Thanh toán & Vận chuyển
+            div(class="space-y-2 text-sm")
+              p(class="flex justify-between")
+                span(class="text-surface-500") Phương thức:
+                span(id="modalPaymentMethod" class="font-medium text-surface-900")
+              p(class="flex justify-between")
+                span(class="text-surface-500") Trạng thái thanh toán:
+                span(id="modalPaymentStatus" class="font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-700")
                 
-                td
-                  //- Sửa lại nút Chi tiết: dùng button thay vì thẻ a, thêm class btn-detail
-                  button.btn.btn-sm.btn-info.btn-detail(data-id=item._id) Chi tiết
+        //- Products Table
+        h6(class="text-sm font-bold text-surface-900 mb-4 uppercase tracking-wider flex items-center gap-2")
+          i.bi.bi-box-seam.text-amber-500
+          | Danh sách sản phẩm
+        div(class="border border-surface-200 rounded-xl overflow-hidden")
+          table(class="w-full text-left text-sm whitespace-nowrap")
+            thead(class="bg-surface-100 text-surface-600 font-semibold border-b border-surface-200")
+              tr
+                th(class="px-4 py-3 w-16 text-center") Ảnh
+                th(class="px-4 py-3") Sản phẩm
+                th(class="px-4 py-3 text-right") Đơn giá
+                th(class="px-4 py-3 text-center") SL
+                th(class="px-4 py-3 text-right") Thành tiền
+            tbody(id="modalProductList" class="divide-y divide-surface-100 bg-white")
+              //- Data populated by JS
+              
+        //- Total
+        div(class="mt-6 flex justify-end")
+          div(class="bg-rose-50 border border-rose-100 px-6 py-4 rounded-xl flex items-center gap-4")
+            span(class="text-surface-600 font-semibold uppercase tracking-wider text-sm") Tổng thanh toán:
+            span(id="modalTotalAmount" class="text-2xl font-bold text-rose-600")
 
-          else
-            tr
-              td(colspan="8" class="text-center") Chưa có đơn hàng nào
-
-  //- --- Cấu trúc Modal Chi Tiết Đơn Hàng ---
-  #orderDetailModal.modal.fade(target="_blank" tabindex="-1" role="dialog")
-    .modal-dialog.modal-lg(role="document")
-      .modal-content
-        .modal-header
-          h5.modal-title Chi tiết đơn hàng: 
-            span#modalOrderCode.font-weight-bold
-        .modal-body
-          .row.mb-3
-            .col-md-6
-              h6 👤 Thông tin khách hàng
-              p.mb-1 
-                strong Họ tên: 
-                span#modalCustomerName
-              p.mb-1 
-                strong Điện thoại: 
-                span#modalCustomerPhone
-              p.mb-1 
-                strong Địa chỉ: 
-                span#modalCustomerAddress
-            .col-md-6
-              h6 💳 Thanh toán & Vận chuyển
-              p.mb-1 
-                strong Phương thức: 
-                span#modalPaymentMethod
-              p.mb-1 
-                strong Trạng thái: 
-                span#modalPaymentStatus
-          
-          h6 📦 Danh sách sản phẩm
-          .table-responsive
-            table.table.table-bordered.table-sm
-              thead.bg-light
-                tr
-                  th Hình ảnh
-                  th Sản phẩm
-                  th Đơn giá
-                  th SL
-                  th Tổng
-              tbody#modalProductList
-          
-          .text-right.mt-3
-            h5 Tổng thanh toán: 
-              span#modalTotalAmount.text-danger.font-weight-bold
-        .modal-footer
-          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Đóng
+      //- Footer
+      div(class="px-6 py-4 border-t border-surface-100 bg-surface-50 flex justify-end")
+        button(type="button" data-bs-dismiss="modal" class="px-5 py-2 rounded-xl border border-surface-200 bg-white text-surface-700 font-semibold hover:bg-surface-100 transition-colors shadow-sm") Đóng
 
 block scripts
   script(src="/admin/js/order.js")

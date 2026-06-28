@@ -5,132 +5,148 @@ block main
   +alert-success(messages.success)
 
   //- Hero Contact
-  .contact-hero
-    .container.text-center
-      h1.contact-hero-title
-        i.bi.bi-telephone-fill.me-3
-        | Liên hệ với chúng tôi
-      p.contact-hero-subtitle Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7
+  div(class="relative bg-surface-950 pt-24 pb-32 px-4 overflow-hidden mb-12")
+    div(class="absolute inset-0 bg-gradient-to-br from-brand-900 via-surface-900 to-blue-900 opacity-90")
+    div(class="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-500/20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none")
+    div(class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none")
+    
+    div(class="container mx-auto relative z-10 text-center max-w-2xl")
+      div(class="w-20 h-20 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-diffusion animate-fade-in")
+        i.bi.bi-headset
+      h1(class="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 animate-fade-in [animation-delay:100ms]") Liên hệ với chúng tôi
+      p(class="text-lg text-surface-300 font-medium leading-relaxed animate-fade-in [animation-delay:200ms]") Đội ngũ của VanHa Tech luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7.
 
-  .container.py-5
+  div(class="container mx-auto px-4 mb-20 -mt-24 relative z-20")
 
-    //- Contact Cards
-    .row.g-4.mb-5
-      .col-md-4
-        .contact-card.text-center
-          .contact-card-icon.bg-primary
-            i.bi.bi-geo-alt-fill
-          h5.fw-bold.mt-3 Địa chỉ
-          p.text-muted Số 22 Đường Cái Trống Quân
-            br
-            | Hạ Lôi, Mê Linh, Hà Nội
-          a.btn.btn-outline-primary.btn-sm(href="#map") Xem bản đồ
-      .col-md-4
-        .contact-card.text-center
-          .contact-card-icon.bg-success
-            i.bi.bi-telephone-fill
-          h5.fw-bold.mt-3 Điện thoại
-          p.text-muted
-            a.text-muted.text-decoration-none(href="tel:+84886911791") 0886 911 791
-          p.text-muted.small.mb-0 T2 - T7: 8:00 - 22:00
-      .col-md-4
-        .contact-card.text-center
-          .contact-card-icon.bg-warning
-            i.bi.bi-envelope-fill
-          h5.fw-bold.mt-3 Email
-          p.text-muted
-            a.text-muted.text-decoration-none(href="mailto:vanhanguyen2k4@gmail.com") vanhanguyen2k4@gmail.com
-          p.text-muted.small.mb-0 Phản hồi trong 24h
+    //- Contact Info Cards
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12")
+      div(class="bento-card text-center !p-8 bg-white/90 backdrop-blur-xl border border-slate-100 shadow-xl hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl mx-auto mb-5 border border-brand-100")
+          i.bi.bi-geo-alt-fill
+        h5(class="text-lg font-black text-surface-900 mb-2") Trụ sở chính
+        p(class="text-surface-500 text-sm font-medium leading-relaxed mb-4") Số 22 Đường Cái Trống Quân<br>Hạ Lôi, Mê Linh, Hà Nội
+        a(href="#map" class="text-xs font-bold text-brand-600 uppercase tracking-wider hover:underline") Xem trên bản đồ →
+      
+      div(class="bento-card text-center !p-8 bg-white/90 backdrop-blur-xl border border-slate-100 shadow-xl hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mx-auto mb-5 border border-emerald-100")
+          i.bi.bi-telephone-fill
+        h5(class="text-lg font-black text-surface-900 mb-2") Điện thoại
+        p(class="text-surface-500 text-sm font-medium leading-relaxed mb-4") 
+          a(href="tel:+84886911791" class="text-surface-900 font-bold hover:text-emerald-600 transition-colors text-lg block mb-1") 0886 911 791
+          | Thứ 2 - Chủ nhật: 8:00 - 22:00
+        a(href="tel:+84886911791" class="text-xs font-bold text-emerald-600 uppercase tracking-wider hover:underline") Gọi ngay →
+        
+      div(class="bento-card text-center !p-8 bg-white/90 backdrop-blur-xl border border-slate-100 shadow-xl hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mx-auto mb-5 border border-rose-100")
+          i.bi.bi-envelope-fill
+        h5(class="text-lg font-black text-surface-900 mb-2") Email hỗ trợ
+        p(class="text-surface-500 text-sm font-medium leading-relaxed mb-4")
+          a(href="mailto:vanhanguyen2k4@gmail.com" class="text-surface-900 font-bold hover:text-rose-600 transition-colors block mb-1") vanhanguyen2k4@gmail.com
+          | Phản hồi trong 24h
+        a(href="mailto:vanhanguyen2k4@gmail.com" class="text-xs font-bold text-rose-600 uppercase tracking-wider hover:underline") Gửi email →
 
-    //- Main Content
-    .row.g-5
-      //- Contact Form
-      .col-lg-7
-        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
-          h4.fw-bold.mb-4
-            i.bi.bi-chat-dots-fill.text-primary.me-2
+    //- Main Content Grid
+    div(class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12")
+      
+      //- Contact Form (Span 7)
+      div(class="lg:col-span-7")
+        div(class="bento-card")
+          h4(class="text-2xl font-black text-surface-900 mb-6 flex items-center gap-3")
+            i.bi.bi-send.text-brand-500
             | Gửi tin nhắn cho chúng tôi
-          form#contact-form(action="/contact" method="POST")
-            .row.g-3
-              .col-md-6
-                label.form-label.fw-semibold Họ và tên *
-                input.form-control(type="text" name="name" placeholder="Nguyễn Văn A" required)
-              .col-md-6
-                label.form-label.fw-semibold Email *
-                input.form-control(type="email" name="email" placeholder="email@example.com" required)
-              .col-md-6
-                label.form-label.fw-semibold Số điện thoại
-                input.form-control(type="tel" name="phone" placeholder="0886 911 791")
-              .col-md-6
-                label.form-label.fw-semibold Chủ đề
-                select.form-select(name="subject")
+          
+          form#contact-form(action="/contact" method="POST" class="space-y-6")
+            div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+              div
+                label(class="block text-sm font-bold text-surface-700 mb-1.5") Họ và tên <span class="text-rose-500">*</span>
+                input(type="text" name="name" placeholder="Nguyễn Văn A" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              
+              div
+                label(class="block text-sm font-bold text-surface-700 mb-1.5") Email <span class="text-rose-500">*</span>
+                input(type="email" name="email" placeholder="email@example.com" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              
+              div
+                label(class="block text-sm font-bold text-surface-700 mb-1.5") Số điện thoại
+                input(type="tel" name="phone" placeholder="0886 911 791" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              
+              div
+                label(class="block text-sm font-bold text-surface-700 mb-1.5") Chủ đề
+                select(name="subject" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-bold text-surface-700 focus:outline-none focus:border-brand-500 cursor-pointer")
                   option(value="order") Hỏi về đơn hàng
                   option(value="product") Hỏi về sản phẩm
                   option(value="return") Đổi/trả hàng
                   option(value="payment") Thanh toán
                   option(value="other") Khác
-              .col-12
-                label.form-label.fw-semibold Nội dung *
-                textarea.form-control(name="message" rows="5" placeholder="Nhập nội dung cần hỗ trợ..." required)
-              .col-12
-                button.btn.btn-primary.w-100.py-3.fw-bold(type="submit")
-                  i.bi.bi-send.me-2
-                  | Gửi tin nhắn
+            
+            div
+              label(class="block text-sm font-bold text-surface-700 mb-1.5") Nội dung <span class="text-rose-500">*</span>
+              textarea(name="message" rows="5" placeholder="Nhập nội dung cần hỗ trợ..." required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all resize-none")
+            
+            button(type="submit" class="btn-premium btn-premium-primary w-full py-3.5 text-base")
+              | Gửi tin nhắn ngay
 
-      //- Info + Social
-      .col-lg-5
-        //- Working hours
-        .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
-          h5.fw-bold.mb-3
-            i.bi.bi-clock-fill.text-success.me-2
+      //- Sidebar Info (Span 5)
+      div(class="lg:col-span-5 flex flex-col gap-6")
+        
+        //- Working Hours
+        div(class="bento-card")
+          h5(class="text-lg font-black text-surface-900 mb-5 flex items-center gap-2")
+            i.bi.bi-clock-fill.text-emerald-500
             | Giờ làm việc
-          .d-flex.justify-content-between.py-2.border-bottom
-            span.text-muted Thứ 2 - Thứ 6
-            span.fw-semibold 8:00 - 22:00
-          .d-flex.justify-content-between.py-2.border-bottom
-            span.text-muted Thứ 7
-            span.fw-semibold 9:00 - 20:00
-          .d-flex.justify-content-between.py-2.border-bottom
-            span.text-muted Chủ nhật
-            span.fw-semibold 10:00 - 18:00
-          .d-flex.justify-content-between.py-2
-            span.text-muted Chat hỗ trợ
-            span.badge.bg-success.align-self-center 24/7
-
+          
+          div(class="space-y-4")
+            div(class="flex justify-between items-center py-3 border-b border-slate-100")
+              span(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Thứ 2 - Thứ 6
+              span(class="font-black text-surface-900") 8:00 - 22:00
+            
+            div(class="flex justify-between items-center py-3 border-b border-slate-100")
+              span(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Thứ 7
+              span(class="font-black text-surface-900") 9:00 - 20:00
+            
+            div(class="flex justify-between items-center py-3 border-b border-slate-100")
+              span(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Chủ nhật
+              span(class="font-black text-surface-900") 10:00 - 18:00
+            
+            div(class="flex justify-between items-center py-3")
+              span(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Live Chat
+              div(class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-black uppercase tracking-widest") 24/7
+        
         //- Social Media
-        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
-          h5.fw-bold.mb-3
-            i.bi.bi-share-fill.text-primary.me-2
-            | Kết nối với chúng tôi
-          .d-flex.flex-column.gap-2
-            a.social-contact-item(href="https://facebook.com" target="_blank")
-              .social-contact-icon.bg-primary
+        div(class="bento-card flex-1")
+          h5(class="text-lg font-black text-surface-900 mb-5 flex items-center gap-2")
+            i.bi.bi-share-fill.text-brand-500
+            | Mạng xã hội
+          
+          div(class="flex flex-col gap-3")
+            a(href="https://facebook.com" target="_blank" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-[#1877F2]/10 transition-colors border border-transparent hover:border-[#1877F2]/20")
+              div(class="w-12 h-12 rounded-xl bg-[#1877F2] text-white flex items-center justify-center text-xl shadow-sm")
                 i.bi.bi-facebook
               div
-                .fw-semibold VanHa Tech Official
-                .text-muted.small Facebook
-            a.social-contact-item(href="https://instagram.com" target="_blank")
-              .social-contact-icon(style="background:#e1306c;")
+                div(class="font-bold text-surface-900 group-hover:text-[#1877F2] transition-colors") VanHa Tech Official
+                div(class="text-xs font-semibold text-surface-500") Hơn 100K người theo dõi
+            
+            a(href="https://instagram.com" target="_blank" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-[#E1306C]/10 transition-colors border border-transparent hover:border-[#E1306C]/20")
+              div(class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#FFDC80] via-[#F56040] to-[#C13584] text-white flex items-center justify-center text-xl shadow-sm")
                 i.bi.bi-instagram
               div
-                .fw-semibold @vanhatech
-                .text-muted.small Instagram
-            a.social-contact-item(href="https://youtube.com" target="_blank")
-              .social-contact-icon.bg-danger
+                div(class="font-bold text-surface-900 group-hover:text-[#E1306C] transition-colors") @vanhatech
+                div(class="text-xs font-semibold text-surface-500") Cập nhật hình ảnh sản phẩm
+            
+            a(href="https://youtube.com" target="_blank" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-[#FF0000]/10 transition-colors border border-transparent hover:border-[#FF0000]/20")
+              div(class="w-12 h-12 rounded-xl bg-[#FF0000] text-white flex items-center justify-center text-xl shadow-sm")
                 i.bi.bi-youtube
               div
-                .fw-semibold VanHa Tech Store
-                .text-muted.small YouTube
+                div(class="font-bold text-surface-900 group-hover:text-[#FF0000] transition-colors") VanHa Tech Channel
+                div(class="text-xs font-semibold text-surface-500") Video review công nghệ
 
-    //- Map iframe
-    #map.mt-5
-      .card.border-0.shadow-sm(style="border-radius:16px; overflow:hidden;")
-        iframe(
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.265147573909!2d105.72937187600867!3d21.141852080536214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134fff67b84f2bb%3A0x8e83fcfce9c09054!2zSOG6oSBMw7RpLCBNw6ogTGluaCwgSGFub2ksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1704123456789!5m2!1sen!2s" 
-          width="100%" 
-          height="400" 
-          style="border:0;" 
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade"
-        )
+    //- Map Iframe
+    div#map(class="bento-card !p-0 overflow-hidden h-[400px]")
+      iframe(
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.265147573909!2d105.72937187600867!3d21.141852080536214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134fff67b84f2bb%3A0x8e83fcfce9c09054!2zSOG6oSBMw7RpLCBNw6ogTGluaCwgSGFub2ksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1704123456789!5m2!1sen!2s" 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade"
+      )

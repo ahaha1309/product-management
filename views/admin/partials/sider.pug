@@ -1,86 +1,139 @@
-.sider
-   .inner-logo
-      a.art-logo(href=prefixAdmin+"/dashboard")
-         i.bi.bi-lightning-charge-fill
-         span VanHa
-         span.highlight Tech
-   .inner-menu
-      ul 
-         li
-            a(href=prefixAdmin+"/dashboard")
-               i.bi.bi-speedometer2.me-2
-               | Tổng quan
-         if(role.permission.includes('products_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/product")
-                  i.bi.bi-box-seam.me-2
-                  | Sản phẩm
-         if(role.permission.includes('orders_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/orders")
-                  i.bi.bi-bag-check.me-2
-                  | Đơn hàng
-         if(role.permission.includes('products-category_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/category-product")
-                  i.bi.bi-folder.me-2
-                  | Danh mục sản phẩm
-         if(role.permission.includes('articles_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/articles")
-                  i.bi.bi-newspaper.me-2
-                  | Bài viết
-            li 
-               a(href=prefixAdmin+"/article-comments")
-                  i.bi.bi-chat-left-text.me-2
-                  | Bình luận bài viết
-         if(role.permission.includes('articles-category_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/category-article")
-                  i.bi.bi-folder2.me-2
-                  | Danh mục bài viết
-         if(role.permission.includes('roles_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/roles")
-                  i.bi.bi-shield-lock.me-2
-                  | Nhóm quyền
-         if(role.permission.includes('roles_permission') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/roles/permission")
-                  i.bi.bi-key.me-2
-                  | Phân quyền
-         if(role.permission.includes('accounts_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/accounts")
-                  i.bi.bi-people.me-2
-                  | Tài khoản Admin
-         if(role.permission.includes('accounts_view') || role.permission.includes('*'))
-            li 
-               a(href=prefixAdmin+"/users")
-                  i.bi.bi-person-badge.me-2
-                  | Khách hàng
-         li 
-            a(href=prefixAdmin+"/loyalty")
-               i.bi.bi-award.me-2
-               | Loyalty & Điểm thưởng
-         li 
-            a(href=prefixAdmin+"/analytics")
-               i.bi.bi-graph-up.me-2
-               | Thống kê & Analytics
-         li 
-            a(href=prefixAdmin+"/reviews")
-               i.bi.bi-star.me-2
-               | Quản lý Reviews
-         li 
-            a(href=prefixAdmin+"/chats")
-               i.bi.bi-chat-dots.me-2
-               | Hỗ trợ trực tuyến
-         li 
-            a(href=prefixAdmin+"/settings/general")
-               i.bi.bi-gear.me-2
-               | Cài đặt chung
-         .sider-divider
-         li 
-            a(href=prefixAdmin+"/my-account")
-               i.bi.bi-person-circle.me-2
-               | Thông tin cá nhân
+aside(class="w-64 bg-slate-950 text-slate-300 h-screen flex flex-col shrink-0 transition-all duration-300 border-r border-slate-900 shadow-xl z-20 hidden md:flex")
+  //- Logo Area
+  div(class="h-16 flex items-center px-6 border-b border-surface-800/50 shrink-0")
+    a(href=`${prefixAdmin}/dashboard` class="flex items-center gap-3 group")
+      div(class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform")
+        i.bi.bi-lightning-charge-fill.text-sm
+      span(class="text-lg font-bold text-white tracking-wide") VanHa <span class="text-brand-400">Tech</span>
+  
+  //- Menu Area
+  div(class="flex-1 overflow-y-auto hide-scrollbar py-4 px-3 space-y-1")
+    
+    //- Dashboard
+    a(href=`${prefixAdmin}/dashboard` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-speedometer2.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Tổng quan
+      
+    //- Catalog
+    div(class="pt-4 pb-2")
+      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Catalog
+      
+    if(role.permission.includes('products_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-box-seam.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Sản phẩm
+        
+    if(role.permission.includes('products-category_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/category-product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-folder2-open.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Danh mục sản phẩm
+
+    //- Sales
+    div(class="pt-4 pb-2")
+      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Sales
+      
+    if(role.permission.includes('orders_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-bag-check.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Đơn hàng
+        
+    if(role.permission.includes('accounts_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/users` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-people.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Khách hàng
+        
+    //- Content & Marketing
+    div(class="pt-4 pb-2")
+      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Content
+      
+    if(role.permission.includes('articles_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/articles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-newspaper.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Bài viết
+        
+    if(role.permission.includes('articles-category_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/category-article` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-tags.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Danh mục bài viết
+
+    a(href=`${prefixAdmin}/reviews` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-star.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Quản lý Reviews
+      
+    a(href=`${prefixAdmin}/loyalty` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-award.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Loyalty & Điểm
+      
+    a(href=`${prefixAdmin}/chats` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-chat-square-dots.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Hỗ trợ CSKH
+
+    //- System
+    div(class="pt-4 pb-2")
+      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") System
+      
+    a(href=`${prefixAdmin}/analytics` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-graph-up-arrow.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Thống kê (Analytics)
+
+    if(role.permission.includes('accounts_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/accounts` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-person-badge.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Tài khoản Admin
+
+    if(role.permission.includes('roles_view') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/roles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-shield-check.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Nhóm quyền
+        
+    if(role.permission.includes('roles_permission') || role.permission.includes('*'))
+      a(href=`${prefixAdmin}/roles/permission` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+        i.bi.bi-key.text-lg.transition-colors(class="group-hover:text-brand-400")
+        | Phân quyền
+        
+    a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-white group")
+      i.bi.bi-gear.text-lg.transition-colors(class="group-hover:text-brand-400")
+      span Cài đặt chung
+
+  script.
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentPath = window.location.pathname;
+      const links = document.querySelectorAll("aside a");
+      let activeLink = null;
+      let maxLength = 0;
+      
+      links.forEach(link => {
+        const href = link.getAttribute("href");
+        if (href && currentPath.startsWith(href) && href !== '/admin' && href.length > maxLength) {
+          activeLink = link;
+          maxLength = href.length;
+        } else if (href && currentPath === href && href === '/admin') {
+           activeLink = link;
+           maxLength = href.length;
+        }
+      });
+      
+      if (activeLink) {
+        activeLink.classList.remove("text-slate-300");
+        activeLink.classList.add("bg-brand-500", "text-white", "shadow-md", "shadow-brand-500/20");
+        
+        // Find icon and override its color
+        const icon = activeLink.querySelector('i');
+        if (icon) {
+          icon.classList.remove("group-hover:text-brand-400");
+        }
+        
+        // Smooth scroll to make it visible
+        activeLink.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+
+  //- User Profile Footer
+  div(class="p-4 border-t border-surface-800/50 mt-auto shrink-0")
+    a(href=`${prefixAdmin}/my-account` class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-800 transition-colors group")
+      div(class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm")
+        | #{account.fullname ? account.fullname.charAt(0).toUpperCase() : 'A'}
+      div(class="flex-1 min-w-0")
+        p(class="text-sm font-semibold text-white truncate") #{account.fullname}
+        p(class="text-xs text-surface-500 truncate") #{role.title}
+      i.bi.bi-chevron-right.text-xs.text-surface-600.transition-transform(class="group-hover:translate-x-1")

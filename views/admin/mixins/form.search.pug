@@ -1,10 +1,5 @@
-mixin formSearch (keyword)
-  form(id="form-search")
-             .input-group 
-               input(type="text"
-             placeholder="Nhập từ khóa"
-             name="keyword"
-             value=keyword
-             class="form-control") 
-               .input-group-append.ms-2
-                button(class="btn btn-success" type="submit") Tìm
+mixin formSearch(keyword)
+  form(id="form-search" class="w-full relative group")
+    i(class="bi bi-search absolute left-3 top-2 translate-y-0.5 text-surface-400")
+    input(type="text" placeholder="Tìm kiếm..." name="keyword" value=keyword class="w-full bg-white border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-9 pr-16 py-2.5 transition-all outline-none")
+    button(type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-surface-100 hover:bg-surface-200 text-surface-600 text-xs font-semibold rounded-lg transition-colors") Tìm

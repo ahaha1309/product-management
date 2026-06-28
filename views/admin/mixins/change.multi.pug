@@ -1,23 +1,12 @@
 mixin changeMulti(path)
-  form(
-            action=path
-            method="POST"
-            form-change-multi
-        )
-          .d-flex.align-items-start
-               .form-group.mx-2
-                   select(name="type" class="form-select text-center")
-                     option(disabled selected) -- Chọn hành động --
-                     option(value="active") Hoạt động
-                     option(value="inactive") Dừng hoạt động
-                     option(value="delete") Xóa sản phẩm
-                     option(value="position") Cập nhật vị trí
-               .form-group
-                   input(
-               type="text"
-               name="ids"
-               value=""
-               class="form-control d-none "
-               input-ids
-              )
-               button(type="submit" class="btn btn-primary ms-2") Áp dụng  
+  form(action=path method="POST" form-change-multi class="flex items-center gap-2")
+    div(class="relative")
+      select(name="type" class="appearance-none bg-white border border-surface-200 text-surface-700 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-4 pr-10 py-2.5 transition-all outline-none cursor-pointer min-w-[180px]")
+        option(disabled selected) -- Chọn hành động --
+        option(value="active") Hoạt động
+        option(value="inactive") Dừng hoạt động
+        option(value="delete") Xóa dữ liệu
+        option(value="position") Cập nhật vị trí
+      i(class="bi bi-chevron-down absolute right-3 top-2 translate-y-0.5 text-surface-400 pointer-events-none")
+    input(type="text" name="ids" value="" class="hidden" input-ids)
+    button(type="submit" class="px-4 py-2.5 bg-surface-900 hover:bg-surface-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-surface-900/20 whitespace-nowrap") Áp dụng

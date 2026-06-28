@@ -1,132 +1,110 @@
-footer.footer-main
-  .footer-top
-    .container
-      .footer-grid
-        //- Col 1: Brand
-        .footer-col.footer-brand-col
-          .footer-logo
-            a.art-logo(href="/")
-              if settingGeneral && settingGeneral.logo
-                img(src=settingGeneral.logo alt="Logo" style="height: 40px; margin-right: 8px; border-radius: 4px;")
-              else
-                i.bi.bi-lightning-charge-fill
-              if settingGeneral && settingGeneral.websiteName
-                span #{settingGeneral.websiteName}
-              else
-                span VanHa
-                span.highlight Tech
-          p.footer-tagline #{settingGeneral && settingGeneral.shortDescription ? settingGeneral.shortDescription : 'Mua sắm thông minh - Tiết kiệm tối đa. Hàng nghìn sản phẩm chính hãng đến tay bạn mỗi ngày.'}
-          .footer-social
-            a.social-link(href=(settingGeneral && settingGeneral.facebook ? settingGeneral.facebook : "https://facebook.com") target="_blank" title="Facebook")
-              i.bi.bi-facebook
-            a.social-link(href=(settingGeneral && settingGeneral.instagram ? settingGeneral.instagram : "https://instagram.com") target="_blank" title="Instagram")
-              i.bi.bi-instagram
-            a.social-link(href=(settingGeneral && settingGeneral.youtube ? settingGeneral.youtube : "https://youtube.com") target="_blank" title="YouTube")
-              i.bi.bi-youtube
-            a.social-link(href=(settingGeneral && settingGeneral.tiktok ? settingGeneral.tiktok : "https://tiktok.com") target="_blank" title="TikTok")
-              i.bi.bi-tiktok
+footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 relative overflow-hidden")
+  //- Ambient Glow Background
+  div(class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-brand-500/20 blur-[100px] rounded-full pointer-events-none")
 
-        //- Col 2: Quick Links
-        .footer-col
-          h5.footer-heading Liên kết nhanh
-          ul.footer-links
-            li
-              a(href="/")
-                i.bi.bi-chevron-right.me-1
-                | Trang chủ
-            li
-              a(href="/product")
-                i.bi.bi-chevron-right.me-1
-                | Sản phẩm
-            li
-              a(href="/articles")
-                i.bi.bi-chevron-right.me-1
-                | Tin tức & Blog
-            li
-              a(href="/about")
-                i.bi.bi-chevron-right.me-1
-                | Giới thiệu
-            li
-              a(href="/contact")
-                i.bi.bi-chevron-right.me-1
-                | Liên hệ
-            li
-              a(href="/auth/login")
-                i.bi.bi-chevron-right.me-1
-                | Đăng nhập
-            li
-              a(href="/auth/register")
-                i.bi.bi-chevron-right.me-1
-                | Đăng ký
+  div(class="container mx-auto px-4 max-w-7xl relative z-10")
+    div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8")
+      
+      //- Brand Column (Spans 4)
+      div(class="lg:col-span-4 flex flex-col")
+        a(href="/" class="flex items-center gap-3 text-white font-black text-3xl tracking-tighter mb-6 inline-flex hover:scale-[1.02] transition-transform w-fit")
+          if settingGeneral && settingGeneral.logo
+            img(src=settingGeneral.logo alt="Logo" class="h-10 rounded-xl shadow-lg shadow-white/10")
+          else
+            div(class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg shadow-brand-500/30")
+              i.bi.bi-lightning-charge-fill.text-xl
+          if settingGeneral && settingGeneral.websiteName
+            span #{settingGeneral.websiteName}
+          else
+            span VanHa
+            span(class="text-brand-500") Tech
+            
+        p(class="text-sm text-slate-400 leading-relaxed mb-8 max-w-sm font-medium")
+          | #{settingGeneral && settingGeneral.shortDescription ? settingGeneral.shortDescription : 'Kiến tạo tương lai thông qua công nghệ. Cung cấp thiết bị thông minh và giải pháp điện tử hàng đầu với trải nghiệm mua sắm không giới hạn.'}
+          
+        div(class="flex items-center gap-3 mt-auto")
+          a(href=(settingGeneral && settingGeneral.facebook ? settingGeneral.facebook : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-blue-500 hover:bg-blue-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
+            i.bi.bi-facebook.text-lg
+          a(href=(settingGeneral && settingGeneral.instagram ? settingGeneral.instagram : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-pink-500 hover:bg-pink-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
+            i.bi.bi-instagram.text-lg
+          a(href=(settingGeneral && settingGeneral.youtube ? settingGeneral.youtube : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-red-500 hover:bg-red-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
+            i.bi.bi-youtube.text-lg
 
-        //- Col 3: Customer Service
-        .footer-col
-          h5.footer-heading Hỗ trợ khách hàng
-          ul.footer-links
-            li
-              a(href="/order/history")
-                i.bi.bi-chevron-right.me-1
-                | Theo dõi đơn hàng
-            li
-              a(href="/loyalty")
-                i.bi.bi-chevron-right.me-1
-                | Chương trình điểm thưởng
-            li
-              a(href="/wishlist")
-                i.bi.bi-chevron-right.me-1
-                | Danh sách yêu thích
-            li
-              a(href="/policy/return")
-                i.bi.bi-chevron-right.me-1
-                | Chính sách đổi trả
-            li
-              a(href="/policy/privacy")
-                i.bi.bi-chevron-right.me-1
-                | Bảo mật thông tin
+      //- Links Column 1 (Spans 2)
+      div(class="lg:col-span-2")
+        h3(class="text-white font-bold mb-6 tracking-wider text-sm uppercase flex items-center gap-2") 
+          div(class="w-2 h-2 rounded-full bg-brand-500")
+          | Sản phẩm
+        ul(class="flex flex-col gap-4 text-sm font-medium text-slate-400")
+          li
+            a(href="/product" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Tất cả sản phẩm
+          li
+            a(href="/product?discount=true" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Khuyến mãi
+          li
+            a(href="/articles" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Tin tức công nghệ
+          li
+            a(href="/about" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Về chúng tôi
 
-        //- Col 4: Contact Info
-        .footer-col
-          h5.footer-heading Thông tin liên hệ
-          .footer-contact-list
-            .footer-contact-item
-              i.bi.bi-geo-alt-fill
-              span #{settingGeneral && settingGeneral.address ? settingGeneral.address : 'Số 22 Đường Cái Trống Quân, Hạ Lôi, Mê Linh, Hà Nội'}
-            .footer-contact-item
-              i.bi.bi-telephone-fill
-              a(href=`tel:${settingGeneral && settingGeneral.phone ? settingGeneral.phone : '+84886911791'}`) #{settingGeneral && settingGeneral.phone ? settingGeneral.phone : '0886 911 791'}
-            .footer-contact-item
-              i.bi.bi-envelope-fill
-              a(href=`mailto:${settingGeneral && settingGeneral.email ? settingGeneral.email : 'vanhanguyen2k4@gmail.com'}`) #{settingGeneral && settingGeneral.email ? settingGeneral.email : 'vanhanguyen2k4@gmail.com'}
-            .footer-contact-item
-              i.bi.bi-clock-fill
-              span T2 - T7: 8:00 - 22:00
+      //- Links Column 2 (Spans 2)
+      div(class="lg:col-span-2")
+        h3(class="text-white font-bold mb-6 tracking-wider text-sm uppercase flex items-center gap-2") 
+          div(class="w-2 h-2 rounded-full bg-brand-500")
+          | Hỗ trợ
+        ul(class="flex flex-col gap-4 text-sm font-medium text-slate-400")
+          li
+            a(href="/order/history" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Theo dõi đơn hàng
+          li
+            a(href="/policy/return" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Đổi trả & Bảo hành
+          li
+            a(href="/policy/privacy" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Bảo mật thông tin
+          li
+            a(href="/contact" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Liên hệ hỗ trợ
 
-          //- Newsletter
-          .footer-newsletter.mt-3
-            p.small.text-muted Nhận ưu đãi độc quyền qua email:
-            .newsletter-form
-              input#newsletter-email.newsletter-input(type="email" placeholder="Email của bạn")
-              button.newsletter-btn(type="button" onclick="subscribeNewsletter()")
-                i.bi.bi-send
+      //- Contact & Newsletter Column (Spans 4)
+      div(class="lg:col-span-4")
+        div(class="bg-slate-900/50 rounded-2xl p-6 border border-slate-800 backdrop-blur-sm")
+          h3(class="text-white font-bold mb-6 tracking-wider text-sm uppercase flex items-center gap-2") 
+            i.bi.bi-envelope-paper.text-brand-500
+            | Nhận tin khuyến mãi
+          p(class="text-sm text-slate-400 mb-4 font-medium") Đăng ký ngay để nhận voucher giảm giá 10% cho đơn hàng đầu tiên của bạn.
+          
+          div(class="relative mb-8 group")
+            div(class="absolute -inset-0.5 bg-gradient-to-r from-brand-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500")
+            div(class="relative flex items-center")
+              input(type="email" id="footerNewsletter" placeholder="Nhập email của bạn..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 pl-4 pr-12 text-sm text-white font-medium focus:outline-none focus:border-brand-500 transition-all")
+              button(type="button" onclick="subscribeNewsletter()" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg bg-brand-500 text-white flex items-center justify-center hover:bg-brand-400 hover:scale-105 transition-all shadow-lg shadow-brand-500/50")
+                i.bi.bi-send-fill
+                
+          ul(class="flex flex-col gap-3 text-sm text-slate-400 font-medium")
+            li(class="flex items-start gap-3 hover:text-slate-300 transition-colors")
+              div(class="w-6 flex justify-center mt-0.5 text-brand-500")
+                i(class="bi bi-geo-alt-fill")
+              span(class="flex-1") #{settingGeneral && settingGeneral.address ? settingGeneral.address : 'Số 22 Đường Cái Trống Quân, Hà Nội'}
+            li(class="flex items-center gap-3 hover:text-slate-300 transition-colors")
+              div(class="w-6 flex justify-center text-brand-500")
+                i(class="bi bi-telephone-fill")
+              a(href=`tel:${settingGeneral && settingGeneral.phone ? settingGeneral.phone : '0886 911 791'}` class="hover:text-brand-400 transition-colors") #{settingGeneral && settingGeneral.phone ? settingGeneral.phone : '0886 911 791'}
 
-  //- Footer Bottom
-  .footer-bottom
-    .container
-      .footer-bottom-inner
-        p.mb-0 #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : '© 2026 VanHa Tech Store. Bảo lưu mọi quyền. Thiết kế bởi Van Ha'}
-        .footer-payment
-          span.payment-badge COD
-          span.payment-badge Chuyển khoản
-          span.payment-badge VNPAY
-          span.payment-badge Momo
+  //- Bottom Bar
+  div(class="container mx-auto px-4 max-w-7xl mt-12 pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10")
+    p(class="text-xs text-slate-500 font-medium")
+      | #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : '© 2026 VanHa Tech Store. All rights reserved.'}
+    
+    div(class="flex items-center gap-4")
+      div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
+        img(src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="VNPAY" class="h-4 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
+      div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
+        img(src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MOMO" class="h-5 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
+      div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
+        img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="VISA" class="h-3 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
 
-  script.
-    function subscribeNewsletter() {
-      const email = document.getElementById('newsletter-email').value;
-      if (!email || !email.includes('@')) {
-        alert('Vui lòng nhập email hợp lệ!');
-        return;
-      }
-      // TODO: POST to /newsletter/subscribe
-      alert('Cảm ơn bạn đã đăng ký! Chúng tôi sẽ gửi ưu đãi đến ' + email);
+script.
+  function subscribeNewsletter() {
+    const email = document.getElementById('footerNewsletter').value;
+    if (!email || !email.includes('@')) {
+      alert('Vui lòng nhập email hợp lệ!');
+      return;
     }
+    alert('Cảm ơn bạn đã đăng ký! Ưu đãi 10% đã được gửi đến ' + email);
+    document.getElementById('footerNewsletter').value = '';
+  }

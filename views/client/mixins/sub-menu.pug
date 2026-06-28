@@ -1,10 +1,13 @@
 mixin sub-menu(categories, path = '')
-  ul
+  ul(class="flex flex-col")
     each item in categories
-      //- 1. Kiểm tra có menu con không để thêm class 'sub-menu'
-      li(class=(item.children && item.children.length > 0 ? 'sub-menu' : ''))
-        a(href=`${path}/c/${item.slug}`) #{item.title}
+      li(class="relative group")
+        a(href=`${path}/c/${item.slug}` class="flex items-center justify-between px-6 py-3 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors border-b border-slate-50 last:border-0")
+          span #{item.title}
+          if (item.children && item.children.length > 0)
+            i(class="bi bi-chevron-right text-[10px] text-surface-400")
         
-        //- 2. Thụt lề lệnh if vào TRONG thẻ li để ul con nằm đúng cấu trúc
         if (item.children && item.children.length > 0)
-          +sub-menu(item.children, path)
+          div(class="absolute top-0 left-full pl-2 z-50 w-56 custom-dropdown")
+            div(class="bg-white rounded-xl shadow-diffusion border border-slate-100 py-2")
+              +sub-menu(item.children, path)

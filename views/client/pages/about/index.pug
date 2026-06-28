@@ -2,258 +2,146 @@ extends ../../layouts/default.pug
 
 block main
   //- Hero Section
-  .about-hero
-    .container
-      .about-hero-content
-        .about-badge.reveal.fade-left
-          i.bi.bi-info-circle.me-2
-          | Về chúng tôi
-        h1.about-hero-title.reveal.fade-left.delay-100 VanHa Tech Store
-        p.about-hero-subtitle.reveal.fade-left.delay-200 Chúng tôi không chỉ bán hàng - chúng tôi mang đến trải nghiệm mua sắm tuyệt vời nhất cho từng khách hàng.
-        .about-hero-cta.reveal.fade-left.delay-300
-          a.btn-hero-primary(href="/product")
-            i.bi.bi-bag-fill.me-2
-            | Mua sắm ngay
-          a.btn-hero-secondary(href="/contact")
-            i.bi.bi-telephone.me-2
-            | Liên hệ chúng tôi
+  div(class="relative bg-surface-950 pt-24 pb-32 px-4 overflow-hidden")
+    div(class="absolute inset-0 bg-gradient-to-br from-brand-900 via-surface-900 to-blue-900 opacity-90")
+    div(class="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-500/20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none")
+    div(class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none")
+    
+    div(class="container mx-auto relative z-10 text-center max-w-3xl")
+      div(class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold tracking-wider uppercase mb-6 animate-fade-in")
+        i.bi.bi-info-circle.text-brand-400
+        | Về chúng tôi
+      
+      h1(class="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tight leading-tight mb-6 animate-fade-in [animation-delay:100ms]") VanHa Tech
+      p(class="text-lg md:text-xl text-surface-300 font-medium leading-relaxed mb-10 animate-fade-in [animation-delay:200ms]") Nơi hội tụ của niềm đam mê công nghệ. Chúng tôi mang đến cho bạn trải nghiệm mua sắm tuyệt vời nhất với những sản phẩm chất lượng hàng đầu.
+      
+      div(class="flex flex-wrap items-center justify-center gap-4 animate-fade-in [animation-delay:300ms]")
+        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30")
+          i.bi.bi-bag-fill.mr-2
+          | Mua sắm ngay
+        a(href="/contact" class="px-8 py-3.5 rounded-xl border border-white/30 text-white font-bold hover:bg-white/10 transition-colors backdrop-blur-sm")
+          i.bi.bi-telephone.mr-2
+          | Liên hệ ngay
 
-  //- Stats section
-  section.about-stats
-    .container
-      .about-stats-grid
-        .about-stat-item.reveal.zoom-in
-          .about-stat-number 5+
-          .about-stat-label Năm kinh nghiệm
-        .about-stat-divider
-        .about-stat-item.reveal.zoom-in.delay-100
-          .about-stat-number 10K+
-          .about-stat-label Sản phẩm
-        .about-stat-divider
-        .about-stat-item.reveal.zoom-in.delay-200
-          .about-stat-number 50K+
-          .about-stat-label Khách hàng hài lòng
-        .about-stat-divider
-        .about-stat-item.reveal.zoom-in.delay-300
-          .about-stat-number 4.8★
-          .about-stat-label Đánh giá trung bình
+  //- Stats Section
+  div(class="container mx-auto px-4 -mt-16 relative z-20 mb-20")
+    div(class="bento-card !p-8 bg-white/90 backdrop-blur-xl border border-slate-100 shadow-xl")
+      div(class="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-slate-100")
+        div(class="text-center")
+          div(class="text-4xl font-black text-brand-600 mb-2") 5+
+          div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Năm kinh nghiệm
+        div(class="text-center")
+          div(class="text-4xl font-black text-brand-600 mb-2") 10K+
+          div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Sản phẩm
+        div(class="text-center")
+          div(class="text-4xl font-black text-brand-600 mb-2") 50K+
+          div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Khách hàng
+        div(class="text-center")
+          div(class="text-4xl font-black text-brand-600 mb-2") 4.8★
+          div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Đánh giá
 
-  .container.py-5
-
+  div(class="container mx-auto px-4 mb-20")
+    
     //- Story Section
-    .row.g-5.align-items-center.mb-5
-      .col-lg-6.reveal.fade-left
-        .about-story-badge Câu chuyện của chúng tôi
-        h2.fw-bold.mb-4 Từ đam mê công nghệ đến cửa hàng đa ngành hàng đầu
-        p.text-muted.mb-3 VanHa Tech Store được thành lập với sứ mệnh đơn giản: mang đến cho người Việt những sản phẩm chất lượng cao với mức giá cạnh tranh nhất, kèm theo dịch vụ hậu mãi tận tâm.
-        p.text-muted.mb-4 Từ những ngày đầu chỉ chuyên về điện tử, chúng tôi đã không ngừng mở rộng danh mục để phục vụ đa dạng nhu cầu của khách hàng - từ thời trang, gia dụng, mỹ phẩm đến đồ thể thao.
-        .about-features-list
-          .about-feature-item
-            i.bi.bi-check-circle-fill.text-primary
-            span Sản phẩm chính hãng 100%
-          .about-feature-item
-            i.bi.bi-check-circle-fill.text-primary
-            span Bảo hành dài hạn, hỗ trợ 24/7
-          .about-feature-item
-            i.bi.bi-check-circle-fill.text-primary
-            span Giao hàng nhanh toàn quốc
-          .about-feature-item
-            i.bi.bi-check-circle-fill.text-primary
-            span Đổi trả dễ dàng trong 30 ngày
+    div(class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24")
+      div
+        div(class="inline-block px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-xs font-bold uppercase tracking-wider mb-6") Câu chuyện của chúng tôi
+        h2(class="text-3xl lg:text-4xl font-black text-surface-950 tracking-tight leading-tight mb-6") Từ đam mê công nghệ đến nhà bán lẻ đa ngành hàng đầu.
+        p(class="text-surface-600 font-medium leading-relaxed mb-4") VanHa Tech được thành lập với sứ mệnh đơn giản: mang đến cho người Việt những sản phẩm chất lượng cao với mức giá cạnh tranh nhất, kèm theo dịch vụ hậu mãi tận tâm.
+        p(class="text-surface-600 font-medium leading-relaxed mb-8") Từ những ngày đầu chỉ chuyên về điện tử, chúng tôi đã không ngừng mở rộng danh mục để phục vụ đa dạng nhu cầu của khách hàng - từ thiết bị thông minh, phụ kiện, đến giải pháp công nghệ toàn diện.
+        
+        div(class="space-y-4")
+          div(class="flex items-center gap-3")
+            div(class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center")
+              i.bi.bi-check-lg.font-bold
+            span(class="font-bold text-surface-900") Sản phẩm chính hãng 100%
+          div(class="flex items-center gap-3")
+            div(class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center")
+              i.bi.bi-check-lg.font-bold
+            span(class="font-bold text-surface-900") Bảo hành dài hạn, hỗ trợ 24/7
+          div(class="flex items-center gap-3")
+            div(class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center")
+              i.bi.bi-check-lg.font-bold
+            span(class="font-bold text-surface-900") Giao hàng hỏa tốc toàn quốc
 
-      .col-lg-6.reveal.fade-right.delay-200
-        .about-image-grid
-          .about-img-main(style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;height:320px;display:flex;align-items:center;justify-content:center;color:white;font-size:5rem;")
-            i.bi.bi-shop
-          .about-img-cards
-            .about-mini-card
-              i.bi.bi-truck.text-primary.mb-2
-              .fw-bold Free Ship
-              .text-muted.small Đơn từ 300K
-            .about-mini-card
-              i.bi.bi-shield-check.text-success.mb-2
-              .fw-bold Chính hãng
-              .text-muted.small 100% đảm bảo
-            .about-mini-card
-              i.bi.bi-headset.text-warning.mb-2
-              .fw-bold Hỗ trợ
-              .text-muted.small 24/7
-            .about-mini-card
-              i.bi.bi-star.text-danger.mb-2
-              .fw-bold VIP
-              .text-muted.small Thành viên
+      div(class="grid grid-cols-2 gap-4")
+        div(class="col-span-2 rounded-3xl bg-gradient-to-br from-brand-500 to-blue-600 p-8 flex items-center justify-center text-white min-h-[240px] shadow-lg shadow-brand-500/20")
+          i.bi.bi-shop.text-7xl
+        
+        div(class="bento-card !p-6 text-center")
+          i.bi.bi-truck.text-3xl.text-brand-500.mb-3.block
+          div(class="font-black text-surface-900") Freeship
+          div(class="text-xs font-semibold text-surface-500") Mọi đơn hàng
+          
+        div(class="bento-card !p-6 text-center")
+          i.bi.bi-shield-check.text-3xl.text-emerald-500.mb-3.block
+          div(class="font-black text-surface-900") Uy tín
+          div(class="text-xs font-semibold text-surface-500") 100% Đảm bảo
 
-    //- Core Values
-    .text-center.mb-5.reveal
-      h2.fw-bold Giá trị cốt lõi
-      p.text-muted Những gì chúng tôi cam kết với mỗi khách hàng
+    //- Values Section
+    div(class="text-center max-w-2xl mx-auto mb-12")
+      h2(class="text-3xl font-black text-surface-950 tracking-tight mb-4") Giá trị cốt lõi
+      p(class="text-surface-500 font-medium") Những nguyên tắc chúng tôi luôn tuân thủ để mang lại trải nghiệm tuyệt vời nhất.
 
-    .row.g-4.mb-5
-      .col-md-4.reveal.delay-100
-        .about-value-card
-          .value-icon(style="background:linear-gradient(135deg,#667eea,#764ba2)")
-            i.bi.bi-award
-          h5.fw-bold.mt-3 Chất lượng hàng đầu
-          p.text-muted Mọi sản phẩm đều được kiểm định kỹ lưỡng trước khi đến tay khách hàng. Chúng tôi chỉ hợp tác với các nhà cung cấp uy tín.
-      .col-md-4.reveal.delay-200
-        .about-value-card
-          .value-icon(style="background:linear-gradient(135deg,#f093fb,#f5576c)")
-            i.bi.bi-heart
-          h5.fw-bold.mt-3 Khách hàng là trọng tâm
-          p.text-muted Sự hài lòng của khách hàng là ưu tiên số 1. Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giải quyết mọi vấn đề.
-      .col-md-4.reveal.delay-300
-        .about-value-card
-          .value-icon(style="background:linear-gradient(135deg,#4facfe,#00f2fe)")
-            i.bi.bi-lightning
-          h5.fw-bold.mt-3 Đổi mới liên tục
-          p.text-muted Chúng tôi không ngừng cải thiện dịch vụ, cập nhật công nghệ mới nhất để mang đến trải nghiệm mua sắm tốt nhất.
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24")
+      div(class="bento-card text-center hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-blue-600 text-white flex items-center justify-center text-2xl mx-auto mb-6 shadow-md shadow-brand-500/30")
+          i.bi.bi-award
+        h5(class="text-xl font-black text-surface-900 mb-3") Chất lượng hàng đầu
+        p(class="text-surface-600 text-sm font-medium leading-relaxed") Mọi sản phẩm đều được kiểm định nghiêm ngặt trước khi trao tay khách hàng.
+      
+      div(class="bento-card text-center hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-600 text-white flex items-center justify-center text-2xl mx-auto mb-6 shadow-md shadow-rose-500/30")
+          i.bi.bi-heart
+        h5(class="text-xl font-black text-surface-900 mb-3") Khách hàng là trung tâm
+        p(class="text-surface-600 text-sm font-medium leading-relaxed") Sự hài lòng của bạn là ưu tiên số 1 của đội ngũ hỗ trợ 24/7 của chúng tôi.
+      
+      div(class="bento-card text-center hover:-translate-y-2 transition-transform duration-300")
+        div(class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center text-2xl mx-auto mb-6 shadow-md shadow-emerald-500/30")
+          i.bi.bi-lightning
+        h5(class="text-xl font-black text-surface-900 mb-3") Đổi mới liên tục
+        p(class="text-surface-600 text-sm font-medium leading-relaxed") Cập nhật công nghệ, cải tiến dịch vụ mỗi ngày để phục vụ bạn tốt hơn.
 
-    //- Team section
-    .text-center.mb-5.reveal
-      h2.fw-bold Đội ngũ của chúng tôi
-      p.text-muted Những con người tận tâm phía sau VanHa Tech Store
+    //- Team
+    div(class="text-center max-w-2xl mx-auto mb-12")
+      h2(class="text-3xl font-black text-surface-950 tracking-tight mb-4") Đội ngũ của chúng tôi
+      p(class="text-surface-500 font-medium") Những con người đầy nhiệt huyết đứng sau thành công của VanHa Tech.
 
-    .row.g-4.mb-5
-      .col-md-4.reveal.delay-100
-        .team-card.text-center
-          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
-            i.bi.bi-person
-          h5.fw-bold Nguyễn Văn Hà
-          p.text-muted.small Nhà sáng lập & CEO
-          p.text-muted.small Đam mê công nghệ và thương mại điện tử
-      .col-md-4.reveal.delay-200
-        .team-card.text-center
-          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
-            i.bi.bi-person
-          h5.fw-bold Đội hỗ trợ khách hàng
-          p.text-muted.small Customer Success
-          p.text-muted.small Luôn sẵn sàng giúp bạn 24/7
-      .col-md-4.reveal.delay-300
-        .team-card.text-center
-          .team-avatar(style="width:80px;height:80px;background:linear-gradient(135deg,#4facfe,#00f2fe);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;")
-            i.bi.bi-person
-          h5.fw-bold Đội vận chuyển
-          p.text-muted.small Logistics Team
-          p.text-muted.small Giao hàng nhanh, an toàn
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24")
+      div(class="bento-card text-center")
+        div(class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-white flex items-center justify-center text-4xl mx-auto mb-4 border-4 border-white shadow-md")
+          i.bi.bi-person
+        h5(class="text-lg font-black text-surface-900") Nguyễn Văn Hà
+        p(class="text-xs font-bold text-brand-600 uppercase tracking-wider mb-2") Nhà sáng lập & CEO
+        p(class="text-surface-500 text-sm font-medium") Đam mê công nghệ và thương mại điện tử.
+      
+      div(class="bento-card text-center")
+        div(class="w-24 h-24 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 text-white flex items-center justify-center text-4xl mx-auto mb-4 border-4 border-white shadow-md")
+          i.bi.bi-headset
+        h5(class="text-lg font-black text-surface-900") Đội Customer Success
+        p(class="text-xs font-bold text-rose-600 uppercase tracking-wider mb-2") Chăm sóc khách hàng
+        p(class="text-surface-500 text-sm font-medium") Luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7.
+      
+      div(class="bento-card text-center")
+        div(class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center text-4xl mx-auto mb-4 border-4 border-white shadow-md")
+          i.bi.bi-truck
+        h5(class="text-lg font-black text-surface-900") Đội Logistics
+        p(class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2") Vận hành & Vận chuyển
+        p(class="text-surface-500 text-sm font-medium") Giao hàng hỏa tốc, an toàn trên toàn quốc.
 
-    //- CTA
-    .about-cta-section.reveal.zoom-in
-      .about-cta-content
-        h3.fw-bold.text-white Bắt đầu trải nghiệm mua sắm ngay hôm nay!
-        p.text-white.opacity-75 Hàng nghìn sản phẩm chính hãng đang chờ bạn. Miễn phí vận chuyển cho đơn hàng từ 300K.
-        .d-flex.gap-3.justify-content-center.mt-4
-          a.btn.btn-light.fw-bold.px-5.py-3(href="/product")
-            i.bi.bi-bag-fill.me-2
-            | Mua sắm ngay
-          a.btn.btn-outline-light.fw-bold.px-5.py-3(href="/auth/register")
-            i.bi.bi-person-plus.me-2
+    //- CTA Bottom
+    div(class="rounded-3xl bg-gradient-to-br from-brand-900 to-blue-950 p-12 text-center relative overflow-hidden")
+      div(class="absolute top-0 right-0 w-64 h-64 bg-brand-500/30 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2")
+      div(class="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/30 blur-3xl rounded-full -translate-x-1/2 translate-y-1/2")
+      
+      div(class="relative z-10 max-w-2xl mx-auto")
+        h3(class="text-3xl font-black text-white tracking-tight mb-4") Bắt đầu trải nghiệm ngay hôm nay!
+        p(class="text-brand-100/80 font-medium mb-8 leading-relaxed") Hàng nghìn sản phẩm công nghệ đang chờ bạn. Đăng ký thành viên để nhận voucher và freeship trọn đời.
+        
+        div(class="flex flex-wrap items-center justify-center gap-4")
+          a(href="/product" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30")
+            i.bi.bi-bag-fill.mr-2
+            | Mua sắm
+          a(href="/auth/register" class="px-8 py-3.5 rounded-xl border border-white/30 text-white font-bold hover:bg-white/10 transition-colors backdrop-blur-sm")
+            i.bi.bi-person-plus.mr-2
             | Đăng ký miễn phí
-
-  style.
-    .about-hero {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: 80px 0;
-      color: white;
-    }
-    .about-badge {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(102,126,234,0.3);
-      border: 1px solid rgba(102,126,234,0.5);
-      color: #a5b4fc;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      margin-bottom: 16px;
-    }
-    .about-hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
-    .about-hero-subtitle { font-size: 1.1rem; opacity: 0.8; max-width: 600px; margin-bottom: 32px; }
-    .about-hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
-    .btn-hero-primary {
-      background: linear-gradient(135deg,#667eea,#764ba2);
-      color: white;
-      padding: 14px 32px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .btn-hero-secondary {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: white;
-      padding: 14px 32px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .about-stats {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px 0;
-    }
-    .about-stats-grid {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    .about-stat-item { text-align: center; color: white; }
-    .about-stat-number { font-size: 2.5rem; font-weight: 800; }
-    .about-stat-label { font-size: 0.9rem; opacity: 0.85; }
-    .about-stat-divider { width: 1px; height: 60px; background: rgba(255,255,255,0.3); }
-    .about-story-badge {
-      display: inline-block;
-      background: #e8eeff;
-      color: #667eea;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .about-features-list { display: flex; flex-direction: column; gap: 10px; }
-    .about-feature-item { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
-    .about-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .about-img-main { grid-column: 1 / -1; }
-    .about-mini-card {
-      background: white;
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      font-size: 0.85rem;
-    }
-    .about-mini-card i { font-size: 1.5rem; }
-    .about-value-card {
-      background: white;
-      border-radius: 20px;
-      padding: 32px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
-      border: 1px solid #f0f0f0;
-      transition: all 0.3s;
-    }
-    .about-value-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
-    .value-icon {
-      width: 70px; height: 70px;
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; color: white;
-      margin: 0 auto 16px;
-    }
-    .team-card {
-      background: white;
-      border-radius: 20px;
-      padding: 32px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-    .about-cta-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 24px;
-      padding: 60px 40px;
-      text-align: center;
-      margin: 60px 0;
-    }
-    }

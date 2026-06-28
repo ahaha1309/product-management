@@ -4,490 +4,101 @@ html(lang="vi")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title Đăng ký | ShopVN
+    title Đăng ký | VanHa Tech
     link(rel="icon" href="/image/logo.png" type="image/x-icon")
-    link(rel="preconnect" href="https://fonts.googleapis.com")
-    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
-    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet")
+    link(rel="stylesheet", href="/css/tailwind.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/geist@1.0.3/dist/fonts/geist-sans/style.css")
     link(href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet")
     style.
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Geist Sans', sans-serif; }
 
-      body {
-        font-family: 'Inter', sans-serif;
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
+  body(class="bg-surface-50 min-h-screen grid grid-cols-1 md:grid-cols-2")
+    
+    //- Left Panel: Hero Graphic
+    div(class="hidden md:flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-12")
+      div(class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10")
+      div(class="absolute w-96 h-96 bg-emerald-500/30 blur-[100px] rounded-full top-[-10%] left-[-10%]")
+      div(class="absolute w-96 h-96 bg-teal-500/30 blur-[100px] rounded-full bottom-[-10%] right-[-10%]")
+      
+      div(class="relative z-10 w-full max-w-md text-center")
+        div(class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 shadow-diffusion")
+          i(class="bi bi-person-plus text-4xl text-white")
+        h1(class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-4") Bắt đầu hành trình mới.
+        p(class="text-emerald-100 text-lg mb-12") Đăng ký ngay để nhận voucher 100K cho đơn hàng đầu tiên và nhiều ưu đãi bất ngờ khác.
+        
+        div(class="space-y-4 text-left bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl shadow-xl")
+          div(class="flex items-center gap-4 text-white")
+            div(class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-400/30 text-emerald-300 font-bold") 1
+            span(class="font-medium") Điền thông tin cá nhân
+          div(class="flex items-center gap-4 text-white")
+            div(class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-400/30 text-emerald-300 font-bold") 2
+            span(class="font-medium") Xác thực tài khoản
+          div(class="flex items-center gap-4 text-white")
+            div(class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-400/30 text-emerald-300 font-bold") 3
+            span(class="font-medium") Mua sắm thả ga
 
-      /* ===== LEFT PANEL ===== */
-      .panel-left {
-        background: linear-gradient(145deg, #059669 0%, #0d9488 40%, #0284c7 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 48px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .panel-left::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: 
-          radial-gradient(circle at 70% 20%, rgba(255,255,255,0.12) 0%, transparent 60%),
-          radial-gradient(circle at 20% 80%, rgba(0,0,0,0.1) 0%, transparent 50%);
-      }
-
-      .panel-left::after {
-        content: '';
-        position: absolute;
-        top: -80px;
-        left: -80px;
-        width: 300px;
-        height: 300px;
-        border: 60px solid rgba(255,255,255,0.08);
-        border-radius: 50%;
-      }
-
-      .shape {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.1;
-        animation: floatShape 8s ease-in-out infinite;
-      }
-
-      .shape-1 { width: 200px; height: 200px; background: #fff; bottom: -60px; right: -60px; }
-      .shape-2 { width: 100px; height: 100px; background: #fff; top: 60px; right: 40px; animation-delay: -4s; }
-
-      @keyframes floatShape {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
-      }
-
-      .brand-area { position: relative; z-index: 1; text-align: center; }
-
-      .brand-logo-big {
-        font-size: 52px;
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: -2px;
-        line-height: 1;
-        margin-bottom: 12px;
-      }
-
-      .brand-tagline {
-        font-size: 15px;
-        color: rgba(255,255,255,0.75);
-        margin-bottom: 48px;
-      }
-
-      .steps-list { list-style: none; text-align: left; width: 100%; max-width: 300px; }
-
-      .steps-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        padding: 14px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        color: rgba(255,255,255,0.9);
-      }
-
-      .steps-list li:last-child { border-bottom: none; }
-
-      .step-num {
-        width: 32px;
-        height: 32px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: 700;
-        color: #fff;
-        flex-shrink: 0;
-        margin-top: 1px;
-      }
-
-      .step-info strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-      .step-info span { font-size: 12.5px; opacity: 0.7; }
-
-      /* ===== RIGHT PANEL ===== */
-      .panel-right {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 48px;
-        background: #fff;
-        overflow-y: auto;
-      }
-
-      .auth-box {
-        width: 100%;
-        max-width: 420px;
-        animation: fadeSlide 0.5s ease forwards;
-      }
-
-      @keyframes fadeSlide {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-
-      .auth-box h2 {
-        font-size: 28px;
-        font-weight: 700;
-        color: #064e3b;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-      }
-
-      .auth-box .subtitle {
-        font-size: 14.5px;
-        color: #6b7280;
-        margin-bottom: 28px;
-      }
-
-      /* Alerts */
-      .alert-msg {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        font-size: 13.5px;
-        font-weight: 500;
-      }
-
-      .alert-err { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-      .alert-ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
-
-      /* Form */
-      .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0 16px;
-      }
-
-      .form-group { margin-bottom: 16px; }
-      .form-group.full { grid-column: 1 / -1; }
-
-      .form-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 7px;
-      }
-
-      .input-wrap { position: relative; }
-
-      .input-icon {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-        font-size: 16px;
-      }
-
-      .form-ctrl {
-        width: 100%;
-        padding: 12px 14px 12px 42px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 14.5px;
-        font-family: 'Inter', sans-serif;
-        color: #111827;
-        background: #f9fafb;
-        transition: all 0.2s;
-        outline: none;
-      }
-
-      .form-ctrl::placeholder { color: #9ca3af; }
-
-      .form-ctrl:focus {
-        background: #fff;
-        border-color: #059669;
-        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
-      }
-
-      .form-ctrl.err-input {
-        border-color: #f87171;
-        background: #fff5f5;
-      }
-
-      .pw-right {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #9ca3af;
-        background: none;
-        border: none;
-        font-size: 17px;
-        transition: color 0.2s;
-      }
-
-      .pw-right:hover { color: #059669; }
-      .has-right { padding-right: 44px; }
-
-      /* Password strength */
-      .pw-strength {
-        margin-top: 6px;
-        display: flex;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .strength-bar {
-        height: 4px;
-        flex: 1;
-        border-radius: 2px;
-        background: #e5e7eb;
-        transition: background 0.3s;
-      }
-
-      .strength-text {
-        font-size: 11px;
-        color: #9ca3af;
-        min-width: 50px;
-        text-align: right;
-      }
-
-      .strength-0 { background: #e5e7eb; }
-      .strength-1 { background: #ef4444; }
-      .strength-2 { background: #f59e0b; }
-      .strength-3 { background: #10b981; }
-
-      /* Hint */
-      .input-hint {
-        font-size: 11.5px;
-        color: #9ca3af;
-        margin-top: 5px;
-      }
-
-      .input-err-msg {
-        font-size: 11.5px;
-        color: #ef4444;
-        margin-top: 5px;
-        display: none;
-      }
-
-      .input-err-msg.show { display: block; }
-
-      /* Terms */
-      .terms-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        margin: 16px 0 20px;
-        font-size: 13px;
-        color: #6b7280;
-        line-height: 1.5;
-      }
-
-      .terms-row input { 
-        accent-color: #059669;
-        margin-top: 2px;
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-        flex-shrink: 0;
-      }
-
-      .terms-row a { color: #059669; text-decoration: none; font-weight: 600; }
-      .terms-row a:hover { text-decoration: underline; }
-
-      /* Submit button */
-      .btn-submit {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #059669, #0d9488);
-        border: none;
-        border-radius: 10px;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        font-family: 'Inter', sans-serif;
-        cursor: pointer;
-        transition: all 0.25s;
-        position: relative;
-      }
-
-      .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(5,150,105,0.35); }
-      .btn-submit:active { transform: none; }
-      .btn-submit.loading { opacity: 0.85; cursor: not-allowed; }
-
-      .spinner-sm {
-        display: none;
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255,255,255,0.4);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin: 0 auto;
-      }
-
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      .btn-submit.loading .btn-label { display: none; }
-      .btn-submit.loading .spinner-sm { display: block; }
-
-      /* Login link */
-      .login-row {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 14px;
-        color: #6b7280;
-      }
-
-      .login-row a {
-        color: #059669;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .login-row a:hover { color: #047857; }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        body { grid-template-columns: 1fr; }
-        .panel-left { display: none; }
-        .panel-right { padding: 40px 24px; }
-        .form-grid { grid-template-columns: 1fr; }
-        .form-group.full { grid-column: auto; }
-      }
-
-  body
-    .panel-left
-      .shape.shape-1
-      .shape.shape-2
-      .brand-area
-        .brand-logo-big ShopVN
-        p.brand-tagline Tạo tài khoản — Mua sắm thả ga
-        ul.steps-list
-          li
-            .step-num 1
-            .step-info
-              strong Tạo tài khoản miễn phí
-              span Chỉ mất 1 phút để đăng ký
-          li
-            .step-num 2
-            .step-info
-              strong Khám phá sản phẩm
-              span Hàng nghìn lựa chọn chờ bạn
-          li
-            .step-num 3
-            .step-info
-              strong Nhận ưu đãi thành viên
-              span Điểm thưởng & voucher độc quyền
-          li
-            .step-num 4
-            .step-info
-              strong Mua sắm an toàn
-              span Bảo mật tuyệt đối & hoàn tiền 100%
-
-    .panel-right
-      .auth-box
-        h2 Tạo tài khoản
-        p.subtitle Điền thông tin bên dưới để bắt đầu mua sắm tại ShopVN.
-
+    //- Right Panel: Form
+    div(class="flex items-center justify-center p-6 md:p-12 bg-white relative h-screen overflow-y-auto hide-scrollbar")
+      a(href="/" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-surface-50 flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-brand-500 transition-colors z-20")
+        i(class="bi bi-x-lg")
+        
+      div(class="w-full max-w-md py-12")
+        div(class="text-center mb-8")
+          h2(class="text-3xl font-black text-surface-950 tracking-tight mb-2") Tạo tài khoản
+          p(class="text-surface-500 font-medium") Đã có tài khoản? <a href="/auth/login" class="text-brand-600 hover:text-brand-700 hover:underline">Đăng nhập</a>
+        
         - if(messages && messages.error)
-          .alert-msg.alert-err
-            i.bi.bi-exclamation-circle-fill
+          div(class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-600 font-medium text-sm animate-fade-in")
+            i(class="bi bi-exclamation-circle-fill text-lg")
             span= messages.error
 
-        - if(messages && messages.success)
-          .alert-msg.alert-ok
-            i.bi.bi-check-circle-fill
-            span= messages.success
+        form#registerForm(action="/auth/register" method="POST" novalidate class="space-y-5")
+          div
+            label(class="block text-sm font-bold text-surface-700 mb-1.5") Họ và tên
+            div(class="relative")
+              i(class="bi bi-person absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#fullName(type="text" name="fullName" placeholder="VD: Nguyễn Văn A" required autocomplete="name" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
 
-        form#registerForm(action="/auth/register" method="POST" novalidate)
-          .form-group.full
-            label.form-label(for="fullName") Họ và tên
-            .input-wrap
-              i.bi.bi-person.input-icon
-              input#fullName.form-ctrl(
-                type="text"
-                name="fullName"
-                placeholder="Nguyễn Văn A"
-                required
-                autocomplete="name"
-              )
+          div
+            label(class="block text-sm font-bold text-surface-700 mb-1.5") Email
+            div(class="relative")
+              i(class="bi bi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#email(type="email" name="email" placeholder="Nhập địa chỉ email" required autocomplete="email" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
 
-          .form-group.full
-            label.form-label(for="email") Địa chỉ Email
-            .input-wrap
-              i.bi.bi-envelope.input-icon
-              input#email.form-ctrl(
-                type="email"
-                name="email"
-                placeholder="email@example.com"
-                required
-                autocomplete="email"
-              )
+          div
+            label(class="block text-sm font-bold text-surface-700 mb-1.5") Mật khẩu
+            div(class="relative")
+              i(class="bi bi-lock absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#password(type="password" name="password" placeholder="Tối thiểu 6 ký tự" minlength="6" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-11 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              button#togglePw1(type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
+                i#eye1(class="bi bi-eye")
+            
+            div(class="flex items-center gap-1.5 mt-2")
+              div#bar1(class="h-1 flex-1 rounded-full bg-slate-200 transition-colors")
+              div#bar2(class="h-1 flex-1 rounded-full bg-slate-200 transition-colors")
+              div#bar3(class="h-1 flex-1 rounded-full bg-slate-200 transition-colors")
+              span#strengthText(class="text-[10px] font-bold uppercase tracking-wider text-surface-400 w-16 text-right") Mức độ
 
-          .form-group.full
-            label.form-label(for="password") Mật khẩu
-            .input-wrap
-              i.bi.bi-lock.input-icon
-              input#password.form-ctrl.has-right(
-                type="password"
-                name="password"
-                placeholder="Tối thiểu 6 ký tự"
-                minlength="6"
-                required
-              )
-              button.pw-right(type="button" id="togglePw1")
-                i.bi.bi-eye(id="eye1")
-            .pw-strength
-              .strength-bar#bar1
-              .strength-bar#bar2
-              .strength-bar#bar3
-              span.strength-text#strengthText Độ mạnh
-            p.input-hint Dùng ít nhất 6 ký tự, gồm chữ và số
+          div
+            label(class="block text-sm font-bold text-surface-700 mb-1.5") Xác nhận mật khẩu
+            div(class="relative")
+              i(class="bi bi-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+              input#confirmPassword(type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" minlength="6" required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-11 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+              button#togglePw2(type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
+                i#eye2(class="bi bi-eye")
+            p#confirmErr(class="hidden mt-1.5 text-xs font-semibold text-rose-500 flex items-center gap-1")
+              i(class="bi bi-x-circle-fill")
+              | Mật khẩu không khớp
 
-          .form-group.full
-            label.form-label(for="confirmPassword") Xác nhận mật khẩu
-            .input-wrap
-              i.bi.bi-shield-check.input-icon
-              input#confirmPassword.form-ctrl.has-right(
-                type="password"
-                name="confirmPassword"
-                placeholder="Nhập lại mật khẩu"
-                minlength="6"
-                required
-              )
-              button.pw-right(type="button" id="togglePw2")
-                i.bi.bi-eye(id="eye2")
-            p.input-err-msg#confirmErr
-              i.bi.bi-x-circle
-              |  Mật khẩu không khớp!
+          div(class="flex items-start gap-2 pt-2")
+            input#terms(type="checkbox" required class="mt-0.5 w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer shrink-0")
+            label(for="terms" class="text-xs text-surface-600 font-medium cursor-pointer leading-relaxed") Tôi đồng ý với <a href="#" class="text-brand-600 hover:underline">Điều khoản dịch vụ</a> và <a href="#" class="text-brand-600 hover:underline">Chính sách bảo mật</a> của VanHa Tech.
 
-          .terms-row
-            input#terms(type="checkbox" required)
-            label(for="terms")
-              | Tôi đồng ý với &nbsp;
-              a(href="#") Điều khoản dịch vụ
-              |  và &nbsp;
-              a(href="#") Chính sách bảo mật
-
-          button.btn-submit#submitBtn(type="submit")
-            span.btn-label
-              i.bi.bi-person-plus(style="margin-right:7px")
-              | Tạo tài khoản
-            .spinner-sm
-
-        .login-row
-          span Đã có tài khoản? &nbsp;
-          a(href="/auth/login") Đăng nhập ngay
+          button#submitBtn(type="submit" class="btn-premium btn-premium-primary w-full py-3.5 text-base shadow-brand-500/30 group relative overflow-hidden mt-4")
+            span.btn-label(class="flex items-center justify-center gap-2 relative z-10")
+              | Tạo tài khoản ngay
+              i(class="bi bi-arrow-right group-hover:translate-x-1 transition-transform")
+            div.spinner-sm(class="hidden absolute inset-0 m-auto w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin z-10")
 
     script.
       // Toggle password 1
@@ -506,7 +117,7 @@ html(lang="vi")
         document.getElementById('eye2').className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
       });
 
-      // Password strength indicator
+      // Password strength
       const pwInput = document.getElementById('password');
       const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3')];
       const strengthText = document.getElementById('strengthText');
@@ -521,13 +132,25 @@ html(lang="vi")
 
       pwInput.addEventListener('input', function() {
         const score = getStrength(this.value);
-        const colors = ['#e5e7eb', '#ef4444', '#f59e0b', '#10b981'];
-        const texts = ['Độ mạnh', 'Yếu', 'Trung bình', 'Mạnh'];
+        const colors = ['#e2e8f0', '#f43f5e', '#f59e0b', '#10b981'];
+        const texts = ['Mức độ', 'Yếu', 'Trung bình', 'Mạnh'];
+        
         bars.forEach((bar, i) => {
-          bar.style.background = i < score ? colors[score] : '#e5e7eb';
+          bar.className = `h-1 flex-1 rounded-full transition-colors ${i < score ? '' : 'bg-slate-200'}`;
+          if (i < score) {
+            if(score===1) bar.style.backgroundColor = '#f43f5e';
+            if(score===2) bar.style.backgroundColor = '#f59e0b';
+            if(score===3) bar.style.backgroundColor = '#10b981';
+          } else {
+             bar.style.backgroundColor = '';
+          }
         });
-        strengthText.textContent = this.value.length > 0 ? texts[score] : 'Độ mạnh';
-        strengthText.style.color = colors[score];
+        
+        strengthText.textContent = this.value.length > 0 ? texts[score] : 'Mức độ';
+        if(score===1) strengthText.style.color = '#f43f5e';
+        else if(score===2) strengthText.style.color = '#f59e0b';
+        else if(score===3) strengthText.style.color = '#10b981';
+        else strengthText.style.color = '#94a3b8';
       });
 
       // Confirm password validation
@@ -536,32 +159,34 @@ html(lang="vi")
 
       confirmInput.addEventListener('input', function() {
         if (this.value && this.value !== pwInput.value) {
-          confirmErr.classList.add('show');
-          this.style.borderColor = '#f87171';
+          confirmErr.classList.remove('hidden');
+          this.classList.add('border-rose-500', 'bg-rose-50');
         } else {
-          confirmErr.classList.remove('show');
-          this.style.borderColor = '';
+          confirmErr.classList.add('hidden');
+          this.classList.remove('border-rose-500', 'bg-rose-50');
         }
       });
 
-      // Submit with loading
+      // Form submission
       const form = document.getElementById('registerForm');
       const btn = document.getElementById('submitBtn');
+      const btnLabel = btn.querySelector('.btn-label');
+      const spinner = btn.querySelector('.spinner-sm');
 
       form.addEventListener('submit', function(e) {
-        // Validate passwords match
         if (confirmInput.value !== pwInput.value) {
           e.preventDefault();
-          confirmErr.classList.add('show');
-          confirmInput.style.borderColor = '#f87171';
+          confirmErr.classList.remove('hidden');
+          confirmInput.classList.add('border-rose-500', 'bg-rose-50');
           return;
         }
-        // Validate terms
         if (!document.getElementById('terms').checked) {
           e.preventDefault();
           alert('Vui lòng đồng ý với điều khoản dịch vụ!');
           return;
         }
-        btn.classList.add('loading');
+        btnLabel.style.display = 'none';
+        spinner.style.display = 'block';
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
         btn.disabled = true;
       });

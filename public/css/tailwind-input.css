@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-surface-50 text-surface-900 antialiased selection:bg-brand-500 selection:text-white;
+  }
+  
+  /* Reset some Bootstrap defaults that might conflict */
+  a {
+    @apply text-inherit no-underline;
+  }
+}
+
+@layer components {
+  /* Bento 2.0 Surface */
+  .bento-card {
+    @apply bg-white border border-slate-200/50 rounded-[2.5rem] p-8 md:p-10 shadow-diffusion relative overflow-hidden transition-all duration-300;
+  }
+  
+  /* Liquid Glass */
+  .liquid-glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass-inner;
+  }
+  
+  /* Modern Button */
+  .btn-premium {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-medium transition-all active:scale-[0.98] active:-translate-y-[1px];
+  }
+  
+  .btn-premium-primary {
+    @apply bg-brand-500 text-white hover:bg-brand-600 shadow-lg shadow-brand-500/30;
+  }
+  
+  .custom-dropdown {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .group:hover > .custom-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .perpetual-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .perpetual-pulse {
+    animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .8; transform: scale(0.98); }
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
+}

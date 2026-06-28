@@ -1,6 +1,17 @@
 mixin alert-success(message)
   - if(messages.success)
-      div(class="alert alert-success" data-time='5000' show-alert) #{messages.success} <span  close-note>X</span>
+      div(class="fixed top-4 right-4 z-[9999] bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-3 rounded-xl shadow-lg flex items-center justify-between gap-4 animate-[bounce_0.5s_ease-out]" data-time='5000' show-alert)
+        div(class="flex items-center gap-2 font-medium")
+          i.bi.bi-check-circle-fill.text-lg
+          span #{messages.success}
+        button(class="text-emerald-400 hover:text-emerald-600 transition-colors" close-note)
+          i.bi.bi-x-lg
+
 mixin alert-error(message)
   - if(messages.error)
-      div(class="alert alert-warning" data-time='5000' show-alert) #{messages.error} <span  close-note>X</span>
+      div(class="fixed top-4 right-4 z-[9999] bg-rose-50 text-rose-600 border border-rose-200 px-4 py-3 rounded-xl shadow-lg flex items-center justify-between gap-4 animate-[bounce_0.5s_ease-out]" data-time='5000' show-alert)
+        div(class="flex items-center gap-2 font-medium")
+          i.bi.bi-exclamation-circle-fill.text-lg
+          span #{messages.error}
+        button(class="text-rose-400 hover:text-rose-600 transition-colors" close-note)
+          i.bi.bi-x-lg

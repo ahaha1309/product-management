@@ -1,40 +1,108 @@
 extends ../../layout/default.pug
 include ../../mixins/select-tree.pug
+
 block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
   +alert-success(messages.success)
+  
   if(role.permission.includes('articles_edit') || role.permission.includes('*'))
-    h1 Chỉnh sửa bài viết
-    form(action=`${prefixAdmin}/articles/edit/${article._id}?_method=PATCH` method="POST" enctype='multipart/form-data')
-      .mb-3
-        label.form-label Tiêu đề
-        input.form-control(type="text" name="title" value=article.title placeholder="Nhập tiêu đề bài viết" required)
-      .mb-3 
-        label.form-label Mô tả
-        textarea.form-control(name="description"  id='description' placeholder="Nhập mô tả bài viết" rows="5") #{article.description}
-      .form-group.mb-3
-        label(for="article_category_id") Danh mục bài viết
-        select.form-select(name="article_category_id" id="article_category_id")
-          option(value="") -- Không có --
-          if(categoryArticle && categoryArticle.length > 0)
-            +select-tree(categoryArticle,1,article.article_category_id)
-        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
-        img.image-preview(src=`${article.thumbnail}`  upload-image-preview)
-        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
-      .mb-3 
-        .mb-3
-        label.form-label Vị trí
-        input.form-control(type="number" name="position" value=article.position placeholder="Tự động tăng" )
-      .mb-3 
-          label.form-label Trạng thái
-          .form-control.d-flex.gap-3
-            input(type="radio" name="status" value="active" checked=(article.status=='active')) 
-            | Hoạt động
-            input(type="radio" name="status" value="inactive" checked=(article.status=='inactive')) 
-            | Dừng hoạt động
-      button.btn.btn-success(type="submit") Cập nhật
+    div(class="max-w-5xl mx-auto")
+      //- Header
+      div(class="flex items-center justify-between mb-6")
+        div(class="flex items-center gap-3")
+          a(href=`${prefixAdmin}/articles` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+            i.bi.bi-arrow-left.text-lg
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chỉnh sửa bài viết
+        
+        button(type="submit" form="edit-article-form" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-check2-circle.text-lg
+          | Cập nhật bài viết
+
+      form(id="edit-article-form" action=`${prefixAdmin}/articles/edit/${article._id}?_method=PATCH` method="POST" enctype='multipart/form-data' class="grid grid-cols-1 lg:grid-cols-3 gap-6")
+        
+        //- Left Column (Main Content)
+        div(class="lg:col-span-2 space-y-6")
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-journal-text.text-brand-500
+              | Nội dung bài viết
+              
+            div(class="space-y-5")
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Tiêu đề <span class="text-rose-500">*</span>
+                input(type="text" name="title" value=article.title required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+              
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Nội dung chi tiết
+                textarea(name="description" id="description" rows="12" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none") #{article.description}
+
+        //- Right Column (Settings & Image)
+        div(class="space-y-6")
+          
+          //- Meta settings
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-gear.text-brand-500
+              | Phân loại & Cài đặt
+              
+            div(class="space-y-5")
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Danh mục
+                div(class="relative")
+                  select(name="article_category_id" id="article_category_id" class="w-full appearance-none bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none cursor-pointer")
+                    option(value="") -- Không có --
+                    if(categoryArticle && categoryArticle.length > 0)
+                      +select-tree(categoryArticle, 1, article.article_category_id)
+                  i.bi.bi-chevron-down.absolute.right-4.top-1.translate-y-2.text-surface-400.pointer-events-none
+
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-2") Trạng thái
+                div(class="flex gap-4")
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="status" value="active" checked=(article.status=='active') class="w-4 h-4 text-brand-500 bg-white border-surface-300 focus:ring-brand-500")
+                    span(class="text-sm text-surface-700 font-medium") Hoạt động
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="status" value="inactive" checked=(article.status=='inactive') class="w-4 h-4 text-rose-500 bg-white border-surface-300 focus:ring-rose-500")
+                    span(class="text-sm text-surface-700 font-medium") Tạm dừng
+              
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Vị trí
+                input(type="number" name="position" value=article.position placeholder="Tự động" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+
+          //- Image
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-image.text-brand-500
+              | Hình ảnh đại diện
+              
+            div(class="space-y-4" upload-image)
+              div(class="relative border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 p-6 text-center hover:bg-surface-100 transition-colors group cursor-pointer")
+                input(type="file" name="thumbnail" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" upload-image-input)
+                i(class="bi bi-cloud-arrow-up text-4xl text-brand-400 mb-2 group-hover:scale-110 transition-transform inline-block")
+                p(class="text-sm font-medium text-surface-700") Click để thay đổi ảnh
+              
+              div(class="relative bg-white border border-surface-200 p-2 rounded-xl" id="image-preview-container")
+                img(src=`${article.thumbnail}` class="w-full h-40 object-cover rounded-lg" upload-image-preview)
+                button(type="button" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-rose-500 text-white rounded-full hover:bg-rose-600 shadow-md transition-colors" close-image-upload title="Xóa ảnh")
+                  i.bi.bi-x-lg.text-sm
+
   else
-    .alert.alert-danger Bạn không có quyền chỉnh sửa sản phẩm
+    div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+      i.bi.bi-shield-lock.text-4xl.mb-3
+      h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+      p(class="text-sm") Bạn không được cấp quyền để chỉnh sửa bài viết.
+
   script(src='/admin/js/product.js')
+  script.
+    document.querySelector('[upload-image-input]').addEventListener('change', function() {
+      const file = this.files[0];
+      const previewContainer = document.getElementById('image-preview-container');
+      if (file) previewContainer.classList.remove('hidden');
+    });
+    document.querySelector('[close-image-upload]').addEventListener('click', function() {
+      const previewContainer = document.getElementById('image-preview-container');
+      previewContainer.classList.add('hidden');
+      document.querySelector('[upload-image-preview]').src = '';
+      document.querySelector('[upload-image-input]').value = '';
+    });

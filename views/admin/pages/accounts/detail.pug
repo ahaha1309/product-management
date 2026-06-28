@@ -1,25 +1,57 @@
 extends ../../layout/default.pug
 block main
-  h1 Chi tiết Tài Khoản
-  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/accounts`) &larr; Quay lại
-  if account
-    .card
-      .card-header
-        h3= account.fullname
-      .card-body
-        if account.avatar
-          img.img-fluid.mb-3.rounded-circle(src=account.avatar alt=account.fullname style="width: 100px; height: 100px; object-fit: cover;")
-        p.mb-2 
-          strong Email: 
-          | #{account.email}
-        p.mb-2 
-          strong Số điện thoại: 
-          | #{account.phone || 'Chưa cập nhật'}
-        p.mb-2 
-          strong Phân quyền: 
-          | #{roleData ? roleData.title : 'Chưa phân quyền'}
-        p.mb-2 
-          strong Trạng thái: 
-          span(class=`badge text-bg-${account.status == "active" ? "success" : "danger"}`) #{account.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
-  else
-    p.text-danger Không tìm thấy tài khoản.
+  div(class="max-w-3xl mx-auto space-y-6")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/accounts` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết Admin
+      
+      if(role.permission.includes('accounts_edit'))
+        a(href=`${prefixAdmin}/accounts/edit/${account._id}` class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-pencil-square.text-lg
+          | Chỉnh sửa
+
+    if account
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-xl shadow-surface-200/40 overflow-hidden")
+        //- Cover & Avatar
+        div(class="h-32 bg-gradient-to-r from-brand-600 to-indigo-600 relative")
+          div(class="absolute -bottom-12 left-6")
+            if account.avatar
+              img(src=account.avatar alt=account.fullname class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-white")
+            else
+              div(class="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center bg-surface-100 text-surface-500 text-4xl")
+                i.bi.bi-person-fill
+                
+        div(class="pt-16 px-6 pb-6")
+          div(class="flex justify-between items-start mb-6")
+            div
+              h2(class="text-2xl font-bold text-surface-900") #{account.fullname}
+              p(class="text-surface-500 flex items-center gap-1.5 mt-1")
+                i.bi.bi-shield-check.text-brand-500
+                | #{roleData ? roleData.title : 'Chưa phân quyền'}
+            
+            span(class=`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg border ${account.status == "active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{account.status == "active" ? "Hoạt động" : "Bị khóa"}
+
+          //- Details Grid
+          div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100 flex items-start gap-3")
+              div(class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-500 shrink-0")
+                i.bi.bi-envelope
+              div
+                p(class="text-xs text-surface-500 font-medium mb-0.5") Email
+                p(class="text-sm font-semibold text-surface-900 break-all") #{account.email}
+                
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100 flex items-start gap-3")
+              div(class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-500 shrink-0")
+                i.bi.bi-telephone
+              div
+                p(class="text-xs text-surface-500 font-medium mb-0.5") Số điện thoại
+                p(class="text-sm font-semibold text-surface-900") #{account.phone || 'Chưa cập nhật'}
+                
+    else
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-8 rounded-2xl flex flex-col items-center justify-center text-center")
+        i.bi.bi-person-x.text-5xl.mb-4
+        h2(class="text-xl font-bold mb-2") Không tìm thấy!
+        p(class="text-sm") Tài khoản này không tồn tại hoặc đã bị xóa khỏi hệ thống.

@@ -1,40 +1,58 @@
 extends ../../layouts/default.pug
 
 block main
-  .container.py-5
-    .row.justify-content-center
-      .col-lg-10
-        .card.border-0.shadow-sm(style="border-radius:16px;")
-          .card-body.p-5
-            .text-center.mb-5
-              h1.fw-bold.text-primary Chính sách đổi trả
-              p.text-muted Cập nhật lần cuối: Tháng 6, 2026
-            
-            .policy-content
-              h4 1. Điều kiện đổi trả
-              p Chúng tôi chấp nhận đổi trả sản phẩm trong vòng 30 ngày kể từ ngày nhận hàng với các điều kiện sau:
-              ul
-                li Sản phẩm còn nguyên tem mác, hộp và phụ kiện đi kèm.
-                li Sản phẩm chưa qua sử dụng, không bị trầy xước, nứt vỡ.
-                li Cần có hóa đơn mua hàng hoặc email xác nhận đơn hàng.
+  div(class="container mx-auto px-4 py-16 mb-20")
+    div(class="max-w-4xl mx-auto")
+      
+      div(class="text-center mb-12")
+        div(class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-bold tracking-wider uppercase mb-4")
+          i.bi.bi-arrow-left-right
+          | Đổi trả
+        h1(class="text-4xl font-black text-surface-950 tracking-tight mb-4") Chính sách đổi trả
+        p(class="text-surface-500 font-medium") Cập nhật lần cuối: Tháng 6, 2026
 
-              h4.mt-4 2. Các trường hợp từ chối đổi trả
-              p Chúng tôi không áp dụng chính sách đổi trả cho các trường hợp:
-              ul
-                li Sản phẩm thuộc danh mục hàng thanh lý, giảm giá đặc biệt.
-                li Sản phẩm đã hết hạn bảo hành hoặc quá 30 ngày kể từ lúc nhận.
-                li Lỗi do người dùng sử dụng không đúng hướng dẫn.
+      div(class="bento-card !p-8 md:!p-12 prose prose-slate prose-lg max-w-none prose-headings:font-black prose-a:text-brand-600")
+        h4(class="flex items-center gap-2 text-surface-900 border-b border-slate-100 pb-4") 
+          span(class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-sm") 1
+          | Điều kiện đổi trả
+        p Chúng tôi chấp nhận đổi trả sản phẩm trong vòng <strong>30 ngày</strong> kể từ ngày nhận hàng với các điều kiện sau:
+        ul(class="list-disc pl-5 mb-8 space-y-2 text-surface-600")
+          li Sản phẩm còn nguyên tem mác, hộp và phụ kiện đi kèm.
+          li Sản phẩm chưa qua sử dụng, không bị trầy xước, nứt vỡ.
+          li Cần có hóa đơn mua hàng hoặc email xác nhận đơn hàng.
 
-              h4.mt-4 3. Quy trình đổi trả
-              p Để thực hiện đổi trả, quý khách vui lòng làm theo các bước:
-              ol
-                li Liên hệ bộ phận CSKH qua email <b>support@daca.vn</b> hoặc gọi <b>0901 234 567</b>.
-                li Cung cấp mã đơn hàng và lý do đổi trả kèm hình ảnh/video thực tế.
-                li Gửi sản phẩm về địa chỉ trung tâm bảo hành của DACA.
-                li DACA kiểm tra và hoàn tiền/gửi sản phẩm mới trong vòng 3-5 ngày làm việc.
+        h4(class="flex items-center gap-2 text-surface-900 border-b border-slate-100 pb-4 mt-10") 
+          span(class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-sm") 2
+          | Các trường hợp từ chối đổi trả
+        div(class="bg-rose-50 border border-rose-100 rounded-2xl p-6 mb-8 text-rose-800")
+          p(class="mb-3 font-bold") Chúng tôi không áp dụng chính sách đổi trả cho các trường hợp:
+          ul(class="list-disc pl-5 space-y-2 font-medium")
+            li Sản phẩm thuộc danh mục hàng thanh lý, giảm giá đặc biệt.
+            li Sản phẩm đã hết hạn bảo hành hoặc quá 30 ngày kể từ lúc nhận.
+            li Lỗi do người dùng sử dụng không đúng hướng dẫn.
 
-              h4.mt-4 4. Chi phí vận chuyển
-              p 
-                | - <b>Lỗi do nhà sản xuất:</b> DACA chịu hoàn toàn chi phí vận chuyển 2 chiều.
-                br
-                | - <b>Khách hàng đổi ý:</b> Khách hàng thanh toán phí gửi hàng về trung tâm DACA.
+        h4(class="flex items-center gap-2 text-surface-900 border-b border-slate-100 pb-4 mt-10") 
+          span(class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-sm") 3
+          | Quy trình đổi trả
+        p Để thực hiện đổi trả, quý khách vui lòng làm theo các bước:
+        ol(class="list-decimal pl-5 mb-8 space-y-2 text-surface-600")
+          li Liên hệ bộ phận CSKH qua email <a href="mailto:vanhanguyen2k4@gmail.com" class="font-bold">vanhanguyen2k4@gmail.com</a> hoặc gọi <strong>0886 911 791</strong>.
+          li Cung cấp mã đơn hàng và lý do đổi trả kèm hình ảnh/video thực tế.
+          li Gửi sản phẩm về địa chỉ trung tâm bảo hành của VanHa Tech.
+          li Chúng tôi sẽ kiểm tra và hoàn tiền/gửi sản phẩm mới trong vòng 3-5 ngày làm việc.
+
+        h4(class="flex items-center gap-2 text-surface-900 border-b border-slate-100 pb-4 mt-10") 
+          span(class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-sm") 4
+          | Chi phí vận chuyển
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4")
+          div(class="p-5 rounded-2xl border border-slate-200 bg-surface-50")
+            div(class="font-black text-surface-900 mb-2 flex items-center gap-2")
+              i.bi.bi-wrench.text-brand-500
+              | Lỗi do nhà sản xuất
+            p(class="text-sm text-surface-600") VanHa Tech chịu hoàn toàn chi phí vận chuyển 2 chiều.
+          
+          div(class="p-5 rounded-2xl border border-slate-200 bg-surface-50")
+            div(class="font-black text-surface-900 mb-2 flex items-center gap-2")
+              i.bi.bi-person.text-amber-500
+              | Khách hàng đổi ý
+            p(class="text-sm text-surface-600") Khách hàng thanh toán phí gửi hàng về trung tâm bảo hành.

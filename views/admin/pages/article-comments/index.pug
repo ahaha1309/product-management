@@ -1,77 +1,83 @@
-extends ../../layouts/default.pug
+extends ../../layout/default.pug
 include ../../mixins/alert.pug
 include ../../mixins/moment.pug
 
 block main
   if(role.permission.includes('articles_view') || role.permission.includes('*'))
-    h1.mb-4 Quản lý Bình luận Bài viết
+    div(class="max-w-7xl mx-auto space-y-6")
+      //- Header
+      div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+        div
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Bình luận Bài viết
+          p(class="text-surface-500 text-sm mt-1") Quản lý các bình luận của người dùng trên bài viết.
 
-    +alert-success(5000)
-    +alert-error(5000)
+      +alert-success(messages.success)
+      +alert-error(messages.error)
 
-    .card.mb-3
-      .card-header Danh sách bình luận
-      .card-body
-        .table-responsive
-          table.table.table-hover.table-sm
+      //- List
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+        div(class="p-5 border-b border-surface-100 bg-surface-50/50 flex justify-between items-center")
+          h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2")
+            i.bi.bi-chat-left-text.text-brand-500
+            | Danh sách bình luận
+            
+        div(class="overflow-x-auto")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
             thead
-              tr
-                th STT
-                th Người dùng
-                th Bài viết
-                th Nội dung bình luận
-                th Thời gian
-                th Hành động
-            tbody
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-4 py-3 text-center w-16") STT
+                th(class="px-4 py-3") Người dùng
+                th(class="px-4 py-3") Bài viết
+                th(class="px-4 py-3") Nội dung bình luận
+                th(class="px-4 py-3") Thời gian
+                th(class="px-4 py-3 text-right w-24") Hành động
+            tbody(class="divide-y divide-surface-100 text-sm")
               if(comments.length > 0)
                 each item, index in comments
-                  tr
-                    td #{index + 1}
-                    td
-                      .d-flex.align-items-center.gap-2
-                        img.rounded-circle(src=item.userAvatar width="30" height="30")
-                        b #{item.userName}
-                    td 
+                  tr(class="hover:bg-surface-50 transition-colors group")
+                    td(class="px-4 py-3 text-center text-surface-500 font-medium") #{index + 1}
+                    td(class="px-4 py-3")
+                      div(class="flex items-center gap-2")
+                        img(src=item.userAvatar || '/image/avatar-default.png' class="w-8 h-8 rounded-full object-cover border border-surface-200")
+                        span(class="font-semibold text-surface-900") #{item.userName}
+                    td(class="px-4 py-3") 
                       if item.articleSlug
-                        a(href=`/articles/${item.articleSlug}` target="_blank") #{item.articleTitle}
+                        a(href=`/articles/${item.articleSlug}` target="_blank" class="text-brand-600 hover:text-brand-700 hover:underline font-medium truncate max-w-[200px] inline-block") #{item.articleTitle}
                       else
-                        | Không tìm thấy
-                    td #{item.text}
-                    td 
+                        span(class="text-surface-400 italic") Không tìm thấy
+                    td(class="px-4 py-3") 
+                      div(class="text-surface-700 whitespace-normal line-clamp-2 max-w-md") #{item.text}
+                    td(class="px-4 py-3 text-surface-500 text-xs") 
                       +formatDateTime(item.createdAt)
-                    td
-                      button.btn.btn-danger.btn-sm.ms-1.btn-delete(
-                        data-id=item.id
-                        data-path=`${prefixAdmin}/article-comments/delete`
-                      ) Xóa
+                    td(class="px-4 py-3 text-right")
+                      button(class="btn-delete w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-100 hover:text-rose-600 transition-colors border border-surface-200 shadow-sm" data-id=item.id data-path=`${prefixAdmin}/article-comments/delete` title="Xóa")
+                        i.bi.bi-trash
               else
                 tr
-                  td(colspan="6" class="text-center") Không có bình luận nào
+                  td(colspan="6" class="px-5 py-8 text-center text-surface-500") Không có bình luận nào.
 
-  //- Form used for DELETE request
-  form(
-    id="form-delete-item"
-    method="POST"
-    action=""
-    data-path=`${prefixAdmin}/article-comments/delete`
-  )
+    form(id="form-delete-item" method="POST" action="" data-path=`${prefixAdmin}/article-comments/delete`)
 
-  script.
-    // Xử lý Xóa bình luận
-    const formDeleteItem = document.getElementById('form-delete-item');
-    if (formDeleteItem) {
-      const path = formDeleteItem.getAttribute('data-path');
-      const buttonsDelete = document.querySelectorAll('.btn-delete');
-      
-      buttonsDelete.forEach(button => {
-        button.addEventListener('click', () => {
-          const isConfirm = confirm("Bạn có chắc chắn muốn xóa bình luận này không?");
-          if (isConfirm) {
-            const id = button.getAttribute('data-id');
-            const action = `${path}/${id}?_method=PATCH`;
-            formDeleteItem.action = action;
-            formDeleteItem.submit();
-          }
+    script.
+      const formDeleteItem = document.getElementById('form-delete-item');
+      if (formDeleteItem) {
+        const path = formDeleteItem.getAttribute('data-path');
+        const buttonsDelete = document.querySelectorAll('.btn-delete');
+        
+        buttonsDelete.forEach(button => {
+          button.addEventListener('click', () => {
+            const isConfirm = confirm("Bạn có chắc chắn muốn xóa bình luận này không?");
+            if (isConfirm) {
+              const id = button.getAttribute('data-id');
+              const action = `${path}/${id}?_method=PATCH`;
+              formDeleteItem.action = action;
+              formDeleteItem.submit();
+            }
+          });
         });
-      });
-    }
+      }
+  else
+    div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+      i.bi.bi-shield-lock.text-4xl.mb-3
+      h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+      p(class="text-sm") Bạn không được cấp quyền để xem bình luận bài viết.

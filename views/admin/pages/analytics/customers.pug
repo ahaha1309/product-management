@@ -1,57 +1,92 @@
 extends ../../layout/default.pug
 
 block main
-  .analytics-customers-container
-    .page-header.d-flex.align-items-center.gap-2.mb-4
-      a.btn.btn-sm.btn-outline-secondary(href='/admin/analytics') &larr; Quay l?i
-      h2.mb-0 👥 Phân Tích Khách Hàng
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/analytics` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        div
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+            i.bi.bi-people.text-indigo-500
+            | Phân Tích Khách Hàng
+          p(class="text-surface-500 text-sm mt-1") Insight về hành vi và độ trung thành của khách hàng.
 
-    .metrics-section
-      .metric
-        .icon 👤
-        .label Tổng khách hàng
-        .value= (customerMetrics.totalCustomers || 0).toLocaleString('vi-VN')
-      
-      .metric
-        .icon 🆕
-        .label Khách mới (30 ngày)
-        .value= (customerMetrics.newCustomersMonth || 0).toLocaleString('vi-VN')
-      
-      .metric
-        .icon 🔄
-        .label Khách lặp lại
-        .value= (customerMetrics.repeatCustomers || 0).toLocaleString('vi-VN')
-      
-      .metric
-        .icon 📊
-        .label Tỷ lệ lặp lại
-        .value= (customerMetrics.repeatRate || 0) + '%'
+    //- Metrics
+    div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5")
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 hover:border-indigo-300 transition-colors group")
+        div(class="flex items-center gap-4")
+          div(class="w-14 h-14 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform")
+            i.bi.bi-person-lines-fill
+          div
+            p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-1") Tổng khách hàng
+            p(class="text-2xl font-bold text-surface-900")= (customerMetrics.totalCustomers || 0).toLocaleString('vi-VN')
+            
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 hover:border-emerald-300 transition-colors group")
+        div(class="flex items-center gap-4")
+          div(class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform")
+            i.bi.bi-person-plus-fill
+          div
+            p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-1") Khách mới (30 ngày)
+            p(class="text-2xl font-bold text-surface-900")= (customerMetrics.newCustomersMonth || 0).toLocaleString('vi-VN')
+            
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 hover:border-amber-300 transition-colors group")
+        div(class="flex items-center gap-4")
+          div(class="w-14 h-14 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform")
+            i.bi.bi-arrow-repeat
+          div
+            p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-1") Khách mua lại
+            p(class="text-2xl font-bold text-surface-900")= (customerMetrics.repeatCustomers || 0).toLocaleString('vi-VN')
+            
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 hover:border-rose-300 transition-colors group")
+        div(class="flex items-center gap-4")
+          div(class="w-14 h-14 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform")
+            i.bi.bi-pie-chart-fill
+          div
+            p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-1") Tỷ lệ giữ chân
+            p(class="text-2xl font-bold text-surface-900")= (customerMetrics.repeatRate || 0) + '%'
 
-    .conversion-section
-      h3 Funnel Chuyển Đổi
-      canvas#conversionChart
-
-    .retention-section.card
-      h3 Retention Rate
-      table.table.table-hover
-        thead
-          tr
-            th Tuần
-            th Khách hiện tại
-            th Retention %
-        tbody
-          tr
-            td Tuần 1
-            td 1,234
-            td 100%
-          tr
-            td Tuần 2
-            td 987
-            td 80%
-          tr
-            td Tuần 3
-            td 654
-            td 53%
+    //- Charts & Tables
+    div(class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6")
+      //- Funnel Chart
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+        h3(class="text-base font-bold text-surface-900 mb-6 flex items-center gap-2")
+          i.bi.bi-funnel.text-brand-500
+          | Phễu chuyển đổi mua hàng
+        div(class="relative h-80 w-full")
+          canvas#conversionChart
+          
+      //- Retention Table
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+        div(class="p-6 border-b border-surface-100")
+          h3(class="text-base font-bold text-surface-900 flex items-center gap-2")
+            i.bi.bi-table.text-brand-500
+            | Tỷ lệ giữ chân (Retention Rate)
+            
+        div(class="overflow-x-auto")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
+            thead
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-6 py-4") Cohort / Tuần
+                th(class="px-6 py-4 text-center") Số lượng khách
+                th(class="px-6 py-4 text-center") Tỷ lệ Retention
+            tbody(class="divide-y divide-surface-100 text-sm")
+              tr(class="hover:bg-surface-50 transition-colors")
+                td(class="px-6 py-4 font-bold text-surface-900") Tuần 1
+                td(class="px-6 py-4 text-center font-medium text-surface-700") 1,234
+                td(class="px-6 py-4 text-center")
+                  span(class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold") 100%
+              tr(class="hover:bg-surface-50 transition-colors")
+                td(class="px-6 py-4 font-bold text-surface-900") Tuần 2
+                td(class="px-6 py-4 text-center font-medium text-surface-700") 987
+                td(class="px-6 py-4 text-center")
+                  span(class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full font-bold") 80%
+              tr(class="hover:bg-surface-50 transition-colors")
+                td(class="px-6 py-4 font-bold text-surface-900") Tuần 3
+                td(class="px-6 py-4 text-center font-medium text-surface-700") 654
+                td(class="px-6 py-4 text-center")
+                  span(class="px-3 py-1 bg-amber-50 text-amber-600 rounded-full font-bold") 53%
 
 block scripts
   script(src='https://cdn.jsdelivr.net/npm/chart.js')
@@ -65,13 +100,22 @@ block scripts
           datasets: [{
             label: 'Lượt tương tác',
             data: [10000, 3000, 1500, 750],
-            backgroundColor: ['#0d6efd', '#0b5ed7', '#0a58ca', '#084298']
+            backgroundColor: ['#e0e7ff', '#a5b4fc', '#6366f1', '#4338ca'],
+            borderRadius: 6,
+            borderSkipped: false
           }]
         },
         options: {
           indexAxis: 'y',
-          responsive: true
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { grid: { display: false, drawBorder: false } },
+            y: { grid: { display: false, drawBorder: false } }
+          }
         }
       });
     }
-

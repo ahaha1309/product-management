@@ -1,4 +1,4 @@
-mixin fillterStatus (button)
-  each item in button  
-     button(class=`btn btn-sm btn-outline-success ms-1 ${item.class}`
-      button-status=item.status) #{item.name}
+mixin fillterStatus(button)
+  div(class="flex items-center gap-2 overflow-x-auto hide-scrollbar p-1")
+    each item in button  
+      button(class=`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${item.class === 'active' ? 'bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-500/20' : 'bg-white text-surface-600 border-surface-200 hover:border-brand-300 hover:text-brand-600'}` button-status=item.status) #{item.name}

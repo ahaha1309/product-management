@@ -1,68 +1,101 @@
 extends ../../layout/default.pug
 
 block main
-  h1 #{pageTitle}
-  
-  .row.mt-4
-    .col-md-4
-      .card
-        .card-header Danh sách khách hàng
-        .list-group.list-group-flush#chat-user-list
+  div(class="max-w-7xl mx-auto space-y-6 h-[calc(100vh-8rem)] flex flex-col")
+    //- Header
+    div(class="flex items-center justify-between shrink-0")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") #{pageTitle || 'Hỗ trợ khách hàng'}
+        p(class="text-surface-500 text-sm mt-1") Chat trực tiếp với khách hàng của bạn.
+        
+    //- Main Chat Layout
+    div(class="flex flex-col md:flex-row gap-6 flex-1 min-h-0")
+      
+      //- User List Sidebar
+      div(class="w-full md:w-1/3 lg:w-1/4 bg-white rounded-2xl border border-surface-200 shadow-sm flex flex-col overflow-hidden shrink-0")
+        div(class="p-4 border-b border-surface-100 bg-surface-50")
+          h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider") Khách hàng
+          
+        div(id="chat-user-list" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-surface-100")
           if chatUsers && chatUsers.length > 0
             each user in chatUsers
-              a.list-group-item.list-group-item-action.chat-user-item(href="#" data-userid=user._id data-fullname=user.fullName)
-                div.d-flex.align-items-center
-                  img.rounded-circle.me-2(src=(user.avatar || 'https://dummyimage.com/40x40/ccc/fff') width="40" height="40")
-                  div
-                    strong #{user.fullName}
-                    br
-                    small.text-muted #{user.email}
+              a(href="#" class="chat-user-item block p-4 hover:bg-brand-50 transition-colors focus:bg-brand-50" data-userid=user._id data-fullname=user.fullName)
+                div(class="flex items-center gap-3")
+                  img(src=(user.avatar || 'https://dummyimage.com/40x40/cbd5e1/ffffff') class="w-10 h-10 rounded-full object-cover border border-surface-200 shrink-0")
+                  div(class="min-w-0")
+                    div(class="font-semibold text-surface-900 truncate") #{user.fullName}
+                    div(class="text-xs text-surface-500 truncate mt-0.5") #{user.email}
           else
-            .p-3.text-center.text-muted Chưa có khách hàng nào nhắn tin.
-    
-    .col-md-8
-      .card#admin-chat-window.d-none
-        .card-header.bg-primary.text-white
-          strong#current-chat-name Đang chat với...
-          input#current-chat-userid(type="hidden" value="")
-        .card-body#admin-chat-messages(style="height: 500px; overflow-y: auto; background: #f8f9fa;")
-          //- Lịch sử tin nhắn sẽ được load bằng JS
-          .text-center.text-muted Chọn một khách hàng để xem tin nhắn
-        .card-footer
-          form#admin-chat-form.d-flex(action="")
-            input#admin-chat-input.form-control.me-2(type="text" placeholder="Nhập câu trả lời..." required autocomplete="off")
-            button.btn.btn-primary(type="submit") 
-              i.bi.bi-send-fill
-              |  Gửi
+            div(class="p-8 text-center text-surface-500")
+              i.bi.bi-inbox.text-3xl.mb-2.block
+              span(class="text-sm") Chưa có tin nhắn nào.
+              
+      //- Chat Window
+      div(class="flex-1 bg-white rounded-2xl border border-surface-200 shadow-sm flex flex-col overflow-hidden min-h-[400px]")
+        //- Empty State
+        div(id="admin-chat-empty" class="flex-1 flex flex-col items-center justify-center text-center p-8 bg-surface-50/50")
+          div(class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center text-brand-500 text-3xl mb-4 shadow-sm")
+            i.bi.bi-chat-dots
+          h3(class="text-lg font-bold text-surface-900 mb-1") Chọn một khách hàng
+          p(class="text-surface-500 text-sm max-w-sm") Nhấp vào một cuộc trò chuyện ở danh sách bên trái để bắt đầu nhắn tin.
 
+        //- Chat Active State
+        div(id="admin-chat-window" class="hidden flex-1 flex flex-col min-h-0")
+          //- Chat Header
+          div(class="p-4 border-b border-surface-100 bg-white flex items-center gap-3 shrink-0 shadow-sm z-10")
+            div(class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold shrink-0")
+              i.bi.bi-person-fill
+            div
+              h3(id="current-chat-name" class="font-bold text-surface-900") Đang chat với...
+              p(class="text-xs text-emerald-500 font-medium flex items-center gap-1")
+                span(class="w-2 h-2 rounded-full bg-emerald-500")
+                | Đang hoạt động
+            input(type="hidden" id="current-chat-userid" value="")
+            
+          //- Messages Area
+          div(id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 bg-surface-50/50 flex flex-col gap-4 custom-scrollbar")
+            //- Lịch sử tin nhắn sẽ được load bằng JS
+            
+          //- Input Area
+          div(class="p-4 border-t border-surface-100 bg-white shrink-0")
+            form(id="admin-chat-form" class="flex items-center gap-2" action="")
+              div(class="relative flex-1")
+                input(type="text" id="admin-chat-input" placeholder="Nhập tin nhắn..." required autocomplete="off" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-4 pr-10 py-3 transition-all outline-none")
+                button(type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
+                  i.bi.bi-emoji-smile
+              button(type="submit" class="shrink-0 w-12 h-12 flex items-center justify-center bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-md transition-transform active:scale-95")
+                i.bi.bi-send-fill
+                
   style.
-    .chat-message {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
-    }
-    .chat-message .bubble {
-      padding: 10px 15px;
-      border-radius: 15px;
-      max-width: 70%;
-      word-wrap: break-word;
-    }
-    .chat-message.self {
-      align-items: flex-end;
-    }
-    .chat-message.self .bubble {
-      background: #0d6efd;
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-    .chat-message.client {
-      align-items: flex-start;
-    }
-    .chat-message.client .bubble {
-      background: #e9ecef;
-      color: #333;
-      border-bottom-left-radius: 4px;
-    }
+    .chat-message { display: flex; flex-direction: column; width: 100%; }
+    .chat-message .bubble { padding: 0.75rem 1rem; border-radius: 1rem; max-width: 75%; font-size: 0.875rem; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .chat-message.self { align-items: flex-end; }
+    .chat-message.self .bubble { background-color: #3b82f6; color: white; border-bottom-right-radius: 0.25rem; }
+    .chat-message.client { align-items: flex-start; }
+    .chat-message.client .bubble { background-color: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 0.25rem; }
     
   script(src="https://cdn.socket.io/4.7.4/socket.io.min.js")
+  script.
+    // Thêm logic UI đơn giản để handle tab switching cho chat
+    document.addEventListener('DOMContentLoaded', () => {
+      const emptyState = document.getElementById('admin-chat-empty');
+      const chatWindow = document.getElementById('admin-chat-window');
+      const userItems = document.querySelectorAll('.chat-user-item');
+      
+      userItems.forEach(item => {
+        item.addEventListener('click', () => {
+          emptyState.classList.add('hidden');
+          chatWindow.classList.remove('hidden');
+          chatWindow.classList.add('flex');
+          
+          // Style active state
+          userItems.forEach(u => {
+            u.classList.remove('bg-brand-50', 'border-l-2', 'border-brand-500');
+            u.classList.add('border-l-2', 'border-transparent');
+          });
+          item.classList.remove('border-transparent');
+          item.classList.add('bg-brand-50', 'border-brand-500');
+        });
+      });
+    });
   script(src="/admin/js/chat.js")

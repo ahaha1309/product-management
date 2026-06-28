@@ -3,57 +3,49 @@ include ../../mixins/alert.pug
 include ../../mixins/select-tree.pug
 
 block main
-  h1.mb-4 Chi tiết danh mục sản phẩm
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  +alert-success(messages.success)
+  
+  div(class="max-w-4xl mx-auto")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/category-product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết danh mục
+      
+      if(role.permission.includes('products-category_edit') || role.permission.includes('*'))
+        a(href=`${prefixAdmin}/category-product/edit/${category._id}` class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-pencil-square.text-lg
+          | Chỉnh sửa
 
-  +alert-error(5000)
-  form( action=`${prefixAdmin}/category-product/create` method="POST" enctype='multipart/form-data' )
-    // Tiêu đề danh mục
-    .form-group.mb-3
-      label(for="title") Tiêu đề
-      input.form-control(
-        type="text"
-        id="title"
-        name="title"
-        value=category.title
-        placeholder="Nhập tiêu đề danh mục"
-        required 
-        readonly
-      )
-    .mb-3 
-      label.form-label Mô tả
-      p(name="description" id='des' placeholder="Nhập mô tả sản phẩm" rows="3" ) !{category.description}
-    // Danh mục cha
-    .form-group.mb-3
-      label(for="parent_id") Danh mục cha
-      select.form-select(name="parent_id" id="parent_id" disabled)
-        option(value="") -- Không có --
-        if(categories && categories.length > 0)
-          +select-tree(categories,1,category.parent_id)
-    .form-group.mb-3(upload-image)
-      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input disabled)
-      img.image-preview(src=category.thumbnail  upload-image-preview)
-      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6")
+      
+      //- Left Image
+      div(class="md:col-span-1")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-2")
+          img(src=`${category.thumbnail || '/image/logo.png'}` class="w-full h-auto aspect-square object-cover rounded-xl" alt=category.title)
+          
+      //- Right Details
+      div(class="md:col-span-2 space-y-6")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+          h2(class="text-xl font-bold text-surface-900 mb-2") #{category.title}
+          
+          div(class="flex flex-wrap gap-2 mb-6")
+            span(class=`px-3 py-1 text-xs font-semibold rounded-full border ${category.status=="active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{category.status=="active" ? "Đang hoạt động" : "Tạm dừng"}
+            span(class="px-3 py-1 text-xs font-semibold rounded-full border bg-surface-50 text-surface-600 border-surface-200") Vị trí: #{category.position}
 
-    // Vị trí
-    .form-group.mb-3
-      label(for="position") Vị trí
-      input.form-control(
-        type="number"
-        id="position"
-        name="position"
-        placeholder="Tự động tăng"
-        value=category.position
-        disabled
-      )
+          div(class="space-y-4")
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100")
+              p(class="text-xs text-surface-500 font-medium mb-1") Danh mục cha
+              div(class="relative mt-2")
+                select(class="w-full appearance-none bg-white border border-surface-200 text-surface-700 text-sm rounded-lg px-3 py-2 opacity-70" disabled)
+                  option(value="") -- Không có --
+                  if(categories && categories.length > 0)
+                    +select-tree(categories, 1, category.parent_id)
 
-    // Trạng thái
-    .form-group.mb-3
-      label Trạng thái
-      span.mx-3(
-        class=`badge text-bg-${category.status=="active" ? "success" :"danger"}`
-       ) #{category.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
-    
-    // Submit
-    if(role.permission.includes('products-category_edit') || role.permission.includes('*'))
-      a.btn.btn-primary(href=`${prefixAdmin}/category-product/edit/${category._id}`) Chỉnh sửa
+          if(category.description)
+            div(class="mt-6")
+              h3(class="text-sm font-bold text-surface-900 mb-3 uppercase tracking-wider") Mô tả danh mục
+              div(class="prose prose-sm max-w-none text-surface-700 bg-surface-50 p-4 rounded-xl border border-surface-100") !{category.description}

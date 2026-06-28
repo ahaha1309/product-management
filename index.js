@@ -46,7 +46,8 @@ app.locals.moment = moment;
 
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  referrerPolicy: false
 }));
 
 const limiter = rateLimit({

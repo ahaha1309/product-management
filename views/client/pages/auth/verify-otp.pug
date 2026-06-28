@@ -5,55 +5,46 @@ block main
   +alert-error(5000)
   +alert-success(5000)
 
-  .container.my-5
-    .row.justify-content-center
-      .col-md-6.col-lg-5
-        .card.shadow-sm.border-0.rounded-4
-          .card-body.p-4.p-sm-5
-            .text-center.mb-4
-              h2.fw-bold MÃ XÁC THỰC OTP
-              p.text-muted Vui lòng nhập mã gồm 6 chữ số đã được gửi đến #{email || phone}
-            form(action="/auth/verify-otp" method="POST")
-              if email
-                input(type="hidden" name="email" value=email)
-              if phone
-                input(type="hidden" name="phone" value=phone)
-              input(type="hidden" name="action" value=action)
+  div(class="container mx-auto px-4 py-16 min-h-[60vh] flex items-center justify-center")
+    div(class="w-full max-w-md")
+      div(class="bento-card border border-slate-100 !p-8")
+        div(class="text-center mb-8")
+          div(class="w-16 h-16 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-4 text-2xl")
+            i(class="bi bi-shield-check")
+          h2(class="text-2xl font-black text-surface-950 tracking-tight mb-2") Mã xác thực OTP
+          p(class="text-surface-500 text-sm leading-relaxed") Vui lòng nhập mã gồm 6 chữ số đã được gửi đến <br> <span class="font-bold text-surface-900">#{email || phone}</span>
+        
+        form(action="/auth/verify-otp" method="POST" class="space-y-6")
+          if email
+            input(type="hidden" name="email" value=email)
+          if phone
+            input(type="hidden" name="phone" value=phone)
+          input(type="hidden" name="action" value=action)
 
-              .form-group.mb-4
-                label(for="otp" class="form-label") Mã OTP
-                input#otp.form-control.form-control-lg(
-                  type="text"
-                  name="otp"
-                  required
-                  placeholder="Nhập mã 6 số"
-                  maxlength="6"
-                  pattern="[0-9]{6}"
-                  style="letter-spacing: 5px; text-align: center; font-size: 24px;"
-                )
-              .d-grid
-                button.btn.btn-primary.btn-lg.rounded-3(type="submit") XÁC NHẬN
+          div
+            label(for="otp" class="block text-sm font-bold text-surface-700 mb-1.5 text-center") Nhập mã OTP
+            input#otp(type="text" name="otp" required placeholder="000000" maxlength="6" pattern="[0-9]{6}" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-4 text-center text-3xl font-mono tracking-[0.5em] focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
             
-            .text-center.mt-4
-              p.text-muted Mã OTP có hiệu lực trong <span id="countdown" class="fw-bold text-danger">05:00</span> phút
-              form(action="/auth/resend-otp" method="POST" id="resendForm" style="display: none;")
-                if email
-                  input(type="hidden" name="email" value=email)
-                if phone
-                  input(type="hidden" name="phone" value=phone)
-                input(type="hidden" name="action" value=action)
-                button.btn.btn-link.text-decoration-none.p-0(type="submit") Gửi lại mã
-              
-              p.text-muted#resendText(style="margin-top: 10px;") Bạn chưa nhận được mã? Gửi lại sau <span id="resendCountdown">60</span>s
-            
-            if action === 'register'
-              .text-center.mt-2
-                p.text-muted Sai thông tin? 
-                  a(href="/auth/register" class="text-decoration-none") Đăng ký lại
-            else if action === 'forgotPassword'
-              .text-center.mt-2
-                p.text-muted Quên thông tin? 
-                  a(href="/auth/forgot-password" class="text-decoration-none") Quay lại
+          button(type="submit" class="btn-premium btn-premium-primary w-full py-3.5") Xác nhận mã
+
+        div(class="text-center mt-6")
+          p(class="text-sm font-medium text-surface-500 mb-3") Mã OTP có hiệu lực trong <span id="countdown" class="font-bold text-rose-500">05:00</span>
+          
+          form#resendForm(action="/auth/resend-otp" method="POST" class="hidden")
+            if email
+              input(type="hidden" name="email" value=email)
+            if phone
+              input(type="hidden" name="phone" value=phone)
+            input(type="hidden" name="action" value=action)
+            button(type="submit" class="text-sm font-bold text-brand-600 hover:text-brand-700 underline transition-colors") Gửi lại mã
+          
+          p#resendText(class="text-sm font-medium text-surface-400 mt-2") Bạn chưa nhận được mã? Gửi lại sau <span id="resendCountdown" class="font-bold">60</span>s
+        
+        div(class="text-center mt-6 pt-6 border-t border-slate-100")
+          if action === 'register'
+            p(class="text-sm font-medium text-surface-500") Sai thông tin? <a href="/auth/register" class="text-brand-600 hover:underline font-bold">Đăng ký lại</a>
+          else if action === 'forgotPassword'
+            p(class="text-sm font-medium text-surface-500") Quên thông tin? <a href="/auth/forgot-password" class="text-brand-600 hover:underline font-bold">Quay lại</a>
 
   script.
     // OTP Expiry Countdown (5 minutes)
@@ -65,7 +56,7 @@ block main
       if(expiryTime <= 0) {
         clearInterval(expiryInterval);
         countdownEl.innerText = "00:00";
-        countdownEl.innerHTML += " (Đã hết hạn)";
+        countdownEl.innerHTML += " <span class='text-xs ml-1'>(Đã hết hạn)</span>";
       } else {
         const m = Math.floor(expiryTime / 60).toString().padStart(2, '0');
         const s = (expiryTime % 60).toString().padStart(2, '0');
@@ -83,8 +74,8 @@ block main
       resendTime--;
       if(resendTime <= 0) {
         clearInterval(resendInterval);
-        resendTextEl.style.display = 'none';
-        resendFormEl.style.display = 'block';
+        resendTextEl.classList.add('hidden');
+        resendFormEl.classList.remove('hidden');
       } else {
         resendCountdownEl.innerText = resendTime;
       }

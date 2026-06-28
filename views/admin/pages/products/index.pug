@@ -1,112 +1,121 @@
 extends ../../layout/default.pug 
 include ../../mixins/moment.pug
+
 block main 
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  h1 Danh sách sản phẩm
-  if(role.permission.includes('products_view'))
-    .card.mb-2 
-      .card-header Bộ lọc tìm kiếm
-      .card-body 
-        .row 
-          .col-6
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header Section
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Quản lý Sản phẩm
+        p(class="text-surface-500 text-sm mt-1") Quản lý danh sách sản phẩm, giá cả và trạng thái hiển thị.
+      
+      if(role.permission.includes('products_create'))
+        a(href=`${prefixAdmin}/product/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95")
+          i.bi.bi-plus-lg.text-lg
+          | Thêm sản phẩm mới
+
+    if(role.permission.includes('products_view'))
+      //- Filter & Search Section
+      div(class="bg-white p-5 rounded-2xl border border-surface-200 shadow-sm space-y-4")
+        div(class="grid grid-cols-1 md:grid-cols-12 gap-4")
+          div(class="md:col-span-7 lg:col-span-8 flex flex-col justify-center")
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2") Trạng thái
             include ../../mixins/filllter.status.pug 
             +fillterStatus(button)
-          .col-6
+            
+          div(class="md:col-span-5 lg:col-span-4 flex flex-col justify-center")
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2") Tìm kiếm
             include ../../mixins/form.search.pug 
             +formSearch(keyword)
-    include ../../mixins/sort.pug 
-    +sort()
-    .card.mb-2
-      .card-header Danh sách
-      .card-body 
-        .row.pb-2 
-            .col-8
-              if(role.permission.includes('products_edit'))
-                include ../../mixins/change.multi.pug
-                +changeMulti(`${prefixAdmin}/product/change-multi?_method=PATCH`)
-            .col-4 
-              if(role.permission.includes('products_create'))
-                 a(href=`${prefixAdmin}/product/create` class="btn btn-outline-success float-end ") Thêm mới
 
-        table.table.table-hover.table-sm
-          thead 
-            tr  
-              th 
-                input(type="checkbox" name="checkall")
-              th STT 
-              th Hình ảnh
-              th Tiêu đề
-              th Giá
-              th Vị trí
-              th Trạng thái
-              th Created By
-              th Updated By
-              th Hành động 
-          tbody 
-            each Item,Index in product
-              tr 
-                td 
-                    input(type="checkbox" name="id" value=Item.id multi-status)
-                td #{pagination.limit*(pagination.currentPage-1)+(Index+1)}
-                td 
-                  img(
-                src=Item.thumbnail
-                alt=Item.title
-                width="100px"
-                height="auto"
-                )
-                td #{Item.title}
-                td #{Item.price}$
-                td 
-                  input(
-                  type="number"
-                  name="position"
-                  value=Item.position
-                  min="1"
-                  style="width: 60px"
-                  )
-                td 
-                   if(role.permission.includes('products_edit'))
-                      a(
-                      href="javascript:;"
-                      class=`badge text-bg-${Item.status=="active" ? "success" :"danger"}`
-                      button-change-status
-                      data-status=Item.status 
-                      button-id=Item.id
-                      ) #{Item.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
-                   else
-                      span(class=`badge text-bg-${Item.status=="active" ? "success" :"danger"}`) #{Item.status=="active" ? "Hoạt động" :"Dừng hoạt động"}
-                td 
-                   p #{Item.fullname}
-                   if(Item.createdBy)
-                     +formatDateTime(Item.createdBy.createdAt)
-                td 
-                   p #{Item.updatedByName}
-                   if(Item.updatedBy && Item.updatedBy.length > 0)
-                     +formatDateTime(Item.updatedBy[Item.updatedBy.length - 1].updatedAt)
-                td
-                  a(href=`${prefixAdmin}/product/detail/${Item.id}` class="btn btn-secondary btn-sm mx-1" button-change-activity="fix" btn-id=Item.id) Chi tiết
-                  if(role.permission.includes('products_edit'))
-                    a(href=`${prefixAdmin}/product/edit/${Item.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=Item.id) Sửa 
-                  if(role.permission.includes('products_delete'))
-                    button(class="btn btn-danger btn-sm ms-1" button-change-activity="delete" btn-id=Item.id) Xóa
+      //- Action & Sort Section
+      div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+        if(role.permission.includes('products_edit'))
+          div(class="flex-1")
+            include ../../mixins/change.multi.pug
+            +changeMulti(`${prefixAdmin}/product/change-multi?_method=PATCH`)
+        div(class="shrink-0")
+          include ../../mixins/sort.pug 
+          +sort()
 
-    include ../../mixins/pagination 
-    +pagination(pagination)
+      //- Data Table
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+        div(class="overflow-x-auto")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
+            thead
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-4 py-3 text-center w-12")
+                  input(type="checkbox" name="checkall" class="rounded border-surface-300 text-brand-500 focus:ring-brand-500/20")
+                th(class="px-4 py-3") STT
+                th(class="px-4 py-3") Sản phẩm
+                th(class="px-4 py-3") Giá
+                th(class="px-4 py-3 text-center w-24") Vị trí
+                th(class="px-4 py-3 text-center") Trạng thái
+                th(class="px-4 py-3") Log
+                th(class="px-4 py-3 text-right w-32") Hành động 
+            
+            tbody(class="divide-y divide-surface-100 text-sm")
+              each Item, Index in product
+                tr(class="hover:bg-surface-50 transition-colors group")
+                  td(class="px-4 py-3 text-center")
+                    input(type="checkbox" name="id" value=Item.id multi-status class="rounded border-surface-300 text-brand-500 focus:ring-brand-500/20")
+                  td(class="px-4 py-3 text-surface-500 font-medium") #{pagination.limit*(pagination.currentPage-1)+(Index+1)}
+                  
+                  td(class="px-4 py-3")
+                    div(class="flex items-center gap-3")
+                      img(src=Item.thumbnail alt=Item.title class="w-12 h-12 rounded-lg object-cover border border-surface-200 shadow-sm")
+                      div(class="font-semibold text-surface-900 line-clamp-2 max-w-xs whitespace-normal") #{Item.title}
+                      
+                  td(class="px-4 py-3 font-semibold text-surface-900") #{Item.price}$
+                  
+                  td(class="px-4 py-3 text-center")
+                    input(type="number" name="position" value=Item.position min="1" class="w-16 px-2 py-1 text-center bg-white border border-surface-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all")
+                    
+                  td(class="px-4 py-3 text-center")
+                    if(role.permission.includes('products_edit'))
+                      button(
+                        button-change-status
+                        data-status=Item.status 
+                        button-id=Item.id
+                        class=`px-3 py-1 text-xs font-semibold rounded-full border transition-colors ${Item.status=="active" ? "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100" : "bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100"}`
+                      ) #{Item.status=="active" ? "Hoạt động" : "Tạm dừng"}
+                    else
+                      span(class=`px-3 py-1 text-xs font-semibold rounded-full border ${Item.status=="active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{Item.status=="active" ? "Hoạt động" : "Tạm dừng"}
+                      
+                  td(class="px-4 py-3 text-xs")
+                    if(Item.createdBy)
+                      div(class="text-surface-900 font-medium") #{Item.fullname}
+                      div(class="text-surface-500") +formatDateTime(Item.createdBy.createdAt)
+                    else if(Item.updatedBy && Item.updatedBy.length > 0)
+                      div(class="text-surface-900 font-medium") #{Item.updatedByName}
+                      div(class="text-surface-500") Sửa: +formatDateTime(Item.updatedBy[Item.updatedBy.length - 1].updatedAt)
+                    else 
+                      div(class="text-surface-400 italic") N/A
+                      
+                  td(class="px-4 py-3 text-right")
+                    div(class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
+                      a(href=`${prefixAdmin}/product/detail/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-surface-200 hover:text-brand-600 transition-colors" title="Chi tiết")
+                        i.bi.bi-eye
+                      if(role.permission.includes('products_edit'))
+                        a(href=`${prefixAdmin}/product/edit/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-amber-100 hover:text-amber-600 transition-colors" title="Sửa")
+                          i.bi.bi-pencil-square
+                      if(role.permission.includes('products_delete'))
+                        button(button-change-activity="delete" btn-id=Item.id class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-100 hover:text-rose-600 transition-colors" title="Xóa")
+                          i.bi.bi-trash
 
-    form(
-      action=""
-      method="POST"
-      id="form-change-status"
-      data-path=`${prefixAdmin}/product/change-status`
-    ) 
-    form(
-      action=""
-      method="POST"
-      id="form-change-activity"
-      data-path=`${prefixAdmin}/product/change-activity`
-    ) 
-  else 
-    .alert.alert-danger Bạn không có quyền xem sản phẩm
-  script(src="/admin/js/product.js") 
+      include ../../mixins/pagination 
+      +pagination(pagination)
+
+      form(action="" method="POST" id="form-change-status" data-path=`${prefixAdmin}/product/change-status`) 
+      form(action="" method="POST" id="form-change-activity" data-path=`${prefixAdmin}/product/change-activity`) 
+
+    else 
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center")
+        i.bi.bi-shield-lock.text-4xl.mb-3
+        h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+        p(class="text-sm") Bạn không được cấp quyền để xem danh sách sản phẩm.
+
+  script(src="/admin/js/product.js")

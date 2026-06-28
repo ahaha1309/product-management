@@ -2,86 +2,102 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main
-  .container.mt-4.cart-page
-    h4.mb-4.fw-bold(style="color: var(--shopee-primary);") <i class="bi bi-cart3 me-2"></i> Giỏ hàng của bạn
+  div(class="container mx-auto px-4 max-w-5xl py-8 mb-32 cart-page")
+    
+    div(class="flex items-center gap-3 mb-8")
+      div(class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl")
+        i.bi.bi-cart3
+      h1(class="text-2xl font-bold text-surface-950 tracking-tight") Giỏ hàng của bạn
 
     if (cart && cart.products && cart.products.length > 0)
-      //- Headers
-      .bg-white.rounded.shadow-sm.p-3.mb-3.d-none.d-md-flex.align-items-center.text-muted
-        .col-1.text-center 
-          input#check-all(type="checkbox" style="transform: scale(1.2);")
-        .col-5 Sản phẩm
-        .col-2.text-center Đơn giá
-        .col-2.text-center Số lượng
-        .col-1.text-center Số tiền
-        .col-1.text-center Thao tác
+      
+      //- Cart Items Container
+      div(class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mb-8")
+        //- Desktop Header
+        div(class="hidden md:grid grid-cols-12 gap-4 p-6 bg-surface-50 border-b border-slate-100 text-sm font-semibold text-surface-500")
+          div(class="col-span-1 flex justify-center")
+            input#check-all(type="checkbox" class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+          div(class="col-span-5") Sản phẩm
+          div(class="col-span-2 text-center") Đơn giá
+          div(class="col-span-2 text-center") Số lượng
+          div(class="col-span-2 text-center") Số tiền
 
-      //- MOCKUP SHOP HEADER
-      .bg-white.rounded-top.shadow-sm.p-3.border-bottom
-        .fw-bold 
-          span.shopee-shop-badge Chính Hãng
-          | VanHa Tech Store
+        //- Cart Items List
+        div(class="flex flex-col")
+          each item in cart.products
+            div(class="cart-item grid grid-cols-1 md:grid-cols-12 gap-4 p-6 border-b border-slate-100 last:border-b-0 items-center transition-colors hover:bg-surface-50/50 group")
+              
+              //- Checkbox
+              div(class="col-span-1 flex justify-between md:justify-center items-center mb-4 md:mb-0")
+                input.item-check(type="checkbox" slug=item.product.slug variant=(item.variantText || '') data-price='' checkbox class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+                form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST" class="md:hidden")
+                  button.btn-delete(type="submit" class="text-surface-400 hover:text-rose-500 p-2")
+                    i.bi.bi-trash
 
-      //- Sản Phẩm
-      .bg-white.rounded-bottom.shadow-sm.p-3.mb-4
-        each item in cart.products
-          .cart-item.d-flex.align-items-center.py-3.border-bottom
-            //- Checkbox
-            .col-1.text-center
-              input.item-check(type="checkbox" slug=item.product.slug variant=(item.variantText || '') data-price='' checkbox style="transform: scale(1.2);")
+              //- Product Info
+              div(class="col-span-5 flex items-start gap-4")
+                img.cart-img(src=item.product.thumbnail alt=item.product.title class="w-20 h-20 rounded-2xl object-cover border border-slate-100 bg-white shadow-sm")
+                div(class="flex flex-col")
+                  a(href=`/product/detail/${item.product.slug}` class="text-surface-900 font-bold hover:text-brand-500 transition-colors line-clamp-2 leading-snug") #{item.product.title}
+                  if item.variantText
+                    div(class="mt-1.5 text-xs text-surface-500 bg-surface-100 inline-block px-2 py-0.5 rounded-md self-start") Phân loại: #{item.variantText}
 
-            //- Hình ảnh & Tên
-            .col-5.d-flex.align-items-center
-              img.cart-img.rounded.me-3(src=item.product.thumbnail alt=item.product.title style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #eee;")
-              div
-                a.text-dark.text-decoration-none.fw-bold(href=`/product/detail/${item.product.slug}` style="font-size: 14px;") #{item.product.title}
-                if item.variantText
-                  div.text-secondary.small.mt-1 Phân loại: #{item.variantText}
-                if item.product.discountPercentage > 0
-                  div.text-danger.small.mt-1 -#{item.product.discountPercentage}%
-            
-            //- Đơn giá
-            .col-2.text-center
-              if item.product.discountPercentage > 0
-                div.text-muted.text-decoration-line-through.small ₫#{Number(item.product.price).toLocaleString('vi-VN')}
-              div.cart-price(data-price=item.product.newPrice style="color: #222;") ₫#{Number(item.product.newPrice).toLocaleString('vi-VN')}
-            
-            //- Số lượng
-            .col-2.d-flex.justify-content-center
-              .quantity-group.d-flex
-                button.btn-qty.minus(type="button") -
-                input.input-qty(type="number" value=item.quantity min="1" name="quantity" data-product-id=item.product.id)
-                button.btn-qty.plus(type="button") +
-            
-            //- Thành tiền
-            .col-1.text-center.cart-item-total.fw-bold(style="color: var(--shopee-primary);")
-              | ₫#{Number(item.quantity * item.product.newPrice).toLocaleString('vi-VN')}
-            
-            //- Nút Xóa
-            .col-1.text-center
-              form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST")
-                button.btn-delete(type="submit" title="Xóa sản phẩm" style="background: none; border: none;")
-                  i.bi.bi-trash.text-danger.fs-5
+              //- Price
+              div(class="col-span-2 flex md:flex-col justify-between md:justify-center items-center md:text-center mt-4 md:mt-0")
+                span(class="md:hidden text-sm text-surface-500") Đơn giá:
+                div(class="flex flex-col items-end md:items-center")
+                  div.cart-price(data-price=item.product.newPrice class="font-bold text-surface-900") ₫#{Number(item.product.newPrice).toLocaleString('vi-VN')}
+                  if item.product.discountPercentage > 0
+                    div(class="text-xs text-surface-400 line-through") ₫#{Number(item.product.price).toLocaleString('vi-VN')}
 
-      //- STICKY FOOTER TỔNG TIỀN
-      .cart-sticky-footer
-        .d-flex.align-items-center
-          input#check-all-footer.me-2(type="checkbox" style="transform: scale(1.2);")
-          label(for="check-all-footer" style="cursor: pointer;") Chọn Tất Cả
-        .d-flex.align-items-center.gap-4
-          div.text-end
-            span.text-muted Tổng thanh toán: 
-            span.total-amount.fw-bold.fs-4(style="color: var(--shopee-primary);") ₫0
-          form(action='/order' method='GET' id="checkout-form")
-            input(type="hidden" name="listProduct")
-            button.btn.btn-shopee-solid.px-5.py-2.fw-bold.fs-5(type="submit") Mua Hàng
+              //- Quantity
+              div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
+                span(class="md:hidden text-sm text-surface-500") Số lượng:
+                div(class="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm")
+                  button.btn-qty.minus(type="button" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors") -
+                  input.input-qty(type="number" value=item.quantity min="1" name="quantity" data-product-id=item.product.id class="w-10 h-8 text-center text-sm font-semibold bg-transparent border-none focus:outline-none appearance-none m-0 p-0")
+                  button.btn-qty.plus(type="button" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors") +
+
+              //- Total & Actions
+              div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
+                span(class="md:hidden text-sm text-surface-500") Tổng:
+                div(class="cart-item-total font-black text-brand-600 text-lg")
+                  | ₫#{Number(item.quantity * item.product.newPrice).toLocaleString('vi-VN')}
+                
+                //- Desktop Delete Button
+                form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST" class="hidden md:block absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity")
+                  button.btn-delete(type="submit" class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm")
+                    i.bi.bi-trash
+
+      //- Floating Sticky Footer
+      div(class="fixed bottom-0 left-0 w-full z-40 bg-white/80 backdrop-blur-xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] py-4 transition-all")
+        div(class="container mx-auto px-4 max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4")
+          
+          div(class="flex items-center gap-3 w-full sm:w-auto")
+            input#check-all-footer(type="checkbox" class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+            label(for="check-all-footer" class="cursor-pointer font-medium text-surface-700 select-none") Chọn tất cả
+
+          div(class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto")
+            div(class="flex flex-col items-end")
+              span(class="text-sm text-surface-500") Tổng thanh toán
+              span.total-amount(class="text-2xl font-black text-brand-600 tracking-tight") ₫0
+            
+            form(action='/order' method='GET' id="checkout-form")
+              input(type="hidden" name="listProduct")
+              button(type="submit" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30 whitespace-nowrap")
+                | Mua Hàng
+                i.bi.bi-arrow-right.ml-2
 
     else
-      //- Giỏ hàng trống
-      .text-center.p-5.bg-white.rounded.shadow-sm
-        img(src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/9bdd8040b334d31946f49e36beaf32db.png" width="150" alt="Empty Cart")
-        p.mt-3.mb-4.fs-5 Giỏ hàng của bạn còn trống.
-        a.btn.btn-shopee-solid.px-4.py-2(href="/product") Mua Ngay
+      //- Empty Cart State
+      div(class="bento-card flex flex-col items-center justify-center py-20 text-center")
+        div(class="w-32 h-32 bg-surface-50 rounded-full flex items-center justify-center mb-6")
+          i.bi.bi-cart-x.text-5xl text-surface-300
+        h2(class="text-xl font-bold text-surface-900 mb-2") Giỏ hàng của bạn đang trống
+        p(class="text-surface-500 mb-8 max-w-sm") Hãy khám phá hàng ngàn sản phẩm công nghệ đang chờ bạn.
+        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3")
+          | Khám phá sản phẩm
+          i.bi.bi-arrow-right.ml-2
 
   script(src='/js/cart.js')
   form(action='' 

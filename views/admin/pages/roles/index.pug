@@ -1,54 +1,74 @@
 extends ../../layout/default.pug 
+
 block main 
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  if(role.permission.includes('roles_view') || role.permission.includes('*'))
-    h1 Danh sách nhóm quyền
-    .card.mb-2
-      .card-header Danh sách
-      .card-body 
-        .row.pb-2 
-            .col-8
-            .col-4 
-              if(role.permission.includes('roles_create') || role.permission.includes('*'))
-                a(href=`${prefixAdmin}/roles/create` class="btn btn-outline-success float-end ") Thêm mới
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Nhóm Quyền Quản Trị
+        p(class="text-surface-500 text-sm mt-1") Quản lý các nhóm quyền và mức độ truy cập vào hệ thống.
+      
+      div(class="flex gap-2")
+        if(role.permission.includes('roles_permission') || role.permission.includes('*'))
+          a(href=`${prefixAdmin}/roles/permissions` class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold rounded-xl transition-all active:scale-95 border border-indigo-200")
+            i.bi.bi-shield-lock-fill.text-lg
+            | Phân quyền chi tiết
+            
+        if(role.permission.includes('roles_create') || role.permission.includes('*'))
+          a(href=`${prefixAdmin}/roles/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95")
+            i.bi.bi-plus-lg.text-lg
+            | Thêm nhóm quyền
 
-        table.table.table-hover.table-sm
-          thead 
-            tr  
-              th STT 
-              th Nhóm quyền
-              th Mô tả ngắn
-              th Hành động 
-          tbody 
-          if(roles && roles.length > 0)
-            each Item,Index in roles
-              tr 
-                td #{(Index+1)}
-                td #{Item.title}
-                td #{Item.description}
-                td
-                  a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="btn btn-secondary btn-sm mx-1" button-change-activity="fix" btn-id=Item.id) Chi tiết
-                  if(role.permission.includes('roles_edit') || role.permission.includes('*'))
-                    a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=Item.id) Sửa 
-                  if(role.permission.includes('roles_delete') || role.permission.includes('*'))
-                      button(class="btn btn-danger btn-sm ms-1" button-change-activity="delete" btn-id=Item.id) Xóa
+    if(role.permission.includes('roles_view') || role.permission.includes('*'))
+      //- Data Table
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+        div(class="overflow-x-auto")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
+            thead
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-4 py-3 text-center w-16") STT
+                th(class="px-4 py-3") Nhóm quyền
+                th(class="px-4 py-3") Mô tả ngắn
+                th(class="px-4 py-3 text-right w-32") Hành động 
+            
+            tbody(class="divide-y divide-surface-100 text-sm")
+              if(roles && roles.length > 0)
+                each Item, Index in roles
+                  tr(class="hover:bg-surface-50 transition-colors group")
+                    td(class="px-4 py-3 text-center text-surface-500 font-medium") #{(Index+1)}
+                    
+                    td(class="px-4 py-3")
+                      div(class="flex items-center gap-2")
+                        div(class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100")
+                          i.bi.bi-shield-check
+                        span(class="font-bold text-surface-900") #{Item.title}
+                        
+                    td(class="px-4 py-3 text-surface-600 whitespace-normal line-clamp-2 max-w-md") #{Item.description}
+                    
+                    td(class="px-4 py-3 text-right")
+                      div(class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
+                        a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-surface-200 hover:text-brand-600 transition-colors" title="Chi tiết")
+                          i.bi.bi-eye
+                        if(role.permission.includes('roles_edit') || role.permission.includes('*'))
+                          a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-amber-100 hover:text-amber-600 transition-colors" title="Sửa")
+                            i.bi.bi-pencil-square
+                        if(role.permission.includes('roles_delete') || role.permission.includes('*'))
+                          button(button-change-activity="delete" btn-id=Item.id class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-100 hover:text-rose-600 transition-colors" title="Xóa")
+                            i.bi.bi-trash
+              else
+                tr
+                  td(colspan="4" class="px-5 py-8 text-center text-surface-500") Không có nhóm quyền nào.
 
-    //-   include ../../mixins/pagination 
-    //-   +pagination(pagination)
+      form(action="" method="POST" id="form-change-status" data-path=`${prefixAdmin}/roles/change-status`) 
+      form(action="" method="POST" id="form-change-activity" data-path=`${prefixAdmin}/roles/change-activity`) 
 
-    form(
-      action=""
-      method="POST"
-      id="form-change-status"
-      data-path=`${prefixAdmin}/roles/change-status`
-    ) 
-    form(
-      action=""
-      method="POST"
-      id="form-change-activity"
-      data-path=`${prefixAdmin}/roles/change-activity`
-    ) 
-  else
-    .alert.alert-danger Bạn không có quyền xem nhóm quyền
+    else
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+        i.bi.bi-shield-lock.text-4xl.mb-3
+        h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+        p(class="text-sm") Bạn không được cấp quyền để xem danh sách nhóm quyền.
+
   script(src="/admin/js/product.js") 

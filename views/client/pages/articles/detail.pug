@@ -2,172 +2,148 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 
 block main
-  .container.py-5
+  div(class="container mx-auto px-4 py-8 mb-20")
 
     //- Breadcrumb
-    nav(aria-label="breadcrumb")
-      ol.breadcrumb
-        li.breadcrumb-item
-          a(href="/") Trang chủ
-        li.breadcrumb-item
-          a(href="/articles") Tin tức
-        li.breadcrumb-item.active #{article.title}
+    div(class="flex items-center flex-wrap gap-2 text-sm font-medium text-surface-500 mb-8")
+      a(href="/" class="hover:text-brand-600 transition-colors") Trang chủ
+      i(class="bi bi-chevron-right text-[10px]")
+      a(href="/articles" class="hover:text-brand-600 transition-colors") Tin tức
+      i(class="bi bi-chevron-right text-[10px]")
+      span(class="text-surface-900 line-clamp-1") #{article.title}
 
-    .row.g-5
-      //- Article content
-      .col-lg-8
-        .article-detail-card
+    div(class="grid grid-cols-1 lg:grid-cols-12 gap-8")
+      
+      //- Article content (Main Column)
+      div(class="lg:col-span-8")
+        div(class="bento-card !p-0 overflow-hidden mb-8")
           if article.thumbnail
-            img.article-detail-thumb(src=article.thumbnail alt=article.title)
-          .article-detail-body
-            h1.article-detail-title #{article.title}
-            .article-meta
-              span.meta-item
-                i.bi.bi-calendar3.me-1
+            div(class="relative h-[300px] md:h-[400px] w-full")
+              img(src=article.thumbnail alt=article.title class="w-full h-full object-cover")
+          
+          div(class="p-6 md:p-10")
+            h1(class="text-3xl md:text-4xl font-black text-surface-950 tracking-tight leading-tight mb-6") #{article.title}
+            
+            //- Meta
+            div(class="flex items-center flex-wrap gap-4 text-sm font-bold text-surface-500 uppercase tracking-wider mb-8 pb-6 border-b border-slate-100")
+              div(class="flex items-center gap-2")
+                i.bi.bi-calendar3.text-brand-500
                 | #{moment ? moment(article.createdAt).format('DD/MM/YYYY') : 'N/A'}
-              span.meta-divider |
-              span.meta-item
-                i.bi.bi-clock.me-1
+              
+              div(class="w-1 h-1 rounded-full bg-surface-300")
+              
+              div(class="flex items-center gap-2")
+                i.bi.bi-clock.text-brand-500
                 | 5 phút đọc
-            .article-detail-content
-              p !{article.description}
+            
+            //- Content
+            div(class="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-a:text-brand-600 prose-img:rounded-2xl prose-img:shadow-sm")
+              | !{article.description}
 
-            //- Share
-            .article-share.mt-5.pt-4.border-top
-              h6.fw-bold.mb-3 Chia sẻ bài viết:
-              .d-flex.gap-2
-                a.btn.btn-primary.btn-sm(href="https://www.facebook.com/sharer/sharer.php" target="_blank")
-                  i.bi.bi-facebook.me-1
+            //- Share Section
+            div(class="mt-12 pt-8 border-t border-slate-100")
+              h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Chia sẻ bài viết:
+              div(class="flex flex-wrap gap-3")
+                a(href="https://www.facebook.com/sharer/sharer.php" target="_blank" class="px-5 py-2.5 rounded-xl bg-[#1877F2] text-white text-sm font-bold hover:bg-[#166FE5] transition-colors flex items-center gap-2 shadow-sm shadow-[#1877F2]/30")
+                  i.bi.bi-facebook
                   | Facebook
-                a.btn.btn-info.btn-sm.text-white(href="#")
-                  i.bi.bi-twitter.me-1
+                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#1DA1F2] text-white text-sm font-bold hover:bg-[#1A91DA] transition-colors flex items-center gap-2 shadow-sm shadow-[#1DA1F2]/30")
+                  i.bi.bi-twitter
                   | Twitter
-                a.btn.btn-success.btn-sm(href="#")
-                  i.bi.bi-whatsapp.me-1
+                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#22BF5B] transition-colors flex items-center gap-2 shadow-sm shadow-[#25D366]/30")
+                  i.bi.bi-whatsapp
                   | WhatsApp
 
-            //- Comments Section
-            .article-comments.mt-5.pt-4.border-top
-              h4.fw-bold.mb-4 Bình luận (#{comments ? comments.length : 0})
-              .comment-form.mb-4
-                if user
-                  textarea#article-comment-input.form-control.mb-2(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết...")
-                  button.btn.btn-primary(type="button" onclick="submitArticleComment()") Gửi bình luận
-                else
-                  .alert.alert-info
-                    | Vui lòng 
-                    a.fw-bold(href="/auth/login") đăng nhập
-                    |  để tham gia bình luận bài viết này.
-              
-              .comment-list#article-comment-list
-                if comments && comments.length > 0
-                  each comment in comments
-                    .comment-item.d-flex.gap-3.mb-4
-                      img.rounded-circle(src=comment.userAvatar width="45" height="45")
-                      div
-                        .fw-bold #{comment.userName}
-                        .text-muted.small #{moment ? moment(comment.createdAt).fromNow() : 'Vừa xong'}
-                        p.mt-1 #{comment.text}
+        //- Comments Section
+        div(class="bento-card")
+          h4(class="text-2xl font-black text-surface-900 mb-6 flex items-center gap-3") 
+            i.bi.bi-chat-dots.text-brand-500
+            | Bình luận (#{comments ? comments.length : 0})
+          
+          div(class="mb-8")
+            if user
+              div(class="relative")
+                textarea#article-comment-input(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết..." class="w-full bg-surface-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all resize-none")
+                div(class="mt-3 flex justify-end")
+                  button(type="button" onclick="submitArticleComment()" class="btn-premium btn-premium-primary px-8 py-2.5 text-sm")
+                    i.bi.bi-send.mr-2
+                    | Gửi bình luận
+            else
+              div(class="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center gap-4")
+                div(class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-blue-500 shadow-sm shrink-0")
+                  i.bi.bi-info-circle-fill.text-xl
+                div
+                  p(class="text-sm font-medium text-blue-900") Vui lòng đăng nhập để tham gia bình luận bài viết này.
+                  a(href="/auth/login" class="inline-block mt-2 text-sm font-bold text-blue-700 hover:underline") Đăng nhập ngay →
 
-      //- Sidebar
-      .col-lg-4
-        .article-sidebar
+          div#article-comment-list(class="space-y-6")
+            if comments && comments.length > 0
+              each comment in comments
+                div(class="flex gap-4 p-4 rounded-2xl bg-surface-50/50 border border-slate-100 transition-colors hover:bg-surface-50")
+                  img(src=comment.userAvatar class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0")
+                  div(class="flex-1")
+                    div(class="flex items-center justify-between mb-1")
+                      div(class="font-bold text-surface-900 text-sm") #{comment.userName}
+                      div(class="text-xs font-semibold text-surface-400 uppercase tracking-wider") #{moment ? moment(comment.createdAt).fromNow() : 'Vừa xong'}
+                    p(class="text-sm text-surface-700 leading-relaxed") #{comment.text}
+            else
+              div#no-comments(class="text-center py-10")
+                i.bi.bi-chat-left-text.text-4xl.text-surface-200.mb-3.block
+                p(class="text-sm font-medium text-surface-500") Hãy là người đầu tiên bình luận về bài viết này!
+
+      //- Sidebar (Right Column)
+      div(class="lg:col-span-4")
+        div(class="sticky top-24 space-y-6")
+          
           //- Recent articles
           if recentArticles && recentArticles.length > 0
-            .sidebar-card
-              h6.sidebar-title
-                i.bi.bi-clock.me-2
+            div(class="bento-card !p-5")
+              h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-5 flex items-center gap-2")
+                i.bi.bi-clock-history.text-brand-500
                 | Bài viết gần đây
-              .recent-articles-list
+              
+              div(class="flex flex-col gap-4")
                 each recent in recentArticles
-                  a.recent-article-item(href=`/articles/${recent.slug}`)
-                    if recent.thumbnail
-                      img.recent-thumb(src=recent.thumbnail alt=recent.title)
-                    else
-                      .recent-thumb-placeholder
-                        i.bi.bi-image
-                    .recent-info
-                      .recent-title #{recent.title}
-                      .recent-date #{moment ? moment(recent.createdAt).format('DD/MM/YYYY') : ''}
+                  a(href=`/articles/${recent.slug}` class="group flex gap-3 p-2 -mx-2 rounded-xl hover:bg-surface-50 transition-colors")
+                    div(class="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-surface-100")
+                      if recent.thumbnail
+                        img(src=recent.thumbnail alt=recent.title class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500")
+                      else
+                        div(class="w-full h-full flex items-center justify-center text-surface-400")
+                          i.bi.bi-image
+                    
+                    div(class="flex flex-col justify-center")
+                      div(class="text-sm font-bold text-surface-900 line-clamp-2 mb-1 group-hover:text-brand-600 transition-colors") #{recent.title}
+                      div(class="text-xs font-semibold text-surface-400 uppercase tracking-wider") #{moment ? moment(recent.createdAt).format('DD/MM/YYYY') : ''}
 
           //- CTA
-          .sidebar-card.mt-4
-            .sidebar-cta
-              i.bi.bi-bag-heart.sidebar-cta-icon
-              h6.fw-bold Mua sắm ngay!
-              p.text-muted.small Hàng nghìn sản phẩm chính hãng đang chờ bạn
-              a.btn.btn-primary.w-100.mt-2(href="/product")
-                i.bi.bi-shop.me-2
+          div(class="bento-card bg-gradient-to-br from-brand-900 to-blue-950 text-white relative overflow-hidden")
+            div(class="absolute top-0 right-0 w-32 h-32 bg-brand-500/30 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2")
+            div(class="relative z-10 text-center")
+              div(class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-4 border border-white/20")
+                i.bi.bi-bag-heart.text-3xl.text-brand-300
+              h6(class="text-xl font-black mb-2") Mua sắm ngay!
+              p(class="text-sm font-medium text-brand-100/80 mb-6") Hàng nghìn sản phẩm chính hãng công nghệ mới nhất đang chờ bạn khám phá.
+              a(href="/product" class="btn-premium btn-premium-primary w-full py-3 shadow-brand-500/30")
+                i.bi.bi-shop.mr-2
                 | Xem sản phẩm
-
-  style.
-    .article-detail-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-    .article-detail-thumb {
-      width: 100%;
-      height: 360px;
-      object-fit: cover;
-    }
-    .article-detail-body { padding: 32px; }
-    .article-detail-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
-    .article-meta { display: flex; align-items: center; gap: 12px; color: #888; font-size: 0.85rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
-    .meta-divider { color: #ddd; }
-    .article-detail-content { font-size: 1rem; line-height: 1.8; color: #444; }
-    .article-sidebar { position: sticky; top: 80px; }
-    .sidebar-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      margin-bottom: 20px;
-    }
-    .sidebar-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; color: #1a1a2e; }
-    .recent-articles-list { display: flex; flex-direction: column; gap: 12px; }
-    .recent-article-item {
-      display: flex;
-      gap: 12px;
-      text-decoration: none;
-      color: inherit;
-      align-items: flex-start;
-      padding: 8px;
-      border-radius: 8px;
-      transition: background 0.2s;
-    }
-    .recent-article-item:hover { background: #f8f9ff; }
-    .recent-thumb {
-      width: 60px; height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-    .recent-thumb-placeholder {
-      width: 60px; height: 60px;
-      background: #e8eeff;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: #667eea; font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-    .recent-title { font-size: 0.85rem; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
-    .recent-date { font-size: 0.75rem; color: #888; }
-    .sidebar-cta { text-align: center; }
-    .sidebar-cta-icon { font-size: 2.5rem; color: #667eea; display: block; margin-bottom: 8px; }
 
   script.
     async function submitArticleComment() {
       const input = document.getElementById('article-comment-input');
       const list = document.getElementById('article-comment-list');
+      const noComments = document.getElementById('no-comments');
+      
       if(!input || !list) return;
 
       const text = input.value.trim();
-      if(!text) return; // Không xử lý nếu trống
+      if(!text) return; 
 
-      // Disable input while submitting
+      const btn = input.nextElementSibling.querySelector('button');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
       input.disabled = true;
+      btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin mr-2"></i>Đang gửi...';
 
       try {
         const response = await fetch(window.location.pathname + '/comment', {
@@ -182,14 +158,18 @@ block main
         if (data.success && data.comment) {
           const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
           
+          if(noComments) noComments.remove();
+
           const newComment = document.createElement('div');
-          newComment.className = 'comment-item d-flex gap-3 mb-4';
+          newComment.className = 'flex gap-4 p-4 rounded-2xl bg-brand-50 border border-brand-100 mb-4 animate-fade-in';
           newComment.innerHTML = `
-            <img class="rounded-circle" src="${data.comment.userAvatar}" width="45" height="45">
-            <div>
-              <div class="fw-bold">${data.comment.userName}</div>
-              <div class="text-muted small">Vừa xong</div>
-              <p class="mt-1">${safeText}</p>
+            <img class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0" src="${data.comment.userAvatar}">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <div class="font-bold text-surface-900 text-sm">${data.comment.userName}</div>
+                <div class="text-xs font-semibold text-brand-600 uppercase tracking-wider">Vừa xong</div>
+              </div>
+              <p class="text-sm text-surface-700 leading-relaxed">${safeText}</p>
             </div>
           `;
           
@@ -203,5 +183,7 @@ block main
         alert('Có lỗi xảy ra, vui lòng thử lại!');
       } finally {
         input.disabled = false;
+        btn.disabled = false;
+        btn.innerHTML = originalText;
       }
     }

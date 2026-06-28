@@ -1,101 +1,127 @@
 extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
-include ../../mixins/sort.pug
 
 block main
-  .container.my-4
+  div(class="container mx-auto px-4 py-8 mb-20")
 
     //- Breadcrumb
-    nav(aria-label="breadcrumb")
-      ol.breadcrumb
-        li.breadcrumb-item
-          a(href="/") Trang chủ
-        li.breadcrumb-item.active #{title}
+    div(class="flex items-center gap-2 text-sm font-medium text-surface-500 mb-8")
+      a(href="/" class="hover:text-brand-600 transition-colors") Trang chủ
+      i(class="bi bi-chevron-right text-[10px]")
+      span(class="text-surface-900") #{title || 'Sản phẩm'}
 
-    .row.g-4
+    div(class="flex flex-col lg:flex-row gap-8")
+      
       //- Mobile Filter Trigger
-      .col-12.d-lg-none
-        button.btn.btn-outline-primary.w-100(type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas")
-          i.bi.bi-funnel.me-2
+      div(class="lg:hidden")
+        button(type="button" class="w-full btn-premium btn-premium-secondary py-3 text-sm flex items-center justify-center gap-2" onclick="document.getElementById('mobileFilter').classList.toggle('hidden')")
+          i(class="bi bi-funnel")
           | Lọc & Sắp xếp
 
       //- Sidebar Filter
-      .col-lg-3
-        .offcanvas-lg.offcanvas-start#filterOffcanvas(tabindex="-1")
-          .offcanvas-header.d-lg-none.border-bottom
-            h5.offcanvas-title
-              i.bi.bi-funnel.me-2
-              | Lọc & Sắp xếp
-            button.btn-close(type="button" data-bs-dismiss="offcanvas" data-bs-target="#filterOffcanvas")
-          .offcanvas-body
-            .filter-sidebar.w-100
+      div#mobileFilter(class="hidden lg:block w-full lg:w-1/4 shrink-0")
+        div(class="sticky top-24 space-y-6 max-h-[calc(100vh-8rem)] overflow-y-auto pb-6 pr-2 custom-scrollbar")
+          
+          //- Sort Bento Card
+          div(class="bento-card !p-5")
+            h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4 flex items-center gap-2")
+              i.bi.bi-sort-down.text-brand-500
+              | Sắp xếp
+            
+            div(class="flex flex-col gap-2")
+              - const sorts = [{val: 'position-desc', label: 'Mới nhất'}, {val: 'price-asc', label: 'Giá thấp → cao'}, {val: 'price-desc', label: 'Giá cao → thấp'}, {val: 'featured-true', label: 'Nổi bật'}]
+              each s in sorts
+                - const isActive = (!type && s.val === 'position-desc') || type === s.val
+                a(href=`/product?sortKey=${s.val.split('-')[0]}&value=${s.val.split('-')[1]}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                  | #{s.label}
 
-              //- Sort
-              .filter-group
-                h6.filter-title
-                  i.bi.bi-sort-down.me-2
-                  | Sắp xếp
-                .d-flex.flex-column.gap-1
-                  a.filter-option(href="/product?sortKey=position&value=desc" class=(!type || type === 'position-desc') ? 'active' : '') Mới nhất
-                  a.filter-option(href="/product?sortKey=price&value=asc" class=type === 'price-asc' ? 'active' : '') Giá thấp → cao
-                  a.filter-option(href="/product?sortKey=price&value=desc" class=type === 'price-desc' ? 'active' : '') Giá cao → thấp
-                  a.filter-option(href="/product?sortKey=featured&value=true" class=type === 'featured-true' ? 'active' : '') Nổi bật
+          //- Category Filter
+          if categories && categories.length > 0
+            div(class="bento-card !p-5")
+              h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4 flex items-center gap-2")
+                i.bi.bi-grid-fill.text-brand-500
+                | Danh Mục
+              
+              div(class="flex flex-col gap-2")
+                each cat in categories
+                  - const isCatActive = currentCategory === cat._id.toString()
+                  a(href=`/product?category=${cat._id}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isCatActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                    | #{cat.title}
+                    
+          //- Rating Filter
+          div(class="bento-card !p-5")
+            h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4 flex items-center gap-2")
+              i.bi.bi-star-fill.text-amber-400
+              | Đánh Giá
+            
+            div(class="flex flex-col gap-2")
+              a(href="/product?rating=5" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 ${currentRating === '5' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                - for(let i=1; i<=5; i++)
+                  i.bi.bi-star-fill.text-amber-400
+              
+              a(href="/product?rating=4" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 ${currentRating === '4' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                - for(let i=1; i<=5; i++)
+                  if i<=4
+                    i.bi.bi-star-fill.text-amber-400
+                  else
+                    i.bi.bi-star.text-amber-400
+                span.ms-2.text-xs.font-medium trở lên
 
-              //- Category Filter
-              if categories && categories.length > 0
-                .filter-group
-                  h6.filter-title
-                    i.bi.bi-grid.me-2
-                    | Danh Mục
-                  .d-flex.flex-column.gap-1
-                    each cat in categories
-                      a.filter-option(href=`/product?category=${cat._id}` class=currentCategory === cat._id.toString() ? 'active' : '') #{cat.title}
-                      
-              //- Rating Filter
-              .filter-group
-                h6.filter-title
-                  i.bi.bi-star.me-2
-                  | Đánh Giá
-                .d-flex.flex-column.gap-1
-                  a.filter-option(href="/product?rating=5" class=currentRating === '5' ? 'active' : '')
-                    .star-rating.small
-                      - for(let i=1; i<=5; i++)
-                        i.bi.bi-star-fill.text-warning
-                  a.filter-option(href="/product?rating=4" class=currentRating === '4' ? 'active' : '')
-                    .star-rating.small
-                      - for(let i=1; i<=5; i++)
-                        if i<=4
-                          i.bi.bi-star-fill.text-warning
-                        else
-                          i.bi.bi-star.text-warning
-                      span.ms-1 trở lên
-
-              //- Reset
-              a.btn.btn-outline-secondary.w-100.btn-sm.mt-2(href="/product")
-                i.bi.bi-x-circle.me-1
-                | Xóa bộ lọc
+          //- Reset button
+          a(href="/product" class="w-full py-3 rounded-xl border border-rose-200 text-rose-500 text-sm font-bold hover:bg-rose-50 transition-colors flex items-center justify-center gap-2")
+            i.bi.bi-x-circle
+            | Xóa bộ lọc
 
       //- Product List
-      .col-lg-9
+      div(class="flex-1")
         //- Results bar
-        .d-flex.justify-content-between.align-items-center.mb-4.p-3.bg-light.rounded
-          .d-flex.align-items-center.gap-2
+        div(class="bento-card !p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4")
+          div(class="text-sm font-medium text-surface-600")
             if(!keyword)
-              span.text-muted Hiển thị
-              strong  #{product ? product.length : 0}
-              span.text-muted  sản phẩm
+              | Hiển thị <span class="font-bold text-surface-900">#{product ? product.length : 0}</span> sản phẩm
             else
-              span.text-muted Kết quả cho "
-              strong #{keyword}
-              span.text-muted " -
-              strong  #{product ? product.length : 0}
-              span.text-muted  sản phẩm
-          .d-flex.align-items-center.gap-2
-            span.text-muted.small Hiển thị:
-            button.btn.btn-sm.btn-outline-secondary#view-grid(title="Grid view")
-              i.bi.bi-grid
-            button.btn.btn-sm.btn-outline-secondary#view-list(title="List view")
+              | Kết quả cho "<span class="font-bold text-brand-600">#{keyword}</span>" - <span class="font-bold text-surface-900">#{product ? product.length : 0}</span> sản phẩm
+          
+          div(class="flex items-center gap-2")
+            span(class="text-xs font-bold text-surface-400 uppercase tracking-wider mr-2") Góc nhìn
+            button(class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Grid View")
+              i.bi.bi-grid-fill
+            button(class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-surface-400 flex items-center justify-center hover:bg-surface-50 transition-colors" title="List View")
               i.bi.bi-list-ul
 
-        +product-grid(product)
+        //- Products Grid (Bento style)
+        if product && product.length > 0
+          div(class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6")
+            each Item in product
+              div(class="bg-white border border-slate-200/50 rounded-[2rem] p-4 flex flex-col h-full group hover:border-brand-500 hover:shadow-diffusion transition-all duration-500 cursor-pointer relative overflow-hidden")
+                div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
+                  a(href=`/product/detail/${Item.slug}` title=Item.title class="block w-full h-full") 
+                    img(src=Item.thumbnail alt=Item.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+                  
+                  if Item.featured === true
+                    div(class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-brand-600 shadow-sm flex items-center") 
+                      i.bi.bi-star-fill.mr-1
+                      | Nổi bật
+                  
+                  if Item.discountPercentage > 0
+                    div(class="absolute top-3 right-3 bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-md")
+                      | -#{Item.discountPercentage}%
+                
+                div(class="flex flex-col flex-1") 
+                  a(href=`/product/detail/${Item.slug}` title=Item.title class="text-surface-900 font-semibold text-lg leading-tight line-clamp-2 mb-3 group-hover:text-brand-500 transition-colors") 
+                    span= Item.title
+                  
+                  div(class="mt-auto")
+                    div(class="text-xl font-black text-brand-600")
+                      | #{Number(Item.priceNew).toLocaleString('vi-VN')}₫
+                    
+                    if Item.price > Item.priceNew
+                      div(class="text-sm font-semibold text-surface-400 line-through mt-1")
+                        | #{Item.price.toLocaleString('vi-VN')}₫
+        else
+          div(class="bento-card text-center py-20")
+            div(class="w-24 h-24 rounded-full bg-surface-50 flex items-center justify-center mx-auto mb-6")
+              i.bi.bi-search.text-4xl.text-surface-300
+            h5(class="text-xl font-bold text-surface-900 mb-2") Không tìm thấy sản phẩm
+            p(class="text-surface-500 font-medium") Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.

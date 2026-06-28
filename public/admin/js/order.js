@@ -76,9 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
   //hiển thị popup
   const btnDetails = document.querySelectorAll('.btn-detail');
   
-  // Khởi tạo Modal 1 lần duy nhất ở ngoài cùng
+  // Khởi tạo Modal Tailwind
   const modalElement = document.getElementById('orderDetailModal');
-  const modalInstance = new bootstrap.Modal(modalElement);
+  const modalInstance = {
+    show: () => modalElement.classList.remove('hidden'),
+    hide: () => modalElement.classList.add('hidden')
+  };
+  
+  // Nút đóng modal
+  document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
+    btn.addEventListener('click', () => modalInstance.hide());
+  });
 
   btnDetails.forEach(button => {
     button.addEventListener('click', async () => {

@@ -13,19 +13,19 @@ module.exports.getDashboardOverview = async (days = 30) => {
 
     // Tổng doanh thu
     const totalRevenue = await Order.aggregate([
-      { $match: { createdAt: { $gte: startDate }, status: 'finish' } },
+      { $match: { createdAt: { $gte: startDate }, status: { $ne: 'canceled' } } },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
     // Số đơn hàng
     const totalOrders = await Order.countDocuments({
       createdAt: { $gte: startDate },
-      status: 'finish'
+      status: { $ne: 'canceled' }
     });
 
     // Số sản phẩm bán
     const totalProductsSold = await Order.aggregate([
-      { $match: { createdAt: { $gte: startDate }, status: 'finish' } },
+      { $match: { createdAt: { $gte: startDate }, status: { $ne: 'canceled' } } },
       { $unwind: '$products' },
       { $group: { _id: null, total: { $sum: '$products.quantity' } } }
     ]);
@@ -64,7 +64,7 @@ module.exports.getRevenueTrend = async (days = 30) => {
     startDate.setDate(startDate.getDate() - days);
 
     const trend = await Order.aggregate([
-      { $match: { createdAt: { $gte: startDate }, status: 'finish' } },
+      { $match: { createdAt: { $gte: startDate }, status: { $ne: 'canceled' } } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
@@ -92,11 +92,11 @@ module.exports.getTopCategories = async (limit = 10, days = 30) => {
     startDate.setDate(startDate.getDate() - days);
 
     const topCategories = await Order.aggregate([
-      { $match: { createdAt: { $gte: startDate }, status: 'finish' } },
+      { $match: { createdAt: { $gte: startDate }, status: { $ne: 'canceled' } } },
       { $unwind: '$products' },
       {
         $addFields: {
-          productObjId: { $toObjectId: '$products.productId' }
+          productObjId: { $convert: { input: '$products.productId', to: 'objectId', onError: null, onNull: null } }
         }
       },
       {
@@ -119,13 +119,7 @@ module.exports.getTopCategories = async (limit = 10, days = 30) => {
       { $limit: limit },
       {
         $addFields: {
-          categoryObjId: { 
-            $cond: { 
-              if: { $and: [{ $ne: ['$_id', null] }, { $ne: ['$_id', ''] }] }, 
-              then: { $toObjectId: '$_id' }, 
-              else: null 
-            } 
-          }
+          categoryObjId: { $convert: { input: '$_id', to: 'objectId', onError: null, onNull: null } }
         }
       },
       {
@@ -289,26 +283,35 @@ module.exports.getProductPerformance = async (limit = 10, days = 30) => {
     startDate.setDate(startDate.getDate() - days);
 
     const performance = await Order.aggregate([
-      { $match: { createdAt: { $gte: startDate }, status: 'finish' } },
+      { $match: { createdAt: { $gte: startDate }, status: { $ne: 'canceled' } } },
       { $unwind: '$products' },
       {
-        $group: {
-          _id: '$products.productId',
-          sold: { $sum: '$products.quantity' },
-          revenue: { $sum: '$products.quantity' }
-        }
-      },
-      { $sort: { revenue: -1 } },
-      { $limit: limit },
-      {
         $addFields: {
-          productObjId: { $toObjectId: '$_id' }
+          normalizedProductId: { $convert: { input: '$products.productId', to: 'objectId', onError: '$products.productId', onNull: null } }
         }
       },
+      {
+        $group: {
+          _id: '$normalizedProductId',
+          sold: { $sum: '$products.quantity' },
+          revenue: { 
+            $sum: { 
+              $multiply: [
+                { $convert: { input: { $ifNull: ['$products.newPrice', { $ifNull: ['$products.price', 0] }] }, to: 'double', onError: 0, onNull: 0 } }, 
+                { $ifNull: ['$products.quantity', 0] }
+              ] 
+            } 
+          },
+          orderTitle: { $first: '$products.title' },
+          orderThumbnail: { $first: '$products.thumbnail' }
+        }
+      },
+      { $sort: { sold: -1, revenue: -1 } },
+      { $limit: limit },
       {
         $lookup: {
           from: 'products',
-          localField: 'productObjId',
+          localField: '_id',
           foreignField: '_id',
           as: 'product'
         }
@@ -332,7 +335,7 @@ module.exports.getConversionFunnel = async () => {
     const addedToCart = await Order.aggregate([
       { $group: { _id: null, count: { $sum: 1 } } }
     ]);
-    const completedOrders = await Order.countDocuments({ status: 'finish' });
+    const completedOrders = await Order.countDocuments({ status: { $ne: 'canceled' } });
 
     return {
       visitors: totalVisitors,

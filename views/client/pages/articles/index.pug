@@ -1,102 +1,66 @@
 extends ../../layouts/default.pug
 
 block main
-  //- Hero
-  .articles-hero
-    .container
-      .text-center
-        .hero-badge
-          i.bi.bi-newspaper.me-2
-          | Tin tức & Kiến thức
-        h1.articles-hero-title Blog VanHa Tech
-        p.articles-hero-subtitle Cập nhật xu hướng công nghệ, mẹo mua sắm thông minh và tin tức mới nhất
+  //- Hero Section
+  div(class="relative bg-surface-950 py-20 px-4 overflow-hidden")
+    div(class="absolute inset-0 bg-gradient-to-br from-brand-900 via-surface-900 to-blue-900 opacity-90")
+    div(class="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-500/20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none")
+    div(class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none")
+    
+    div(class="container mx-auto relative z-10 text-center max-w-3xl")
+      div(class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold tracking-wider uppercase mb-6")
+        i.bi.bi-newspaper.text-brand-400
+        | Tin tức & Kiến thức
+      
+      h1(class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-6") Blog VanHa Tech
+      p(class="text-lg md:text-xl text-white/90 font-medium leading-relaxed drop-shadow-md max-w-2xl mx-auto") Cập nhật liên tục những xu hướng công nghệ mới nhất, thủ thuật mua sắm và thông tin hữu ích từ chuyên gia.
 
-  .container.py-5
+  div(class="container mx-auto px-4 py-12 mb-20")
 
-    //- Category tabs
-    .articles-category-tabs.mb-4
-      a.cat-tab(href="/articles" class=(!currentCategory ? 'active' : ''))
-        | Tất cả
+    //- Category Tabs
+    div(class="flex flex-wrap items-center justify-center gap-3 mb-12")
+      a(href="/articles" class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${!currentCategory ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
+        | Tất cả bài viết
+      
       if categories && categories.length > 0
         each cat in categories
-          a.cat-tab(href=`/articles?category=${cat._id}` class=(currentCategory == cat._id.toString() ? 'active' : ''))
+          - const isActive = currentCategory == cat._id.toString()
+          a(href=`/articles?category=${cat._id}` class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${isActive ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
             | #{cat.title}
 
+    //- Articles Grid
     if articles && articles.length > 0
-      .row.g-4
+      div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8")
         each article in articles
-          .col-md-6.col-lg-4
-            a.article-card(href=`/articles/${article.slug}`)
-              .article-thumb
-                img(src=article.thumbnail || '/image/logo.png' alt=article.title style="width:100%;height:200px;object-fit:cover;")
-                .article-date
-                  i.bi.bi-calendar3.me-1
-                  span #{moment ? moment(article.createdAt).format('DD/MM/YYYY') : 'N/A'}
-              .article-body
-                h5.article-title #{article.title}
-                p.article-excerpt #{article.description ? article.description.substring(0, 120) + '...' : 'Nhấn để đọc thêm...'}
-                .article-footer
-                  .article-read-more
-                    | Đọc thêm
-                    i.bi.bi-arrow-right.ms-1
-    else
-      .text-center.py-5
-        i.bi.bi-newspaper(style="font-size:4rem;opacity:0.2;")
-        h5.text-muted.mt-3 Chưa có bài viết nào
-        p.text-muted Hãy quay lại sau để đọc những bài viết thú vị nhất!
-        a.btn.btn-primary.mt-2(href="/product") Mua sắm ngay
+          a(href=`/articles/${article.slug}` class="bento-card !p-0 group flex flex-col h-full overflow-hidden hover:-translate-y-2 hover:shadow-diffusion transition-all duration-500 border border-slate-100")
+            //- Thumbnail
+            div(class="relative h-56 overflow-hidden bg-surface-100")
+              img(src=article.thumbnail || '/image/logo.png' alt=article.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+              div(class="absolute inset-0 bg-gradient-to-t from-surface-950/80 to-transparent opacity-60")
+              
+              div(class="absolute bottom-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm flex items-center gap-1.5 border border-white/30")
+                i.bi.bi-calendar3
+                span #{moment ? moment(article.createdAt).format('DD/MM/YYYY') : 'N/A'}
 
-  style.
-    .articles-hero {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      padding: 60px 0;
-      color: white;
-      text-align: center;
-      margin-bottom: 0;
-    }
-    .articles-hero-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
-    .articles-hero-subtitle { opacity: 0.8; font-size: 1rem; }
-    .articles-category-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-    .cat-tab {
-      padding: 8px 20px;
-      border-radius: 20px;
-      background: #f5f5f5;
-      color: #666;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .cat-tab:hover, .cat-tab.active {
-      background: linear-gradient(135deg,#667eea,#764ba2);
-      color: white;
-    }
-    .article-card {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      transition: all 0.3s;
-      height: 100%;
-    }
-    .article-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); color: inherit; }
-    .article-thumb { position: relative; overflow: hidden; }
-    .article-thumb img { transition: transform 0.3s; }
-    .article-card:hover .article-thumb img { transform: scale(1.05); }
-    .article-date {
-      position: absolute;
-      bottom: 10px; right: 10px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-    }
-    .article-body { padding: 20px; }
-    .article-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
-    .article-excerpt { font-size: 0.85rem; color: #666; margin-bottom: 16px; line-height: 1.6; }
-    .article-footer { display: flex; justify-content: flex-end; }
-    .article-read-more { color: #667eea; font-size: 0.85rem; font-weight: 600; }
+            //- Body
+            div(class="p-6 flex flex-col flex-1")
+              h5(class="text-lg font-black text-surface-900 leading-snug mb-3 group-hover:text-brand-600 transition-colors line-clamp-2")
+                | #{article.title}
+              
+              p(class="text-sm text-surface-500 font-medium leading-relaxed mb-6 line-clamp-3")
+                | #{article.description ? article.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Nhấn để xem chi tiết bài viết...'}
+              
+              div(class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100")
+                span(class="text-sm font-bold text-brand-600 flex items-center gap-1 group-hover:gap-2 transition-all")
+                  | Đọc tiếp
+                  i.bi.bi-arrow-right
+                
+                div(class="w-8 h-8 rounded-full bg-surface-100 flex items-center justify-center text-surface-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors")
+                  i.bi.bi-book
+    else
+      div(class="bento-card text-center py-24 max-w-2xl mx-auto")
+        div(class="w-24 h-24 rounded-full bg-surface-50 flex items-center justify-center mx-auto mb-6")
+          i.bi.bi-newspaper.text-5xl.text-surface-300
+        h5(class="text-2xl font-black text-surface-900 mb-3") Chưa có bài viết nào
+        p(class="text-surface-500 font-medium mb-8") Các bài viết mới sẽ sớm được cập nhật. Cảm ơn bạn đã quan tâm!
+        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3.5") Mua sắm ngay

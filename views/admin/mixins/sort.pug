@@ -1,28 +1,25 @@
 mixin sort()
- .card.mb-2
-    .card-header Sắp xếp
-      .card-body
-          .row
-                .col-4
-                  div(sort)
-                    select.form-select(name="sort" sort-select)
-                       option(value="position-desc" option-select) Vị trí giảm dần
-                       option(value="position-asc" option-select) Vị trí tăng dần
-                       option(value="price-desc" option-select) Giá giảm dần
-                       option(value="price-asc" option-select) Giá tăng dần
-                       option(value="title-asc" option-select) Tiêu đề A - Z
-                       option(value="title-desc" option-select) Tiêu đề Z - A
-                    button.btn.btn-danger.mt-2(sort-clear) Clear
+  div(class="flex items-center gap-2" sort)
+    div(class="relative")
+      select(name="sort" class="appearance-none bg-white border border-surface-200 text-surface-700 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-4 pr-10 py-2.5 transition-all outline-none cursor-pointer" sort-select)
+        option(value="position-desc" option-select) Vị trí giảm dần
+        option(value="position-asc" option-select) Vị trí tăng dần
+        option(value="price-desc" option-select) Giá giảm dần
+        option(value="price-asc" option-select) Giá tăng dần
+        option(value="title-asc" option-select) Tiêu đề A - Z
+        option(value="title-desc" option-select) Tiêu đề Z - A
+      i(class="bi bi-chevron-down absolute right-3 top-2 translate-y-0.5 text-surface-400 pointer-events-none")
+    button(class="w-10 h-10 flex items-center justify-center bg-surface-100 hover:bg-rose-50 text-surface-600 hover:text-rose-600 text-sm font-semibold rounded-xl transition-colors border border-transparent" sort-clear title="Bỏ sắp xếp")
+      i.bi.bi-x-lg
+
 mixin sortCategory()
- .card.mb-2
-    .card-header Sắp xếp
-      .card-body
-          .row
-                .col-4
-                  div(sort)
-                    select.form-select(name="sort" sort-select)
-                       option(value="position-desc" option-select) Vị trí giảm dần
-                       option(value="position-asc" option-select) Vị trí tăng dần
-                       option(value="title-asc" option-select) Tiêu đề A - Z
-                       option(value="title-desc" option-select) Tiêu đề Z - A
-                    button.btn.btn-danger.mt-2(sort-clear) Clear
+  div(class="flex items-center gap-2" sort)
+    div(class="relative")
+      select(name="sort" class="appearance-none bg-white border border-surface-200 text-surface-700 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-4 pr-10 py-2.5 transition-all outline-none cursor-pointer" sort-select)
+        option(value="position-desc" option-select) Vị trí giảm dần
+        option(value="position-asc" option-select) Vị trí tăng dần
+        option(value="title-asc" option-select) Tiêu đề A - Z
+        option(value="title-desc" option-select) Tiêu đề Z - A
+      i(class="bi bi-chevron-down absolute right-3 top-2 translate-y-0.5 text-surface-400 pointer-events-none")
+    button(class="w-10 h-10 flex items-center justify-center bg-surface-100 hover:bg-rose-50 text-surface-600 hover:text-rose-600 text-sm font-semibold rounded-xl transition-colors border border-transparent" sort-clear title="Bỏ sắp xếp")
+      i.bi.bi-x-lg

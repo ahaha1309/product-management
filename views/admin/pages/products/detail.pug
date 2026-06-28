@@ -3,34 +3,57 @@ block main
   include ../../mixins/alert.pug
   +alert-error(messages.error)
   +alert-success(messages.success)
-  h1 Chi tiết sản phẩm
-  form(action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data')
-    .mb-3
-      label.form-label Tiêu đề
-      .form-control( name="title"  placeholder="Nhập tiêu đề sản phẩm" required) #{product.title}
-    .mb-3 
-      label.form-label Mô tả
-      .form-control(name="description"  id='desc' placeholder="Nhập mô tả sản phẩm" rows="5") !{product.description}
-    .mb-3
-      label.form-label Giá
-      .form-control( name="price"  placeholder='Nhập giá sản phẩm' required) #{product.price}
-    .mb-3
-      label.form-label Giảm giá (%)
-      .form-control( name="discount"  placeholder='Nhập giảm giá' required) #{product.discountPercentage}
-    .mb-3
-      label.form-label Số lượng
-      .form-control(type="number" name="quantity" placeholder='Nhập số lượng' required) #{product.stock}
-    .form-group.mb-3(upload-image)
-      label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-      img.image-preview(src=`${product.thumbnail}`  upload-image-preview)
-      button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
-    .mb-3 
-      .mb-3
-      label.form-label Vị trí
-      .form-control( name="position"  placeholder="Tự động tăng" ) #{product.position}
-    .mb-3 
-        label.form-label Trạng thái
-        .form-control( name="status"  ) #{product.status}
-    if(role.permission.includes('products_edit'))
-      a(href=`${prefixAdmin}/product/edit/${product.id}` class="btn btn-warning btn-sm" button-change-activity="fix" btn-id=product.id) Chỉnh sửa
+  
+  div(class="max-w-4xl mx-auto")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết sản phẩm
+      
+      if(role.permission.includes('products_edit'))
+        a(href=`${prefixAdmin}/product/edit/${product.id}` class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-pencil-square.text-lg
+          | Chỉnh sửa
+
+    //- Content Grid
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6")
+      
+      //- Left Image
+      div(class="md:col-span-1")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-2")
+          img(src=`${product.thumbnail}` class="w-full h-auto aspect-square object-cover rounded-xl" alt=product.title)
+          
+      //- Right Details
+      div(class="md:col-span-2 space-y-6")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+          h2(class="text-xl font-bold text-surface-900 mb-2") #{product.title}
+          
+          div(class="flex flex-wrap gap-2 mb-6")
+            span(class=`px-3 py-1 text-xs font-semibold rounded-full border ${product.status=="active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{product.status=="active" ? "Đang hoạt động" : "Tạm dừng"}
+            if(product.featured)
+              span(class="px-3 py-1 text-xs font-semibold rounded-full border bg-amber-50 text-amber-600 border-amber-200") Nổi bật
+            span(class="px-3 py-1 text-xs font-semibold rounded-full border bg-surface-50 text-surface-600 border-surface-200") Vị trí: #{product.position}
+
+          div(class="grid grid-cols-2 gap-4 mb-6")
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100")
+              p(class="text-xs text-surface-500 font-medium mb-1") Giá gốc
+              p(class="text-lg font-bold text-surface-900") #{product.price}$
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100")
+              p(class="text-xs text-surface-500 font-medium mb-1") Giảm giá
+              p(class="text-lg font-bold text-rose-500") #{product.discountPercentage}%
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100")
+              p(class="text-xs text-surface-500 font-medium mb-1") Giá sau giảm
+              - var finalPrice = product.price * (100 - product.discountPercentage) / 100
+              p(class="text-lg font-bold text-brand-600") #{finalPrice.toFixed(2)}$
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100")
+              p(class="text-xs text-surface-500 font-medium mb-1") Tồn kho
+              p(class="text-lg font-bold text-surface-900") #{product.stock}
+              
+          if(product.description)
+            div
+              h3(class="text-sm font-bold text-surface-900 mb-3 uppercase tracking-wider") Mô tả chi tiết
+              div(class="prose prose-sm max-w-none text-surface-700 bg-surface-50 p-4 rounded-xl border border-surface-100") !{product.description}
+
   script(src='/admin/js/product.js')

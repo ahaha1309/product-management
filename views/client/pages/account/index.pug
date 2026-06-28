@@ -2,39 +2,68 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main 
-   .container
-      .card
-        .header
-          .avatar 
-            img#avatarPreview.avatar(src=user.avatar || 'https://via.placeholder.com/100?text=No+Avatar', alt='Avatar')
-          p Thông tin cá nhân
+  div(class="container mx-auto px-4 max-w-4xl py-12 mb-20")
+    
+    //- Profile Header Bento Card
+    div(class="bento-card relative overflow-hidden mb-8 !p-0")
+      div(class="h-32 bg-gradient-to-r from-brand-500 via-brand-600 to-blue-600 w-full")
+      
+      div(class="px-8 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16 relative z-10")
+        div(class="relative")
+          img#avatarPreview(src=user.avatar || 'https://via.placeholder.com/150?text=No+Avatar' alt='Avatar' class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover bg-surface-50")
+          div(class="absolute bottom-2 right-2 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full")
+        
+        div(class="flex-1 text-center sm:text-left mb-2")
+          h1(class="text-2xl font-black text-surface-950 tracking-tight")= user.fullName || 'Người dùng mới'
+          p(class="text-surface-500 font-medium") Chào mừng trở lại với VanHa Tech
+        
+        div(class="flex gap-3")
+          a(href=`/my-account/edit/${user._id}` class="btn-premium btn-premium-primary px-6 py-2.5 text-sm shadow-brand-500/30") 
+            i.bi.bi-pencil-square.mr-2
+            | Chỉnh sửa
+          a(href="/" class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-50 transition-colors flex items-center gap-2")
+            i.bi.bi-box-arrow-left
+            | Thoát
 
-        .content
-          .form-group
-            label Họ và tên
-            .field
-              span.icon 👤
-              .field-content= user.fullName || '(chưa cập nhật)'
+    //- Info Grid
+    div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+      
+      //- Contact Info
+      div(class="bento-card")
+        h2(class="text-lg font-bold text-surface-900 mb-6 flex items-center gap-2")
+          i.bi.bi-person-badge.text-brand-500
+          | Thông tin liên lạc
+        
+        div(class="space-y-4")
+          div(class="flex items-start gap-4 p-4 rounded-xl bg-surface-50 border border-slate-100")
+            div(class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-surface-400 shadow-sm shrink-0")
+              i.bi.bi-envelope-fill
+            div
+              div(class="text-xs text-surface-500 uppercase tracking-wider font-semibold mb-1") Email
+              div(class=`font-medium ${user.email ? 'text-surface-900' : 'text-surface-400 italic'}`)
+                | #{user.email || 'Chưa cập nhật'}
+                
+          div(class="flex items-start gap-4 p-4 rounded-xl bg-surface-50 border border-slate-100")
+            div(class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-surface-400 shadow-sm shrink-0")
+              i.bi.bi-telephone-fill
+            div
+              div(class="text-xs text-surface-500 uppercase tracking-wider font-semibold mb-1") Số điện thoại
+              div(class=`font-medium ${user.phone ? 'text-surface-900' : 'text-surface-400 italic'}`)
+                | #{user.phone || 'Chưa cập nhật'}
 
-          .form-group
-            label Email
-            .field(class=user.email ? '' : 'empty')
-              span.icon ✉️
-              .field-content= user.email ? `${user.email}` : '(chưa cập nhật)'
-
-          .form-group
-            label Địa chỉ
-            .field(class=user.address ? '' : 'empty')
-              span.icon 📍
-              .field-content= user.address || '(chưa cập nhật)'
-
-          .form-group
-            label Số điện thoại
-            .field(class=user.phone ? '' : 'empty')
-              span.icon 📱
-              .field-content= user.phone || '(chưa cập nhật)'
-
-          .actions
-            a.btn.btn-primary(href=`/my-account/edit/${user._id}`) Chỉnh sửa
-            a.btn.btn-secondary(href="/") Quay lại
-
+      //- Address Info
+      div(class="bento-card")
+        h2(class="text-lg font-bold text-surface-900 mb-6 flex items-center gap-2")
+          i.bi.bi-geo-alt-fill.text-brand-500
+          | Địa chỉ giao hàng mặc định
+        
+        div(class="flex items-start gap-4 p-4 rounded-xl bg-brand-50 border border-brand-100 h-[calc(100%-3rem)]")
+          div(class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-500 shadow-sm shrink-0")
+            i.bi.bi-house-door-fill
+          div(class="flex-1")
+            div(class="text-xs text-brand-600/80 uppercase tracking-wider font-semibold mb-2") Địa chỉ hiện tại
+            div(class=`font-medium leading-relaxed ${user.address ? 'text-brand-950' : 'text-brand-600/60 italic'}`)
+              | #{user.address || 'Bạn chưa cập nhật địa chỉ giao hàng. Vui lòng cập nhật để mua hàng nhanh chóng hơn.'}
+            
+            if !user.address
+              a(href=`/my-account/edit/${user._id}` class="inline-block mt-4 text-sm font-bold text-brand-600 hover:text-brand-700 hover:underline") Cập nhật ngay →

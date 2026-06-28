@@ -1,177 +1,209 @@
-extends /layout/default
+extends ../../layouts/default.pug
 
-block content
-  .container
-    .search-header
-      h1 🔍 Tìm kiếm sản phẩm
-      p Lọc và tìm kiếm những sản phẩm bạn yêu thích
+block main
+  div(class="container mx-auto px-4 py-8 mb-20")
     
-    // ===== FILTERS SIDEBAR =====
-    .search-container
-      .filters-sidebar
-        // Search box
-        .filter-section
-          h3 Tìm kiếm
-          input.search-input(
-            type='text'
-            placeholder='Nhập từ khóa...'
-            id='searchInput'
-            onchange='performAdvancedSearch()'
-          )
-        
-        // Price range filter
-        .filter-section
-          h3 Giá tiền
-          .price-inputs
-            input.price-input(
-              type='number'
-              placeholder='Từ'
-              id='filterMinPrice'
-              onchange='performAdvancedSearch()'
-            )
-            span -
-            input.price-input(
-              type='number'
-              placeholder='Đến'
-              id='filterMaxPrice'
-              onchange='performAdvancedSearch()'
-            )
-          
-          .price-ranges
-            button.price-range(onclick="filterByPrice(0, 500000)") Dưới 500K
-            button.price-range(onclick="filterByPrice(500000, 1000000)") 500K - 1M
-            button.price-range(onclick="filterByPrice(1000000, 5000000)") 1M - 5M
-            button.price-range(onclick="filterByPrice(5000000, 999999999)") 5M+
-        
-        // Category filter
-        .filter-section
-          h3 Danh mục
-          select#filterCategory(onchange='performAdvancedSearch()')
-            option(value='') Tất cả danh mục
-            each cat in categories || []
-              option(value=cat._id)= cat.title
-        
-        // Rating filter
-        .filter-section
-          h3 Đánh giá
-          .rating-options
-            - for (let i = 5; i >= 1; i--)
-              button.rating-option(onclick=`filterByRating(${i})`)
-                - for (let j = 0; j < i; j++)
-                  span ⭐
-                span #{i} sao trở lên
-        
-        // Attributes filter
-        if attributes
-          .filter-section
-            h3 Màu sắc
-            .attribute-options
-              each color in attributes.colors || []
-                button.color-option(
-                  style=`background-color: ${color.toLowerCase()};`
-                  onclick=`filterByAttribute('color', '${color}')`
-                  title=color
-                )
-          
-          .filter-section
-            h3 Kích cỡ
-            .size-options
-              each size in attributes.sizes || []
-                button.size-option(onclick=`filterByAttribute('size', '${size}')`) #{size}
-        
-        // Other filters
-        .filter-section
-          .filter-tag(onclick='performAdvancedSearch()')
-            input(type='checkbox' id='inStock')
-            label(for='inStock') Còn hàng
-          
-          .filter-tag(onclick='performAdvancedSearch()')
-            input(type='checkbox' id='onSale')
-            label(for='onSale') Đang giảm giá
-        
-        button.btn.btn-outline(onclick='clearFilters()') Xóa bộ lọc
+    //- Search Header
+    div(class="text-center max-w-2xl mx-auto mb-10")
+      h1(class="text-3xl font-black text-surface-950 tracking-tight mb-3 flex items-center justify-center gap-3") 
+        i.bi.bi-search.text-brand-500
+        | Tìm kiếm nâng cao
+      p(class="text-surface-500 font-medium") Lọc và tìm kiếm những sản phẩm bạn yêu thích
+    
+    //- Main Layout
+    div(class="flex flex-col lg:flex-row gap-8")
+      
+      //- Mobile Filter Trigger
+      div(class="lg:hidden")
+        button(type="button" class="w-full btn-premium btn-premium-secondary py-3 text-sm flex items-center justify-center gap-2" onclick="document.getElementById('mobileFilter').classList.toggle('hidden')")
+          i(class="bi bi-funnel")
+          | Bộ lọc nâng cao
 
-      // ===== PRODUCTS GRID =====
-      .products-section
-        .filters-toolbar
-          .sort-group
-            label Sắp xếp:
-            select#sortBy(onchange='performAdvancedSearch()')
-              option(value='newest') Mới nhất
-              option(value='price-asc') Giá: Thấp → Cao
-              option(value='price-desc') Giá: Cao → Thấp
-              option(value='rating') Đánh giá cao
-              option(value='best-seller') Bán chạy
+      //- Filters Sidebar
+      div#mobileFilter(class="hidden lg:block w-full lg:w-1/4 shrink-0")
+        div(class="sticky top-24 space-y-6")
           
-          .view-toggle
-            button#gridView.view-btn(onclick='switchView("grid")') ⊞
-            button#listView.view-btn(onclick='switchView("list")') ☰
+          //- Search input
+          div(class="bento-card !p-5")
+            h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Tìm kiếm
+            div(class="relative")
+              i.bi.bi-search.absolute.left-4.top-1.translate-y-1.text-surface-400
+              input#searchInput(type="text" placeholder="Nhập từ khóa..." onchange="performAdvancedSearch()" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
+          
+          //- Price Range
+          div(class="bento-card !p-5")
+            h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Giá tiền
+            div(class="flex items-center gap-2 mb-4")
+              input#filterMinPrice(type="number" placeholder="Từ" onchange="performAdvancedSearch()" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-medium focus:bg-white focus:border-brand-500 outline-none transition-all")
+              span(class="text-surface-400 font-bold") -
+              input#filterMaxPrice(type="number" placeholder="Đến" onchange="performAdvancedSearch()" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-medium focus:bg-white focus:border-brand-50 outline-none transition-all")
+            
+            div(class="grid grid-cols-2 gap-2")
+              button(onclick="filterByPrice(0, 500000)" class="px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-surface-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors") Dưới 500K
+              button(onclick="filterByPrice(500000, 1000000)" class="px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-surface-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors") 500K - 1M
+              button(onclick="filterByPrice(1000000, 5000000)" class="px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-surface-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors") 1M - 5M
+              button(onclick="filterByPrice(5000000, 999999999)" class="px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-surface-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors") Trên 5M
+          
+          //- Category filter
+          div(class="bento-card !p-5")
+            h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Danh mục
+            select#filterCategory(onchange="performAdvancedSearch()" class="w-full bg-surface-50 border border-slate-200 rounded-xl py-2.5 px-4 text-sm font-bold text-surface-700 focus:border-brand-500 outline-none cursor-pointer")
+              option(value="") Tất cả danh mục
+              each cat in categories || []
+                option(value=cat._id)= cat.title
+          
+          //- Rating filter
+          div(class="bento-card !p-5")
+            h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Đánh giá
+            div(class="flex flex-col gap-2")
+              - for (let i = 5; i >= 1; i--)
+                button(onclick=`filterByRating(${i})` class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-colors text-surface-600 hover:bg-amber-50 hover:text-amber-700 border border-transparent hover:border-amber-200")
+                  div(class="flex gap-0.5")
+                    - for (let j = 0; j < 5; j++)
+                      if j < i
+                        i.bi.bi-star-fill.text-amber-400
+                      else
+                        i.bi.bi-star.text-amber-400
+                  span.text-xs.font-bold trở lên
 
-        #searchResults.products-grid
-          // Will be populated by search results
+          //- Attributes Filter
+          if attributes
+            if attributes.colors && attributes.colors.length > 0
+              div(class="bento-card !p-5")
+                h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Màu sắc
+                div(class="flex flex-wrap gap-2")
+                  each color in attributes.colors
+                    button(style=`background-color: ${color.toLowerCase()};` onclick=`filterByAttribute('color', '${color}')` title=color class="w-8 h-8 rounded-full border-2 border-slate-200 hover:scale-110 hover:border-brand-500 transition-all shadow-sm")
+            
+            if attributes.sizes && attributes.sizes.length > 0
+              div(class="bento-card !p-5")
+                h3(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Kích cỡ
+                div(class="flex flex-wrap gap-2")
+                  each size in attributes.sizes
+                    button(onclick=`filterByAttribute('size', '${size}')` class="w-10 h-10 rounded-xl border border-slate-200 text-sm font-bold text-surface-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors flex items-center justify-center") #{size}
+
+          //- Tags filter
+          div(class="bento-card !p-5 space-y-3")
+            div(class="flex items-center gap-3 cursor-pointer" onclick="performAdvancedSearch()")
+              input#inStock(type="checkbox" class="w-5 h-5 rounded-md border-slate-300 text-brand-500 focus:ring-brand-500")
+              label(for="inStock" class="text-sm font-bold text-surface-700 cursor-pointer select-none") Còn hàng
+            
+            div(class="flex items-center gap-3 cursor-pointer" onclick="performAdvancedSearch()")
+              input#onSale(type="checkbox" class="w-5 h-5 rounded-md border-slate-300 text-rose-500 focus:ring-rose-500")
+              label(for="onSale" class="text-sm font-bold text-surface-700 cursor-pointer select-none") Đang giảm giá
+          
+          button(onclick="clearFilters()" class="w-full py-3 rounded-xl border border-slate-200 text-surface-500 text-sm font-bold hover:bg-surface-50 transition-colors flex items-center justify-center gap-2")
+            i.bi.bi-arrow-counterclockwise
+            | Xóa bộ lọc
+
+      //- Products Section
+      div(class="flex-1")
+        //- Toolbar
+        div(class="bento-card !p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4")
+          div(class="flex items-center gap-3")
+            label(class="text-xs font-bold text-surface-400 uppercase tracking-wider") Sắp xếp:
+            select#sortBy(onchange="performAdvancedSearch()" class="bg-surface-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-bold text-surface-700 focus:outline-none focus:border-brand-500 cursor-pointer")
+              option(value="newest") Mới nhất
+              option(value="price-asc") Giá: Thấp → Cao
+              option(value="price-desc") Giá: Cao → Thấp
+              option(value="rating") Đánh giá cao
+              option(value="best-seller") Bán chạy
+          
+          div(class="flex items-center gap-2")
+            button#gridView(onclick="switchView('grid')" class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Grid View")
+              i.bi.bi-grid-fill
+            button#listView(onclick="switchView('list')" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-surface-400 flex items-center justify-center hover:bg-surface-50 transition-colors" title="List View")
+              i.bi.bi-list-ul
+
+        //- Search Results Grid
+        div#searchResults(class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6")
           each product in products || []
-            .product-card
-              .product-image
-                img(src=product.thumbnail alt=product.title)
+            div(class="bg-white border border-slate-200/50 rounded-[2rem] p-4 flex flex-col h-full group hover:border-brand-500 hover:shadow-diffusion transition-all duration-500 cursor-pointer relative overflow-hidden")
+              div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
+                img(src=product.thumbnail alt=product.title class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
                 if product.discountPercentage
-                  .product-badge -#{product.discountPercentage}%
-                .product-actions
-                  button.product-action-btn(onclick=`addToCart('${product._id}')`) 🛒
-                  button.product-action-btn(onclick=`toggleCompare('${product._id}')`) ⚖️
-                  button.product-action-btn(onclick=`addToWishlist('${product._id}')`) ❤️
-              
-              .product-info
-                .product-title= product.title
-                .product-rating
-                  span ⭐ #{product.rating || 0}/5
-                  span (#{product.reviewCount || 0})
+                  div(class="absolute top-3 left-3 bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-md") -#{product.discountPercentage}%
                 
-                .product-price
-                  span.price-current= (product.newPrice || 0).toLocaleString('vi-VN') + 'đ'
-                  if product.price > product.newPrice
-                    span.price-original= (product.price || 0).toLocaleString('vi-VN') + 'đ'
+                div(class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 duration-300")
+                  button(onclick=`addToCart('${product._id}')` class="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-brand-600 flex items-center justify-center shadow hover:bg-brand-500 hover:text-white transition-colors" title="Thêm vào giỏ")
+                    i.bi.bi-cart-plus
+                  button(onclick=`toggleCompare('${product._id}')` class="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-surface-600 flex items-center justify-center shadow hover:bg-surface-900 hover:text-white transition-colors" title="So sánh")
+                    i.bi.bi-arrow-left-right
+                  button(onclick=`addToWishlist('${product._id}')` class="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-rose-500 flex items-center justify-center shadow hover:bg-rose-500 hover:text-white transition-colors" title="Yêu thích")
+                    i.bi.bi-heart
+            
+              div(class="flex flex-col flex-1")
+                div(class="text-surface-900 font-semibold text-lg leading-tight line-clamp-2 mb-2")= product.title
                 
-                button.add-to-cart-btn(onclick=`addToCart('${product._id}')`) + Thêm vào giỏ
+                div(class="flex items-center gap-2 mb-3")
+                  div(class="flex text-amber-400 text-xs")
+                    - const rating = product.rating || 0
+                    - for(let i=1; i<=5; i++)
+                      if i <= rating
+                        i.bi.bi-star-fill
+                      else
+                        i.bi.bi-star
+                  span(class="text-xs text-surface-400 font-medium") (#{product.reviewCount || 0})
+                
+                div(class="mt-auto flex items-end justify-between")
+                  div
+                    div(class="text-xl font-black text-brand-600")
+                      | #{(product.newPrice || 0).toLocaleString('vi-VN')}₫
+                    if product.price > product.newPrice
+                      div(class="text-sm font-semibold text-surface-400 line-through")
+                        | #{(product.price || 0).toLocaleString('vi-VN')}₫
+                  
+                  button(onclick=`addToCart('${product._id}')` class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors")
+                    i.bi.bi-plus-lg
 
-        // ===== PAGINATION =====
+        //- Pagination
         if pagination
-          .pagination
+          div(class="mt-10 flex justify-center items-center gap-2")
             - const maxPage = pagination.totalPages
             - const currentPage = pagination.currentPage
             
             if currentPage > 1
-              a.page-btn(href=`?page=1`) « Đầu
-              a.page-btn(href=`?page=${currentPage - 1}`) ‹ Trước
+              a(href=`?page=1` class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 text-surface-500 hover:bg-surface-50 hover:text-brand-600 font-bold transition-colors")
+                i.bi.bi-chevron-double-left
+              a(href=`?page=${currentPage - 1}` class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 text-surface-500 hover:bg-surface-50 hover:text-brand-600 font-bold transition-colors")
+                i.bi.bi-chevron-left
             
             - for (let i = Math.max(1, currentPage - 2); i <= Math.min(maxPage, currentPage + 2); i++)
               if i === currentPage
-                span.page-btn.active= i
+                span(class="w-10 h-10 rounded-xl flex items-center justify-center bg-brand-500 text-white font-bold shadow-md shadow-brand-500/30")= i
               else
-                a.page-btn(href=`?page=${i}`)= i
+                a(href=`?page=${i}` class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 text-surface-600 hover:border-brand-500 hover:text-brand-600 font-bold transition-colors")= i
             
             if currentPage < maxPage
-              a.page-btn(href=`?page=${currentPage + 1}`) Sau ›
-              a.page-btn(href=`?page=${maxPage}`) Cuối »
+              a(href=`?page=${currentPage + 1}` class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 text-surface-500 hover:bg-surface-50 hover:text-brand-600 font-bold transition-colors")
+                i.bi.bi-chevron-right
+              a(href=`?page=${maxPage}` class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 text-surface-500 hover:bg-surface-50 hover:text-brand-600 font-bold transition-colors")
+                i.bi.bi-chevron-double-right
 
-block scripts
-  script(src='/js/modern-features.js')
-  script.
-    function clearFilters() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('filterMinPrice').value = '';
-      document.getElementById('filterMaxPrice').value = '';
-      document.getElementById('filterCategory').value = '';
-      performAdvancedSearch();
-    }
-    
-    function switchView(view) {
-      const grid = document.getElementById('searchResults');
-      if (view === 'list') {
-        grid.classList.add('list-view');
-      } else {
-        grid.classList.remove('list-view');
+  block scripts
+    script(src='/js/modern-features.js')
+    script.
+      function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterMinPrice').value = '';
+        document.getElementById('filterMaxPrice').value = '';
+        document.getElementById('filterCategory').value = '';
+        document.getElementById('inStock').checked = false;
+        document.getElementById('onSale').checked = false;
+        performAdvancedSearch();
       }
-    }
-    
-    performAdvancedSearch();
-  
+      
+      function switchView(view) {
+        const grid = document.getElementById('searchResults');
+        if (view === 'list') {
+          grid.className = 'grid grid-cols-1 gap-6'; // List view logic handled via CSS if needed, or JS modification
+          // Alternatively, modify inner HTML classes for list view items
+        } else {
+          grid.className = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6';
+        }
+      }
+      
+      // Init search
+      if(typeof performAdvancedSearch === 'function') {
+        performAdvancedSearch();
+      }

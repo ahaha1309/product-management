@@ -1,29 +1,60 @@
 extends ../../layout/default.pug
 block main
-  h1 Chi tiết Khách Hàng
-  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/users`) &larr; Quay lại
-  if user
-    .card
-      .card-header
-        h3= user.fullName
-      .card-body
-        if user.avatar
-          .mb-3
-            img(src=user.avatar alt=user.fullName style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;")
-        p.mb-2 
-          strong Email: 
-          | #{user.email}
-        p.mb-2 
-          strong Số điện thoại: 
-          | #{user.phone || 'Chưa cập nhật'}
-        p.mb-2 
-          strong Địa chỉ: 
-          | #{user.address || 'Chưa cập nhật'}
-        p.mb-2 
-          strong Ngày tham gia: 
-          | #{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : 'Không rõ'}
-        p.mb-2 
-          strong Trạng thái: 
-          span(class=`badge text-bg-${user.status == "active" ? "success" : "danger"}`) #{user.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
-  else
-    p.text-danger Không tìm thấy khách hàng.
+  div(class="max-w-3xl mx-auto space-y-6")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/users` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết Khách hàng
+
+    if user
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-xl shadow-surface-200/40 overflow-hidden")
+        //- Cover & Avatar
+        div(class="h-32 bg-gradient-to-r from-brand-500 to-blue-500 relative")
+          div(class="absolute -bottom-12 left-6")
+            if user.avatar
+              img(src=user.avatar alt=user.fullName class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg")
+            else
+              div(class="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center bg-gradient-to-tr from-brand-100 to-blue-100 text-brand-600 font-bold text-4xl")
+                | #{user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
+        
+        div(class="pt-16 px-6 pb-6")
+          div(class="flex justify-between items-start mb-6")
+            div
+              h2(class="text-2xl font-bold text-surface-900") #{user.fullName}
+              p(class="text-surface-500 flex items-center gap-1.5 mt-1")
+                i.bi.bi-envelope.text-sm
+                | #{user.email}
+            
+            span(class=`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg border ${user.status == "active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{user.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
+
+          //- Details Grid
+          div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100 flex items-start gap-3")
+              div(class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-500 shrink-0")
+                i.bi.bi-telephone
+              div
+                p(class="text-xs text-surface-500 font-medium mb-0.5") Số điện thoại
+                p(class="text-sm font-semibold text-surface-900") #{user.phone || 'Chưa cập nhật'}
+                
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100 flex items-start gap-3")
+              div(class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-500 shrink-0")
+                i.bi.bi-calendar-date
+              div
+                p(class="text-xs text-surface-500 font-medium mb-0.5") Ngày tham gia
+                p(class="text-sm font-semibold text-surface-900") #{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : 'Không rõ'}
+                
+            div(class="p-4 rounded-xl bg-surface-50 border border-surface-100 flex items-start gap-3 md:col-span-2")
+              div(class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-500 shrink-0")
+                i.bi.bi-geo-alt
+              div
+                p(class="text-xs text-surface-500 font-medium mb-0.5") Địa chỉ
+                p(class="text-sm font-semibold text-surface-900") #{user.address || 'Chưa cập nhật'}
+                
+    else
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-8 rounded-2xl flex flex-col items-center justify-center text-center")
+        i.bi.bi-person-x.text-5xl.mb-4
+        h2(class="text-xl font-bold mb-2") Không tìm thấy!
+        p(class="text-sm") Khách hàng này không tồn tại hoặc đã bị xóa khỏi hệ thống.
+        a(href=`${prefixAdmin}/users` class="mt-4 px-5 py-2.5 bg-white text-surface-700 hover:text-brand-600 rounded-xl font-semibold shadow-sm border border-surface-200 transition-colors") Quay lại danh sách

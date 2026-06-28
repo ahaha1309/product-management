@@ -104,3 +104,56 @@ module.exports.createPost = async (req, res) => {
     res.redirect('back');
   }
 };
+
+module.exports.changeStatus = async (req, res) => {
+  const status = req.params.status;
+  const id = req.params.id;
+  await articleModel.updateOne({ _id: id }, { status: status });
+  req.flash('success', `Cập nhật trạng thái thành công!`);
+  res.redirect('back');
+};
+
+module.exports.changeActivity = async (req, res) => {
+  const activity = req.params.activity;
+  const id = req.params.id;
+  if (activity == 'delete') {
+    await articleModel.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    req.flash('success', `Xóa thành công!`);
+  }
+  res.redirect('back');
+};
+
+module.exports.changeMulti = async (req, res) => {
+  const status = req.body.type;
+  const ids = req.body.ids.split(',').filter((id) => id);
+  switch (status) {
+    case 'active':
+      await articleModel.updateMany({ _id: { $in: ids } }, { $set: { status: 'active' } });
+      req.flash('success', `Cập nhật trạng thái thành công!`);
+      break;
+    case 'inactive':
+      await articleModel.updateMany({ _id: { $in: ids } }, { $set: { status: 'inactive' } });
+      req.flash('success', `Cập nhật trạng thái thành công!`);
+      break;
+    case 'delete':
+      await articleModel.updateMany(
+        { _id: { $in: ids } },
+        { $set: { deleted: true, deletedAt: new Date() } }
+      );
+      req.flash('success', `Xóa thành công!`);
+      break;
+    case 'position':
+      let result = ids.map((item) => {
+        const [id, position] = item.split(':');
+        return { id: id, position: parseInt(position) };
+      });
+      for (const item of result) {
+        await articleModel.updateOne({ _id: item.id }, { $set: { position: item.position } });
+      }
+      req.flash('success', `Cập nhật vị trí thành công!`);
+      break;
+    default:
+      return res.redirect('back');
+  }
+  res.redirect('back');
+};

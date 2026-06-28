@@ -1,62 +1,71 @@
 extends ../../layout/default.pug
 include ../../mixins/table-tree.pug 
+
 block main 
   include ../../mixins/alert.pug
   +alert-success(messages.success)
-  if(role.permission.includes('articles-category_view'))
-    h1 Danh mục bài viết
-    .card.mb-2 
-      .card-header Bộ lọc tìm kiếm
-      .card-body 
-        .row 
-          .col-6
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header Section
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Danh mục bài viết
+        p(class="text-surface-500 text-sm mt-1") Quản lý hệ thống phân cấp danh mục bài viết, tin tức.
+      
+      if(role.permission.includes('articles-category_create'))
+        a(href=`${prefixAdmin}/category-article/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95")
+          i.bi.bi-plus-lg.text-lg
+          | Thêm danh mục mới
+
+    if(role.permission.includes('articles-category_view'))
+      //- Filter & Search Section
+      div(class="bg-white p-5 rounded-2xl border border-surface-200 shadow-sm space-y-4")
+        div(class="grid grid-cols-1 md:grid-cols-12 gap-4")
+          div(class="md:col-span-7 lg:col-span-8 flex flex-col justify-center")
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2") Trạng thái
             include ../../mixins/filllter.status.pug 
             +fillterStatus(button)
-          .col-6
+            
+          div(class="md:col-span-5 lg:col-span-4 flex flex-col justify-center")
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2") Tìm kiếm
             include ../../mixins/form.search.pug 
             +formSearch(keyword)
-    include ../../mixins/sort.pug 
-    +sortCategory()
-    .card.mb-2
-      .card-header Danh sách
-      .card-body 
-        .row.pb-2 
-            .col-8
-              if(role.permission.includes('articles-category_edit'))
-                include ../../mixins/change.multi.pug
-                +changeMulti(`${prefixAdmin}/category-article/change-multi?_method=PATCH`)
-            .col-4 
-              if(role.permission.includes('articles-category_create'))
-                a(href=`${prefixAdmin}/category-article/create` class="btn btn-outline-success float-end ") Thêm mới
-        table.table.table-hover.table-sm
-          thead 
-            tr  
-              th 
-                input(type="checkbox" name="checkall")
-              th STT 
-              th Hình ảnh
-              th Tiêu đề
-              th Vị trí
-              th Trạng thái
-              th Hành động 
-          tbody 
+
+      //- Action & Sort Section
+      div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+        if(role.permission.includes('articles-category_edit'))
+          div(class="flex-1")
+            include ../../mixins/change.multi.pug
+            +changeMulti(`${prefixAdmin}/category-article/change-multi?_method=PATCH`)
+        div(class="shrink-0")
+          include ../../mixins/sort.pug 
+          +sortCategory()
+
+      //- Data Table
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+        div(class="overflow-x-auto")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
+            thead
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-4 py-3 text-center w-12")
+                  input(type="checkbox" name="checkall" class="rounded border-surface-300 text-brand-500 focus:ring-brand-500/20")
+                th(class="px-4 py-3") STT
+                th(class="px-4 py-3") Hình ảnh
+                th(class="px-4 py-3") Tiêu đề
+                th(class="px-4 py-3 text-center w-24") Vị trí
+                th(class="px-4 py-3 text-center") Trạng thái
+                th(class="px-4 py-3 text-right w-32") Hành động 
+            
+            tbody(class="divide-y divide-surface-100 text-sm")
               +table-tree(categoryArticle, 0, 'category-article')
 
-    //- include ../../mixins/pagination 
-    //- +pagination(pagination)
+      form(action="" method="POST" id="form-change-status" data-path=`${prefixAdmin}/category-article/change-status`) 
+      form(action="" method="POST" id="form-change-activity" data-path=`${prefixAdmin}/category-article/change-activity`) 
 
-    form(
-      action=""
-      method="POST"
-      id="form-change-status"
-      data-path=`${prefixAdmin}/category-article/change-status`
-    ) 
-    form(
-      action=""
-      method="POST"
-      id="form-change-activity"
-      data-path=`${prefixAdmin}/category-article/change-activity`
-    ) 
-  else
-    .alert.alert-danger Bạn không có quyền xem danh mục sản phẩm
+    else
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center")
+        i.bi.bi-shield-lock.text-4xl.mb-3
+        h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+        p(class="text-sm") Bạn không được cấp quyền để xem danh mục bài viết.
+
   script(src="/admin/js/product.js")

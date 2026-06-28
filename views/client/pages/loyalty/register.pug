@@ -1,35 +1,42 @@
 extends ../../layouts/default.pug
 
 block main
-  .container.py-5
-    .row.align-items-center.justify-content-center
-      .col-lg-5
-        img.img-fluid.mb-4(src="https://img.freepik.com/free-vector/customer-loyalty-concept-illustration_114360-6101.jpg" alt="Loyalty Program" style="border-radius:16px;")
-      .col-lg-6.offset-lg-1
-        .card.border-0.shadow-sm(style="border-radius:16px;")
-          .card-body.p-5
-            .text-center.mb-4
-              h2.fw-bold.text-primary VanHa Rewards
-              p.text-muted Chương trình Khách hàng thân thiết VanHa Tech
-            
-            .features-list.mb-4
-              .d-flex.align-items-center.mb-3
-                i.bi.bi-check-circle-fill.text-success.fs-4.me-3
-                div
-                  h6.fw-bold.mb-0 Tích điểm mỗi giao dịch
-                  span.text-muted.small 1 điểm cho mỗi 10,000đ mua sắm
-              .d-flex.align-items-center.mb-3
-                i.bi.bi-check-circle-fill.text-success.fs-4.me-3
-                div
-                  h6.fw-bold.mb-0 Đặc quyền theo hạng thẻ
-                  span.text-muted.small Giảm tới 15% cho thành viên Platinum
-              .d-flex.align-items-center.mb-3
-                i.bi.bi-check-circle-fill.text-success.fs-4.me-3
-                div
-                  h6.fw-bold.mb-0 Quà tặng sinh nhật
-                  span.text-muted.small Tặng ngay 100 điểm vào tháng sinh nhật
-            
-            form(action="/loyalty/register" method="POST")
-              button.btn.btn-primary.w-100.py-3.fw-bold(type="submit")
-                i.bi.bi-star-fill.me-2
-                | Tham gia miễn phí ngay
+  div(class="container mx-auto px-4 py-16 min-h-[70vh] flex items-center justify-center")
+    div(class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl w-full")
+      
+      div(class="hidden lg:block relative")
+        div(class="absolute inset-0 bg-brand-500 blur-[100px] opacity-20 rounded-full")
+        img(src="https://img.freepik.com/free-vector/customer-loyalty-concept-illustration_114360-6101.jpg" alt="Loyalty Program" class="relative z-10 w-full rounded-3xl shadow-diffusion")
+      
+      div(class="bento-card !p-10 relative overflow-hidden")
+        div(class="absolute -top-24 -right-24 w-48 h-48 bg-brand-50 rounded-full blur-3xl")
+        
+        div(class="text-center mb-10 relative z-10")
+          div(class="w-20 h-20 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mx-auto mb-6 shadow-sm border border-brand-200")
+            i(class="bi bi-stars text-4xl perpetual-pulse")
+          h2(class="text-3xl font-black text-brand-600 tracking-tight mb-2") VanHa Rewards
+          p(class="text-surface-500 font-medium") Trở thành khách hàng thân thiết, nhận đặc quyền vô hạn
+        
+        div(class="space-y-6 mb-10 relative z-10")
+          div(class="flex items-start gap-4 p-4 rounded-2xl bg-surface-50 border border-slate-100 hover:border-brand-200 transition-colors")
+            i(class="bi bi-coin text-amber-500 text-2xl mt-1")
+            div
+              h6(class="font-bold text-surface-900") Tích điểm mọi giao dịch
+              span(class="text-surface-500 text-sm") Nhận 1 điểm cho mỗi 10.000đ mua sắm
+          
+          div(class="flex items-start gap-4 p-4 rounded-2xl bg-surface-50 border border-slate-100 hover:border-brand-200 transition-colors")
+            i(class="bi bi-gem text-blue-500 text-2xl mt-1")
+            div
+              h6(class="font-bold text-surface-900") Đặc quyền thăng hạng
+              span(class="text-surface-500 text-sm") Giảm lên tới 15% cho thành viên Platinum
+          
+          div(class="flex items-start gap-4 p-4 rounded-2xl bg-surface-50 border border-slate-100 hover:border-brand-200 transition-colors")
+            i(class="bi bi-gift text-rose-500 text-2xl mt-1")
+            div
+              h6(class="font-bold text-surface-900") Quà tặng sinh nhật
+              span(class="text-surface-500 text-sm") Tặng ngay voucher và 100 điểm vào tháng sinh nhật
+        
+        form(action="/loyalty/register" method="POST" class="relative z-10")
+          button(type="submit" class="btn-premium btn-premium-primary w-full py-4 text-base")
+            i(class="bi bi-lightning-charge-fill mr-2 text-yellow-300")
+            | Kích hoạt thẻ thành viên miễn phí

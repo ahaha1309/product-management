@@ -2,141 +2,91 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 
 block main
-  link(rel="stylesheet", href="/css/orderHistory.css")
-  
-  .container.shopee-order-history
-    +alert-success(messages.success)
-    +alert-error(messages.error)
+  +alert-success(messages.success)
+  +alert-error(messages.error)
 
-    //- Thanh tab trạng thái (Giả lập giao diện Shopee)
-    .shopee-tabs
-      a.tab-item(href="/order/history" class=`${!status?'active':''}`) Tất cả
-      a.tab-item(href="/order/history?status=pending" class=`${status=='pending'?'active':''}`) Chờ xác nhận
-      a.tab-item(href="/order/history?status=confirm" class=`${status=='confirm'?'active':''}`) Đang xử lý
-      a.tab-item(href="/order/history?status=finish" class=`${status=='finish'?'active':''}`) Hoàn thành
-      a.tab-item(href="/order/history?status=canceled" class=`${status=='canceled'?'active':''}`) Đã hủy
+  div(class="container mx-auto px-4 max-w-5xl py-8 mb-20")
+    
+    div(class="mb-8")
+      h1(class="text-3xl font-black text-surface-950 tracking-tight") Lịch sử đơn hàng
+      p(class="text-surface-500 mt-2") Quản lý và theo dõi các đơn hàng của bạn.
+
+    //- Status Tabs
+    div(class="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-surface-50 p-2 rounded-2xl border border-slate-100")
+      a(href="/order/history" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${!status ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Tất cả
+      a(href="/order/history?status=pending" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='pending' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Chờ xác nhận
+      a(href="/order/history?status=confirm" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='confirm' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đang xử lý
+      a(href="/order/history?status=finish" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='finish' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Hoàn thành
+      a(href="/order/history?status=canceled" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='canceled' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đã hủy
+
     if orders && orders.length > 0
-      .orders-list
+      div(class="flex flex-col gap-6 orders-list")
         each order in orders
-          //- Thẻ card đơn hàng
-          - var statusMap = { 'pending': {label: 'Chờ xác nhận', color: '#f59e0b'}, 'confirm': {label: 'Đang xử lý', color: '#3b82f6'}, 'finish': {label: 'Hoàn thành', color: '#10b981'}, 'canceled': {label: 'Đã hủy', color: '#ef4444'} }
-          - var statusInfo = statusMap[order.status] || {label: 'Chờ xác nhận', color: '#f59e0b'}
-          - var paymentInfo = order.paymentStatus === 'success' ? '✅ Đã thanh toán' : (order.paymentStatus === 'failed' ? '❌ Thanh toán thất bại' : '⏳ Chờ thanh toán')
-          .shopee-card
-            //- Header: Tên Shop / Mã đơn & Trạng thái
-            .card-header
-              .shop-info
-                span.shop-name 🛒 Đơn hàng: #{order.orderCode}
-              span.order-status-badge(style=`background: ${statusInfo.color}20; color: ${statusInfo.color}; border: 1px solid ${statusInfo.color}40; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;`) #{statusInfo.label}
-
-            //- Body: Danh sách sản phẩm
-            a.card-body(href=`/order/detail/${order._id}`)
-              each item in order.products
-                .shopee-product
-                  .product-img
-                    img(src=item.thumbnail, alt=item.title)
-                  .product-details
-                    h4.product-name #{item.title}
-                    if item.variant
-                      p.product-variant Phân loại: #{item.variant}
-                    span.product-qty x#{item.quantity}
-                  .product-price
-                    span.new-price #{Number(item.newPrice).toLocaleString('vi-VN')}₫
-
-            //- Footer: Tổng tiền và Nút hành động
-            .card-footer
-              .total-amount
-                - var totalQty = order.products.reduce((sum, p) => sum + p.quantity, 0)
-                span Thành tiền (#{totalQty} sản phẩm):&nbsp;
-                span.amount-highlight #{order.amount.toLocaleString('vi-VN')}₫
-              .payment-note(style="font-size:12px; color:#6b7280; margin-top:4px;") #{paymentInfo}
+          - var statusMap = { 'pending': {label: 'Chờ xác nhận', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200'}, 'confirm': {label: 'Đang xử lý', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200'}, 'finish': {label: 'Hoàn thành', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200'}, 'canceled': {label: 'Đã hủy', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200'} }
+          - var statusInfo = statusMap[order.status] || {label: 'Chờ xác nhận', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200'}
+          - var paymentInfo = order.paymentStatus === 'success' ? 'Đã thanh toán' : (order.paymentStatus === 'failed' ? 'Thanh toán thất bại' : 'Chờ thanh toán')
+          
+          div(class="bento-card !p-0 overflow-hidden shopee-card group")
+            //- Header
+            div(class="px-6 py-4 bg-surface-50 border-b border-slate-100 flex flex-wrap justify-between items-center gap-4 card-header")
+              div(class="flex items-center gap-3 shop-info")
+                div(class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-brand-500 shadow-sm")
+                  i.bi.bi-shop
+                div
+                  span(class="font-bold text-surface-900 text-sm") VanHa Tech Store
+                  div(class="text-xs text-surface-500") Đơn hàng: <span class="font-mono text-surface-700">#{order.orderCode}</span>
               
-              .card-actions
-                a.btn-outline(href=`/order/detail/${order._id}`) Xem chi tiết
+              span.order-status-badge(class=`px-3 py-1 rounded-full text-xs font-bold border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`) #{statusInfo.label}
+
+            //- Body
+            a(href=`/order/detail/${order._id}` class="block px-6 py-4 card-body")
+              each item in order.products
+                div(class="flex items-start sm:items-center gap-4 py-4 border-b border-slate-100 last:border-0 last:pb-0 shopee-product")
+                  img(src=item.thumbnail alt=item.title class="w-20 h-20 rounded-xl object-cover border border-slate-100 bg-white shadow-sm transition-transform group-hover:scale-105")
+                  div(class="flex-1")
+                    h4(class="font-bold text-surface-900 text-sm leading-tight line-clamp-2") #{item.title}
+                    if item.variant
+                      p(class="text-xs text-surface-500 mt-1.5 inline-block bg-surface-100 px-2 py-0.5 rounded") Phân loại: #{item.variant}
+                    div(class="text-sm font-medium text-surface-500 mt-2") x#{item.quantity}
+                  div(class="text-right")
+                    span(class="font-bold text-surface-900") #{Number(item.newPrice).toLocaleString('vi-VN')}₫
+
+            //- Footer
+            div(class="px-6 py-4 bg-surface-50/50 border-t border-slate-100 flex flex-wrap justify-between items-center gap-4 card-footer")
+              div
+                - var totalQty = order.products.reduce((sum, p) => sum + p.quantity, 0)
+                div(class="text-sm text-surface-600 total-amount")
+                  | Thành tiền (#{totalQty} sản phẩm): 
+                  span(class="font-black text-brand-600 text-lg ml-1 amount-highlight") #{order.amount.toLocaleString('vi-VN')}₫
+                div(class="text-xs text-surface-500 mt-1 payment-note flex items-center gap-1.5")
+                  if order.paymentStatus === 'success'
+                    i.bi.bi-check-circle-fill.text-emerald-500
+                  else if order.paymentStatus === 'failed'
+                    i.bi.bi-x-circle-fill.text-rose-500
+                  else
+                    i.bi.bi-clock-fill.text-amber-500
+                  | #{paymentInfo}
+
+              div(class="flex gap-3 card-actions")
+                a(href=`/order/detail/${order._id}` class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-100 transition-colors btn-outline") Xem chi tiết
                 if order.status === 'finish' || order.status === 'canceled'
-                  a.btn-primary.btn-rebuy(href=`/order/rebuy/${order._id}`) Mua lại
+                  a(href=`/order/rebuy/${order._id}` class="btn-premium btn-premium-primary px-5 py-2.5 text-sm btn-rebuy") Mua lại
                 if order.cancelRequest
-                  button.btn-cancel-request(disabled style="background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-weight: 500; cursor: not-allowed;") ⏳ Đang chờ duyệt hủy
+                  button.btn-cancel-request(disabled class="px-5 py-2.5 rounded-xl border border-slate-200 bg-surface-100 text-surface-400 text-sm font-semibold cursor-not-allowed flex items-center gap-2")
+                    i.bi.bi-hourglass-split
+                    | Đang chờ duyệt hủy
                 else if order.status !== 'canceled' && order.paymentStatus === 'pending' && order.status !== 'finish'
-                  button.btn-cancel-order(data-id=`${order._id}`) Hủy đơn
+                  button.btn-cancel-order(data-id=`${order._id}` class="px-5 py-2.5 rounded-xl border border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-500 hover:text-white transition-colors text-sm font-semibold") Hủy đơn
 
     else
-      .empty-orders
-        .empty-orders-animation
-          svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="160" height="160")
-            // Nền tròn
-            circle(cx="100" cy="100" r="90" fill="#f0f4ff" stroke="#e0e7ff" stroke-width="2")
-            // Hộp đơn hàng
-            g(class="box-group")
-              rect(x="55" y="75" width="90" height="70" rx="8" fill="#7c3aed" opacity="0.15")
-              rect(x="60" y="70" width="80" height="65" rx="8" fill="white" stroke="#7c3aed" stroke-width="2")
-              // Nắp hộp
-              path(d="M60 78 Q100 60 140 78" fill="#7c3aed" opacity="0.8")
-              rect(x="60" y="70" width="80" height="12" rx="4" fill="#7c3aed")
-              // Dây nơ
-              line(x1="100" y1="70" x2="100" y2="135" stroke="white" stroke-width="2" stroke-dasharray="3 2")
-              // Dấu hỏi bên trong
-              text(x="100" y="117" text-anchor="middle" font-size="28" fill="#7c3aed" opacity="0.5" font-weight="bold") ?
-            // Dấu sao nhấp nháy
-            circle(cx="45" cy="55" r="4" fill="#fbbf24" class="star star-1")
-            circle(cx="160" cy="65" r="3" fill="#f472b6" class="star star-2")
-            circle(cx="150" cy="150" r="4" fill="#34d399" class="star star-3")
-            circle(cx="50" cy="148" r="3" fill="#60a5fa" class="star star-4")
-        style.
-          .empty-orders {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            text-align: center;
-          }
-          .empty-orders-animation {
-            margin-bottom: 20px;
-            animation: floatBox 3s ease-in-out infinite;
-          }
-          @keyframes floatBox {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-          }
-          .star { animation: blink 1.5s ease-in-out infinite; }
-          .star-1 { animation-delay: 0s; }
-          .star-2 { animation-delay: 0.4s; }
-          .star-3 { animation-delay: 0.8s; }
-          .star-4 { animation-delay: 1.2s; }
-          @keyframes blink {
-            0%, 100% { opacity: 1; r: 4px; }
-            50% { opacity: 0.2; r: 2px; }
-          }
-          .empty-orders p {
-            font-size: 16px;
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 8px;
-          }
-          .empty-orders small {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 20px;
-            display: block;
-          }
-          .btn-shopping {
-            display: inline-block;
-            padding: 12px 28px;
-            background: linear-gradient(135deg, #7c3aed, #4f46e5);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.25s;
-            box-shadow: 0 4px 15px rgba(124,58,237,0.3);
-          }
-          .btn-shopping:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124,58,237,0.4);
-          }
-        p Chưa có đơn hàng nào
-        small Hãy khám phá và chọn mua những sản phẩm yêu thích nhé! 🛍️
-        a.btn-shopping(href="/product") Mua sắm ngay →
+      div(class="bento-card flex flex-col items-center justify-center py-20 text-center empty-orders")
+        div(class="w-32 h-32 bg-surface-50 rounded-full flex items-center justify-center mb-6 relative")
+          i.bi.bi-box-seam.text-5xl.text-surface-300
+          i.bi.bi-stars.absolute.top-2.right-2.text-brand-400.text-xl.perpetual-pulse
+        h2(class="text-xl font-bold text-surface-900 mb-2") Chưa có đơn hàng nào
+        p(class="text-surface-500 mb-8 max-w-sm") Hãy khám phá và chọn mua những sản phẩm công nghệ yêu thích nhé!
+        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3")
+          | Mua sắm ngay
+          i.bi.bi-arrow-right.ml-2
+
   script(src='/js/orderHistory.js')

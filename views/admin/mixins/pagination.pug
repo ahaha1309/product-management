@@ -1,22 +1,26 @@
 mixin pagination(pagination)
-  nav
-    ul.pagination.justify-content-center
+  nav(class="flex items-center justify-end mt-6")
+    ul(class="flex items-center gap-1.5")
       if pagination.currentPage > 1
-        li.page-item
-          a.page-link(href='#' button-pagination=`1`) &laquo;
-      li.page-item
-        a.page-link(href='#' button-pagination=`${pagination.currentPage > 1 ? pagination.currentPage - 1 : pagination.totalPage}`) &lt;
+        li
+          a(href='#' button-pagination=`1` class="w-9 h-9 flex items-center justify-center rounded-xl border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm bg-white")
+            i.bi.bi-chevron-double-left.text-xs
+        li
+          a(href='#' button-pagination=`${pagination.currentPage > 1 ? pagination.currentPage - 1 : pagination.totalPage}` class="w-9 h-9 flex items-center justify-center rounded-xl border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm bg-white")
+            i.bi.bi-chevron-left.text-xs
       
       - var startPage = Math.max(1, pagination.currentPage - 2)
       - var endPage = Math.min(pagination.totalPage, startPage + 4)
       - if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4)
       
       - for(var i = startPage; i <= endPage; i++)
-        li(class=`page-item ${pagination.currentPage == i ? "active" : ""}`)
-          a.page-link(href='#' button-pagination=`${i}`) #{i}
+        li
+          a(href='#' button-pagination=`${i}` class=`w-9 h-9 flex items-center justify-center rounded-xl font-semibold text-sm transition-all shadow-sm ${pagination.currentPage == i ? "bg-brand-500 text-white border border-brand-500 shadow-brand-500/30" : "bg-white text-surface-700 border border-surface-200 hover:bg-surface-50 hover:text-brand-600"}`) #{i}
           
-      li.page-item
-        a.page-link(href='#' button-pagination=`${pagination.currentPage < pagination.totalPage ? pagination.currentPage + 1 : 1}`) &gt;
+      li
+        a(href='#' button-pagination=`${pagination.currentPage < pagination.totalPage ? pagination.currentPage + 1 : 1}` class="w-9 h-9 flex items-center justify-center rounded-xl border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm bg-white")
+          i.bi.bi-chevron-right.text-xs
       if pagination.currentPage < pagination.totalPage
-        li.page-item
-          a.page-link(href='#' button-pagination=`${pagination.totalPage}`) &raquo;
+        li
+          a(href='#' button-pagination=`${pagination.totalPage}` class="w-9 h-9 flex items-center justify-center rounded-xl border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm bg-white")
+            i.bi.bi-chevron-double-right.text-xs

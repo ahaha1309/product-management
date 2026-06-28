@@ -53,9 +53,16 @@ module.exports.getTopSellingProducts = async (limit = 3, days = 7) => {
       },
       { $unwind: '$products' },
       {
+        $addFields: {
+          normalizedProductId: { $convert: { input: '$products.productId', to: 'objectId', onError: '$products.productId', onNull: null } }
+        }
+      },
+      {
         $group: {
-          _id: '$products.productId',
-          totalSold: { $sum: '$products.quantity' }
+          _id: '$normalizedProductId',
+          totalSold: { $sum: '$products.quantity' },
+          orderTitle: { $first: '$products.title' },
+          orderThumbnail: { $first: '$products.thumbnail' }
         }
       },
       { $sort: { totalSold: -1 } },
@@ -70,8 +77,8 @@ module.exports.getTopSellingProducts = async (limit = 3, days = 7) => {
       const product = products.find(p => p._id.toString() === item._id.toString());
       return {
         productId: item._id,
-        productTitle: product?.title,
-        thumbnail: product?.thumbnail,
+        productTitle: product?.title || item.orderTitle,
+        thumbnail: product?.thumbnail || item.orderThumbnail,
         sold: item.totalSold,
         message: `${item.totalSold} người đã mua`
       };

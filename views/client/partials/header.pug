@@ -1,213 +1,222 @@
 include ../mixins/sub-menu.pug
 
 //- Top Heading Bar (USP)
-.top-heading
-  .container
-    .d-flex.justify-content-between.align-items-center
-      .top-heading-left.d-flex.gap-4
-        a(href="#")
-          i.bi.bi-clock-history
-          span GIAO HÀNG TRONG 2 GIỜ
-        a(href="#")
-          i.bi.bi-arrow-repeat
-          span BẢO HÀNH ĐỔI MỚI 365 NGÀY
-      .top-heading-right.d-flex.gap-4
-        a(href="#")
-          i.bi.bi-shield-check
-          span CHÍNH HÃNG 100%
-        a(href="#")
-          i.bi.bi-headset
-          span TƯ VẤN MIỄN PHÍ 24/7
+div(class="bg-surface-950 text-surface-50 text-[11px] font-medium tracking-wide py-2 hidden md:block")
+  div(class="container mx-auto px-4 max-w-7xl flex justify-between items-center")
+    div(class="flex gap-6 opacity-80")
+      a(href="#" class="flex items-center gap-2 hover:text-brand-500 transition-colors")
+        i.bi.bi-clock-history
+        span GIAO HÀNG TRONG 2 GIỜ
+      a(href="#" class="flex items-center gap-2 hover:text-brand-500 transition-colors")
+        i.bi.bi-arrow-repeat
+        span BẢO HÀNH ĐỔI MỚI 365 NGÀY
+    div(class="flex gap-6 opacity-80")
+      a(href="#" class="flex items-center gap-2 hover:text-brand-500 transition-colors")
+        i.bi.bi-shield-check
+        span CHÍNH HÃNG 100%
+      a(href="#" class="flex items-center gap-2 hover:text-brand-500 transition-colors")
+        i.bi.bi-headset
+        span TƯ VẤN MIỄN PHÍ 24/7
 
-header.header
-  .container
-    .row.align-items-center.flex-nowrap.justify-content-between
-      //- Logo
-      .col-auto
-        .inner-logo
-          a.art-logo(href="/")
-            if settingGeneral && settingGeneral.logo
-              img(src=settingGeneral.logo alt="Logo" style="height: 40px; margin-right: 8px; border-radius: 4px;")
+//- Main Header
+header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-3 transition-all duration-300" id="mainHeader")
+  div(class="container mx-auto px-4 max-w-7xl flex items-center justify-between gap-4")
+    
+    //- Logo
+    div(class="flex-shrink-0")
+      a(href="/" class="flex items-center gap-2 text-surface-950 font-black text-2xl tracking-tighter hover:scale-[1.02] transition-transform")
+        if settingGeneral && settingGeneral.logo
+          img(src=settingGeneral.logo alt="Logo" class="h-8 rounded-md")
+        else
+          div(class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-md shadow-brand-500/20")
+            i.bi.bi-lightning-charge-fill.text-lg
+        if settingGeneral && settingGeneral.websiteName
+          span #{settingGeneral.websiteName}
+        else
+          span VanHa
+          span(class="text-brand-500") Tech
+          
+    //- Desktop Navigation
+    nav(class="hidden lg:flex items-center gap-8 ml-8 flex-1")
+      a(href="/" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Trang chủ
+      
+      div(class="relative group")
+        a(href="/product" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors flex items-center gap-1 py-4") 
+          | Sản phẩm
+          i(class="bi bi-chevron-down text-[10px] transition-transform group-hover:rotate-180")
+        //- Mega Menu / Sub Menu Dropdown
+        div(class="absolute top-full left-0 pt-2 z-50 w-64 custom-dropdown")
+          div(class="bg-white rounded-2xl shadow-diffusion border border-slate-100 py-2")
+            if(category && category.length > 0)
+              +sub-menu(category, '/product')
             else
-              i.bi.bi-lightning-charge-fill
-            if settingGeneral && settingGeneral.websiteName
-              span #{settingGeneral.websiteName}
-            else
-              span VanHa
-              span.highlight Tech
+              a(href="/product" class="block px-6 py-3 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500") Tất cả sản phẩm
+            
+      a(href="/articles" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Tin tức
+      a(href="/contact" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Liên hệ
+
+    //- Desktop Actions (Search, Cart, User)
+    div(class="hidden lg:flex items-center gap-4 justify-end")
       
       //- Search Bar
-      .col.d-none.d-lg-block
-        form(action='/search', id="form-search", method='GET')
-          .input-group
-            input(
-              type="text",
-              placeholder="Tìm kiếm sản phẩm, thương hiệu...",
-              name="keyword",
-              value=keyword,
-              class="form-control search-input"
-            )
-            button.btn.btn-search(type="submit")
-              i.bi.bi-search
-              
-      //- Mobile Icons & Hamburger
-      .col-auto.d-lg-none.d-flex.align-items-center.gap-2.ms-auto
-        button.btn.btn-light.btn-sm.mobile-search-btn(type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch")
+      form(action='/search' id="form-search" method='GET' class="relative group")
+        input(type="text" placeholder="Tìm kiếm..." name="keyword" value=keyword class="w-48 xl:w-64 bg-surface-50 border border-slate-200 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all group-hover:shadow-md")
+        button(type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
           i.bi.bi-search
-        a.btn.btn-light.btn-sm(href="/cart" style="position: relative;")
-          i.bi.bi-cart3
-          if(quantityCart)
-            span.badge.bg-danger.rounded-pill(style="position: absolute; top: -5px; right: -5px; font-size: 10px;")= quantityCart
-        button.btn.btn-light.btn-sm(type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu")
-          i.bi.bi-list.fs-5
-      
-      //- Menu (Desktop standard, Mobile Offcanvas)
-      .col-auto
-        .offcanvas-lg.offcanvas-end#mobileMenu(tabindex="-1")
-          .offcanvas-header.d-lg-none.border-bottom
-            h5.offcanvas-title
-              i.bi.bi-lightning-charge-fill.text-warning.me-2
-              | VanHa Tech
-            button.btn-close(type="button" data-bs-dismiss="offcanvas" data-bs-target="#mobileMenu")
-          .offcanvas-body
-            .inner-menu
-              ul
-                //- Cart Button (Desktop only)
-                li.cart-item.d-none.d-lg-block
-                  form(action="/cart", method='GET', id='form-cart')
-                    button.btn-cart-icon(type="submit" title="Giỏ hàng")
-                      i.bi.bi-cart3
-                      if(quantityCart)
-                        .inner-quantity= quantityCart
+          
+      div(class="h-6 w-px bg-slate-200 mx-2")
 
-                //- Wishlist
-                if(user)
-                  li
-                    a.mobile-nav-link(href="/wishlist")
-                      span.position-relative(style="display: inline-block; padding-top: 4px;")
-                        i.bi.bi-heart.fs-4
-                        if(quantityWishlist !== undefined && quantityWishlist > 0)
-                          .inner-quantity(style="top: -2px; right: -8px;")= quantityWishlist
-                      span.nav-text.ms-2  Yêu thích
+      //- Wishlist
+      if(user)
+        a(href="/wishlist" class="relative text-surface-600 hover:text-brand-500 transition-colors hover:scale-110 p-2")
+          i.bi.bi-heart.text-lg
+          if(quantityWishlist !== undefined && quantityWishlist > 0)
+            span(class="absolute top-0 right-0 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityWishlist
 
-                //- Home
-                li
-                  a.mobile-nav-link(href="/")
-                    i.bi.bi-house-fill
-                    span.nav-text  Trang chủ
+      //- Cart
+      a(href="/cart" id="btn-cart" class="relative text-surface-600 hover:text-brand-500 transition-colors hover:scale-110 p-2 flex items-center justify-center")
+        i.bi.bi-bag.text-lg
+        if(quantityCart)
+          span(class="absolute top-0 right-0 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityCart
+            
+      //- User Auth
+      if (user)
+        div(class="relative group ml-2")
+          a(href="javascript:void(0)" class="flex items-center gap-2 py-2")
+            if user.avatar
+              img(src=user.avatar alt="avatar" class="w-8 h-8 rounded-full border border-slate-200 object-cover")
+            else
+              div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 font-bold flex items-center justify-center text-xs")
+                | #{user.fullName.charAt(0).toUpperCase()}
+            i(class="bi bi-chevron-down text-[10px] text-surface-400 transition-transform group-hover:rotate-180")
+            
+          div(class="absolute top-full right-0 pt-2 z-50 min-w-[200px] custom-dropdown")
+            div(class="bg-white rounded-2xl shadow-diffusion border border-slate-100 overflow-hidden py-2")
+              div(class="px-4 py-3 border-b border-slate-100 mb-2 bg-surface-50")
+                p(class="text-sm font-semibold text-surface-950 truncate") #{user.fullName}
+                p(class="text-xs text-surface-500 truncate") #{user.email}
+              a(href=`/my-account/${user._id}` class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
+                i.bi.bi-person.text-lg
+                | Tài khoản của tôi
+              a(href="/loyalty" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
+                i.bi.bi-star.text-lg
+                | Điểm thưởng
+              a(href="/wishlist" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
+                i.bi.bi-heart.text-lg
+                | Yêu thích
+              a(href="/order/history" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
+                i.bi.bi-bag-check.text-lg
+                | Đơn mua
+              div(class="h-px bg-slate-100 my-2")
+              a(href="/auth/logout" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors")
+                i.bi.bi-box-arrow-right.text-lg
+                | Đăng xuất
+      else
+        a(href="/auth/login" class="btn-premium btn-premium-primary text-sm py-2 px-5 ml-2") Đăng nhập
 
-                //- Products
-                li.sub-menu
-                  - const path='/product'
-                  a.mobile-nav-link(href="/product")
-                    i.bi.bi-grid
-                    span.nav-text  Sản phẩm
-                  if(category && category.length > 0)
-                    +sub-menu(category, path)
+    //- Mobile Actions (Hamburger & Cart)
+    div(class="flex lg:hidden items-center gap-4")
+      button(type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch" class="text-surface-600 hover:text-brand-500 text-xl")
+        i.bi.bi-search
+      a(href="/cart" class="relative text-surface-600 hover:text-brand-500 text-xl")
+        i.bi.bi-bag
+        if(quantityCart)
+          span(class="absolute -top-1 -right-2 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityCart
+      button(type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" class="text-surface-950 text-2xl ml-2 focus:outline-none active:scale-95 transition-transform")
+        i.bi.bi-list
 
-                //- Blog / News
-                li
-                  a.mobile-nav-link(href="/articles")
-                    i.bi.bi-newspaper
-                    span.nav-text  Tin tức
+  //- Mobile Search Collapse
+  div(class="collapse lg:hidden absolute top-full left-0 w-full bg-white shadow-md border-b border-slate-100" id="mobileSearch")
+    div(class="container mx-auto p-4")
+      form(action='/search' method='GET' class="relative")
+        input(type="text" placeholder="Tìm kiếm sản phẩm..." name="keyword" value=keyword class="w-full bg-surface-50 border border-slate-200 text-base rounded-xl px-4 py-3 focus:outline-none focus:border-brand-500")
+        button(type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-surface-400 text-lg")
+          i.bi.bi-search
 
-                //- Contact
-                li
-                  a.mobile-nav-link(href="/contact")
-                    i.bi.bi-telephone
-                    span.nav-text  Liên hệ
+  //- Mobile Menu Offcanvas (Kept Bootstrap JS for toggle, Tailwind for style)
+  div(class="offcanvas offcanvas-end lg:hidden w-80 max-w-[85vw] border-l-0 shadow-2xl" tabindex="-1" id="mobileMenu")
+    div(class="offcanvas-header border-b border-slate-100 py-4 px-6")
+      h5(class="text-lg font-bold flex items-center gap-2")
+        i.bi.bi-lightning-charge-fill.text-brand-500
+        | VanHa Tech
+      button(type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close")
+    
+    div(class="offcanvas-body p-0 overflow-y-auto")
+      //- Auth Mobile
+      if user
+        div(class="bg-brand-50 p-6 border-b border-brand-100")
+          div(class="flex items-center gap-4 mb-4")
+            if user.avatar
+              img(src=user.avatar alt="avatar" class="w-12 h-12 rounded-full border border-white shadow-sm")
+            else
+              div(class="w-12 h-12 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center text-xl shadow-sm")
+                | #{user.fullName.charAt(0).toUpperCase()}
+            div
+              p(class="font-bold text-surface-950") #{user.fullName}
+              p(class="text-xs text-surface-500") #{user.email}
+          div(class="grid grid-cols-2 gap-2")
+            a(href=`/my-account/${user._id}` class="bg-white rounded-lg p-2 text-center text-sm font-medium text-surface-700 shadow-sm border border-slate-100") Tài khoản
+            a(href="/order/history" class="bg-white rounded-lg p-2 text-center text-sm font-medium text-surface-700 shadow-sm border border-slate-100") Đơn hàng
+      else
+        div(class="p-6 border-b border-slate-100 flex flex-col gap-3")
+          a(href="/auth/login" class="btn-premium btn-premium-primary text-center") Đăng nhập
+          a(href="/auth/register" class="btn-premium bg-white border border-slate-200 text-surface-900 text-center") Đăng ký
 
-                //- Order history (only when logged in)
-                if(user)
-                  li
-                    a.mobile-nav-link(href="/order/history")
-                      i.bi.bi-bag-check
-                      span.nav-text  Đơn hàng
+      //- Links Mobile
+      ul(class="flex flex-col py-2")
+        li
+          a(href="/" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+            i.bi.bi-house.text-xl.text-surface-400
+            | Trang chủ
+        li
+          a(href="/product" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+            i.bi.bi-grid.text-xl.text-surface-400
+            | Sản phẩm
+        li
+          a(href="/articles" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+            i.bi.bi-newspaper.text-xl.text-surface-400
+            | Tin tức
+        if user
+          li
+            a(href="/wishlist" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+              i.bi.bi-heart.text-xl.text-surface-400
+              | Yêu thích
+              if(quantityWishlist > 0)
+                span(class="ml-auto bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-xs font-bold")= quantityWishlist
+        li
+          a(href="/contact" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+            i.bi.bi-telephone.text-xl.text-surface-400
+            | Liên hệ
 
-                //- Auth Section
-                if (user)
-                  li.auth-section#userMenuTrigger
-                    a.btn-user-info.mobile-nav-link(href="javascript:void(0)" id="userMenuBtn")
-                      if user.avatar
-                        img.user-avatar-mini(src=user.avatar alt="avatar")
-                      else
-                        i.bi.bi-person-circle
-                      span.nav-text.username  Chào #{user.fullName.split(' ').pop()} 👋
-                      i.bi.bi-chevron-down.dropdown-arrow.d-none.d-lg-inline-block(id="dropdownArrow")
-                    .user-dropdown.d-lg-block#userDropdown
-                      //- User info header
-                      .dropdown-user-info
-                        .dropdown-user-avatar
-                          if user.avatar
-                            img(src=user.avatar alt="avatar")
-                          else
-                            | #{user.fullName.charAt(0).toUpperCase()}
-                        div
-                          .dropdown-user-name #{user.fullName}
-                          .dropdown-user-email #{user.email}
-                      //- Menu items
-                      a.text-dark(href=`/my-account/${user._id}`)
-                        i.bi.bi-person
-                        span.ms-2 Tài khoản của tôi
-                      a.text-dark(href="/loyalty")
-                        i.bi.bi-star
-                        span.ms-2 Điểm thưởng
-                      a.text-dark(href="/order/history")
-                        i.bi.bi-bag
-                        span.ms-2 Đơn hàng
-                      a.text-dark(href="/wishlist")
-                        i.bi.bi-heart
-                        span.ms-2 Yêu thích
-                      .dropdown-divider
-                      a.text-danger(href="/auth/logout")
-                        i.bi.bi-box-arrow-right
-                        | Đăng xuất
-                else
-                  li
-                    a.btn.btn-auth-primary.w-100(href="/auth/login")
-                      i.bi.bi-box-arrow-in-right
-                      span.nav-text  Đăng nhập
-    //- Mobile Search Collapse
-    .collapse#mobileSearch.d-lg-none
-      .container.py-2.bg-white
-        form(action='/search', method='GET')
-          .input-group
-            input.form-control(type="text" placeholder="Tìm kiếm..." name="keyword" value=keyword)
-            button.btn.btn-primary(type="submit")
-              i.bi.bi-search
+      if user
+        div(class="px-6 py-6 mt-auto")
+          a(href="/auth/logout" class="flex items-center justify-center gap-2 w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-medium active:scale-95 transition-transform")
+            i.bi.bi-box-arrow-right
+            | Đăng xuất
 
-  style.
-    .user-avatar-mini {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(255,255,255,0.5);
-    }
-    .dropdown-arrow {
-      font-size: 11px;
-      transition: transform 0.25s ease;
-      margin-left: 2px;
-    }
-    .dropdown-arrow.open {
-      transform: rotate(180deg);
-    }
-
-  script.
-    document.addEventListener('DOMContentLoaded', function () {
-      // ===== Cart click =====
-      const isLogin = !{JSON.stringify(isLogin)};
-      const formCart = document.querySelector("#form-cart");
-      const cartBtn = document.querySelector('ul li form .btn-cart-icon');
-      
-      if (cartBtn && formCart) {
-        cartBtn.addEventListener('click', function (e) {
+script.
+  document.addEventListener('DOMContentLoaded', function () {
+    const isLogin = !{JSON.stringify(isLogin)};
+    const cartBtn = document.getElementById('btn-cart');
+    
+    if (cartBtn) {
+      cartBtn.addEventListener('click', function (e) {
+        if (!isLogin) {
           e.preventDefault();
-          if (!isLogin) {
-            alert('Bạn cần đăng nhập để xem giỏ hàng!');
-            return;
-          }
-          formCart.submit();
-        });
+          alert('Bạn cần đăng nhập để xem giỏ hàng!');
+        }
+      });
+    }
+
+    // Shrink header on scroll
+    const header = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 50) {
+        header.classList.add('py-2', 'shadow-md');
+        header.classList.remove('py-3');
+      } else {
+        header.classList.add('py-3');
+        header.classList.remove('py-2', 'shadow-md');
       }
     });
+  });

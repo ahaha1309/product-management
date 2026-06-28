@@ -21,4 +21,8 @@ router.post('/create', upload.single('thumbnail'), uploadCloud.upload, categoryA
 router.get('/edit/:id', categoryArticleController.edit);
 router.patch('/edit/:id', upload.single('thumbnail'), uploadCloud.upload, categoryArticleController.editPatch);
 
+router.patch('/change-status/:status/:id', categoryArticleController.changeStatus);
+router.patch('/change-multi', categoryArticleController.changeMulti);
+router.patch('/change-activity/:activity/:id', categoryArticleController.changeActivity);
+
 module.exports = router;

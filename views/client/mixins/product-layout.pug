@@ -1,6 +1,6 @@
 include ./product-item.pug
 mixin product-grid(product)
-    .row
+    div(class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 hide-scrollbar")
        each Item in product
          +product-item(Item)
 

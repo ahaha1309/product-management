@@ -1,86 +1,93 @@
 extends ../../layouts/default.pug
 
 block main
-  link(rel="stylesheet" href="/css/style.css")
-  .container.mt-5.mb-5
-    //- Header
-    .d-flex.justify-content-between.align-items-center.mb-4
-      div
-        h2.fw-bold.mb-1
-          i.bi.bi-heart-fill.text-danger.me-2
-          | Danh sách yêu thích
-        p.text-muted.mb-0 #{products.length} sản phẩm đã lưu
+  div(class="container mx-auto px-4 py-8 mb-20")
 
-      .d-flex.gap-2
-        button.btn.btn-outline-secondary.btn-sm#btn-grid(onclick="switchView('grid')" title="Grid view")
-          i.bi.bi-grid
-        button.btn.btn-outline-secondary.btn-sm#btn-list(onclick="switchView('list')" title="List view")
-          i.bi.bi-list-ul
+    //- Breadcrumb
+    div(class="flex items-center gap-2 text-sm font-medium text-surface-500 mb-8")
+      a(href="/" class="hover:text-brand-600 transition-colors") Trang chủ
+      i(class="bi bi-chevron-right text-[10px]")
+      span(class="text-surface-900") Danh sách yêu thích
 
-    if products && products.length > 0
-      //- Sort bar
-      .d-flex.justify-content-between.align-items-center.mb-3.p-3.bg-light.rounded
-        span.text-muted
-          strong #{products.length}
-          |  sản phẩm
-        .d-flex.align-items-center.gap-2
-          label.text-muted.mb-0 Sắp xếp:
-          select.form-select.form-select-sm(style="width:auto" onchange="sortWishlist(this.value)")
-            option(value='newest') Mới nhất
-            option(value='oldest') Cũ nhất
-            option(value='price-asc') Giá thấp → cao
-            option(value='price-desc') Giá cao → thấp
+    div(class="max-w-6xl mx-auto")
+      //- Header
+      div(class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8")
+        div
+          h1(class="text-3xl font-black text-surface-950 tracking-tight flex items-center gap-3 mb-2")
+            i.bi.bi-heart-fill.text-rose-500
+            | Danh sách yêu thích
+          p(class="text-surface-500 font-medium") Bạn đã lưu <span class="font-bold text-surface-900">#{products ? products.length : 0}</span> sản phẩm
 
-      //- Product grid
-      .row.row-cols-2.row-cols-md-3.row-cols-lg-4.g-4#wishlist-items
-        each product in products
-          .col
-            .wishlist-card.card.h-100.shadow-sm.border-0(style="border-radius:12px; overflow:hidden; transition: all 0.3s;")
+        div(class="flex items-center gap-2")
+          button(class="w-10 h-10 rounded-xl bg-surface-100 text-surface-600 flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Grid View")
+            i.bi.bi-grid-fill
+          button(class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-surface-400 flex items-center justify-center hover:bg-surface-50 transition-colors" title="List View")
+            i.bi.bi-list-ul
+
+      if products && products.length > 0
+        //- Toolbar
+        div(class="bento-card !p-4 mb-6 flex justify-between items-center")
+          div(class="text-sm font-bold text-surface-600")
+            | Hiển thị #{products.length} sản phẩm
+          
+          div(class="flex items-center gap-3")
+            label(class="text-xs font-bold text-surface-400 uppercase tracking-wider") Sắp xếp:
+            select(onchange="sortWishlist(this.value)" class="bg-surface-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-bold text-surface-700 focus:outline-none focus:border-brand-500 cursor-pointer")
+              option(value="newest") Mới nhất
+              option(value="oldest") Cũ nhất
+              option(value="price-asc") Giá: Thấp → Cao
+              option(value="price-desc") Giá: Cao → Thấp
+
+        //- Product Grid
+        div(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6")
+          each product in products
+            div(class="bg-white border border-slate-200/50 rounded-[2rem] p-4 flex flex-col h-full group hover:border-brand-500 hover:shadow-diffusion transition-all duration-500 cursor-pointer relative overflow-hidden")
+              
               //- Image
-              .position-relative
-                a(href=`/product/detail/${product.slug}`)
-                  img.card-img-top(src=product.thumbnail alt=product.title style="height:200px; object-fit:cover;")
+              div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
+                a(href=`/product/detail/${product.slug}` class="block w-full h-full")
+                  img(src=product.thumbnail alt=product.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+                
                 if product.discountPercentage > 0
-                  .position-absolute.top-0.start-0.m-2
-                    span.badge.bg-danger -#{product.discountPercentage}%
-                //- Remove from wishlist
-                button.position-absolute.top-0.end-0.m-2.btn.btn-sm.btn-danger.rounded-circle(
-                  onclick=`removeFromWishlist('${product._id}')` title="Xóa khỏi yêu thích"
-                  style="width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center;"
-                )
-                  i.bi.bi-x-lg
+                  div(class="absolute top-3 left-3 bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-md")
+                    | -#{product.discountPercentage}%
+                
+                //- Remove Button
+                button(onclick=`removeFromWishlist('${product._id}')` class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur text-rose-500 flex items-center justify-center shadow-sm hover:bg-rose-500 hover:text-white transition-colors" title="Xóa khỏi yêu thích")
+                  i.bi.bi-trash-fill
 
-              .card-body.d-flex.flex-column
-                h6.card-title.fw-semibold.mb-2(style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;")
-                  a.text-dark.text-decoration-none(href=`/product/detail/${product.slug}`) #{product.title}
-
-                .mt-auto
-                  if product.discountPercentage > 0
-                    .d-flex.align-items-center.gap-2.mb-2
-                      span.fw-bold.text-danger.fs-6 #{product.newPrice ? Number(product.newPrice).toLocaleString('vi-VN') : 0}₫
-                      span.text-muted.text-decoration-line-through.small #{Number(product.price).toLocaleString('vi-VN')}₫
-                  else
-                    span.fw-bold.text-danger.fs-6.mb-2.d-block #{product.newPrice ? Number(product.newPrice).toLocaleString('vi-VN') : 0}₫
-
-                  form(action=`/cart/add/${product._id}` method="POST")
+              //- Info
+              div(class="flex flex-col flex-1")
+                a(href=`/product/detail/${product.slug}` class="text-surface-900 font-bold text-base leading-tight line-clamp-2 mb-3 group-hover:text-brand-600 transition-colors") #{product.title}
+                
+                div(class="mt-auto")
+                  div(class="flex items-end justify-between mb-4")
+                    div
+                      div(class="text-lg font-black text-brand-600")
+                        | #{product.newPrice ? Number(product.newPrice).toLocaleString('vi-VN') : 0}₫
+                      if product.discountPercentage > 0
+                        div(class="text-xs font-semibold text-surface-400 line-through")
+                          | #{Number(product.price).toLocaleString('vi-VN')}₫
+                  
+                  form(action=`/cart/add/${product._id}` method="POST" class="w-full")
                     input(type="hidden" name="quantity" value="1")
-                    button.btn.btn-primary.w-100.btn-sm(type="submit")
-                      i.bi.bi-cart-plus.me-1
+                    button(type="submit" class="w-full py-2.5 rounded-xl bg-brand-50 text-brand-600 font-bold text-sm hover:bg-brand-500 hover:text-white transition-colors flex items-center justify-center gap-2")
+                      i.bi.bi-cart-plus
                       | Thêm vào giỏ
-
-    else
-      //- Empty state
-      .text-center.py-5.my-5
-        i.bi.bi-heartbreak(style="font-size: 5rem; color: #dee2e6;")
-        h4.mt-4.text-muted Danh sách yêu thích trống
-        p.text-muted.mb-4 Hãy lưu những sản phẩm bạn yêu thích để không bỏ lỡ!
-        a.btn.btn-primary.px-4.py-2(href="/product")
-          i.bi.bi-grid.me-2
-          | Khám phá sản phẩm
+      else
+        //- Empty State
+        div(class="bento-card text-center py-20 mt-8")
+          div(class="w-24 h-24 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-6")
+            i.bi.bi-heartbreak-fill.text-5xl.text-rose-300
+          h4(class="text-2xl font-black text-surface-900 mb-2") Danh sách yêu thích trống
+          p(class="text-surface-500 font-medium mb-8") Hãy lưu lại những sản phẩm bạn yêu thích để dễ dàng mua sắm sau.
+          a(href="/product" class="btn-premium btn-premium-primary px-8 py-3.5")
+            i.bi.bi-grid.mr-2
+            | Khám phá sản phẩm ngay
 
   script.
     function removeFromWishlist(productId) {
-      if (confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) {
+      if (confirm('Bạn chắc chắn muốn xóa sản phẩm này khỏi danh sách yêu thích?')) {
         fetch(`/wishlist/${productId}`, { method: 'DELETE' })
           .then(res => res.json())
           .then(data => {
@@ -90,16 +97,6 @@ block main
               alert('❌ Không thể xóa. Vui lòng thử lại!');
             }
           }).catch(() => location.reload());
-      }
-    }
-
-    function switchView(view) {
-      const container = document.getElementById('wishlist-items');
-      if (!container) return;
-      if (view === 'list') {
-        container.className = 'row row-cols-1 g-3';
-      } else {
-        container.className = 'row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4';
       }
     }
 

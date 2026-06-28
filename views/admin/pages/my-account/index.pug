@@ -1,40 +1,61 @@
 extends ../../layout/default.pug
 
 block main
-  h1(class="mb-4") Thông tin cá nhân
+  div(class="max-w-4xl mx-auto space-y-6")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Hồ sơ cá nhân
+        p(class="text-surface-500 text-sm mt-1") Thông tin tài khoản quản trị hệ thống của bạn.
+      
+      a(href=`${prefixAdmin}/my-account/edit` class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
+        i.bi.bi-pencil-square.text-lg
+        | Chỉnh sửa hồ sơ
 
-  // Avatar
-  if (account.avatar)
-    img(src=account.avatar width="150px" class="mb-3")
-  else
-    img(src="/admin/images/avatar.png" width="150px" class="mb-3")
+    //- Profile Card
+    div(class="bg-white rounded-2xl border border-surface-200 shadow-xl shadow-surface-200/40 overflow-hidden")
+      //- Cover
+      div(class="h-40 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 relative overflow-hidden")
+        div(class="absolute inset-0 bg-black/10")
+        //- Decorative circles
+        div(class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-xl")
+        div(class="absolute bottom-0 left-20 w-32 h-32 rounded-full bg-white/10 blur-xl")
 
-  // Họ tên
-  if (account.fullname)
-    p Họ và tên: 
-      b #{account.fullname}
+      //- Content
+      div(class="px-8 pb-8 relative")
+        //- Avatar
+        div(class="absolute -top-16 left-8 p-1 bg-white rounded-2xl shadow-lg")
+          img(src=(account.avatar || 'https://dummyimage.com/200x200/cbd5e1/ffffff') class="w-32 h-32 rounded-xl object-cover border border-surface-100")
+          
+        div(class="flex justify-end pt-4 mb-8")
+          span(class=`px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-full border ${account.status == "active" ? "bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm shadow-emerald-500/10" : "bg-rose-50 text-rose-600 border-rose-200 shadow-sm shadow-rose-500/10"}`) 
+            if account.status == "active"
+              i(class="bi bi-circle-fill text-[8px] mr-1 align-middle")
+              | Hoạt động
+            else
+              i.bi.bi-slash-circle.text-sm.mr-1.align-middle
+              | Bị khóa
 
-  // Email
-  if (account.email)
-    p Email: 
-      b #{account.email}
+        div(class="mt-2")
+          h2(class="text-3xl font-bold text-surface-900 mb-1 tracking-tight") #{account.fullname || 'Chưa cập nhật'}
+          div(class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-100")
+            i.bi.bi-shield-check
+            | #{role ? role.title : 'Admin'}
 
-  // Số điện thoại
-  if (account.phone)
-    p Số điện thoại: 
-      b #{account.phone}
-
-  // Trạng thái
-  p Trạng thái: 
-    b #{account.status == "active" ? "Hoạt động" : "Dừng hoạt động"}
-
-  // Phân quyền
-  if (role && role.title)
-    p Phân quyền: 
-      b #{role.title}
-
-  // Nút chỉnh sửa
-  a(
-    href=`${prefixAdmin}/my-account/edit`
-    class="btn btn-primary"
-  ) Chỉnh sửa thông tin
+        div(class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6")
+          //- Info boxes
+          div(class="bg-surface-50 rounded-2xl p-5 border border-surface-200 hover:border-brand-300 transition-colors group")
+            div(class="flex items-center gap-4")
+              div(class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-brand-500 text-xl group-hover:scale-110 transition-transform")
+                i.bi.bi-envelope-at
+              div
+                p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-0.5") Địa chỉ Email
+                p(class="text-sm font-semibold text-surface-900") #{account.email || 'Chưa cập nhật'}
+                
+          div(class="bg-surface-50 rounded-2xl p-5 border border-surface-200 hover:border-brand-300 transition-colors group")
+            div(class="flex items-center gap-4")
+              div(class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-brand-500 text-xl group-hover:scale-110 transition-transform")
+                i.bi.bi-telephone
+              div
+                p(class="text-xs font-bold text-surface-500 uppercase tracking-wider mb-0.5") Số điện thoại
+                p(class="text-sm font-semibold text-surface-900") #{account.phone || 'Chưa cập nhật'}

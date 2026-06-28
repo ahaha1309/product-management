@@ -3,64 +3,107 @@ include ../../mixins/alert.pug
 include ../../mixins/select-tree.pug
 
 block main
-  h1.mb-4 Chỉnh sửa danh mục sản phẩm
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  +alert-success(messages.success)
+  
   if(role.permission.includes('products-category_edit'))
-    +alert-error(5000)
-    form(
-      action=`${prefixAdmin}/category-product/edit/${category.id}?_method=PATCH`
-      method="POST"
-      enctype='multipart/form-data'
-    )
+    div(class="max-w-4xl mx-auto")
+      //- Header
+      div(class="flex items-center justify-between mb-6")
+        div(class="flex items-center gap-3")
+          a(href=`${prefixAdmin}/category-product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+            i.bi.bi-arrow-left.text-lg
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chỉnh sửa danh mục
+        
+        button(type="submit" form="edit-category-form" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-check2-circle.text-lg
+          | Cập nhật
+          
+      form(id="edit-category-form" action=`${prefixAdmin}/category-product/edit/${category.id}?_method=PATCH` method="POST" enctype='multipart/form-data' class="space-y-6")
+        
+        //- Main Info
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+          h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+            i.bi.bi-info-circle.text-brand-500
+            | Thông tin cơ bản
+            
+          div(class="space-y-5")
+            div
+              label(class="block text-sm font-semibold text-surface-700 mb-1.5") Tiêu đề danh mục <span class="text-rose-500">*</span>
+              input(type="text" name="title" value=category.title required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+            
+            div
+              label(class="block text-sm font-semibold text-surface-700 mb-1.5") Danh mục cha
+              div(class="relative")
+                select(name="parent_id" id="parent_id" class="w-full appearance-none bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none cursor-pointer")
+                  option(value="") -- Không có (Là danh mục gốc) --
+                  if(categories && categories.length > 0)
+                    +select-tree(categories, 1, category.parent_id)
+                i.bi.bi-chevron-down.absolute.right-4.top-1.translate-y-2.text-surface-400.pointer-events-none
+            
+            div
+              label(class="block text-sm font-semibold text-surface-700 mb-1.5") Mô tả danh mục
+              textarea(name="description" id="description" rows="4" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none") !{category.description}
 
-      // Tiêu đề danh mục
-      .form-group.mb-3
-        label(for="title") Tiêu đề
-        input.form-control(
-          type="text"
-          id="title"
-          value=category.title
-          name="title"
-          placeholder="Nhập tiêu đề danh mục"
-          required
-        )
-      .mb-3 
-        label.form-label Mô tả
-        textarea.form-control(name="description" id='description' placeholder="Nhập mô tả sản phẩm" rows="5") !{category.description}
-      // Danh mục cha
-      .form-group.mb-3
-        label(for="parent_id") Danh mục cha
-        select.form-select(name="parent_id" id="parent_id")
-          option(value="") -- Không có --
-          if(categories && categories.length > 0)
-            +select-tree(categories, 1, category.parent_id)
-      .form-group.mb-3(upload-image)
-        label.mb-2(for="thumbnail" style='width:100%') Hình ảnh
-        input.form-control-file(type="file" name="thumbnail" style='width:100%'  accept='image/*' upload-image-input)
-        img.image-preview(src=category.thumbnail  upload-image-preview)
-        button.d-none.mx-2.position-relative(close-image-upload style="top:0" ) X
+        //- Media & Settings
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+          
+          //- Image
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-image.text-brand-500
+              | Hình ảnh đại diện
+            
+            div(class="space-y-4" upload-image)
+              div(class="relative border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 p-6 text-center hover:bg-surface-100 transition-colors group cursor-pointer")
+                input(type="file" name="thumbnail" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" upload-image-input)
+                i(class="bi bi-cloud-arrow-up text-4xl text-brand-400 mb-2 group-hover:scale-110 transition-transform inline-block")
+                p(class="text-sm font-medium text-surface-700") Click để thay đổi ảnh
+              
+              div(class="relative bg-white border border-surface-200 p-2 rounded-xl" id="image-preview-container")
+                img(src=category.thumbnail class="w-full h-40 object-cover rounded-lg" upload-image-preview)
+                button(type="button" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-rose-500 text-white rounded-full hover:bg-rose-600 shadow-md transition-colors" close-image-upload title="Xóa ảnh")
+                  i.bi.bi-x-lg.text-sm
 
-      // Vị trí
-      .form-group.mb-3
-        label(for="position") Vị trí
-        input.form-control(
-          type="number"
-          id="position"
-          value=category.position
-          name="position"
-          placeholder="Tự động tăng"
-        )
+          //- Settings
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-gear.text-brand-500
+              | Cài đặt
+              
+            div(class="space-y-5")
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-2") Trạng thái hiển thị
+                div(class="flex gap-4")
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="status" value="active" checked=(category.status=='active') class="w-4 h-4 text-brand-500 bg-white border-surface-300 focus:ring-brand-500")
+                    span(class="text-sm text-surface-700 font-medium") Hoạt động
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="status" value="inactive" checked=(category.status=='inactive') class="w-4 h-4 text-rose-500 bg-white border-surface-300 focus:ring-rose-500")
+                    span(class="text-sm text-surface-700 font-medium") Tạm dừng
+              
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Vị trí sắp xếp
+                input(type="number" name="position" value=category.position placeholder="Tự động" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
 
-      // Trạng thái
-      .form-group.mb-3
-        label Trạng thái
-        .form-control.d-flex.gap-3
-          label
-            input(type="radio" name="status" value="active" checked=(category.status=='active'))
-            | Hoạt động
-          label
-            input(type="radio" name="status" value="inactive" checked=(category.status=='inactive'))
-            | Dừng hoạt động
-    // Submit
-    button.btn.btn-primary(type="submit") Cập nhật
   else
-    .alert.alert-danger Bạn không có quyền chỉnh sửa danh mục sản phẩm
+    div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+      i.bi.bi-shield-lock.text-4xl.mb-3
+      h2(class="text-lg font-bold mb-1") Không có quyền truy cập
+      p(class="text-sm") Bạn không được cấp quyền để chỉnh sửa danh mục này.
+
+  script(src='/admin/js/product.js')
+  script.
+    // Image preview handling
+    document.querySelector('[upload-image-input]').addEventListener('change', function() {
+      const file = this.files[0];
+      const previewContainer = document.getElementById('image-preview-container');
+      if (file) previewContainer.classList.remove('hidden');
+    });
+    document.querySelector('[close-image-upload]').addEventListener('click', function() {
+      const previewContainer = document.getElementById('image-preview-container');
+      previewContainer.classList.add('hidden');
+      document.querySelector('[upload-image-preview]').src = '';
+      document.querySelector('[upload-image-input]').value = '';
+    });

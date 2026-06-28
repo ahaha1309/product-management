@@ -1,17 +1,35 @@
 extends ../../layout/default.pug
 block main
-  h1 Chi tiết Bài Viết
-  a.btn.btn-outline-secondary.mb-3(href=`${prefixAdmin}/articles`) &larr; Quay lại
-  if article
-    .card
-      .card-header
-        h3= article.title
-      .card-body
+  div(class="max-w-4xl mx-auto space-y-6")
+    //- Header
+    div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center gap-3")
+        a(href=`${prefixAdmin}/articles` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết Bài viết
+        
+    if article
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
         if article.thumbnail
-          img.img-fluid.mb-3(src=article.thumbnail alt=article.title style="max-height: 300px; object-fit: cover;")
-        .content !{article.description}
-        hr
-        p.text-muted Tác giả: #{article.author || 'Admin'}
-        p.text-muted Tạo lúc: #{new Date(article.createdAt).toLocaleString('vi-VN')}
-  else
-    p.text-danger Không tìm thấy bài viết.
+          img(src=article.thumbnail alt=article.title class="w-full h-80 object-cover")
+          
+        div(class="p-6 md:p-8")
+          h2(class="text-2xl font-bold text-surface-900 mb-4") #{article.title}
+          
+          div(class="flex flex-wrap gap-4 items-center text-sm text-surface-500 mb-8 pb-6 border-b border-surface-100")
+            div(class="flex items-center gap-2")
+              i.bi.bi-person-circle
+              | Tác giả: #{article.author || 'Admin'}
+            div(class="flex items-center gap-2")
+              i.bi.bi-calendar3
+              | #{new Date(article.createdAt).toLocaleString('vi-VN')}
+            div
+              span(class=`px-3 py-1 text-xs font-semibold rounded-full border ${article.status=="active" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-600 border-rose-200"}`) #{article.status=="active" ? "Hoạt động" : "Tạm dừng"}
+              
+          div(class="prose prose-sm md:prose-base max-w-none text-surface-700") !{article.description}
+          
+    else
+      div(class="bg-rose-50 border border-rose-200 text-rose-600 p-8 rounded-2xl flex flex-col items-center justify-center text-center")
+        i.bi.bi-exclamation-circle.text-5xl.mb-4
+        h2(class="text-xl font-bold mb-2") Không tìm thấy!
+        p(class="text-sm") Bài viết này không tồn tại hoặc đã bị xóa.

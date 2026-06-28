@@ -1,285 +1,190 @@
 extends ../../layout/default.pug
 
 block main
-  .admin-dashboard
-    //- Welcome banner
-    .dashboard-welcome
-      .welcome-content
-        h1.welcome-title
-          i.bi.bi-speedometer2.me-3
-          | Dashboard Quản Trị
-        p.welcome-subtitle Xin chào Admin! Đây là tổng quan hệ thống VanHa Tech Store.
-      .welcome-meta
-        span.meta-badge
-          i.bi.bi-calendar3.me-1
-          span#current-date
+  div(class="max-w-7xl mx-auto space-y-6")
+    
+    //- Welcome Header
+    div(class="bg-gradient-to-br from-surface-900 to-surface-950 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between shadow-2xl shadow-surface-900/20 relative overflow-hidden")
+      //- Decorative blur
+      div(class="absolute -top-24 -right-24 w-64 h-64 bg-brand-500/30 rounded-full blur-[80px] pointer-events-none")
+      div(class="relative z-10")
+        h1(class="text-2xl md:text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3")
+          i.bi.bi-speedometer2.text-brand-400
+          | Tổng quan hệ thống
+        p(class="text-surface-400 font-medium") Xin chào Admin! Theo dõi hiệu suất và quản lý cửa hàng VanHa Tech.
+      div(class="relative z-10 mt-4 md:mt-0 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2.5 flex items-center gap-2 text-white")
+        i.bi.bi-calendar3.text-brand-400
+        span(id="current-date" class="text-sm font-medium")
+        
+    //- Key Metrics (Stats)
+    div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4")
+      //- Revenue
+      div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
+        div(class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110")
+        div(class="relative z-10 flex justify-between items-start mb-4")
+          div(class="w-10 h-10 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-lg")
+            i.bi.bi-currency-dollar
+          span(class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1")
+            i.bi.bi-arrow-up-right
+            | Đang tải
+        div(class="relative z-10")
+          p(class="text-sm font-medium text-surface-500 mb-1") Doanh thu (30 ngày)
+          h3(id="stat-revenue" class="text-2xl font-bold text-surface-900 tracking-tight") --
 
-    //- Stats Cards Row 1
-    .stats-row
-      .stat-card.stat-revenue
-        .stat-icon
-          i.bi.bi-currency-dollar
-        .stat-info
-          .stat-label Doanh thu (30 ngày)
-          .stat-value#stat-revenue --
-          .stat-trend
-            i.bi.bi-arrow-up.text-success
-            span.text-success Đang tải...
-
-      .stat-card.stat-orders
-        .stat-icon
-          i.bi.bi-bag-check
-        .stat-info
-          .stat-label Đơn hàng hôm nay
-          .stat-value#stat-orders --
-          .stat-trend
+      //- Orders
+      div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
+        div(class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110")
+        div(class="relative z-10 flex justify-between items-start mb-4")
+          div(class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg")
+            i.bi.bi-bag-check
+          span(class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-md flex items-center gap-1")
             i.bi.bi-clock
-            span Đang tải...
+            | Đang tải
+        div(class="relative z-10")
+          p(class="text-sm font-medium text-surface-500 mb-1") Đơn hàng hôm nay
+          h3(id="stat-orders" class="text-2xl font-bold text-surface-900 tracking-tight") --
 
-      .stat-card.stat-users
-        .stat-icon
-          i.bi.bi-people
-        .stat-info
-          .stat-label Tổng khách hàng
-          .stat-value#stat-users --
-          .stat-trend
-            i.bi.bi-arrow-up.text-success
-            span.text-success Đang tải...
+      //- Users
+      div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
+        div(class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110")
+        div(class="relative z-10 flex justify-between items-start mb-4")
+          div(class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg")
+            i.bi.bi-people
+          span(class="text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-1 rounded-md flex items-center gap-1")
+            i.bi.bi-arrow-up-right
+            | Đang tải
+        div(class="relative z-10")
+          p(class="text-sm font-medium text-surface-500 mb-1") Tổng khách hàng
+          h3(id="stat-users" class="text-2xl font-bold text-surface-900 tracking-tight") --
 
-      .stat-card.stat-products
-        .stat-icon
-          i.bi.bi-box-seam
-        .stat-info
-          .stat-label Sản phẩm active
-          .stat-value#stat-products --
-          .stat-trend
-            i.bi.bi-check-circle.text-success
-            span.text-success Đang tải...
+      //- Products
+      div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
+        div(class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110")
+        div(class="relative z-10 flex justify-between items-start mb-4")
+          div(class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg")
+            i.bi.bi-box-seam
+          span(class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1")
+            i.bi.bi-check-circle
+            | Đang tải
+        div(class="relative z-10")
+          p(class="text-sm font-medium text-surface-500 mb-1") Sản phẩm Active
+          h3(id="stat-products" class="text-2xl font-bold text-surface-900 tracking-tight") --
 
-    //- Main content grid
-    .dashboard-grid
-      //- Left column
-      .dashboard-main
-
-        //- Recent Orders
-        .dashboard-card
-          .card-header-admin
-            h6.card-title-admin
-              i.bi.bi-bag-check.me-2
-              | Đơn hàng gần đây
-            a.card-action(href=`${prefixAdmin}/orders`) Xem tất cả →
-          .table-responsive
-            table.admin-table
+    //- Main Grid (Bento Box Layout)
+    div(class="grid grid-cols-1 xl:grid-cols-3 gap-6")
+      
+      //- Left Column (Orders & Products)
+      div(class="xl:col-span-2 space-y-6")
+        
+        //- Recent Orders Table
+        div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden flex flex-col")
+          div(class="p-5 border-b border-surface-100 flex justify-between items-center bg-surface-50/50")
+            h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2")
+              i.bi.bi-cart-check.text-brand-500
+              | Đơn hàng mới nhất
+            a(href=`${prefixAdmin}/orders` class="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1")
+              | Xem tất cả
+              i.bi.bi-arrow-right
+          
+          div(class="overflow-x-auto")
+            table(class="w-full text-left border-collapse")
               thead
+                tr(class="bg-surface-50 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                  th(class="px-5 py-3 border-b border-surface-100") Mã đơn
+                  th(class="px-5 py-3 border-b border-surface-100") Khách hàng
+                  th(class="px-5 py-3 border-b border-surface-100") Số tiền
+                  th(class="px-5 py-3 border-b border-surface-100") Trạng thái
+                  th(class="px-5 py-3 border-b border-surface-100") Thanh toán
+              tbody(id="recent-orders-body" class="divide-y divide-surface-100 text-sm")
                 tr
-                  th Mã đơn
-                  th Khách hàng
-                  th Sản phẩm
-                  th Số tiền
-                  th Trạng thái
-                  th Thanh toán
-              tbody#recent-orders-body
-                tr
-                  td(colspan="6")
-                    .text-center.py-3.text-muted
-                      i.bi.bi-hourglass-split.me-2
-                      | Đang tải đơn hàng...
+                  td(colspan="5" class="px-5 py-8 text-center text-surface-400")
+                    i.bi.bi-arrow-repeat.animate-spin.text-2xl.mb-2.inline-block
+                    p Đang tải dữ liệu...
 
         //- Top Products
-        .dashboard-card.mt-4
-          .card-header-admin
-            h6.card-title-admin
-              i.bi.bi-trophy.me-2
+        div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
+          div(class="p-5 border-b border-surface-100 flex justify-between items-center bg-surface-50/50")
+            h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2")
+              i.bi.bi-trophy.text-amber-500
               | Sản phẩm bán chạy
-            a.card-action(href=`${prefixAdmin}/analytics`) Phân tích →
-          #top-products-list
-            .text-center.py-3.text-muted
-              i.bi.bi-hourglass-split.me-2
-              | Đang tải...
+            a(href=`${prefixAdmin}/analytics` class="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1")
+              | Xem báo cáo
+              i.bi.bi-arrow-right
+          
+          div(id="top-products-list" class="divide-y divide-surface-100")
+            div(class="px-5 py-8 text-center text-surface-400")
+              i.bi.bi-arrow-repeat.animate-spin.text-2xl.mb-2.inline-block
+              p Đang tải dữ liệu...
 
-      //- Right column
-      .dashboard-side
+      //- Right Column (Quick Actions, Reviews, Status)
+      div(class="space-y-6")
+        
+        //- Quick Links
+        div(class="bg-white rounded-2xl border border-surface-100 shadow-sm p-5")
+          h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2 mb-4")
+            i.bi.bi-lightning-charge.text-brand-500
+            | Truy cập nhanh
+          
+          div(class="grid grid-cols-2 gap-3")
+            a(href=`${prefixAdmin}/product/create` class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-50 hover:bg-brand-50 border border-transparent hover:border-brand-100 text-surface-600 hover:text-brand-600 transition-all group")
+              i(class="bi bi-plus-circle text-xl mb-1 transition-transform group-hover:scale-110")
+              span(class="text-xs font-medium") Thêm SP
+            a(href=`${prefixAdmin}/orders` class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-50 hover:bg-brand-50 border border-transparent hover:border-brand-100 text-surface-600 hover:text-brand-600 transition-all group")
+              i(class="bi bi-bag-check text-xl mb-1 transition-transform group-hover:scale-110")
+              span(class="text-xs font-medium") Duyệt đơn
+            a(href=`${prefixAdmin}/articles/create` class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-50 hover:bg-brand-50 border border-transparent hover:border-brand-100 text-surface-600 hover:text-brand-600 transition-all group")
+              i(class="bi bi-pen text-xl mb-1 transition-transform group-hover:scale-110")
+              span(class="text-xs font-medium") Viết bài
+            a(href=`${prefixAdmin}/users` class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-50 hover:bg-brand-50 border border-transparent hover:border-brand-100 text-surface-600 hover:text-brand-600 transition-all group")
+              i(class="bi bi-people text-xl mb-1 transition-transform group-hover:scale-110")
+              span(class="text-xs font-medium") Khách hàng
 
-        //- Quick links
-        .dashboard-card
-          .card-header-admin
-            h6.card-title-admin
-              i.bi.bi-lightning-fill.me-2
-              | Truy cập nhanh
-          .quick-links-grid
-            a.quick-link-item(href=`${prefixAdmin}/product/create`)
-              i.bi.bi-plus-circle
-              span Thêm SP
-            a.quick-link-item(href=`${prefixAdmin}/product`)
-              i.bi.bi-box-seam
-              span Sản phẩm
-            a.quick-link-item(href=`${prefixAdmin}/orders`)
-              i.bi.bi-bag-check
-              span Đơn hàng
-            a.quick-link-item(href=`${prefixAdmin}/accounts`)
-              i.bi.bi-people
-              span Tài khoản
-            a.quick-link-item(href=`${prefixAdmin}/reviews`)
-              i.bi.bi-star
-              span Reviews
-            a.quick-link-item(href=`${prefixAdmin}/analytics`)
-              i.bi.bi-graph-up
-              span Thống kê
-            a.quick-link-item(href=`${prefixAdmin}/loyalty`)
-              i.bi.bi-award
-              span Loyalty
-            a.quick-link-item(href=`${prefixAdmin}/articles`)
-              i.bi.bi-newspaper
-              span Bài viết
+        //- Latest Reviews
+        div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
+          div(class="p-5 border-b border-surface-100 flex justify-between items-center")
+            h2(class="text-base font-semibold text-surface-900 flex items-center gap-2")
+              i.bi.bi-star-fill.text-amber-400
+              | Đánh giá mới
+          
+          div(id="latest-reviews-list" class="divide-y divide-surface-100")
+            div(class="px-5 py-8 text-center text-surface-400")
+              i.bi.bi-arrow-repeat.animate-spin.text-2xl.mb-2.inline-block
+              p Đang tải dữ liệu...
 
-        //- Review summary
-        .dashboard-card.mt-4
-          .card-header-admin
-            h6.card-title-admin
-              i.bi.bi-star.me-2
-              | Reviews mới
-            a.card-action(href=`${prefixAdmin}/reviews`) Duyệt →
-          #latest-reviews-list
-            .text-center.py-3.text-muted
-              i.bi.bi-hourglass-split.me-2
-              | Đang tải...
-
-        //- System status
-        .dashboard-card.mt-4
-          .card-header-admin
-            h6.card-title-admin
-              i.bi.bi-shield-check.me-2
-              | Trạng thái hệ thống
-          .status-list
-            .status-item
-              .status-dot.status-ok
-              span Database MongoDB
-              span.ms-auto.badge.bg-success Online
-            .status-item
-              .status-dot.status-ok
-              span VNPAY Gateway
-              span.ms-auto.badge.bg-success Active
-            .status-item
-              .status-dot.status-ok
-              span Email Service
-              span.ms-auto.badge.bg-warning Kiểm tra
-            .status-item
-              .status-dot.status-ok
-              span Chatbot AI
-              span.ms-auto.badge.bg-success Active
-
-  style.
-    .admin-dashboard { padding: 0; }
-    .dashboard-welcome {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .welcome-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
-    .welcome-subtitle { opacity: 0.85; margin: 0; }
-    .meta-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      padding: 0 24px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      border: 1px solid #f0f0f0;
-    }
-    .stat-icon {
-      width: 56px; height: 56px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-    }
-    .stat-revenue .stat-icon { background: #e8f5e9; color: #2e7d32; }
-    .stat-orders .stat-icon { background: #e3f2fd; color: #1565c0; }
-    .stat-users .stat-icon { background: #fce4ec; color: #c62828; }
-    .stat-products .stat-icon { background: #fff3e0; color: #e65100; }
-    .stat-label { font-size: 0.8rem; color: #666; margin-bottom: 4px; }
-    .stat-value { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
-    .stat-trend { font-size: 0.78rem; margin-top: 4px; }
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 24px;
-      padding: 0 24px 24px;
-    }
-    .dashboard-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      border: 1px solid #f0f0f0;
-    }
-    .card-header-admin {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .card-title-admin { font-size: 1rem; font-weight: 600; margin: 0; color: #1a1a2e; }
-    .card-action { font-size: 0.85rem; color: #667eea; text-decoration: none; }
-    .card-action:hover { color: #764ba2; }
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .admin-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #666; border-bottom: 2px solid #e9ecef; }
-    .admin-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
-    .admin-table tr:hover td { background: #fafafa; }
-    .quick-links-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .quick-link-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 14px 8px;
-      border-radius: 10px;
-      background: #f8f9fa;
-      text-decoration: none;
-      color: #333;
-      font-size: 0.75rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .quick-link-item i { font-size: 1.2rem; color: #667eea; }
-    .quick-link-item:hover { background: #e8eeff; transform: translateY(-2px); }
-    .status-list { display: flex; flex-direction: column; gap: 10px; }
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-    }
-    .status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      flex-shrink: 0;
-    }
-    @media (max-width: 1200px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .dashboard-grid { grid-template-columns: 1fr; }
-    }
+        //- System Status
+        div(class="bg-surface-900 rounded-2xl p-5 shadow-xl shadow-surface-900/10 text-white relative overflow-hidden")
+          div(class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -mr-8 -mt-8")
+          h2(class="text-base font-semibold flex items-center gap-2 mb-4 relative z-10")
+            i.bi.bi-shield-check.text-emerald-400
+            | Trạng thái hệ thống
+            
+          div(class="space-y-3 relative z-10")
+            div(class="flex items-center justify-between text-sm")
+              div(class="flex items-center gap-2")
+                span(class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse")
+                span(class="text-surface-300") Database (MongoDB)
+              span(class="text-emerald-400 font-medium") Online
+            
+            div(class="flex items-center justify-between text-sm")
+              div(class="flex items-center gap-2")
+                span(class="w-2 h-2 rounded-full bg-emerald-400")
+                span(class="text-surface-300") Payment Gateway
+              span(class="text-emerald-400 font-medium") Active
+              
+            div(class="flex items-center justify-between text-sm")
+              div(class="flex items-center gap-2")
+                span(class="w-2 h-2 rounded-full bg-amber-400")
+                span(class="text-surface-300") Email Service
+              span(class="text-amber-400 font-medium") Kiểm tra
 
   script.
     // Set current date
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Format utility
+    const formatMoney = (amount) => {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    };
 
     // Load dashboard stats via API
     async function loadDashboardData() {
@@ -292,7 +197,7 @@ block main
         // Update stats
         if (stats.generalStats) {
           const g = stats.generalStats;
-          document.getElementById('stat-revenue').textContent = (g.totalRevenue || 0).toLocaleString('vi-VN') + 'đ';
+          document.getElementById('stat-revenue').textContent = formatMoney(g.totalRevenue || 0);
           document.getElementById('stat-orders').textContent = (g.todayOrders || g.totalOrders || 0).toLocaleString('vi-VN');
           document.getElementById('stat-users').textContent = (g.totalUsers || 0).toLocaleString('vi-VN');
           document.getElementById('stat-products').textContent = (g.totalProducts || 0).toLocaleString('vi-VN');
@@ -301,51 +206,85 @@ block main
         // Recent orders
         if (stats.liveOrders && stats.liveOrders.length > 0) {
           const tbody = document.getElementById('recent-orders-body');
-          tbody.innerHTML = stats.liveOrders.map(order => `
-            <tr>
-              <td><strong>#${order.orderCode || 'N/A'}</strong></td>
-              <td>${order.userName || 'N/A'}</td>
-              <td>${order.products ? order.products.length : 0} SP</td>
-              <td>${(order.amount || 0).toLocaleString('vi-VN')}đ</td>
-              <td><span class="badge bg-${order.status === 'finish' ? 'success' : order.status === 'canceled' ? 'danger' : order.status === 'confirm' ? 'primary' : 'warning'}">${order.status || 'pending'}</span></td>
-              <td><span class="badge bg-${order.paymentStatus === 'success' ? 'success' : order.paymentStatus === 'failed' ? 'danger' : 'warning'}">${order.paymentStatus || 'pending'}</span></td>
-            </tr>
-          `).join('');
-        } else {
-          document.getElementById('recent-orders-body').innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Không có đơn hàng nào</td></tr>';
-        }
+          tbody.innerHTML = stats.liveOrders.map(order => {
+            const statusColors = {
+              'finish': 'bg-emerald-50 text-emerald-600 border-emerald-200',
+              'canceled': 'bg-rose-50 text-rose-600 border-rose-200',
+              'confirm': 'bg-blue-50 text-blue-600 border-blue-200',
+              'pending': 'bg-amber-50 text-amber-600 border-amber-200'
+            };
+            const pStatusColors = {
+              'success': 'bg-emerald-50 text-emerald-600 border-emerald-200',
+              'failed': 'bg-rose-50 text-rose-600 border-rose-200',
+              'pending': 'bg-amber-50 text-amber-600 border-amber-200'
+            };
+            
+            const sClass = statusColors[order.status] || statusColors['pending'];
+            const psClass = pStatusColors[order.paymentStatus] || pStatusColors['pending'];
 
-        // Latest reviews
-        if (stats.latestReviews && stats.latestReviews.length > 0) {
-          const reviewsList = document.getElementById('latest-reviews-list');
-          reviewsList.innerHTML = stats.latestReviews.slice(0, 4).map(r => `
-            <div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="font-size:0.85rem;">${r.userName || 'Ẩn danh'}</strong>
-                <span style="color:#ffc107;">${'★'.repeat(r.rating || 5)}</span>
-              </div>
-              <p style="font-size:0.8rem;color:#666;margin:4px 0 0;">${(r.comment || '').substring(0, 60)}${r.comment && r.comment.length > 60 ? '...' : ''}</p>
-            </div>
-          `).join('');
+            return `
+              <tr class="hover:bg-surface-50 transition-colors group">
+                <td class="px-5 py-3 whitespace-nowrap">
+                  <a href="#{prefixAdmin}/orders/detail/${order._id}" class="font-semibold text-surface-900 group-hover:text-brand-600 transition-colors">#${(order.orderCode || 'N/A').toUpperCase()}</a>
+                </td>
+                <td class="px-5 py-3">
+                  <div class="font-medium text-surface-900">${order.userName || 'N/A'}</div>
+                </td>
+                <td class="px-5 py-3 font-medium text-surface-900">${formatMoney(order.amount || 0)}</td>
+                <td class="px-5 py-3">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium border ${sClass}">${order.status || 'pending'}</span>
+                </td>
+                <td class="px-5 py-3">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium border ${psClass}">${order.paymentStatus || 'pending'}</span>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          document.getElementById('recent-orders-body').innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-surface-500">Không có đơn hàng nào</td></tr>';
         }
 
         // Top products
         if (stats.topSellingProducts && stats.topSellingProducts.length > 0) {
           const topList = document.getElementById('top-products-list');
           topList.innerHTML = stats.topSellingProducts.map((p, i) => `
-            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0;">
-              <span style="width:24px;height:24px;background:#667eea;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">${i+1}</span>
-              <img src="${p.thumbnail || '/image/logo.png'}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;">
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title || 'N/A'}</div>
-                <div style="font-size:0.75rem;color:#666;">Đã bán: ${p.totalSold || 0}</div>
+            <div class="px-5 py-3 flex items-center gap-3 hover:bg-surface-50 transition-colors">
+              <div class="w-6 h-6 rounded-full bg-surface-100 flex items-center justify-center text-xs font-bold text-surface-600 shrink-0 border border-surface-200">
+                ${i+1}
+              </div>
+              <img src="${p.thumbnail || '/image/logo.png'}" class="w-10 h-10 rounded-lg object-cover border border-surface-200 shadow-sm" alt="Product">
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-semibold text-surface-900 truncate" title="${p.productTitle || 'N/A'}">${p.productTitle || 'N/A'}</h4>
+                <p class="text-xs text-surface-500 mt-0.5">Đã bán: <span class="font-medium text-surface-900">${p.sold || 0}</span></p>
               </div>
             </div>
           `).join('');
+        } else {
+          document.getElementById('top-products-list').innerHTML = '<div class="px-5 py-8 text-center text-surface-500">Chưa có dữ liệu</div>';
+        }
+
+        // Latest reviews
+        if (stats.latestReviews && stats.latestReviews.length > 0) {
+          const reviewsList = document.getElementById('latest-reviews-list');
+          reviewsList.innerHTML = stats.latestReviews.slice(0, 4).map(r => `
+            <div class="px-5 py-3 hover:bg-surface-50 transition-colors">
+              <div class="flex justify-between items-start mb-1">
+                <strong class="text-sm font-semibold text-surface-900">${r.userName || 'Ẩn danh'}</strong>
+                <div class="flex gap-0.5 text-amber-400 text-xs">
+                  ${Array(r.rating || 5).fill('<i class="bi bi-star-fill"></i>').join('')}
+                </div>
+              </div>
+              <p class="text-xs text-surface-600 line-clamp-2">${r.comment || ''}</p>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('latest-reviews-list').innerHTML = '<div class="px-5 py-8 text-center text-surface-500">Chưa có đánh giá</div>';
         }
 
       } catch(e) {
         console.log('Dashboard load error:', e);
       }
     }
+    
+    // Initialize
     loadDashboardData();

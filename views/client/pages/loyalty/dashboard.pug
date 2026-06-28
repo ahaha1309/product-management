@@ -1,110 +1,112 @@
 extends ../../layouts/default.pug
 
 block main
-  .container.mt-5.mb-5
+  div(class="container mx-auto px-4 max-w-6xl py-12 mb-20")
     //- Breadcrumb
-    nav(aria-label="breadcrumb")
-      ol.breadcrumb
-        li.breadcrumb-item
-          a(href="/loyalty") Thành viên
-        li.breadcrumb-item.active Dashboard
+    div(class="flex items-center gap-2 text-sm font-medium text-surface-500 mb-8")
+      a(href="/loyalty" class="hover:text-brand-600 transition-colors") Thành viên
+      i(class="bi bi-chevron-right text-[10px]")
+      span(class="text-surface-900") Dashboard Chi Tiết
 
-    h4.fw-bold.mb-4
-      i.bi.bi-bar-chart-fill.text-primary.me-2
+    h4(class="text-2xl font-black text-surface-900 mb-6 flex items-center gap-3")
+      i.bi.bi-bar-chart-fill.text-brand-500
       | Loyalty Dashboard
 
     //- Stats top bar
-    .row.g-3.mb-4
-      .col-6.col-md-3
-        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px; background:linear-gradient(135deg,#667eea,#764ba2); color:white;")
-          .fs-3.fw-bold #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
-          .small.opacity-75 Điểm hiện tại
-      .col-6.col-md-3
-        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
-          .fs-3.fw-bold.text-warning #{loyalty.currentLevel || 'BRONZE'}
-          .small.text-muted Hạng hiện tại
-      .col-6.col-md-3
-        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
-          .fs-3.fw-bold.text-success #{(loyalty.transactions || []).filter(t => t.points > 0).reduce((a,b) => a+b.points, 0).toLocaleString('vi-VN')}
-          .small.text-muted Tổng điểm kiếm
-      .col-6.col-md-3
-        .card.border-0.shadow-sm.text-center.p-3(style="border-radius:12px;")
-          .fs-3.fw-bold.text-danger #{Math.abs((loyalty.transactions || []).filter(t => t.points < 0).reduce((a,b) => a+b.points, 0)).toLocaleString('vi-VN')}
-          .small.text-muted Điểm đã dùng
+    div(class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8")
+      div(class="bento-card !p-6 bg-gradient-to-br from-brand-500 to-blue-600 text-white relative overflow-hidden")
+        div(class="absolute top-0 right-0 p-4 opacity-10 text-6xl") 💎
+        div(class="text-3xl font-black mb-1 relative z-10") #{(loyalty.totalPoints || 0).toLocaleString('vi-VN')}
+        div(class="text-sm font-medium opacity-80 relative z-10") Xu hiện tại
+      
+      div(class="bento-card !p-6")
+        div(class="text-3xl font-black text-amber-500 mb-1") #{loyalty.currentLevel || 'BRONZE'}
+        div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Hạng hiện tại
+      
+      div(class="bento-card !p-6")
+        div(class="text-3xl font-black text-emerald-500 mb-1") #{(loyalty.transactions || []).filter(t => t.points > 0).reduce((a,b) => a+b.points, 0).toLocaleString('vi-VN')}
+        div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Tổng xu đã kiếm
+      
+      div(class="bento-card !p-6")
+        div(class="text-3xl font-black text-rose-500 mb-1") #{Math.abs((loyalty.transactions || []).filter(t => t.points < 0).reduce((a,b) => a+b.points, 0)).toLocaleString('vi-VN')}
+        div(class="text-sm font-bold text-surface-500 uppercase tracking-wider") Xu đã sử dụng
 
-    .row.g-4
-      //- Tier progression
-      .col-lg-8
-        .card.border-0.shadow-sm.p-4.mb-4(style="border-radius:16px;")
-          h6.fw-bold.mb-3 So Sánh Các Hạng
-          .row.g-2
+    div(class="grid grid-cols-1 lg:grid-cols-3 gap-8")
+      
+      //- Left Col: Tiers & Rewards (Spans 2)
+      div(class="lg:col-span-2 space-y-8")
+        
+        //- Tier progression
+        div(class="bento-card")
+          h6(class="text-lg font-bold text-surface-900 mb-6") Lộ Trình Thăng Hạng
+          div(class="grid grid-cols-2 sm:grid-cols-4 gap-4")
             - const tiers = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
-            - const tierData = { BRONZE: {min: 0, discount: 0, icon: '🥉', color: '#cd7f32'}, SILVER: {min: 100, discount: 5, icon: '🥈', color: '#c0c0c0'}, GOLD: {min: 300, discount: 10, icon: '🥇', color: '#ffd700'}, PLATINUM: {min: 500, discount: 15, icon: '💎', color: '#667eea'} }
+            - const tierData = { BRONZE: {min: 0, discount: 0, icon: '🥉'}, SILVER: {min: 100, discount: 5, icon: '🥈'}, GOLD: {min: 300, discount: 10, icon: '🥇'}, PLATINUM: {min: 500, discount: 15, icon: '💎'} }
+            
             each tier in tiers
               - const td = tierData[tier]
-              .col-6.col-md-3
-                .card.text-center.p-3.border-2(
-                  class=tier === (loyalty.currentLevel || 'BRONZE') ? 'border-primary' : 'border-light'
-                  style=`border-radius:10px; ${tier === (loyalty.currentLevel || 'BRONZE') ? 'background:#f0f4ff;' : ''}`
-                )
-                  .fs-2 #{td.icon}
-                  .fw-bold.small #{tier}
-                  .text-muted.small #{td.min}+ điểm
-                  .text-primary.small #{td.discount}% giảm
-                  if tier === (loyalty.currentLevel || 'BRONZE')
-                    span.badge.bg-primary.mt-1 Hiện tại
+              - const isCurrent = tier === (loyalty.currentLevel || 'BRONZE')
+              
+              div(class=`rounded-2xl p-4 text-center border-2 transition-all ${isCurrent ? 'border-brand-500 bg-brand-50 relative' : 'border-slate-100 bg-surface-50'}`)
+                if isCurrent
+                  div(class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-500 text-white text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full") Hiện tại
+                div(class="text-4xl mb-3") #{td.icon}
+                div(class="font-black text-surface-900 mb-1") #{tier}
+                div(class="text-xs font-semibold text-surface-500 mb-3") #{td.min}+ xu
+                div(class="text-sm font-bold text-brand-600 bg-white rounded-lg py-1.5 border border-slate-100") #{td.discount}% giảm
 
         //- Available Rewards
-        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
-          h6.fw-bold.mb-3
-            i.bi.bi-gift.me-2
-            | Thưởng Có Thể Đổi
+        div(class="bento-card")
+          h6(class="text-lg font-bold text-surface-900 mb-6 flex items-center gap-2")
+            i.bi.bi-gift-fill.text-rose-500
+            | Có thể đổi ngay
+          
           if availableRewards && availableRewards.length
-            .row.g-2
+            div(class="grid grid-cols-1 sm:grid-cols-2 gap-4")
               each reward in availableRewards
                 if reward.available
-                  .col-md-6
-                    .card.border.p-3(style="border-radius:10px; border-color:#667eea !important;")
-                      .d-flex.align-items-center.gap-3
-                        span.fs-3 #{reward.icon}
-                        div
-                          .fw-semibold #{reward.name}
-                          .text-muted.small #{reward.description}
-                          .text-primary.fw-bold #{reward.pointsRequired} điểm
-                      button.btn.btn-primary.btn-sm.mt-2.w-100(onclick=`quickRedeem('${reward.id}', ${reward.pointsRequired})`)
-                        | Đổi Ngay
+                  div(class="rounded-2xl p-5 border-2 border-brand-500 bg-brand-50")
+                    div(class="flex gap-4 items-center mb-4")
+                      div(class="text-4xl") #{reward.icon}
+                      div
+                        h6(class="font-bold text-surface-900 text-sm") #{reward.name}
+                        div(class="font-black text-brand-600 mt-1") #{reward.pointsRequired} xu
+                    p(class="text-xs text-surface-500 mb-4") #{reward.description}
+                    button(onclick=`quickRedeem('${reward.id}', ${reward.pointsRequired})` class="btn-premium btn-premium-primary w-full py-2.5 text-sm")
+                      | Đổi Ngay
           else
-            .text-center.text-muted.py-3 Không có thưởng khả dụng
+            div(class="text-center py-10 bg-surface-50 rounded-2xl border border-dashed border-slate-200")
+              p(class="text-sm font-medium text-surface-500") Bạn chưa đủ xu để đổi bất kỳ phần thưởng nào.
 
-      //- FAQ
-      .col-lg-4
-        .card.border-0.shadow-sm.p-4(style="border-radius:16px;")
-          h6.fw-bold.mb-3
-            i.bi.bi-question-circle.me-2
-            | FAQ
-          .accordion#faqAccordion
-            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
-              h2.accordion-header
-                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq1")
-                  | Điểm có hết hạn không?
-              .accordion-collapse.collapse#faq1
-                .accordion-body.text-muted.small Điểm không bao giờ hết hạn, nhưng thưởng đổi có thể hết hạn 30 ngày.
-            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
-              h2.accordion-header
-                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq2")
-                  | Làm sao lên tier?
-              .accordion-collapse.collapse#faq2
-                .accordion-body.text-muted.small Tiếp tục mua sắm để kiếm điểm. Hệ thống tự động nâng tier của bạn.
-            .accordion-item.border-0.mb-2(style="border-radius:8px; overflow:hidden;")
-              h2.accordion-header
-                button.accordion-button.collapsed.fw-semibold(type="button" data-bs-toggle="collapse" data-bs-target="#faq3")
-                  | Có thể hoàn lại điểm không?
-              .accordion-collapse.collapse#faq3
-                .accordion-body.text-muted.small Không, điểm không thể hoàn lại sau khi đổi thưởng.
+      //- Right Col: FAQ
+      div(class="lg:col-span-1")
+        div(class="bento-card")
+          h6(class="text-lg font-bold text-surface-900 mb-6 flex items-center gap-2")
+            i.bi.bi-question-circle-fill.text-brand-500
+            | Câu hỏi thường gặp
+          
+          div(class="space-y-4")
+            div(class="bg-surface-50 rounded-2xl p-5 border border-slate-100")
+              h3(class="font-bold text-surface-900 text-sm mb-2 flex items-start gap-2")
+                i(class="bi bi-clock text-amber-500")
+                | Xu có hết hạn không?
+              p(class="text-sm text-surface-600 leading-relaxed") Xu tích lũy không bao giờ hết hạn. Tuy nhiên, các voucher sau khi đổi sẽ có hạn sử dụng là 30 ngày.
+              
+            div(class="bg-surface-50 rounded-2xl p-5 border border-slate-100")
+              h3(class="font-bold text-surface-900 text-sm mb-2 flex items-start gap-2")
+                i(class="bi bi-arrow-up-circle text-emerald-500")
+                | Làm sao để thăng hạng?
+              p(class="text-sm text-surface-600 leading-relaxed") Hạng được tính dựa trên số xu bạn tích lũy được trong suốt thời gian sử dụng. Hệ thống tự động nâng hạng ngay khi đủ xu.
+              
+            div(class="bg-surface-50 rounded-2xl p-5 border border-slate-100")
+              h3(class="font-bold text-surface-900 text-sm mb-2 flex items-start gap-2")
+                i(class="bi bi-arrow-counterclockwise text-rose-500")
+                | Có thể hoàn lại xu không?
+              p(class="text-sm text-surface-600 leading-relaxed") Rất tiếc, một khi đã sử dụng xu để đổi lấy phần thưởng hoặc voucher, bạn không thể hoàn tác thao tác này.
 
   script.
     function quickRedeem(rewardId, points) {
-      if (confirm(`Dùng ${points} điểm để nhận thưởng này?`)) {
+      if (confirm(`Dùng ${points} xu để nhận phần thưởng này?`)) {
         fetch('/loyalty/redeem', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -116,7 +118,7 @@ block main
             alert('✅ ' + data.message);
             location.reload();
           } else {
-            alert('❌ ' + (data.message || 'Thất bại'));
+            alert('❌ ' + (data.message || 'Đổi thưởng thất bại'));
           }
         });
       }

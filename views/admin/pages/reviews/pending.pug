@@ -1,43 +1,71 @@
 extends ../../layout/default.pug
 
 block main
-  .admin-reviews-container
-    h2 📝 Quản Lý Reviews
+  div(class="max-w-5xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight") Quản Lý Reviews
+        p(class="text-surface-500 text-sm mt-1") Xem xét và phê duyệt các đánh giá từ khách hàng.
 
-    .filter-bar
-      select(onchange=`filterByStatus(this.value)`)
-        option(value='approved') Đã duyệt
-        option(value='pending') Chờ duyệt
-        option(value='rejected') Bị từ chối
+      //- Filter
+      div(class="bg-white p-1 rounded-xl border border-surface-200 shadow-sm inline-flex")
+        select(onchange=`filterByStatus(this.value)` class="appearance-none bg-transparent text-sm font-semibold text-surface-700 py-2 pl-4 pr-10 outline-none cursor-pointer border-none focus:ring-0")
+          option(value='approved' selected=(currentStatus==='approved')) Đã duyệt
+          option(value='pending' selected=(currentStatus==='pending')) Chờ duyệt
+          option(value='rejected' selected=(currentStatus==='rejected')) Bị từ chối
+        i.bi.bi-chevron-down.absolute.right-4.top-1.translate-y-2.text-surface-400.pointer-events-none.hidden
 
-    .reviews-list
-      each review in reviews || []
-        .review-item
-          .review-header
-            .info
-              strong= review.userName
-              span.date= moment(review.createdAt).format('DD/MM/YYYY HH:mm')
-              if review.verifiedPurchase
-                span.badge ✓ Xác thực
-            
-            .rating
-              - for (let i = 1; i <= 5; i++)
-                if i <= review.rating
-                  span.star ★
-                else
-                  span.star ☆
+    //- List
+    div(class="space-y-4")
+      if reviews && reviews.length > 0
+        each review in reviews
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6 hover:shadow-md transition-shadow")
+            div(class="flex flex-col md:flex-row md:items-start justify-between gap-4")
+              //- Info
+              div(class="flex-1 space-y-3")
+                div(class="flex items-center gap-3")
+                  div(class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-inner")
+                    | #{review.userName ? review.userName.charAt(0).toUpperCase() : 'U'}
+                  div
+                    div(class="flex items-center gap-2")
+                      span(class="font-bold text-surface-900") #{review.userName}
+                      if review.verifiedPurchase
+                        span(class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1")
+                          i.bi.bi-check-circle-fill
+                          | Đã mua
+                    div(class="text-xs text-surface-500") #{new Date(review.createdAt).toLocaleString('vi-VN')}
+                
+                div(class="flex items-center text-amber-400 gap-1 text-sm")
+                  - for (let i = 1; i <= 5; i++)
+                    if i <= review.rating
+                      i.bi.bi-star-fill
+                    else
+                      i.bi.bi-star.text-surface-300
+                      
+                div(class="bg-surface-50 rounded-xl p-4 border border-surface-100")
+                  if review.title
+                    h4(class="text-sm font-bold text-surface-900 mb-1") #{review.title}
+                  p(class="text-sm text-surface-700 leading-relaxed") #{review.comment}
 
-          .review-content
-            if review.title
-              h4= review.title
-            p= review.comment
-
-          .review-actions
-            if currentStatus === 'pending'
-              button.btn.btn-success(onclick=`approveReview('${review._id}')`) ✓ Duyệt
-              button.btn.btn-danger(onclick=`rejectReview('${review._id}')`) ✗ Từ chối
-            
-            button.btn.btn-danger(onclick=`deleteReview('${review._id}')`) Xóa
+              //- Actions
+              div(class="flex flex-row md:flex-col gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-surface-100 md:pl-4 mt-4 md:mt-0")
+                if currentStatus === 'pending'
+                  button(onclick=`approveReview('${review._id}')` class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-emerald-200")
+                    i.bi.bi-check-lg
+                    | Duyệt
+                  button(onclick=`rejectReview('${review._id}')` class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-amber-200")
+                    i.bi.bi-x-lg
+                    | Từ chối
+                button(onclick=`deleteReview('${review._id}')` class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-rose-200")
+                  i.bi.bi-trash
+                  | Xóa
+      else
+        div(class="bg-surface-50 border border-surface-200 border-dashed rounded-2xl p-12 text-center")
+          div(class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-surface-400 text-2xl shadow-sm mx-auto mb-4")
+            i.bi.bi-chat-square-text
+          h3(class="text-lg font-bold text-surface-900 mb-1") Không có đánh giá nào
+          p(class="text-surface-500 text-sm") Hiện không có đánh giá nào trong trạng thái này.
 
 block scripts
   script.
@@ -46,12 +74,8 @@ block scripts
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'approved' })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.code === '00') {
-          location.reload();
-        }
+      }).then(res => res.json()).then(data => {
+        if (data.code === '00') location.reload();
       });
     }
 
@@ -60,23 +84,17 @@ block scripts
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'rejected' })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.code === '00') {
-          location.reload();
-        }
+      }).then(res => res.json()).then(data => {
+        if (data.code === '00') location.reload();
       });
     }
 
     function deleteReview(reviewId) {
-      if (confirm('Xóa review này?')) {
+      if (confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) {
         fetch(`/admin/reviews/${reviewId}`, { method: 'DELETE' })
         .then(res => res.json())
         .then(data => {
-          if (data.code === '00') {
-            location.reload();
-          }
+          if (data.code === '00') location.reload();
         });
       }
     }

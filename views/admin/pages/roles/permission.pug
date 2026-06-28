@@ -3,221 +3,114 @@ extends ../../layout/default
 block main
   include ../../mixins/alert.pug
   +alert-success(messages.success)
+  
   if(role.permission.includes('roles_permission') || role.permission.includes('*'))
-    h1.mb-4 Phân quyền
+    div(class="max-w-full mx-auto space-y-6")
+      //- Header
+      div(class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6")
+        div
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Phân Quyền Hệ Thống
+          p(class="text-surface-500 text-sm mt-1") Quản lý chi tiết quyền truy cập cho từng nhóm vai trò.
+        
+        button(type="submit" form="form-permission" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-save.text-lg
+          | Lưu thay đổi phân quyền
 
-    div.text-right
-      button.btn.btn-primary.mb-3(type="submit") Cập nhật
-    if(roles && roles.length > 0)
-      table.table.table-hover.table-sm(id="table-permission")
-          thead
-          tr
-              th Tính năng
-              each role in roles
-                th.text-center #{role.title}
+      if(roles && roles.length > 0)
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm flex flex-col")
+          div(class="overflow-auto max-h-[calc(100vh-12rem)] custom-scrollbar relative")
+            table(class="w-full text-left border-collapse whitespace-nowrap" id="table-permission")
+              thead(class="sticky top-0 z-30")
+                tr(class="bg-surface-100 text-sm font-bold text-surface-900 shadow-sm")
+                  th(class="px-6 py-4 sticky left-0 top-0 bg-surface-100 z-40 min-w-[250px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] border-b-2 border-surface-300") Tính năng / Module
+                  each roleItem in roles
+                    th(class="px-4 py-4 text-center min-w-[150px] bg-surface-100 border-b-2 border-surface-300") 
+                      div(class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-surface-200 shadow-sm")
+                        i.bi.bi-shield-check.text-brand-500
+                        | #{roleItem.title}
+                      
+              tbody(class="divide-y divide-surface-100 text-sm")
+                tr(class="hidden" data-name='id')
+                  td
+                  each roleItem in roles
+                    td.text-center 
+                      input(type="text" name="id" value=roleItem.id multi-status)
+                    
+                //- Mixin for Category Header
+                mixin categoryHeader(title, iconClass)
+                  tr(class="bg-surface-50/80 border-y-2 border-surface-200")
+                    td(colspan=(roles.length + 1) class="px-6 py-3 font-bold text-surface-900 sticky left-0 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]")
+                      div(class="flex items-center gap-2 text-brand-600")
+                        i(class=`bi ${iconClass} text-lg`)
+                        span(class="uppercase tracking-wider text-xs") #{title}
+                      
+                //- Mixin for Permission Row
+                mixin permRow(name, label, textClass="text-surface-700")
+                  tr(class="hover:bg-surface-50 transition-colors group" data-name=name)
+                    td(class=`px-6 py-3 font-medium sticky left-0 bg-white group-hover:bg-surface-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] transition-colors ${textClass}`) #{label}
+                    each roleItem in roles
+                      td(class="px-4 py-3 text-center border-l border-surface-100")
+                        div(class="inline-flex items-center justify-center")
+                          input(type="checkbox" checked=(roleItem.permission && roleItem.permission.includes(name)) class="w-5 h-5 rounded border-surface-300 text-brand-500 focus:ring-brand-500/20 cursor-pointer transition-all")
 
-          tbody
-            tr.d-none(data-name='id')
-              td
-              each role in roles
-                td.text-center 
-                  input(type="text" name="id" value=role.id multi-status)
-            // Danh mục sản phẩm
-            tr
-              td(colspan="3" background="#f8f9fa")
-                b Danh mục sản phẩm
+                //- Dashboard (If any)
+              
+                //- Danh mục sản phẩm
+                +categoryHeader("Danh mục sản phẩm", "bi-folder")
+                +permRow("products-category_view", "Xem danh sách")
+                +permRow("products-category_create", "Thêm mới")
+                +permRow("products-category_edit", "Chỉnh sửa")
+                +permRow("products-category_delete", "Xóa", "text-rose-600")
+              
+                //- Sản phẩm
+                +categoryHeader("Sản phẩm", "bi-box-seam")
+                +permRow("products_view", "Xem danh sách")
+                +permRow("products_create", "Thêm mới")
+                +permRow("products_edit", "Chỉnh sửa")
+                +permRow("products_delete", "Xóa", "text-rose-600")
+              
+                //- Nhóm quyền
+                +categoryHeader("Nhóm quyền & Phân quyền", "bi-shield-lock")
+                +permRow("roles_view", "Xem danh sách")
+                +permRow("roles_create", "Thêm mới")
+                +permRow("roles_edit", "Chỉnh sửa")
+                +permRow("roles_delete", "Xóa", "text-rose-600")
+                +permRow("roles_permission", "Phân quyền chi tiết")
+              
+                //- Tài khoản Admin
+                +categoryHeader("Tài khoản Quản trị", "bi-person-vcard")
+                +permRow("accounts_view", "Xem danh sách")
+                +permRow("accounts_create", "Thêm mới")
+                +permRow("accounts_edit", "Chỉnh sửa")
+                +permRow("accounts_delete", "Xóa", "text-rose-600")
+              
+                //- Bài viết
+                +categoryHeader("Bài viết & Tin tức", "bi-journal-text")
+                +permRow("articles_view", "Xem danh sách")
+                +permRow("articles_create", "Thêm mới")
+                +permRow("articles_edit", "Chỉnh sửa")
+                +permRow("articles_delete", "Xóa", "text-rose-600")
+              
+                //- Danh mục bài viết
+                +categoryHeader("Danh mục bài viết", "bi-folder2-open")
+                +permRow("articles-category_view", "Xem danh sách")
+                +permRow("articles-category_create", "Thêm mới")
+                +permRow("articles-category_edit", "Chỉnh sửa")
+                +permRow("articles-category_delete", "Xóa", "text-rose-600")
+              
+                //- Đơn hàng
+                +categoryHeader("Quản lý đơn hàng", "bi-cart-check")
+                +permRow("orders_view", "Xem danh sách")
+                +permRow("orders_confirm", "Xác nhận / Hủy đơn")
+                +permRow("orders_delete", "Xóa", "text-rose-600")
 
-            tr(data-name="products-category_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_view"))
-
-            tr(data-name="products-category_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_create"))
-
-            tr(data-name="products-category_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_edit"))
-
-            tr(data-name="products-category_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products-category_delete"))
-            // Sản phẩm
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Sản phẩm
-
-            tr(data-name="products_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products_view"))
-
-            tr(data-name="products_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products_create"))
-
-            tr(data-name="products_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products_edit"))
-
-            tr(data-name="products_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("products_delete"))
-            // Nhóm quyền
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Nhóm quyền
-
-            tr(data-name="roles_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("roles_view"))
-
-            tr(data-name="roles_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("roles_create"))
-
-            tr(data-name="roles_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("roles_edit"))
-
-            tr(data-name="roles_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("roles_delete"))
-            tr(data-name="roles_permission")
-              td Phân quyền
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("roles_permission"))
-            // Tài khoản
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Tài khoản
-
-            tr(data-name="accounts_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("accounts_view"))
-
-            tr(data-name="accounts_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("accounts_create"))
-
-            tr(data-name="accounts_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("accounts_edit"))
-
-            tr(data-name="accounts_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("accounts_delete"))
-            // Bài viết
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Bài viết
-
-            tr(data-name="articles_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_view"))
-
-            tr(data-name="articles_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_create"))
-
-            tr(data-name="articles_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_edit"))
-
-            tr(data-name="articles_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles_delete"))
-            // Danh mục bài viết
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Danh mục bài viết
-
-            tr(data-name="articles-category_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_view"))
-
-            tr(data-name="articles-category_create")
-              td Thêm mới
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_create"))
-
-            tr(data-name="articles-category_edit")
-              td Chỉnh sửa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_edit"))
-
-            tr(data-name="articles-category_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("articles-category_delete"))
-            // Quản lý đơn hàng
-            tr(style="background: #666767;")
-              td(colspan="3")
-                b Quản lý đơn hàng
-
-            tr(data-name="orders_view")
-              td Xem
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_view"))
-
-            tr(data-name="orders_confirm")
-              td Xác nhận / Hủy
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_confirm"))
-            tr(data-name="orders_delete")
-              td(style="color: red;") Xóa
-              each role in roles
-                td.text-center
-                  input(type="checkbox" checked=role.permission&&role.permission.includes("orders_delete"))
-      form(action=`${prefixAdmin}/roles/permission?_method=PATCH` method="POST" id="form-permission")
-        input(type="hidden" name="permissions" id="input-permissions")
+        form(action=`${prefixAdmin}/roles/permission?_method=PATCH` method="POST" id="form-permission" class="hidden")
+          input(type="hidden" name="permissions" id="input-permissions")
+          
   else
-    .alert.alert-warning Bạn không có quyền phân quyền cho nhóm quyền
+    div(class="bg-amber-50 border border-amber-200 text-amber-700 p-8 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
+      i.bi.bi-exclamation-triangle.text-5xl.mb-4
+      h2(class="text-xl font-bold mb-2") Cảnh báo truy cập
+      p(class="text-sm") Bạn không có quyền xem hoặc chỉnh sửa phân quyền hệ thống.
+
   script(src="/admin/js/roles.js")
