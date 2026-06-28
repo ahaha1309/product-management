@@ -2799,88 +2799,144 @@ body {
     .product-item .inner-content {
         padding: 10px;
     }
-    .product-item .inner-title {
-        font-size: 13px;
-        line-height: 1.4;
-        height: 36px; /* 2 lines max */
+/* ==========================================================================
+   CHUYÊN BIỆT RESPONSIVE CHO ĐIỆN THOẠI (Tham khảo top 10 E-commerce apps)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* 1. TYPOGRAPHY & GENERAL SPACING */
+    body {
+        font-size: 14px; /* Chữ cơ bản dễ đọc trên mobile */
+    }
+    
+    h1, h2, h3 {
+        font-size: 18px !important;
+    }
+
+    /* 2. PRODUCT GRID & ITEM (Tối ưu không gian hiển thị 2 cột) */
+    .row {
+        margin-left: -4px; /* Thu hẹp khoảng cách giữa 2 cột */
+        margin-right: -4px;
+    }
+    .col-6, .col-md-3, .col-md-4, .col-lg-2 {
+        padding-left: 4px; /* Giảm padding trái phải của column */
+        padding-right: 4px;
+    }
+    
+    .product-item {
+        margin-bottom: 8px; /* Khoảng cách dọc nhỏ lại */
+        border-radius: 4px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    }
+
+    .product-item .inner-info {
+        padding: 8px; /* Giảm padding trong card */
+    }
+
+    .product-item .title {
+        font-size: 12px; /* Chuẩn app Shopee/Lazada */
+        line-height: 16px;
+        height: 32px; /* Fixed height cho 2 dòng */
+        margin-bottom: 4px;
+        font-weight: 400;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    .product-item .inner-price-new {
-        font-size: 15px;
+
+    .product-item .price {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ee4d2d;
     }
-    .product-item .inner-price-old {
+
+    .product-item .old-price {
+        font-size: 11px;
+    }
+
+    /* 3. NÚT BẤM (BUTTONS) - Touch Target tiêu chuẩn */
+    .btn {
+        min-height: 40px; /* Đảm bảo dễ bấm trên cảm ứng */
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    
+    .btn-sm {
+        min-height: 32px;
         font-size: 12px;
+        padding: 0 12px;
     }
-    
-    /* Footer Stacking */
-    footer .row > div {
-        margin-bottom: 25px;
-    }
-    
-    /* Shopee Price Panel on Mobile Detail Page */
-    .shopee-price-panel {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 15px;
-        gap: 8px;
-    }
-    .shopee-new-price {
-        font-size: 24px;
-    }
-    
-    /* Buttons */
+
+    /* Chi tiết sản phẩm: Các nút mua hàng tràn viền hoặc to rõ */
     .button-group, .shopee-shop-buttons {
         display: flex;
         flex-direction: column;
         width: 100%;
         gap: 10px;
     }
+    
     .button-group .btn, .shopee-shop-buttons .btn {
         width: 100%;
-        margin-right: 0;
-        margin-bottom: 5px;
+        margin: 0;
+        height: 44px; /* Nút to, rõ ràng */
+        font-weight: 500;
+    }
+
+    /* 4. ICONS VÀ CÁC THÀNH PHẦN KHÁC */
+    .bi {
+        font-size: 18px; /* Icon rõ ràng */
     }
     
-    /* Cart Page */
+    .category-item {
+        min-width: 80px;
+        padding: 8px 4px;
+    }
+    .category-img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 6px;
+    }
+    .category-title {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+    
+    .flash-sale-title {
+        font-size: 16px !important;
+    }
+    .flash-item {
+        min-width: 130px;
+        max-width: 130px;
+    }
+
+    /* 5. CHI TIẾT SẢN PHẨM (Detail Page) */
+    .shopee-price-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+        gap: 8px;
+    }
+    .shopee-new-price {
+        font-size: 20px; /* To, rõ giá */
+    }
+    .shopee-old-price {
+        font-size: 13px;
+    }
+
+    /* Giỏ hàng */
     .cart-item-card {
         padding: 10px;
     }
     .cart-sticky-footer {
         flex-direction: column;
-        gap: 15px;
-        padding: 15px;
+        gap: 10px;
+        padding: 12px;
     }
     .cart-sticky-footer button {
         width: 100%;
-    }
-}
-
-@media (max-width: 576px) {
-    /* Even smaller adjustments */
-    .hero-carousel img {
-        height: 150px;
-    }
-    .category-item {
-        min-width: 90px;
-        padding: 8px;
-    }
-    .category-img {
-        width: 45px;
-        height: 45px;
-    }
-    .category-title {
-        font-size: 12px;
-    }
-    .flash-sale-title {
-        font-size: 18px;
-    }
-    .flash-item {
-        min-width: 140px;
-        max-width: 140px;
-    }
-    .shopee-shop-info {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        height: 44px;
     }
 }
