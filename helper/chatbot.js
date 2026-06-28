@@ -695,6 +695,8 @@ Your role is to:
 - Do NOT create or make up product information
 - Format product responses clearly with name, price, description
 - When showing products, ALWAYS include: name, price, discount (if any), and stock status
+- LƯU Ý QUAN TRỌNG: Nếu khách hàng yêu cầu tư vấn sản phẩm, hoặc hỏi sản phẩm nào "tốt nhất", bạn BẮT BUỘC phải đưa ra lý do chi tiết tại sao bạn lại chọn/đề xuất sản phẩm đó (dựa trên tính năng, mô tả hoặc giá trị của nó).
+- BẮT BUỘC phải trả lời trọn vẹn câu, không bao giờ được ngắt quãng giữa chừng. Hãy luôn kiểm tra lại câu trả lời trước khi kết thúc.
 - If no matching products found, apologize and suggest alternatives
 ${context ? `\n\nAdditional context about our business:\n${context}` : ''}
 ${finalProductContext}`;
@@ -732,7 +734,7 @@ ${finalProductContext}`;
                 generationConfig: {
                     temperature: 0.7,
                     topP: 0.95,
-                    maxOutputTokens: 1024,
+                    maxOutputTokens: 2048,
                 }
             })
         });
