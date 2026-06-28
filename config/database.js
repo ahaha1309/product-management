@@ -14,6 +14,7 @@ module.exports.connect = async () => {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false, // Tối ưu cho Serverless
+      serverSelectionTimeoutMS: 5000, // Timeout sau 5s thay vì 30s để tránh Vercel 504
     };
 
     cached.promise = mongoose.connect(process.env.MONGO_URL, opts).then((mongoose) => {

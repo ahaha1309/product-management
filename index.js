@@ -17,8 +17,16 @@ const rateLimit = require('express-rate-limit');
 const routes = require('./routes/client/index.router');
 const systemConfig = require('./config/system');
 const routerAdmin = require('./routes/admin/index.router');
-database.connect();
-
+// Kết nối Database middleware (Tối ưu cho Serverless)
+app.use(async (req, res, next) => {
+  try {
+    await database.connect();
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ error: 'Database connection failed. Please check MongoDB IP whitelist.' });
+  }
+});
 // Ép Node.js ưu tiên IPv4 để sửa lỗi treo (xoay xoay) khi gọi API Facebook/Google
 const dns = require('node:dns');
 dns.setDefaultResultOrder('ipv4first');
