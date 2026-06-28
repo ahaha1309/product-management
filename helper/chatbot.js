@@ -217,12 +217,13 @@ async function searchProducts(keyword, limit = 15) {
         console.log(`🔎 Searching for: "${normalizedKeyword}"`);
 
         // 📊 Tạo regex pattern linh hoạt
+        const escapedKeyword = normalizedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const patterns = [
-            { regex: new RegExp(`^${normalizedKeyword}$`, 'i'), score: 100 },
-            { regex: new RegExp(`^${normalizedKeyword}`, 'i'), score: 90 },
-            { regex: new RegExp(`${normalizedKeyword}$`, 'i'), score: 80 },
-            { regex: new RegExp(normalizedKeyword, 'i'), score: 70 },
-            { regex: new RegExp(`\\b${normalizedKeyword}`, 'i'), score: 75 }
+            { regex: new RegExp(`^${escapedKeyword}$`, 'i'), score: 100 },
+            { regex: new RegExp(`^${escapedKeyword}`, 'i'), score: 90 },
+            { regex: new RegExp(`${escapedKeyword}$`, 'i'), score: 80 },
+            { regex: new RegExp(escapedKeyword, 'i'), score: 70 },
+            { regex: new RegExp(`\\b${escapedKeyword}`, 'i'), score: 75 }
         ];
 
         // 🔎 Tìm kiếm sản phẩm
@@ -329,7 +330,7 @@ case 'search': {
     console.log('🔍 SEARCH: Starting search...');
     
     let searchKeyword = currentQuestion.toLowerCase()
-        .replace(/tôi|cần|tư vấn|về|sản phẩm|cái|chiếc|này|cho|hỏi|mua|xem|có/g, ' ')
+        .replace(/(^|\s)(tôi|cần|tư vấn|về|sản phẩm|cái|chiếc|này|cho|hỏi|mua|xem|có)(?=\s|$)/gi, ' ')
         .replace(/[:!?.,]/g, ' ')
         .trim();
         
