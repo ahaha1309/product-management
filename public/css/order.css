@@ -144,20 +144,20 @@
         grid-template-columns: 1fr;
       }
       .product-item {
-        display: grid;
-        grid-template-columns: 65px 1fr;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
         gap: 12px;
         padding: 12px;
         position: relative;
-        align-items: start;
       }
       .product-image-detail {
-        grid-column: 1;
+        flex: 0 0 65px;
         width: 65px;
         height: 65px;
       }
       .product-info {
-        grid-column: 2;
+        flex: 1;
         min-width: 0;
         padding-right: 25px; /* Room for remove button */
         display: flex;
