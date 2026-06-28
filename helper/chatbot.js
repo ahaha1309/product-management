@@ -374,7 +374,19 @@ case 'search': {
             productContext += `   📦 ${product.stock > 0 ? `✅ ${product.stock} cái` : '❌ Hết hàng'}\n\n`;
         });
     } else {
-        productContext = `\n\n❌ **KHÔNG TÌM THẤY SẢN PHẨM**\n\nXin lỗi, không có sản phẩm nào khớp với tìm kiếm của bạn.\n\n**Thử:**\n- Từ khóa khác\n- "Xem sản phẩm" để liệt kê\n- "Tư vấn" để được hỗ trợ`;
+        const fallbackProducts = await getAllShopProducts();
+        productContext = `\n\n❌ **KHÔNG TÌM THẤY SẢN PHẨM KHỚP VỚI TỪ KHÓA**\n\nXin lỗi, không có sản phẩm nào khớp chính xác với tìm kiếm của bạn.\n\n`;
+        if (fallbackProducts.length > 0) {
+            productContext += `💡 **NHƯNG ĐÂY LÀ MỘT SỐ SẢN PHẨM NỔI BẬT BẠN CÓ THỂ THÍCH**:\n`;
+            fallbackProducts.slice(0, 5).forEach((product, index) => {
+                productContext += `${index + 1}. **${product.name}** - ${product.price}\n`;
+                productContext += `   📂 ${product.category}\n`;
+                productContext += `   📝 ${product.description}\n\n`;
+            });
+            productContext += `Bạn có thể dùng các sản phẩm trên để tư vấn nếu phù hợp với nhu cầu chung của khách hàng.`;
+        } else {
+            productContext += `**Thử:**\n- Từ khóa khác\n- "Xem sản phẩm" để liệt kê\n- "Tư vấn" để được hỗ trợ`;
+        }
     }
     break;};
             case 'price': {
@@ -596,11 +608,13 @@ case 'search': {
                 
                 allProducts = await getAllShopProducts();
                 if (allProducts.length > 0) {
-                    productContext = `\n\n📦 **SẢN PHẨM GỢI Ý**:\n`;
-                    allProducts.slice(0, 3).forEach((product, index) => {
+                    productContext = `\n\n📦 **SẢN PHẨM GỢI Ý ĐỂ TƯ VẤN (Tùy chọn)**:\n`;
+                    allProducts.slice(0, 5).forEach((product, index) => {
                         productContext += `${index + 1}. ${product.name} - ${product.price}`;
                         if (product.discount > 0) productContext += ` (${product.discount}%)`;
                         productContext += `\n`;
+                        productContext += `   📂 ${product.category}\n`;
+                        productContext += `   📝 ${product.description}\n\n`;
                     });
                 }
             }
