@@ -84,10 +84,10 @@ header.header
                 if(user)
                   li
                     a.mobile-nav-link(href="/wishlist")
-                      span.position-relative(style="display: inline-block;")
-                        i.bi.bi-heart
+                      span.position-relative(style="display: inline-block; padding-top: 4px;")
+                        i.bi.bi-heart.fs-4
                         if(quantityWishlist !== undefined && quantityWishlist > 0)
-                          .inner-quantity(style="top: -8px; right: -12px;")= quantityWishlist
+                          .inner-quantity(style="top: -2px; right: -8px;")= quantityWishlist
                       span.nav-text.ms-2  Yêu thích
 
                 //- Home

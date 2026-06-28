@@ -39,13 +39,18 @@ module.exports.infoUser = async (req, res, next) => {
       if (!wishlist) {
         res.locals.quantityWishlist = -1; // -1 means not found
       } else {
-        res.locals.quantityWishlist = wishlist.products.length;
+        const Product = require('../../models/product.model');
+        const validCount = await Product.countDocuments({
+          _id: { $in: wishlist.products.map(item => item.productId) },
+          deleted: false,
+          status: "active"
+        });
+        res.locals.quantityWishlist = validCount;
       }
     } catch (err) {
       console.error(err);
       res.locals.quantityWishlist = -99; // -99 means crash
     }
-    console.log(`Debug: User ${user.fullName} has quantityWishlist = ${res.locals.quantityWishlist}`);
 
     res.locals.user = user || null;
     res.locals.isLogin = !!user;
