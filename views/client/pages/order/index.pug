@@ -60,7 +60,7 @@ block main
                   .product-info
                     h4= product.title
                     p.product-variant= `Phân loại: ${product.variantText || 'Mặc định'}`
-                    p.product-price= `${product.newPrice.toLocaleString('vi-VN')}₫`
+                    p.product-price= `${Number(product.newPrice).toLocaleString('vi-VN')}₫`
                   
                   .product-quantity
                     span= `x${product.quantity}`
