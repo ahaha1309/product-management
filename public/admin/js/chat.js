@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const socket = io();
+  const socket = io({
+      reconnectionAttempts: 2,
+      timeout: 2000
+  });
 
   const userItems = document.querySelectorAll('.chat-user-item');
   const chatWindow = document.getElementById('admin-chat-window');

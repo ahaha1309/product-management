@@ -12,6 +12,7 @@ const myAccountRouter=require('./my-account.router');
 const orderRouter=require('./order.router')
 const analyticsRouter = require('./analytics.router');
 const loyaltyRouter = require('./loyalty.router');
+const articleCommentRouter = require("./article-comment.router");
 
 module.exports = (app) => {
   const path_admin = systemConfig.prefixAdmin;
@@ -19,6 +20,7 @@ module.exports = (app) => {
   app.use(path_admin + '/product',authMiddleware.requireAuth, productRouter);
   app.use(path_admin + '/category-product',authMiddleware.requireAuth, categoryProductRouter);
   app.use(path_admin + '/category-article',authMiddleware.requireAuth, categoryArticleRouter);
+  app.use(path_admin + '/article-comments', authMiddleware.requireAuth, articleCommentRouter);
   app.use(path_admin + '/roles', authMiddleware.requireAuth, roleRouter);
   app.use(path_admin + '/accounts', authMiddleware.requireAuth, accountRouter);
   app.use(path_admin + '/articles', authMiddleware.requireAuth, articleRouter);

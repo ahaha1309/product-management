@@ -1,0 +1,77 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/moment.pug
+
+block main
+  if(role.permission.includes('articles_view') || role.permission.includes('*'))
+    h1.mb-4 Quản lý Bình luận Bài viết
+
+    +alert-success(5000)
+    +alert-error(5000)
+
+    .card.mb-3
+      .card-header Danh sách bình luận
+      .card-body
+        .table-responsive
+          table.table.table-hover.table-sm
+            thead
+              tr
+                th STT
+                th Người dùng
+                th Bài viết
+                th Nội dung bình luận
+                th Thời gian
+                th Hành động
+            tbody
+              if(comments.length > 0)
+                each item, index in comments
+                  tr
+                    td #{index + 1}
+                    td
+                      .d-flex.align-items-center.gap-2
+                        img.rounded-circle(src=item.userAvatar width="30" height="30")
+                        b #{item.userName}
+                    td 
+                      if item.articleSlug
+                        a(href=`/articles/${item.articleSlug}` target="_blank") #{item.articleTitle}
+                      else
+                        | Không tìm thấy
+                    td #{item.text}
+                    td 
+                      +formatDateTime(item.createdAt)
+                    td
+                      button.btn.btn-danger.btn-sm.ms-1.btn-delete(
+                        data-id=item.id
+                        data-path=`${prefixAdmin}/article-comments/delete`
+                      ) Xóa
+              else
+                tr
+                  td(colspan="6" class="text-center") Không có bình luận nào
+
+  //- Form used for DELETE request
+  form(
+    id="form-delete-item"
+    method="POST"
+    action=""
+    data-path=`${prefixAdmin}/article-comments/delete`
+  )
+
+  script.
+    // Xử lý Xóa bình luận
+    const formDeleteItem = document.getElementById('form-delete-item');
+    if (formDeleteItem) {
+      const path = formDeleteItem.getAttribute('data-path');
+      const buttonsDelete = document.querySelectorAll('.btn-delete');
+      
+      buttonsDelete.forEach(button => {
+        button.addEventListener('click', () => {
+          const isConfirm = confirm("Bạn có chắc chắn muốn xóa bình luận này không?");
+          if (isConfirm) {
+            const id = button.getAttribute('data-id');
+            const action = `${path}/${id}?_method=PATCH`;
+            formDeleteItem.action = action;
+            formDeleteItem.submit();
+          }
+        });
+      });
+    }

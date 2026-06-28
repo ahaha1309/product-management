@@ -28,7 +28,10 @@ class ChatbotClient {
 
     setupSocket() {
         if (!this.userId) return;
-        this.socket = io();
+        this.socket = io({
+            reconnectionAttempts: 2,
+            timeout: 2000
+        });
 
         // Lắng nghe tin nhắn từ Admin
         this.socket.on('SERVER_RETURN_MESSAGE', (data) => {

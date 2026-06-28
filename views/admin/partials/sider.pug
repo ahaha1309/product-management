@@ -30,6 +30,10 @@
                a(href=prefixAdmin+"/articles")
                   i.bi.bi-newspaper.me-2
                   | Bài viết
+            li 
+               a(href=prefixAdmin+"/article-comments")
+                  i.bi.bi-chat-left-text.me-2
+                  | Bình luận bài viết
          if(role.permission.includes('articles-category_view') || role.permission.includes('*'))
             li 
                a(href=prefixAdmin+"/category-article")

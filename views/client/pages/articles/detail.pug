@@ -48,24 +48,26 @@ block main
 
             //- Comments Section
             .article-comments.mt-5.pt-4.border-top
-              h4.fw-bold.mb-4 Bình luận (2)
+              h4.fw-bold.mb-4 Bình luận (#{comments ? comments.length : 0})
               .comment-form.mb-4
-                textarea.form-control.mb-2(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết...")
-                button.btn.btn-primary(type="button" onclick="alert('Đã gửi bình luận!')") Gửi bình luận
+                if user
+                  textarea#article-comment-input.form-control.mb-2(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết...")
+                  button.btn.btn-primary(type="button" onclick="submitArticleComment()") Gửi bình luận
+                else
+                  .alert.alert-info
+                    | Vui lòng 
+                    a.fw-bold(href="/auth/login") đăng nhập
+                    |  để tham gia bình luận bài viết này.
               
-              .comment-list
-                .comment-item.d-flex.gap-3.mb-4
-                  img.rounded-circle(src="https://ui-avatars.com/api/?name=Khach+Hang&background=random" width="45" height="45")
-                  div
-                    .fw-bold Khách hàng
-                    .text-muted.small 2 giờ trước
-                    p.mt-1 Bài viết rất hữu ích, cảm ơn shop!
-                .comment-item.d-flex.gap-3.mb-4
-                  img.rounded-circle(src="https://ui-avatars.com/api/?name=Thanh+Vien&background=random" width="45" height="45")
-                  div
-                    .fw-bold Thành viên
-                    .text-muted.small 5 giờ trước
-                    p.mt-1 Mình cũng đang định mua sản phẩm này theo tư vấn.
+              .comment-list#article-comment-list
+                if comments && comments.length > 0
+                  each comment in comments
+                    .comment-item.d-flex.gap-3.mb-4
+                      img.rounded-circle(src=comment.userAvatar width="45" height="45")
+                      div
+                        .fw-bold #{comment.userName}
+                        .text-muted.small #{moment ? moment(comment.createdAt).fromNow() : 'Vừa xong'}
+                        p.mt-1 #{comment.text}
 
       //- Sidebar
       .col-lg-4
@@ -154,3 +156,52 @@ block main
     .recent-date { font-size: 0.75rem; color: #888; }
     .sidebar-cta { text-align: center; }
     .sidebar-cta-icon { font-size: 2.5rem; color: #667eea; display: block; margin-bottom: 8px; }
+
+  script.
+    async function submitArticleComment() {
+      const input = document.getElementById('article-comment-input');
+      const list = document.getElementById('article-comment-list');
+      if(!input || !list) return;
+
+      const text = input.value.trim();
+      if(!text) return; // Không xử lý nếu trống
+
+      // Disable input while submitting
+      input.disabled = true;
+
+      try {
+        const response = await fetch(window.location.pathname + '/comment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ text })
+        });
+        
+        const data = await response.json();
+        if (data.success && data.comment) {
+          const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          
+          const newComment = document.createElement('div');
+          newComment.className = 'comment-item d-flex gap-3 mb-4';
+          newComment.innerHTML = `
+            <img class="rounded-circle" src="${data.comment.userAvatar}" width="45" height="45">
+            <div>
+              <div class="fw-bold">${data.comment.userName}</div>
+              <div class="text-muted small">Vừa xong</div>
+              <p class="mt-1">${safeText}</p>
+            </div>
+          `;
+          
+          list.prepend(newComment);
+          input.value = '';
+        } else {
+          alert('Có lỗi xảy ra, vui lòng thử lại!');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Có lỗi xảy ra, vui lòng thử lại!');
+      } finally {
+        input.disabled = false;
+      }
+    }

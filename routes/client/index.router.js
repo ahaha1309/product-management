@@ -44,8 +44,14 @@ module.exports = (app) => {
   app.use('/articles', articleRouter);
   app.use('/about', aboutRouter);
   
+  // ✅ Intercept Socket.io requests (Vercel serverless doesn't support websockets natively)
+  app.use('/socket.io', (req, res) => {
+    res.status(400).json({ error: 'Socket.io not supported on Vercel Serverless' });
+  });
+
   // 404 handler
   app.use((req, res) => {
+    console.log("404 HIT:", req.method, req.originalUrl);
     res.status(404).render('client/pages/404', {
       title: '404 - Trang không tìm thấy',
     });
