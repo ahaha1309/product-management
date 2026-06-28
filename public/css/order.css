@@ -117,6 +117,19 @@
       .checkout-wrapper {
         padding: 0;
       }
+      .checkout-page {
+        padding: 10px;
+      }
+      .info-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+      .info-value {
+        text-align: left;
+      }
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
       .product-item {
         grid-template-columns: 60px 1fr;
         grid-template-rows: auto auto;
