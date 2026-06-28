@@ -375,17 +375,17 @@ case 'search': {
         });
     } else {
         const fallbackProducts = await getAllShopProducts();
-        productContext = `\n\n❌ **KHÔNG TÌM THẤY SẢN PHẨM KHỚP VỚI TỪ KHÓA**\n\nXin lỗi, không có sản phẩm nào khớp chính xác với tìm kiếm của bạn.\n\n`;
+        productContext = `\n\n❌ **TÌM KIẾM CƠ BẢN KHÔNG THẤY TỪ KHÓA CHÍNH XÁC**\n\n`;
+        productContext += `Tuy nhiên, bạn (AI) là một trợ lý thông minh. Hãy đọc danh sách sản phẩm dưới đây của cửa hàng và tự suy luận ngữ nghĩa để tìm ra sản phẩm phù hợp nhất với câu hỏi của khách hàng (Ví dụ: khách hỏi "công nghệ" thì bạn tự tìm các sản phẩm thuộc danh mục "điện tử, máy tính, điện thoại", khách hỏi "thời trang" thì tìm quần áo).\n\n`;
         if (fallbackProducts.length > 0) {
-            productContext += `💡 **NHƯNG ĐÂY LÀ MỘT SỐ SẢN PHẨM NỔI BẬT BẠN CÓ THỂ THÍCH**:\n`;
-            fallbackProducts.slice(0, 5).forEach((product, index) => {
+            productContext += `📦 **DANH SÁCH SẢN PHẨM HIỆN CÓ ĐỂ BẠN TÌM KIẾM VÀ TƯ VẤN**:\n`;
+            fallbackProducts.slice(0, 30).forEach((product, index) => {
                 productContext += `${index + 1}. **${product.name}** - ${product.price}\n`;
-                productContext += `   📂 ${product.category}\n`;
-                productContext += `   📝 ${product.description}\n\n`;
+                productContext += `   📂 Danh mục: ${product.category}\n`;
+                productContext += `   📝 Mô tả: ${product.description}\n\n`;
             });
-            productContext += `Bạn có thể dùng các sản phẩm trên để tư vấn nếu phù hợp với nhu cầu chung của khách hàng.`;
         } else {
-            productContext += `**Thử:**\n- Từ khóa khác\n- "Xem sản phẩm" để liệt kê\n- "Tư vấn" để được hỗ trợ`;
+            productContext += `Hiện tại cửa hàng không có sản phẩm nào.`;
         }
     }
     break;};
@@ -608,13 +608,14 @@ case 'search': {
                 
                 allProducts = await getAllShopProducts();
                 if (allProducts.length > 0) {
-                    productContext = `\n\n📦 **SẢN PHẨM GỢI Ý ĐỂ TƯ VẤN (Tùy chọn)**:\n`;
-                    allProducts.slice(0, 5).forEach((product, index) => {
+                    productContext = `\n\n📦 **DANH SÁCH SẢN PHẨM HIỆN CÓ ĐỂ BẠN TÌM KIẾM VÀ TƯ VẤN**:\n`;
+                    productContext += `Khách hàng đang hỏi một câu chung chung hoặc tìm kiếm tự do. Hãy tự suy luận ngữ nghĩa dựa trên câu hỏi của khách hàng để chọn ra các sản phẩm phù hợp nhất từ danh sách dưới đây để giới thiệu (ví dụ: khách hỏi 'công nghệ' thì lọc đồ điện tử, khách hỏi 'đồ nữ' thì lọc mỹ phẩm, thời trang). Nếu không có cái nào khớp thì cứ nói rõ.\n\n`;
+                    allProducts.slice(0, 30).forEach((product, index) => {
                         productContext += `${index + 1}. ${product.name} - ${product.price}`;
                         if (product.discount > 0) productContext += ` (${product.discount}%)`;
                         productContext += `\n`;
-                        productContext += `   📂 ${product.category}\n`;
-                        productContext += `   📝 ${product.description}\n\n`;
+                        productContext += `   📂 Danh mục: ${product.category}\n`;
+                        productContext += `   📝 Mô tả: ${product.description}\n\n`;
                     });
                 }
             }
