@@ -6,7 +6,6 @@
       background: #f5f5f5;
       padding: 20px;
       min-height: 100vh;
-      overflow-x: hidden;
       width: 100%;
       box-sizing: border-box;
     }
@@ -14,8 +13,11 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      overflow-x: hidden;
       box-sizing: border-box;
+    }
+
+    .checkout-left, .checkout-right {
+      min-width: 0;
     }
 
     .checkout-wrapper {
@@ -29,10 +31,11 @@
       .checkout-wrapper {
         grid-template-columns: 1fr;
       }
+      /* Remove sticky from checkout-right on mobile because it covers the whole screen */
       .checkout-right {
-        position: sticky;
-        bottom: 0;
-        z-index: 100;
+        position: relative;
+        bottom: auto;
+        z-index: 1;
       }
     }
 
@@ -96,6 +99,7 @@
     .info-value {
       color: #1f2937;
       font-weight: 500;
+      word-break: break-word;
     }
 
     /* Products List */
@@ -286,12 +290,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .voucher-info {
       display: flex;
       gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .voucher-tag {
