@@ -114,16 +114,36 @@
     }
 
     @media (max-width: 640px) {
-      .product-item {
-        grid-template-columns: 60px 1fr 50px;
-        gap: 8px;
+      .checkout-wrapper {
+        padding: 0;
       }
-      .product-quantity, .product-remove {
-        display: none;
+      .product-item {
+        grid-template-columns: 60px 1fr;
+        grid-template-rows: auto auto;
+        gap: 8px;
+        position: relative;
+        padding-bottom: 40px; /* Space for total & remove */
+      }
+      .product-image-detail {
+        width: 60px;
+        height: 60px;
+      }
+      .product-quantity {
+        font-size: 12px;
+        color: #666;
+        text-align: left;
+        margin-top: 4px;
       }
       .product-total {
-        grid-column: 3;
-        text-align: right;
+        position: absolute;
+        bottom: 12px;
+        left: 80px; /* Align with info */
+        text-align: left;
+      }
+      .product-remove {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
       }
     }
 
