@@ -1,56 +1,79 @@
-# 🛒 NVH Mall - Nền Tảng Thương Mại Điện Tử Hiện Đại
+# 🛒 NVH Mall - Nền Tảng Thương Mại Điện Tử Hiện Đại (Enterprise-Grade)
 
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101)
+![Elasticsearch](https://img.shields.io/badge/-ElasticSearch-005571?style=for-the-badge&logo=elasticsearch)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 
-**NVH Mall** là một hệ thống website thương mại điện tử chuyên nghiệp được xây dựng bằng hệ sinh thái Node.js. Dự án cung cấp một giao diện mua sắm mượt mà, tối ưu hóa cho cả thiết bị di động (Responsive) và máy tính để bàn, tích hợp đầy đủ các tính năng phức tạp của một hệ thống bán lẻ như Shopee, Thế Giới Di Động hay Hoàng Hà Mobile.
+**NVH Mall** là hệ thống thương mại điện tử toàn diện, được xây dựng theo kiến trúc hiện đại, tập trung vào hiệu suất cao, bảo mật chặt chẽ và tích hợp nhiều công nghệ tiên tiến như Trí tuệ nhân tạo (AI), Tìm kiếm toàn văn bản (Elasticsearch), và Giao tiếp thời gian thực (WebSockets). Dự án đáp ứng đầy đủ tiêu chuẩn của một đồ án tốt nghiệp xuất sắc và một sản phẩm thương mại thực tế.
 
 ---
 
-## ✨ Tính Năng Nổi Bật (Features)
+## ✨ Các Tính Năng Nổi Bật (Key Features)
 
-### Dành Cho Khách Hàng (Client-Side)
-- **🛍️ Quản Lý Giỏ Hàng & Đặt Hàng:** Thêm/sửa/xóa sản phẩm trong giỏ hàng, tự động tính tổng tiền, quy trình Checkout chuyên nghiệp.
-- **❤️ Danh Sách Yêu Thích (Wishlist):** Lưu các sản phẩm yêu thích kèm hiệu ứng badge số đếm thời gian thực trên thanh điều hướng.
-- **⚡ Flash Sale Thông Minh:** Giao diện Flash Sale với thanh trượt tự động, đếm ngược thời gian và thanh trạng thái "Đang bán chạy".
-- **🔍 Bộ Lọc & Tìm Kiếm Nâng Cao:** Tìm kiếm theo từ khóa, lọc sản phẩm theo mức giá, danh mục, và đánh giá sao trực tiếp không cần load lại trang.
-- **📱 Thiết Kế Đáp Ứng (Responsive UI):** Giao diện tự động co giãn, Sidebar Offcanvas cho thiết bị di động mang lại trải nghiệm mượt mà.
-- **👤 Quản Lý Tài Khoản:** Đăng nhập, đăng ký, quên mật khẩu, cập nhật thông tin người dùng và theo dõi lịch sử đơn hàng.
+### 🤖 Công Nghệ Tiên Tiến (Advanced Integrations)
+- **Tích hợp Trí Tuệ Nhân Tạo (Google Generative AI):** Hỗ trợ gợi ý sản phẩm, tự động tạo mô tả sản phẩm và Chatbot thông minh.
+- **Tìm kiếm siêu tốc với Elasticsearch:** Tìm kiếm Full-text search nhanh chóng, chính xác, hỗ trợ lọc và gợi ý từ khóa.
+- **Giao tiếp thời gian thực (Socket.io):** Hỗ trợ tính năng nhắn tin chăm sóc khách hàng trực tuyến, thông báo đơn hàng realtime.
+- **Đăng nhập Mạng xã hội (OAuth 2.0):** Tích hợp Passport.js cho phép đăng nhập nhanh qua **Google** và **Facebook**.
+- **SMS & Email Marketing:** Tích hợp **Twilio** (gửi mã OTP qua điện thoại) và **Nodemailer** (gửi email xác nhận đơn hàng chuẩn HTML Premium).
+- **Lưu trữ Cloud (Cloudinary):** Tối ưu hóa việc tải lên và lưu trữ hình ảnh sản phẩm/avatar người dùng.
 
-### Dành Cho Quản Trị (Admin-Side)
-- Bảng điều khiển (Dashboard) thống kê doanh thu và đơn hàng.
-- Quản lý danh mục (Categories), quản lý sản phẩm (Products), thùng rác (Recycle Bin).
-- Phân quyền người dùng (Role-based access control), quản lý nhân viên.
-- Chỉnh sửa linh hoạt giao diện cài đặt chung của hệ thống.
+### 🛍️ Dành Cho Khách Hàng (Client-Side)
+- **Quản Lý Giỏ Hàng & Thanh Toán:** Quy trình Checkout chuyên nghiệp, hỗ trợ nhiều phương thức thanh toán trực tuyến.
+- **Flash Sale & Danh Mục Động:** Giao diện Flash Sale với đồng hồ đếm ngược, tự động cập nhật trạng thái "Đang bán chạy".
+- **Chương trình Khách hàng thân thiết (Loyalty):** Tích điểm thưởng sau mỗi lần mua hàng.
+- **Quản Lý Tài Khoản:** Quản lý thông tin cá nhân, thay đổi mật khẩu, theo dõi lịch sử đơn hàng và yêu cầu hủy/hoàn trả đơn hàng.
+- **Thiết Kế Tối Ưu (Responsive):** Giao diện TailwindCSS hiện đại, co giãn hoàn hảo trên thiết bị di động (Mobile-first).
+
+### ⚙️ Dành Cho Quản Trị (Admin-Side)
+- **Dashboard Thống Kê Nâng Cao:** Trực quan hóa dữ liệu doanh thu, số lượng đơn hàng, người dùng bằng biểu đồ.
+- **Quản lý Sản Phẩm & Phân Loại:** Thêm/sửa/xóa sản phẩm, trình soạn thảo văn bản phong phú (TinyMCE) cho mô tả sản phẩm.
+- **Cấu hình Hệ thống & SEO:** Chỉnh sửa linh hoạt giao diện cài đặt chung, quản lý URL thân thiện (Slug-updater).
+- **Phân Quyền Chi Tiết (RBAC):** Phân quyền quản trị viên, nhân viên sale, chăm sóc khách hàng.
+
+---
+
+## 🛡️ Hệ Thống Bảo Mật (Security Measures)
+
+Dự án áp dụng các tiêu chuẩn bảo mật khắt khe nhất để chống lại các lỗ hổng web phổ biến:
+- **Helmet.js:** Đặt các HTTP Header bảo mật.
+- **XSS-Clean:** Vô hiệu hóa mã độc XSS từ input của người dùng.
+- **Express-Mongo-Sanitize:** Ngăn chặn lỗi bảo mật NoSQL Injection.
+- **Express-Rate-Limit:** Chống tấn công DDOS và Brute Force bằng cách giới hạn số lượt request.
+- **Bcrypt & JWT:** Mã hóa mật khẩu một chiều mạnh mẽ và quản lý phiên đăng nhập an toàn bằng JSON Web Tokens.
 
 ---
 
 ## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
 
-### Backend:
-- **Node.js** & **Express.js**: Cung cấp kiến trúc máy chủ mạnh mẽ và định tuyến (routing).
-- **MongoDB** & **Mongoose**: Quản lý cơ sở dữ liệu NoSQL linh hoạt, bảo mật cao.
-- **Bcrypt / JWT**: Mã hóa mật khẩu và xử lý token phân quyền.
+### Backend
+- **Core:** Node.js, Express.js
+- **Database:** MongoDB (với Mongoose), Elasticsearch
+- **Authentication:** Passport.js, JWT, Bcrypt
+- **Cloud & 3rd Party:** Cloudinary, Google Generative AI, Twilio, Nodemailer
 
-### Frontend:
-- **Pug**: Template Engine biên dịch HTML tinh gọn, kế thừa cấu trúc (layouts) thông minh.
-- **CSS3 & Bootstrap 5**: Xây dựng bố cục nhanh chóng, Responsive UI, kết hợp Custom CSS theo phong cách tối giản.
-- **Vanilla JavaScript**: Xử lý logic phía Client (AJAX giỏ hàng, thanh trượt Flash sale, bộ lọc động...).
+### Frontend
+- **Template Engine:** Pug
+- **Styling:** Tailwind CSS, Bootstrap 5, Autoprefixer
+- **Interactivity:** Vanilla JavaScript, Socket.io (Client)
+- **Editor:** TinyMCE
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Khởi Chạy (Installation)
+## 🚀 Hướng Dẫn Cài Đặt (Installation & Setup)
 
 ### 1. Yêu cầu hệ thống
-- Node.js (phiên bản 14.x hoặc mới hơn).
-- MongoDB (đã cài đặt local hoặc sử dụng MongoDB Atlas).
-- Git.
+- Node.js (phiên bản v18.x trở lên).
+- MongoDB (Local hoặc MongoDB Atlas).
+- Elasticsearch (Local hoặc Elastic Cloud - *tuỳ chọn*).
 
 ### 2. Tải mã nguồn về máy
 ```bash
-git clone <đường-dẫn-repo-của-bạn>
+git clone https://github.com/ahaha1309/product-management.git
 cd product-management
 ```
 
@@ -60,52 +83,66 @@ npm install
 ```
 
 ### 4. Thiết lập biến môi trường (.env)
-Tạo một file `.env` ở thư mục gốc của dự án và khai báo các biến sau:
+Tạo một file `.env` ở thư mục gốc của dự án và khai báo toàn bộ các khóa API cần thiết:
 ```env
-PORT=3002
-MONGO_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/product-management?retryWrites=true&w=majority
-SESSION_SECRET=my_super_secret_key
-# Cấu hình Gửi Email (Tùy chọn)
+# Server & Database
+PORT=3000
+MONGO_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/product-management
+
+# Security & Sessions
+SESSION_SECRET=your_super_secret_session_key
+
+# Cấu hình Gửi Email (Nodemailer)
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
+
+# Cấu hình Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Cấu hình OAuth (Google/Facebook)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+FACEBOOK_APP_ID=your_fb_app_id
+FACEBOOK_APP_SECRET=your_fb_app_secret
+
+# AI & Khác (Twilio, Gemini...)
+GEMINI_API_KEY=your_gemini_api_key
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_token
 ```
 
 ### 5. Khởi chạy máy chủ (Run the server)
-Môi trường phát triển (tự động khởi động lại khi sửa code):
-```bash
-npm run dev
-```
-Hoặc môi trường thực tế (Production):
+Chạy script tự động build CSS Tailwind và khởi động Nodemon:
 ```bash
 npm start
 ```
-Mở trình duyệt và truy cập: `http://localhost:3002`
+Mở trình duyệt và truy cập: `http://localhost:3000`
 
 ---
 
 ## 📁 Cấu Trúc Thư Mục (Folder Structure)
 
 ```text
-├── config/              # Kết nối Database và các thiết lập hệ thống
-├── controller/          # Các Controller xử lý logic chính (Client & Admin)
-├── helper/              # Các hàm tiện ích (Pug helpers, Pagination, Mailer...)
-├── middleware/          # Middleware kiểm tra đăng nhập, xác thực, upload file
-├── models/              # Schema định nghĩa cấu trúc dữ liệu MongoDB
-├── public/              # Thư mục tĩnh chứa CSS, Images, và Client-side JS
-├── routes/              # Khai báo đường dẫn API và URL cho Client & Admin
-├── template/            # Template dựng sẵn (nếu có)
-├── validate/            # Logic bắt lỗi, kiểm tra tính hợp lệ của Form
-├── views/               # Chứa các file giao diện Pug (được chia layout rõ ràng)
-│   ├── admin/           # Giao diện cho ban quản trị
-│   └── client/          # Giao diện dành cho khách hàng mua sắm
-├── .env                 # File biến môi trường (không push lên git)
-├── index.js             # File gốc khởi chạy máy chủ Express
-└── package.json         # Khai báo cấu hình dự án và dependencies
+├── config/              # Kết nối Database (MongoDB, Elasticsearch)
+├── controller/          # Logic điều khiển (Client & Admin controllers)
+├── helper/              # Các hàm tiện ích (SendMail, OTP, Cloudinary...)
+├── middleware/          # Xử lý trung gian (Auth, Security, File Upload)
+├── models/              # Lược đồ cơ sở dữ liệu (Mongoose Schemas)
+├── public/              # Tài nguyên tĩnh (Tailwind CSS, JS, Images, Uploads)
+├── routes/              # Định nghĩa đường dẫn API và Web
+├── template/            # Các mẫu HTML Premium (Email Marketing...)
+├── validate/            # Logic kiểm tra dữ liệu đầu vào (Validation)
+├── views/               # Giao diện hiển thị (Pug template)
+│   ├── admin/           # Bảng quản trị
+│   └── client/          # Giao diện người dùng
+├── index.js             # File gốc khởi chạy ứng dụng
+└── package.json         # Khai báo cấu hình dự án và thư viện
 ```
 
 ---
 
-## 🤝 Hỗ Trợ & Đóng Góp
-Nếu bạn tìm thấy lỗi (bug) hoặc muốn đóng góp ý tưởng phát triển dự án, vui lòng tạo **Issue** hoặc gửi **Pull Request**. Mọi ý kiến đóng góp của bạn đều được trân trọng!
-
-**Dự án được xây dựng và phát triển bởi NVH Mall. Bản quyền © 2024.**
+## 🤝 Bản Quyền & Hỗ Trợ
+Dự án được xây dựng và phát triển với quy chuẩn khắt khe, áp dụng các best practices mới nhất trong lĩnh vực phát triển web.  
+**Bản quyền © 2026 NVH Mall.**
