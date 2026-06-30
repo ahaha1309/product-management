@@ -5,18 +5,14 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101)
-![Elasticsearch](https://img.shields.io/badge/-ElasticSearch-005571?style=for-the-badge&logo=elasticsearch)
-![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 
-**NVH Mall** là hệ thống thương mại điện tử toàn diện, được xây dựng theo kiến trúc hiện đại, tập trung vào hiệu suất cao, bảo mật chặt chẽ và tích hợp nhiều công nghệ tiên tiến như Trí tuệ nhân tạo (AI), Tìm kiếm toàn văn bản (Elasticsearch), và Giao tiếp thời gian thực (WebSockets). Dự án đáp ứng đầy đủ tiêu chuẩn của một đồ án tốt nghiệp xuất sắc và một sản phẩm thương mại thực tế.
+**NVH Mall** là hệ thống thương mại điện tử toàn diện, được xây dựng theo kiến trúc hiện đại, tập trung vào hiệu suất cao, bảo mật chặt chẽ và tích hợp giao tiếp thời gian thực (WebSockets). Dự án đáp ứng đầy đủ tiêu chuẩn của một đồ án tốt nghiệp xuất sắc và một sản phẩm thương mại thực tế.
 
 ---
 
 ## ✨ Các Tính Năng Nổi Bật (Key Features)
 
 ### 🤖 Công Nghệ Tiên Tiến (Advanced Integrations)
-- **Tích hợp Trí Tuệ Nhân Tạo (Google Generative AI):** Hỗ trợ gợi ý sản phẩm, tự động tạo mô tả sản phẩm và Chatbot thông minh.
-- **Tìm kiếm siêu tốc với Elasticsearch:** Tìm kiếm Full-text search nhanh chóng, chính xác, hỗ trợ lọc và gợi ý từ khóa.
 - **Giao tiếp thời gian thực (Socket.io):** Hỗ trợ tính năng nhắn tin chăm sóc khách hàng trực tuyến, thông báo đơn hàng realtime.
 - **Đăng nhập Mạng xã hội (OAuth 2.0):** Tích hợp Passport.js cho phép đăng nhập nhanh qua **Google** và **Facebook**.
 - **SMS & Email Marketing:** Tích hợp **Twilio** (gửi mã OTP qua điện thoại) và **Nodemailer** (gửi email xác nhận đơn hàng chuẩn HTML Premium).
@@ -52,9 +48,9 @@ Dự án áp dụng các tiêu chuẩn bảo mật khắt khe nhất để chố
 
 ### Backend
 - **Core:** Node.js, Express.js
-- **Database:** MongoDB (với Mongoose), Elasticsearch
+- **Database:** MongoDB (với Mongoose)
 - **Authentication:** Passport.js, JWT, Bcrypt
-- **Cloud & 3rd Party:** Cloudinary, Google Generative AI, Twilio, Nodemailer
+- **Cloud & 3rd Party:** Cloudinary, Twilio, Nodemailer
 
 ### Frontend
 - **Template Engine:** Pug
@@ -69,7 +65,6 @@ Dự án áp dụng các tiêu chuẩn bảo mật khắt khe nhất để chố
 ### 1. Yêu cầu hệ thống
 - Node.js (phiên bản v18.x trở lên).
 - MongoDB (Local hoặc MongoDB Atlas).
-- Elasticsearch (Local hoặc Elastic Cloud - *tuỳ chọn*).
 
 ### 2. Tải mã nguồn về máy
 ```bash
@@ -107,8 +102,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 FACEBOOK_APP_ID=your_fb_app_id
 FACEBOOK_APP_SECRET=your_fb_app_secret
 
-# AI & Khác (Twilio, Gemini...)
-GEMINI_API_KEY=your_gemini_api_key
+# SMS (Twilio)
 TWILIO_ACCOUNT_SID=your_twilio_sid
 TWILIO_AUTH_TOKEN=your_twilio_token
 ```
@@ -125,7 +119,7 @@ Mở trình duyệt và truy cập: `http://localhost:3000`
 ## 📁 Cấu Trúc Thư Mục (Folder Structure)
 
 ```text
-├── config/              # Kết nối Database (MongoDB, Elasticsearch)
+├── config/              # Kết nối Database (MongoDB)
 ├── controller/          # Logic điều khiển (Client & Admin controllers)
 ├── helper/              # Các hàm tiện ích (SendMail, OTP, Cloudinary...)
 ├── middleware/          # Xử lý trung gian (Auth, Security, File Upload)
