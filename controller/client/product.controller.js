@@ -166,10 +166,14 @@ module.exports.detail=async (req,res)=>{
     let isWishlisted = false;
     if (res.locals.user) {
       const wishlistModel = require('../../models/wishlist.model');
-      const wishlist = await wishlistModel.findOne({ userId: res.locals.user._id.toString() });
+      const userId = res.locals.user._id || res.locals.user.id;
+      
+      const wishlist = await wishlistModel.findOne({ userId: userId.toString() });
+      let fallback = null;
+      
       if (!wishlist) {
         // Fallback check if it was saved as ObjectId somehow
-        const fallback = await wishlistModel.findOne({ userId: res.locals.user._id });
+        fallback = await wishlistModel.findOne({ userId: userId });
         if (fallback && fallback.products && fallback.products.some(p => p.productId && p.productId.toString() === product._id.toString())) {
           isWishlisted = true;
         }
@@ -177,13 +181,13 @@ module.exports.detail=async (req,res)=>{
         isWishlisted = true;
       }
       console.log('DEBUG WISHLIST:', { 
-        userId: res.locals.user._id.toString(), 
+        userId: userId.toString(), 
         productId: product._id.toString(), 
         wishlistFound: !!(wishlist || fallback), 
         isWishlisted 
       });
       res.locals.debugWishlist = JSON.stringify({
-        userId: res.locals.user._id.toString(),
+        userId: userId.toString(),
         productId: product._id.toString(),
         wishlistFound: !!(wishlist || fallback),
         isWishlisted,
