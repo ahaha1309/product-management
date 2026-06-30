@@ -561,6 +561,14 @@ block main
           }
           currentAction = btn.getAttribute('action-type');
           if (hasVariants) {
+            const confirmBtnText = document.getElementById('confirmVariantBtn');
+            if (confirmBtnText) {
+              if (currentAction === 'checkout') {
+                confirmBtnText.innerText = 'XÁC NHẬN MUA NGAY';
+              } else {
+                confirmBtnText.innerText = 'Xác Nhận Thêm Vào Giỏ';
+              }
+            }
             const myModal = new bootstrap.Modal(document.getElementById('variantModal'));
             myModal.show();
           } else {
