@@ -258,7 +258,7 @@ module.exports.adminPending = async (req, res) => {
     const products = await Product.find({ _id: { $in: productIds } }).select('title').lean();
     
     const reviewsWithProducts = reviews.map(review => {
-      const product = products.find(p => p._id.toString() === review.productId.toString());
+      const product = products.find(p => review.productId && p._id.toString() === review.productId.toString());
       return {
         ...review.toObject(),
         productTitle: product?.title || 'Sản phẩm'
@@ -270,8 +270,8 @@ module.exports.adminPending = async (req, res) => {
       title: 'Reviews chờ duyệt'
     });
   } catch (error) {
-    console.log(error);
-    res.redirect('back');
+    console.log('Error in adminPending:', error);
+    res.status(500).send('Đã có lỗi xảy ra khi lấy danh sách reviews chờ duyệt.');
   }
 };
 
@@ -316,7 +316,7 @@ module.exports.adminAll = async (req, res) => {
     const products = await Product.find({ _id: { $in: productIds } }).select('title').lean();
     
     const reviewsWithProducts = reviews.map(review => {
-      const product = products.find(p => p._id.toString() === review.productId.toString());
+      const product = products.find(p => review.productId && p._id.toString() === review.productId.toString());
       return {
         ...review.toObject(),
         productTitle: product?.title || 'Sản phẩm'
@@ -329,7 +329,7 @@ module.exports.adminAll = async (req, res) => {
       currentStatus: status
     });
   } catch (error) {
-    console.log(error);
-    res.redirect('back');
+    console.log('Error in adminAll:', error);
+    res.status(500).send('Đã có lỗi xảy ra khi lấy danh sách reviews.');
   }
 };

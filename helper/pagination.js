@@ -1,6 +1,6 @@
 module.exports = (query, countProduct) => {
   let objectPanigation = {
-    limit: 4,
+    limit: 5,
     currentPage:1,
   };
   if (query.page) {

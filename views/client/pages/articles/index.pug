@@ -12,7 +12,7 @@ block main
         i.bi.bi-newspaper.text-brand-400
         | Tin tức & Kiến thức
       
-      h1(class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-6") Blog VanHa Tech
+      h1(class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-6") Blog NVH Mall
       p(class="text-lg md:text-xl text-white/90 font-medium leading-relaxed drop-shadow-md max-w-2xl mx-auto") Cập nhật liên tục những xu hướng công nghệ mới nhất, thủ thuật mua sắm và thông tin hữu ích từ chuyên gia.
 
   div(class="container mx-auto px-4 py-12 mb-20")
@@ -48,7 +48,7 @@ block main
                 | #{article.title}
               
               p(class="text-sm text-surface-500 font-medium leading-relaxed mb-6 line-clamp-3")
-                | #{article.description ? article.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Nhấn để xem chi tiết bài viết...'}
+                | !{article.description ? article.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Nhấn để xem chi tiết bài viết...'}
               
               div(class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100")
                 span(class="text-sm font-bold text-brand-600 flex items-center gap-1 group-hover:gap-2 transition-all")

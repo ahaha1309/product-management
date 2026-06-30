@@ -18,6 +18,10 @@ const Productschema = new mongoose.Schema({
   },
   status: String,
   position: Number,
+  requireVariants: {
+    type: Boolean,
+    default: true
+  },
   createdBy: {
     accountId:String,
     createdAt:{

@@ -1,56 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    /* CSS cơ bản dùng trên web, phần lớn sẽ được inline bên dưới */
-    body { margin:0; padding:0; background-color:#f4f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-    .section { padding: 20px 24px; border-bottom: 8px solid #f8f8f8; }
-    .text-gray { color: #555555; }
-    .text-dark { color: #161823; }
-    .text-bold { font-weight: 600; }
-    .flex-space { width: 100%; display: table; margin-bottom: 12px; }
-    .flex-left { display: table-cell; text-align: left; color: #555555; font-size: 14px; }
-    .flex-right { display: table-cell; text-align: right; color: #161823; font-size: 14px; font-weight: 500;}
+    body { margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+    .header { background-color: #0f172a; padding: 32px 40px; text-align: center; border-bottom: 4px solid #ef4444; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .header p { margin: 8px 0 0; color: #94a3b8; font-size: 15px; }
+    .content { padding: 40px; }
+    .greeting { font-size: 16px; color: #334155; margin-top: 0; margin-bottom: 24px; line-height: 1.6; }
+    .alert-box { background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+    .alert-box p { margin: 0; color: #991b1b; font-size: 14px; line-height: 1.6; }
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; font-weight: 700; margin-bottom: 20px; margin-top: 32px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
+    .table-container { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .table-container td { padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+    .table-container td.label { color: #64748b; font-size: 14px; }
+    .table-container td.value { color: #0f172a; font-size: 14px; font-weight: 600; text-align: right; }
+    .btn { display: inline-block; background-color: #0f172a; color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; text-align: center; margin-top: 32px; transition: background-color 0.2s; }
+    .footer { background-color: #f8fafc; padding: 32px 40px; text-align: center; border-top: 1px solid #e2e8f0; }
+    .footer p { margin: 0; color: #64748b; font-size: 13px; line-height: 1.6; }
+    .footer a { color: #2563eb; text-decoration: none; font-weight: 500; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="section" style="border-bottom: 1px solid #f0f0f0;">
-      <h1 class="text-dark" style="font-size: 24px; margin-top: 10px; margin-bottom: 20px; color: #e74c3c;">Đơn hàng của bạn đã được hủy</h1>
-      <p style="font-size: 15px; color: #555;">Xin chào <strong>{{userName}}</strong>!</p>
-      <p style="font-size: 14px; color: #777; line-height: 1.5;">Theo yêu cầu của bạn, chúng tôi đã tiến hành hủy đơn hàng <strong>#{{orderCode}}</strong> thành công. Nếu bạn đã thanh toán trực tuyến, số tiền sẽ được hoàn lại vào tài khoản của bạn theo chính sách hoàn tiền của chúng tôi.</p>
+    <div class="header">
+      <h1>NVH Mall</h1>
+      <p>Hủy đơn hàng #{{orderCode}}</p>
     </div>
 
-    <div class="section">
-      <div style="margin-bottom: 15px; font-weight: 600; font-size: 14px; color: #161823; display: flex; align-items: center;">
-        🛍️ Chi tiết đơn hàng đã hủy
+    <div class="content">
+      <p class="greeting">Xin chào <strong>{{userName}}</strong>,</p>
+
+      <div class="alert-box">
+        <p>Đơn hàng <strong>#{{orderCode}}</strong> của bạn đã được hủy thành công theo yêu cầu. Nếu bạn đã thanh toán trực tuyến, số tiền sẽ được hoàn lại vào thẻ/tài khoản của bạn trong vòng 3-5 ngày làm việc theo quy định của ngân hàng.</p>
       </div>
-      
+
+      <div class="section-title">Chi tiết đơn hàng đã hủy</div>
       {{productListHTML}}
 
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+      <table class="table-container">
         <tr>
-          <td class="flex-left">ID đơn hàng</td>
-          <td class="flex-right">{{orderCode}}</td>
+          <td class="label">Mã đơn hàng</td>
+          <td class="value">#{{orderCode}}</td>
         </tr>
         <tr>
-          <td class="flex-left" style="padding-top: 8px;">Ngày hủy</td>
-          <td class="flex-right" style="padding-top: 8px;">{{cancelDate}}</td>
+          <td class="label">Ngày hủy</td>
+          <td class="value">{{cancelDate}}</td>
         </tr>
       </table>
 
-      <div style="margin-top: 24px; text-align: center;">
-        <a href="{{orderLink}}" style="display: block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 0; border-radius: 6px; font-weight: 600; font-size: 15px;">Tiếp tục mua sắm</a>
+      <div style="text-align: center;">
+        <a href="{{orderLink}}" class="btn">Tiếp tục mua sắm</a>
       </div>
     </div>
 
-    <div class="section" style="border-bottom: none;">
-      <h3 style="font-size: 16px; margin-top: 0; margin-bottom: 16px; color: #161823;">Rất tiếc vì đơn hàng không thành công!</h3>
-      <p style="font-size: 14px; color: #555; margin-bottom: 6px;">Chúng tôi hi vọng có thể phục vụ bạn ở những đơn hàng tiếp theo.</p>
-      <p style="font-size: 14px; color: #555; margin-bottom: 6px;">Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ bộ phận hỗ trợ khách hàng.</p>
+    <div class="footer">
+      <p>Rất tiếc vì chưa thể phục vụ bạn lần này. Hy vọng sẽ được đón tiếp bạn trong tương lai!</p>
+      <p style="margin-top: 16px; font-size: 12px; color: #94a3b8;">© 2026 NVH Mall. All rights reserved.</p>
     </div>
   </div>
 </body>

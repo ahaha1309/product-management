@@ -126,7 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
             productListBody.appendChild(tr);
           });
 
-          // 3. Hiển thị modal (Dùng cú pháp của JS thuần, đặt ngay sau khi đổ dữ liệu xong)
+          // 3. Update print invoice link
+          document.getElementById('btn-print-invoice').href = `/admin/orders/print/${order._id}`;
+
+          // 4. Hiển thị modal (Dùng cú pháp của JS thuần, đặt ngay sau khi đổ dữ liệu xong)
           modalInstance.show();
         }
       } catch (error) {

@@ -188,6 +188,21 @@ io.on('connection', (socket) => {
   });
 });
 
+// Global Error Handler (404)
+app.use((req, res, next) => {
+  res.status(404).render('client/pages/404', {
+    pageTitle: '404 - Không tìm thấy trang'
+  });
+});
+
+// Global Error Handler (500)
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).render('client/pages/500', {
+    pageTitle: '500 - Lỗi hệ thống'
+  });
+});
+
 if (process.env.NODE_ENV !== 'production') {
   server.listen(port, () => {
     console.log(`tao dang chay o port ${port} voi socket.io`);

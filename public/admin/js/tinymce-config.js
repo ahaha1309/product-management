@@ -1,7 +1,7 @@
 tinymce.init({
   selector: '#description',
   license_key: 'gpl',
-  height: 300,
+  height: 450,
   plugins: 'image link lists table code image',
   toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | image link | code',
   // hàm chọn file từ máy tính

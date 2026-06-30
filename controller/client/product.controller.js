@@ -82,9 +82,12 @@ module.exports.index = async (req, res) => {
   const validCatIds = new Set(activeProductsForCat.map(p => p.product_category_id ? p.product_category_id.toString() : null));
   const categories = categoriesRaw.filter(c => validCatIds.has(c._id.toString()));
 
-  // Lọc theo Danh mục (Category Filter)
+  // Lọc theo Danh mục (Category Filter) — bao gồm cả category con
   if (req.query.category) {
-    newProduct = newProduct.filter(item => item.product_category_id && item.product_category_id.toString() === req.query.category);
+    const subCats = await getSubCategoryHelper.getSubCategory(req.query.category);
+    const subCatIds = subCats.map(c => c.id || c._id.toString());
+    const allCatIds = new Set([req.query.category, ...subCatIds]);
+    newProduct = newProduct.filter(item => item.product_category_id && allCatIds.has(item.product_category_id.toString()));
   }
 
   let pageTitle = 'Trang sản phẩm';
@@ -188,8 +191,16 @@ module.exports.detail=async (req,res)=>{
       });
     }
 
+    // 4. Fetch Questions
+    const questionModel = require('../../models/question.model');
+    const questions = await questionModel.find({ productId: product._id, status: 'approved', deleted: false })
+      .populate('userId', 'fullName avatar')
+      .populate('answers.userId', 'fullName avatar')
+      .sort({ createdAt: 'desc' });
+
     res.render('client/pages/products/detail', {
       title: product.title,
+      metaDesc: product.description ? product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) : `Mua ${product.title} chính hãng tại NVH Mall. Giá tốt, giao hàng toàn quốc.`,
       product: product,
       variants: variants,
       variantAttributes: {
@@ -199,7 +210,8 @@ module.exports.detail=async (req,res)=>{
       },
       reviews: reviews,
       averageRating: averageRating,
-      isWishlisted: isWishlisted
+      isWishlisted: isWishlisted,
+      questions: questions
     });    
   } catch (error) {
     req.flash('error','Lỗi khi tải chi tiết sản phẩm');
@@ -210,17 +222,39 @@ module.exports.getProductsByCategory = async (req, res) => {
   const slugCategory = req.params.slug;
 
   try {
-    const category = await categoryModel.findOne({ slug: slugCategory });
-    const listSubCategory=await getSubCategoryHelper.getSubCategory(category._id)
-    const listSubCategoryId=listSubCategory.map(item=>item.id)
-    // lấy category con đúng
-    const products= await Product.find({
-      product_category_id: {$in:[category._id,...listSubCategoryId]}
+    const category = await categoryModel.findOne({ slug: slugCategory, deleted: false });
+    if (!category) {
+      return res.redirect('/product');
+    }
+
+    const listSubCategory = await getSubCategoryHelper.getSubCategory(category._id);
+    const listSubCategoryId = listSubCategory.map(item => item.id);
+
+    // Lấy sản phẩm thuộc category này VÀ tất cả category con (đệ quy)
+    const products = await Product.find({
+      product_category_id: { $in: [category._id.toString(), ...listSubCategoryId] },
+      status: 'active',
+      deleted: false,
     });
-    const newProduct=productHelper.productHelper(products)
+
+    const newProduct = productHelper.productHelper(products);
+
+    // Lấy danh sách categories cho sidebar
+    const categoriesRaw = await categoryModel.find({ status: 'active', deleted: false });
+    const activeProductsForCat = await Product.find({ status: 'active', deleted: false }).select('product_category_id');
+    const validCatIds = new Set(activeProductsForCat.map(p => p.product_category_id ? p.product_category_id.toString() : null));
+    const categories = categoriesRaw.filter(c => validCatIds.has(c._id.toString()));
+
     res.render('client/pages/products/index', {
-      title: `Sản phẩm ${category.title}`,
+      title: category.title,
+      metaDesc: `Danh sách sản phẩm ${category.title} chính hãng, giá cực sốc tại NVH Mall. Mua ngay hôm nay để nhận ưu đãi hấp dẫn.`,
       product: newProduct,
+      categories: categories,
+      currentCategory: category._id.toString(),
+      type: '',
+      minPrice: undefined,
+      maxPrice: undefined,
+      currentRating: undefined,
     });
 
   } catch (e) {

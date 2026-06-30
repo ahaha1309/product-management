@@ -16,19 +16,13 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
           if settingGeneral && settingGeneral.websiteName
             span #{settingGeneral.websiteName}
           else
-            span VanHa
-            span(class="text-brand-500") Tech
+            span NVH 
+            span(class="text-brand-500") Mall
             
         p(class="text-sm text-slate-400 leading-relaxed mb-8 max-w-sm font-medium")
           | #{settingGeneral && settingGeneral.shortDescription ? settingGeneral.shortDescription : 'Kiến tạo tương lai thông qua công nghệ. Cung cấp thiết bị thông minh và giải pháp điện tử hàng đầu với trải nghiệm mua sắm không giới hạn.'}
           
-        div(class="flex items-center gap-3 mt-auto")
-          a(href=(settingGeneral && settingGeneral.facebook ? settingGeneral.facebook : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-blue-500 hover:bg-blue-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
-            i.bi.bi-facebook.text-lg
-          a(href=(settingGeneral && settingGeneral.instagram ? settingGeneral.instagram : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-pink-500 hover:bg-pink-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
-            i.bi.bi-instagram.text-lg
-          a(href=(settingGeneral && settingGeneral.youtube ? settingGeneral.youtube : "#") class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-red-500 hover:bg-red-500/20 transition-all hover:-translate-y-1 shadow-lg" target="_blank")
-            i.bi.bi-youtube.text-lg
+
 
       //- Links Column 1 (Spans 2)
       div(class="lg:col-span-2")
@@ -88,7 +82,7 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
   //- Bottom Bar
   div(class="container mx-auto px-4 max-w-7xl mt-12 pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10")
     p(class="text-xs text-slate-500 font-medium")
-      | #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : '© 2026 VanHa Tech Store. All rights reserved.'}
+      | #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : '© 2026 NVH Mall Store. All rights reserved.'}
     
     div(class="flex items-center gap-4")
       div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")

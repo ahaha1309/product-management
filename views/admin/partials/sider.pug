@@ -1,10 +1,9 @@
 aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex flex-col shrink-0 transition-transform duration-300 border-r border-slate-900 shadow-xl z-50 fixed md:relative -translate-x-full md:translate-x-0")
   //- Logo Area
   div(class="h-16 flex items-center px-6 border-b border-surface-800/50 shrink-0")
-    a(href=`${prefixAdmin}/dashboard` class="flex items-center gap-3 group")
-      div(class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform")
-        i.bi.bi-lightning-charge-fill.text-sm
-      span(class="text-lg font-bold text-white tracking-wide") VanHa <span class="text-brand-400">Tech</span>
+    a(href=`${prefixAdmin}/dashboard` class="logo-link flex items-center gap-3 group")
+      img(src="/image/logo.png" alt="Logo" class="w-8 h-8 rounded-lg shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform")
+      span(class="text-lg font-bold text-white tracking-wide") NVH <span class="text-brand-400">Mall</span>
   
   //- Menu Area
   div(class="flex-1 overflow-y-auto hide-scrollbar py-4 px-3 space-y-1")
@@ -41,6 +40,10 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
       a(href=`${prefixAdmin}/users` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
         i.bi.bi-people.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Khách hàng
+
+    a(href=`${prefixAdmin}/vouchers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-ticket-perforated.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Voucher
         
     //- Content & Marketing
     div(class="pt-4 pb-2")
@@ -98,7 +101,7 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
   script.
     document.addEventListener("DOMContentLoaded", () => {
       const currentPath = window.location.pathname;
-      const links = document.querySelectorAll("aside a");
+      const links = document.querySelectorAll("aside a:not(.logo-link)");
       let activeLink = null;
       let maxLength = 0;
       

@@ -47,6 +47,17 @@ const orderSchema = new mongoose.Schema({
     default: false
   },
   canceledAt: Date,
+  // Lưu snapshot địa chỉ giao hàng tại thời điểm đặt hàng
+  shippingAddress: {
+    fullName: String,
+    phone: String,
+    address: String,
+  },
+  // Ghi chú của khách hàng
+  orderNote: {
+    type: String,
+    default: ''
+  },
 },
 {
   timestamps: true // Tự động sinh createdAt và updatedAt

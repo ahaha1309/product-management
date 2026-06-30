@@ -140,7 +140,8 @@ module.exports.index = async (req, res) => {
   const isLogin = req.cookies.token ? true : false;
 
   res.render('client/pages/home/index.pug', {
-    title: 'Trang chủ',
+    title: 'NVH Mall - Premium E-commerce',
+    metaDesc: 'NVH Mall - Chuyên phân phối các sản phẩm công nghệ Apple, Samsung cao cấp, chính hãng với giá tốt nhất thị trường.',
     message: 'Trang chủ',
     isLogin: isLogin,
     productFeatured: productFeatured,

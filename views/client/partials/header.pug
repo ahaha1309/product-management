@@ -28,13 +28,12 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
         if settingGeneral && settingGeneral.logo
           img(src=settingGeneral.logo alt="Logo" class="h-8 rounded-md")
         else
-          div(class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-md shadow-brand-500/20")
-            i.bi.bi-lightning-charge-fill.text-lg
+          img(src="/image/logo.png" alt="Logo" class="h-8 rounded-md")
         if settingGeneral && settingGeneral.websiteName
           span #{settingGeneral.websiteName}
         else
-          span VanHa
-          span(class="text-brand-500") Tech
+          span NVH
+          span(class="text-brand-500") Mall
           
     //- Desktop Navigation
     nav(class="hidden lg:flex items-center gap-8 ml-8 flex-1")
@@ -134,14 +133,14 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
           i.bi.bi-search
 
   //- Mobile Menu Offcanvas (Kept Bootstrap JS for toggle, Tailwind for style)
-  div(class="offcanvas offcanvas-end lg:hidden w-80 max-w-[85vw] border-l-0 shadow-2xl" tabindex="-1" id="mobileMenu")
-    div(class="offcanvas-header border-b border-slate-100 py-4 px-6")
+  div(class="offcanvas offcanvas-end lg:hidden w-80 max-w-[85vw] border-l-0 shadow-2xl" tabindex="-1" id="mobileMenu" style="background-color: #ffffff !important; z-index: 1050 !important; height: 100vh !important; display: flex; flex-direction: column;")
+    div(class="offcanvas-header border-b border-slate-100 py-4 px-6" style="background-color: #ffffff !important;")
       h5(class="text-lg font-bold flex items-center gap-2")
-        i.bi.bi-lightning-charge-fill.text-brand-500
-        | VanHa Tech
+        img(src="/image/logo.png" alt="Logo" class="h-6 rounded-sm")
+        | NVH Mall
       button(type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close")
     
-    div(class="offcanvas-body p-0 overflow-y-auto")
+    div(class="offcanvas-body p-0 overflow-y-auto" style="background-color: #ffffff !important; flex: 1 1 auto; height: 100%;")
       //- Auth Mobile
       if user
         div(class="bg-brand-50 p-6 border-b border-brand-100")
@@ -177,6 +176,10 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
             i.bi.bi-newspaper.text-xl.text-surface-400
             | Tin tức
         if user
+          li
+            a(href="/loyalty" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
+              i.bi.bi-star.text-xl.text-surface-400
+              | Điểm thưởng
           li
             a(href="/wishlist" class="flex items-center gap-3 px-6 py-4 text-base font-medium text-surface-700 hover:bg-surface-50 active:bg-surface-100")
               i.bi.bi-heart.text-xl.text-surface-400

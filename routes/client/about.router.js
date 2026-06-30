@@ -5,7 +5,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
   const isLogin = req.cookies.token ? true : false;
   res.render('client/pages/about/index', {
-    title: 'Giới thiệu - VanHa Tech Store',
+    title: 'Giới thiệu - NVH Mall Store',
     isLogin
   });
 });

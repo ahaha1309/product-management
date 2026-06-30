@@ -36,4 +36,10 @@ router.patch(
   Controller.editPost
 );
 router.get('/detail/:id', Controller.detail);
+
+// Variant API routes (JSON)
+router.post('/edit/:id/variants', upload.single('variantImage'), uploadMiddleware.upload, Controller.variantCreate);
+router.patch('/edit/:id/variants/:variantId', upload.single('variantImage'), uploadMiddleware.upload, Controller.variantUpdate);
+router.delete('/edit/:id/variants/:variantId', Controller.variantDelete);
+
 module.exports = router;

@@ -1,0 +1,114 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(messages.success)
+  +alert-error(messages.error)
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+          i.bi.bi-ticket-perforated.text-brand-500
+          | Quản lý Voucher
+        p(class="text-surface-500 text-sm mt-1") Tạo và quản lý mã khuyến mãi cho khách hàng.
+      a(href=`${prefixAdmin}/vouchers/create` class="btn-premium btn-premium-primary px-6 py-2.5 flex items-center gap-2 self-start")
+        i.bi.bi-plus-lg
+        | Tạo Voucher
+
+    //- Stats Row
+    div(class="grid grid-cols-2 md:grid-cols-4 gap-4")
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center")
+        div(class="w-10 h-10 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-lg mx-auto mb-3")
+          i.bi.bi-ticket-perforated
+        div(class="text-2xl font-bold text-surface-900 mb-1") #{stats.total}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Tổng Voucher
+        
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center")
+        div(class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg mx-auto mb-3")
+          i.bi.bi-check-circle
+        div(class="text-2xl font-bold text-emerald-600 mb-1") #{stats.active}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Đang hoạt động
+        
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center")
+        div(class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg mx-auto mb-3")
+          i.bi.bi-x-circle
+        div(class="text-2xl font-bold text-rose-600 mb-1") #{stats.expired}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Hết hạn
+
+      div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-5 text-center")
+        div(class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg mx-auto mb-3")
+          i.bi.bi-graph-up
+        div(class="text-2xl font-bold text-blue-600 mb-1") #{stats.totalUsed}
+        div(class="text-xs font-semibold text-surface-500 uppercase tracking-wider") Lượt sử dụng
+
+    //- Table
+    div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse")
+          thead
+            tr(class="bg-surface-50 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-5 py-3 border-b border-surface-100") Mã
+              th(class="px-5 py-3 border-b border-surface-100") Tiêu đề
+              th(class="px-5 py-3 border-b border-surface-100") Giảm giá
+              th(class="px-5 py-3 border-b border-surface-100") Đơn tối thiểu
+              th(class="px-5 py-3 border-b border-surface-100") Thời hạn
+              th(class="px-5 py-3 border-b border-surface-100") Đã dùng
+              th(class="px-5 py-3 border-b border-surface-100") Trạng thái
+              th(class="px-5 py-3 border-b border-surface-100") Thao tác
+          tbody(class="divide-y divide-surface-100 text-sm")
+            if vouchers && vouchers.length > 0
+              each v in vouchers
+                - const now = new Date()
+                - const isExpired = new Date(v.validTo) < now
+                - const statusClass = v.status === 'active' && !isExpired ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'
+                - const statusText = v.status === 'active' && !isExpired ? 'Hoạt động' : (isExpired ? 'Hết hạn' : 'Tắt')
+                tr(class="hover:bg-surface-50 transition-colors")
+                  td(class="px-5 py-3 whitespace-nowrap")
+                    span(class="font-bold text-surface-900 bg-surface-100 px-2.5 py-1 rounded-lg text-xs tracking-wider") #{v.code}
+                  td(class="px-5 py-3 text-surface-700") #{v.title || '--'}
+                  td(class="px-5 py-3")
+                    span(class="font-semibold text-brand-600") #{v.discountPercentage}%
+                    if v.maxDiscountAmount > 0
+                      span(class="text-xs text-surface-500 ml-1") (tối đa #{v.maxDiscountAmount.toLocaleString('vi-VN')}đ)
+                  td(class="px-5 py-3 text-surface-600") #{v.minOrderValue ? v.minOrderValue.toLocaleString('vi-VN') + 'đ' : 'Không'}
+                  td(class="px-5 py-3 text-xs text-surface-500")
+                    div #{moment(v.validFrom).format('DD/MM/YYYY')}
+                    div(class="text-surface-400") ~ #{moment(v.validTo).format('DD/MM/YYYY')}
+                  td(class="px-5 py-3")
+                    span(class="font-semibold text-surface-900") #{v.usedCount}
+                    span(class="text-surface-400") /#{v.usageLimit}
+                  td(class="px-5 py-3")
+                    span(class=`px-2.5 py-1 rounded-full text-xs font-medium border ${statusClass}`) #{statusText}
+                  td(class="px-5 py-3")
+                    div(class="flex items-center gap-2")
+                      a(href=`${prefixAdmin}/vouchers/edit/${v._id}` class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors" title="Sửa")
+                        i.bi.bi-pencil.text-sm
+                      button(class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors btn-delete-voucher" data-id=v._id title="Xóa")
+                        i.bi.bi-trash.text-sm
+            else
+              tr
+                td(colspan="8" class="px-5 py-12 text-center text-surface-400")
+                  i.bi.bi-ticket-perforated.text-4xl.mb-3.inline-block.opacity-50
+                  p(class="font-medium") Chưa có voucher nào
+                  a(href=`${prefixAdmin}/vouchers/create` class="text-brand-600 text-sm font-semibold hover:underline mt-2 inline-block") Tạo voucher đầu tiên
+
+  script.
+    document.querySelectorAll('.btn-delete-voucher').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Bạn có chắc chắn muốn xóa voucher này?')) return;
+        const id = btn.dataset.id;
+        try {
+          const res = await fetch(`#{prefixAdmin}/vouchers/delete/${id}`, { method: 'DELETE' });
+          const data = await res.json();
+          if (data.code === 200) {
+            btn.closest('tr').remove();
+          } else {
+            alert(data.message || 'Xóa thất bại');
+          }
+        } catch (e) {
+          alert('Có lỗi xảy ra');
+        }
+      });
+    });

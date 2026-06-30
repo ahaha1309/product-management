@@ -1,0 +1,124 @@
+doctype html
+html
+  head
+    title #{title}
+    meta(charset="utf-8")
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet")
+    style.
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          font-size: 12pt;
+          background: #fff;
+        }
+        .invoice-container {
+          box-shadow: none !important;
+          border: none !important;
+        }
+      }
+      .invoice-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 3rem;
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        border-radius: 8px;
+      }
+      .invoice-header {
+        border-bottom: 2px solid #333;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+      }
+      .brand-name {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111;
+        letter-spacing: -1px;
+      }
+      .table th {
+        background-color: #f8f9fa !important;
+      }
+  body(onload="window.print()")
+    .no-print.text-center.mt-4
+      button.btn.btn-primary.me-2(onclick="window.print()") In Hóa Đơn
+      button.btn.btn-outline-secondary(onclick="window.history.back()") Quay Lại
+
+    .invoice-container
+      .invoice-header.d-flex.justify-content-between.align-items-center
+        .brand-info
+          .brand-name NVH Mall
+          div MST: 0123456789
+          div Địa chỉ: 123 Đường Số 1, TP.HCM
+          div Hotline: 1900 1234
+        .invoice-title.text-end
+          h2.mb-0 HÓA ĐƠN BÁN HÀNG
+          .text-muted Mã ĐH: #{order.orderCode}
+          .text-muted Ngày: #{moment ? moment(order.createdAt).format('DD/MM/YYYY HH:mm') : new Date(order.createdAt).toLocaleString()}
+
+      .row.mb-4
+        .col-sm-6
+          h6 THÔNG TIN KHÁCH HÀNG:
+          if order.shippingAddress && order.shippingAddress.fullName
+            div Tên: #{order.shippingAddress.fullName}
+            div SĐT: #{order.shippingAddress.phone}
+            div Địa chỉ: #{order.shippingAddress.address}
+          else
+            div Tên: #{user.fullName}
+            div SĐT: #{user.phone}
+            div Địa chỉ: #{user.address}
+        .col-sm-6.text-sm-end
+          h6 PHƯƠNG THỨC THANH TOÁN:
+          div #{order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán trực tuyến (VNPAY)'}
+          div Trạng thái: #{order.paymentStatus === 'success' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+          if order.orderNote
+            div.mt-2
+              strong Ghi chú:
+              |  #{order.orderNote}
+
+      table.table.table-bordered.mb-4
+        thead
+          tr
+            th(style="width: 5%") STT
+            th(style="width: 45%") Sản phẩm
+            th.text-center(style="width: 15%") Đơn giá
+            th.text-center(style="width: 15%") SL
+            th.text-end(style="width: 20%") Thành tiền
+        tbody
+          each item, index in order.products
+            tr
+              td.text-center #{index + 1}
+              td
+                | #{item.title}
+                if item.variantText
+                  br
+                  small.text-muted #{item.variantText}
+              td.text-center #{item.newPrice.toLocaleString('vi-VN')}đ
+              td.text-center #{item.quantity}
+              td.text-end #{(item.newPrice * item.quantity).toLocaleString('vi-VN')}đ
+              
+      .row
+        .col-sm-6
+        .col-sm-6
+          table.table.table-borderless.table-sm
+            tbody
+              - const subtotal = order.products.reduce((sum, p) => sum + (p.newPrice * p.quantity), 0);
+              - const discount = subtotal - order.amount; // Giả sử order.amount là số tiền cuối cùng sau giảm giá
+              tr
+                td Tổng tiền hàng:
+                td.text-end #{subtotal.toLocaleString('vi-VN')}đ
+              if discount > 0
+                tr
+                  td Giảm giá:
+                  td.text-end -#{discount.toLocaleString('vi-VN')}đ
+              tr.border-top
+                td
+                  strong TỔNG THANH TOÁN:
+                td.text-end
+                  strong.fs-5 #{order.amount.toLocaleString('vi-VN')}đ
+
+      .text-center.mt-5
+        p.fst-italic Cảm ơn Quý khách đã mua sắm tại NVH Mall!
+        small.text-muted Mọi thắc mắc xin liên hệ hotline: 1900 1234

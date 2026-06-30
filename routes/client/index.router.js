@@ -40,10 +40,14 @@ module.exports = (app) => {
   app.use('/contact', contactRouter);
   app.use('/policy', policyRouter);
 
-  // ✅ NEW ROUTES - VanHa Tech
+  // ✅ NEW ROUTES - NVH Mall
   app.use('/articles', articleRouter);
   app.use('/about', aboutRouter);
+  app.use('/questions', require('./question.route'));
   
+  // ✅ SEO - Sitemap
+  app.get('/sitemap.xml', require('../../controller/client/sitemap.controller').index);
+
   // ✅ Intercept Socket.io requests (Vercel serverless doesn't support websockets natively)
   app.use('/socket.io', (req, res) => {
     res.status(400).json({ error: 'Socket.io not supported on Vercel Serverless' });

@@ -36,5 +36,7 @@ module.exports = (app) => {
   app.use(path_admin + '/users', authMiddleware.requireAuth, require('./user.router'));
   app.use(path_admin + '/loyalty', authMiddleware.requireAuth, loyaltyRouter);
   app.use(path_admin + '/chats', authMiddleware.requireAuth, require('./chat.route'));
+  app.use(path_admin + '/vouchers', authMiddleware.requireAuth, require('./voucher.router'));
+  app.use(path_admin + '/notifications', authMiddleware.requireAuth, require('./notification.route'));
   app.use(path_admin + '/settings', authMiddleware.requireAuth, require('./setting.router'));
 };

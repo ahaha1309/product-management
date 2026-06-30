@@ -16,7 +16,7 @@ module.exports.index = async (req, res) => {
     const categories = await ArticleCategory.find({ deleted: false, status: 'active' });
 
     res.render('client/pages/articles/index', {
-      title: 'Tin tức & Blog - VanHa Tech',
+      title: 'Tin tức & Blog - NVH Mall',
       articles,
       categories,
       currentCategory: categoryId || null
@@ -48,7 +48,7 @@ module.exports.detail = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.render('client/pages/articles/detail', {
-      title: `${article.title} - VanHa Tech Blog`,
+      title: `${article.title} - NVH Mall Blog`,
       article,
       recentArticles,
       comments

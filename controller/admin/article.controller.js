@@ -102,3 +102,63 @@ module.exports.createPost = async (req, res) => {
     res.redirect('back');
   }
 };
+
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(',').filter(item => item !== '');
+
+    switch (type) {
+      case 'active':
+        await articleModel.updateMany({ _id: { $in: ids } }, { status: 'active', $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } } });
+        req.flash('success', 'Cập nhật trạng thái thành công!');
+        break;
+      case 'inactive':
+        await articleModel.updateMany({ _id: { $in: ids } }, { status: 'inactive', $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } } });
+        req.flash('success', 'Cập nhật trạng thái thành công!');
+        break;
+      case 'delete':
+        await articleModel.updateMany({ _id: { $in: ids } }, { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } });
+        req.flash('success', 'Xóa thành công!');
+        break;
+      case 'position':
+        for (const item of ids) {
+          const [id, position] = item.split(':');
+          await articleModel.updateOne({ _id: id }, { position: parseInt(position), $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } } });
+        }
+        req.flash('success', 'Cập nhật vị trí thành công!');
+        break;
+      default:
+        break;
+    }
+    res.redirect('back');
+  } catch (error) {
+    res.redirect('back');
+  }
+};
+
+module.exports.changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const status = req.params.status;
+    await articleModel.updateOne({ _id: id }, { status: status, $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } } });
+    req.flash('success', 'Cập nhật trạng thái thành công!');
+    res.redirect('back');
+  } catch (error) {
+    res.redirect('back');
+  }
+};
+
+module.exports.changeActivity = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const activity = req.params.activity;
+    if (activity === 'delete') {
+      await articleModel.updateOne({ _id: id }, { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } });
+      req.flash('success', 'Xóa thành công!');
+    }
+    res.redirect('back');
+  } catch (error) {
+    res.redirect('back');
+  }
+};

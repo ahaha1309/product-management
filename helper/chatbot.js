@@ -229,7 +229,6 @@ async function searchProducts(keyword, limit = 15) {
         // 🔎 Tìm kiếm sản phẩm
         const products = await Product.find({ status: 'active' })
             .select('_id title description price discountPercentage stock category thumbnail slug')
-            .limit(limit * 2)
             .lean();
 
         if (products.length === 0) {

@@ -47,11 +47,16 @@ if(req.query.product&&req.query.quantity){
 }
   // Fetch valid vouchers
   const Voucher = require('../../models/voucher.model');
-  const availableVouchers = await Voucher.find({
+  const userId = res.locals.user._id.toString();
+  const allVouchers = await Voucher.find({
     status: 'active',
     validFrom: { $lte: new Date() },
     validTo: { $gte: new Date() }
   });
+  // Lọc voucher: chưa hết lượt dùng + user chưa dùng
+  const availableVouchers = allVouchers.filter(v => 
+    v.usedCount < v.usageLimit && !v.usedBy.includes(userId)
+  );
 
   let appliedVoucher = null;
   const subtotal = products.reduce((sum, p) => sum + p.newPrice * p.quantity, 0);
@@ -64,7 +69,7 @@ if(req.query.product&&req.query.quantity){
       validTo: { $gte: new Date() }
     });
 
-    if (vc && subtotal >= vc.minOrderValue && vc.usedCount < vc.usageLimit) {
+    if (vc && subtotal >= vc.minOrderValue && vc.usedCount < vc.usageLimit && !vc.usedBy.includes(userId)) {
       appliedVoucher = {
         code: vc.code,
         discount: vc.discountPercentage,
@@ -130,7 +135,7 @@ if(req.query.product&&req.query.quantity){
 module.exports.createPaymentUrl = async (req, res, next) => {
   try {
     // Lấy dữ liệu từ request body
-    const { amount, paymentMethod, products } = req.body;
+    const { amount, paymentMethod, products, shippingAddress, orderNote } = req.body;
 
     if (!amount) {
       return res.status(400).json({ code: '01', message: 'Thiếu amount' });
@@ -144,42 +149,107 @@ module.exports.createPaymentUrl = async (req, res, next) => {
     const generate = require('../../helper/generate');
     const orderCode = generate.generateOrderCode();
 
-     for(let item of products){
-      const id= item.productId || item._id; // _id is passed if from checkout form
-      const product=await productModel.findOne({_id:id});
-      const newPrice=productHelper.priceNewProduct(product);
-      item.newPrice=newPrice
-      item.thumbnail=product.thumbnail;
-      item.title=product.title;
-      item.productId = id; // Ensure productId is saved correctly
-      // variantText is already in item if passed from form
+    // ==========================================
+    // VALIDATE STOCK + ENRICH PRODUCT DATA
+    // ==========================================
+    for (let item of products) {
+      const id = item.productId || item._id;
+      const product = await productModel.findOne({ _id: id });
+      
+      if (!product) {
+        return res.status(400).json({ code: '03', message: `Sản phẩm không tồn tại` });
+      }
+      
+      // Kiểm tra tồn kho
+      if (product.stock !== undefined && product.stock < (item.quantity || 1)) {
+        return res.status(400).json({ 
+          code: '04', 
+          message: `Sản phẩm "${product.title}" chỉ còn ${product.stock} sản phẩm trong kho` 
+        });
+      }
+      
+      const newPrice = productHelper.priceNewProduct(product);
+      item.newPrice = newPrice;
+      item.thumbnail = product.thumbnail;
+      item.title = product.title;
+      item.productId = id;
     }
+
+    // ==========================================
+    // CAPTURE SHIPPING ADDRESS SNAPSHOT
+    // ==========================================
+    const user = res.locals.user;
+    const addressSnapshot = shippingAddress || {
+      fullName: user.fullName,
+      phone: user.phone,
+      address: user.address,
+    };
 
     // 1. Tạo đơn hàng và lưu vào Database trước (áp dụng cho mọi phương thức)
     const newOrder = new orders({
       userId: res.locals.user._id,
       orderCode: orderCode,
-      products:products,
+      products: products,
       title: 'Thanh toan cho ma GD: ' + orderCode,
       amount: amount,
-      paymentMethod: paymentMethod // Lưu thêm phương thức thanh toán vào DB
-      // Các trường còn lại tự động là: pending,...
+      paymentMethod: paymentMethod,
+      shippingAddress: addressSnapshot,
+      orderNote: orderNote || '',
     });
     
     if (req.body.voucherCode) {
       const Voucher = require('../../models/voucher.model');
       await Voucher.updateOne(
         { code: req.body.voucherCode },
-        { $inc: { usedCount: 1 } }
+        { 
+          $inc: { usedCount: 1 },
+          $push: { usedBy: res.locals.user._id.toString() }
+        }
       );
     }
     
     await newOrder.save();
+
+    // ==========================================
+    // DEDUCT STOCK (Trừ tồn kho sau khi đặt hàng)
+    // ==========================================
+    for (let item of products) {
+      await productModel.updateOne(
+        { _id: item.productId },
+        { $inc: { stock: -(item.quantity || 1) } }
+      );
+    }
     
     try {
       await sendEmail.sendOrderConfirmationEmail(newOrder, res.locals.user);
     } catch (err) {
       console.log("Error sending order confirmation email:", err);
+    }
+
+    // ==========================================
+    // NOTIFY ADMIN VIA SOCKET & DB
+    // ==========================================
+    try {
+      const Notification = require('../../models/notification.model');
+      const notif = new Notification({
+        type: 'order',
+        title: 'Đơn hàng mới',
+        message: `Khách hàng ${res.locals.user.fullName} vừa đặt đơn hàng ${orderCode} trị giá ${amount.toLocaleString('vi-VN')}đ`,
+        link: `/admin/orders`,
+        isAdmin: true
+      });
+      await notif.save();
+
+      if (global._io) {
+        global._io.emit('ADMIN_NEW_NOTIFICATION', {
+          title: notif.title,
+          message: notif.message,
+          link: notif.link,
+          time: new Date()
+        });
+      }
+    } catch (err) {
+      console.log('Error notifying admin:', err);
     }
 
     // 2. Xử lý logic theo phương thức thanh toán
@@ -392,13 +462,29 @@ module.exports.historyOrder = async (req, res) => {
 //chi tiết đơn hàng
 module.exports.detailOrder = async (req, res) => {
   try {
-    const id=req.params.id;
-    const order = await orders.findOne({_id:id});
-    const user=await userModel.findOne({_id:res.locals.user._id})
+    const id = req.params.id;
+    const order = await orders.findOne({_id: id});
+    const user = await userModel.findOne({_id: res.locals.user._id});
+
+    const Product = require('../../models/product.model');
+    const productsInfo = await Promise.all(order.products.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      const itemObj = typeof item.toObject === 'function' ? item.toObject() : { ...item };
+      return {
+        ...itemObj,
+        title: product?.title || 'Sản phẩm không xác định',
+        thumbnail: product?.thumbnail || '',
+        newPrice: product?.price ? (product.price * (1 - (product.discountPercentage || 0) / 100)) : (item.price || 0)
+      };
+    }));
+
+    const orderObj = order.toObject();
+    orderObj.products = productsInfo;
+
     res.render('client/pages/order/orderDetail', {
-      title:"Chi tiết đơn hàng",
-      order:order,
-      user:user // Truyền listOrders ra view
+      title: "Chi tiết đơn hàng",
+      order: orderObj,
+      user: user
     });
   } catch (error) {
     console.log(error);
@@ -430,6 +516,16 @@ module.exports.cancelOrder = async (req, res) => {
     order.status = 'canceled';
     order.canceledAt = Date.now();
     await order.save();
+
+    // Hoàn lại tồn kho khi hủy đơn
+    for (let item of order.products) {
+      if (item.productId) {
+        await productModel.updateOne(
+          { _id: item.productId },
+          { $inc: { stock: (item.quantity || 1) } }
+        );
+      }
+    }
 
     try {
       await sendEmail.sendOrderCancellationEmail(order, res.locals.user);
@@ -484,5 +580,111 @@ module.exports.rebuyOrder = async (req, res) => {
     console.error(error);
     req.flash('error', 'Có lỗi xảy ra, vui lòng thử lại');
     res.redirect('/order/history');
+  }
+};
+
+// [GET] /order/print/:id
+module.exports.printInvoice = async (req, res) => {
+  try {
+    const order = await orders.findOne({
+      _id: req.params.id,
+      userId: res.locals.user._id
+    });
+    
+    if (!order) {
+      req.flash('error', 'Đơn hàng không tồn tại');
+      return res.redirect('/order/history');
+    }
+
+    const Product = require('../../models/product.model');
+    const productsInfo = await Promise.all(order.products.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      const itemObj = typeof item.toObject === 'function' ? item.toObject() : { ...item };
+      return {
+        ...itemObj,
+        title: product?.title || 'Sản phẩm không xác định',
+        thumbnail: product?.thumbnail || '',
+      };
+    }));
+
+    const orderObj = order.toObject();
+    orderObj.products = productsInfo;
+
+    res.render('admin/pages/order/invoice', { 
+      order: orderObj, 
+      user: res.locals.user,
+      title: 'In Hóa Đơn - ' + orderObj.orderCode
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect('back');
+  }
+};
+
+// [POST] /order/validate-voucher
+module.exports.validateVoucher = async (req, res) => {
+  try {
+    const { code, amount } = req.body;
+    if (!code) {
+      return res.status(400).json({ code: 400, message: 'Thiếu mã voucher' });
+    }
+
+    const Voucher = require('../../models/voucher.model');
+    const voucher = await Voucher.findOne({
+      code: code.toUpperCase(),
+      status: 'active'
+    });
+
+    if (!voucher) {
+      return res.status(404).json({ code: 404, message: 'Mã voucher không tồn tại hoặc đã hết hạn.' });
+    }
+
+    // Validate date
+    const now = new Date();
+    if (voucher.validFrom && new Date(voucher.validFrom) > now) {
+      return res.status(400).json({ code: 400, message: 'Voucher chưa đến thời gian áp dụng.' });
+    }
+    if (voucher.validTo && new Date(voucher.validTo) < now) {
+      return res.status(400).json({ code: 400, message: 'Voucher đã hết hạn.' });
+    }
+
+    // Check usage limits
+    if (voucher.usageLimit > 0 && voucher.usedCount >= voucher.usageLimit) {
+      return res.status(400).json({ code: 400, message: 'Voucher này đã hết lượt sử dụng.' });
+    }
+
+    // Check if user already used it
+    const userId = res.locals.user ? res.locals.user._id.toString() : null;
+    if (userId && voucher.usedBy && voucher.usedBy.includes(userId)) {
+      return res.status(400).json({ code: 400, message: 'Bạn đã sử dụng voucher này rồi.' });
+    }
+
+    // Check min order value
+    if (voucher.minOrderValue > 0 && amount < voucher.minOrderValue) {
+      return res.status(400).json({ code: 400, message: `Đơn hàng tối thiểu ${voucher.minOrderValue.toLocaleString('vi-VN')}₫ để áp dụng.` });
+    }
+
+    // Calculate discount
+    let discount = 0;
+    if (voucher.discountPercentage > 0) {
+      discount = amount * (voucher.discountPercentage / 100);
+      if (voucher.maxDiscountAmount > 0 && discount > voucher.maxDiscountAmount) {
+        discount = voucher.maxDiscountAmount;
+      }
+    }
+
+    return res.status(200).json({
+      code: 200,
+      message: 'Áp dụng voucher thành công',
+      voucher: {
+        code: voucher.code,
+        discountAmount: discount,
+        percentage: voucher.discountPercentage
+      }
+    });
+
+  } catch (error) {
+    console.log('Error validating voucher:', error);
+    res.status(500).json({ code: 500, message: 'Lỗi server' });
   }
 };

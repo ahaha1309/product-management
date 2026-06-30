@@ -1,0 +1,71 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(messages.success)
+  +alert-error(messages.error)
+  
+  div(class="max-w-3xl mx-auto space-y-6")
+    //- Header
+    div(class="flex items-center justify-between")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+          i.bi.bi-plus-circle.text-brand-500
+          | Tạo Voucher mới
+        p(class="text-surface-500 text-sm mt-1") Điền thông tin để tạo mã khuyến mãi.
+      a(href=`${prefixAdmin}/vouchers` class="text-sm font-semibold text-surface-600 hover:text-brand-500 flex items-center gap-1 transition-colors")
+        i.bi.bi-arrow-left
+        | Quay lại
+
+    //- Form
+    form(action=`${prefixAdmin}/vouchers/create` method="POST")
+      div(class="bg-white rounded-2xl border border-surface-100 shadow-sm p-6 md:p-8 space-y-6")
+        
+        //- Code & Title
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Mã Voucher *
+            input(type="text" name="code" required placeholder="VD: SUMMER2026" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold uppercase focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Tiêu đề
+            input(type="text" name="title" placeholder="VD: Giảm giá mùa hè" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+
+        //- Discount & Max
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Phần trăm giảm (%) *
+            input(type="number" name="discountPercentage" required min="1" max="100" placeholder="10" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Giảm tối đa (VNĐ)
+            input(type="number" name="maxDiscountAmount" min="0" placeholder="50000" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+
+        //- Min Order & Usage
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Đơn hàng tối thiểu (VNĐ)
+            input(type="number" name="minOrderValue" min="0" placeholder="100000" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Số lượt dùng tối đa
+            input(type="number" name="usageLimit" min="1" value="100" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+
+        //- Dates
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-6")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Ngày bắt đầu
+            input(type="date" name="validFrom" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+          div
+            label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Ngày kết thúc
+            input(type="date" name="validTo" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+
+        //- Status
+        div
+          label(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2 block") Trạng thái
+          select(name="status" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
+            option(value="active") Hoạt động
+            option(value="inactive") Tắt
+
+        //- Submit
+        div(class="flex justify-end pt-4 border-t border-surface-100")
+          button(type="submit" class="btn-premium btn-premium-primary px-8 py-3 flex items-center gap-2")
+            i.bi.bi-check-lg
+            | Tạo Voucher

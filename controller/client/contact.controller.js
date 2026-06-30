@@ -1,7 +1,7 @@
 module.exports.index = async (req, res) => {
   const isLogin = req.cookies.token ? true : false;
   res.render('client/pages/contact/index', {
-    title: 'Liên hệ - VanHa Tech Store',
+    title: 'Liên hệ - NVH Mall Store',
     isLogin: isLogin,
   });
 };

@@ -1,7 +1,7 @@
 document.addEventListener(
   'DOMContentLoaded',
   function () {
-    const btn = document.querySelectorAll('.btn-outline-success');
+    const btn = document.querySelectorAll('[button-status]');
     const url = new URL(window.location.href);
     btn.forEach((button) => {
       button.onclick = function () {
@@ -30,13 +30,17 @@ document.addEventListener(
     }
     // end form search
     //phân trang
-    const page = document.querySelectorAll('.pagination li a');
-    page.forEach((page) => {
-      page.onclick = function () {
-        const currentPage = page.getAttribute('button-pagination');
+    const page = document.querySelectorAll('[button-pagination]');
+    page.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const currentPage = button.getAttribute('button-pagination');
+
         url.searchParams.set('page', currentPage);
+
         window.location.href = url.href;
-      };
+      });
     });
     //sắp xếp
     const btnSort = document.querySelector('[sort-clear]');

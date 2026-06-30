@@ -12,6 +12,7 @@ module.exports.index = async (req, res) => {
     // Có thể bổ sung lấy tin nhắn cuối cùng để hiển thị preview, nhưng làm đơn giản trước
     
     res.render('admin/pages/chat/index', {
+      title: 'Hỗ trợ khách hàng',
       pageTitle: 'Quản lý hỗ trợ trực tuyến',
       chatUsers: users
     });

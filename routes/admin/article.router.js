@@ -20,5 +20,8 @@ router.get('/create', articleController.create);
 router.post('/create', upload.single('thumbnail'), uploadCloud.upload, articleController.createPost);
 router.get('/edit/:id', articleController.edit);
 router.patch('/edit/:id', upload.single('thumbnail'), uploadCloud.upload, articleController.editPatch);
+router.patch('/change-multi', articleController.changeMulti);
+router.patch('/change-status/:status/:id', articleController.changeStatus);
+router.patch('/change-activity/:activity/:id', articleController.changeActivity);
 
 module.exports=router;

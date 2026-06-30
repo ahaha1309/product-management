@@ -7,32 +7,37 @@ block main
   +alert-success(messages.success)
   
   if(role.permission.includes('products_edit'))
-    div(class="max-w-5xl mx-auto")
+    - const prefixVariant = `${prefixAdmin}/product/edit/${id}/variants`
+
+    div(class="max-w-6xl mx-auto space-y-6")
       //- Header
-      div(class="flex items-center justify-between mb-6")
+      div(class="flex items-center justify-between")
         div(class="flex items-center gap-3")
           a(href=`${prefixAdmin}/product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
             i.bi.bi-arrow-left.text-lg
-          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chỉnh sửa sản phẩm
+          div
+            h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chỉnh sửa sản phẩm
+            p(class="text-xs text-surface-400 mt-0.5") ID: #{id}
         
         button(type="submit" form="edit-form" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2")
           i.bi.bi-check2-circle.text-lg
           | Cập nhật sản phẩm
 
-      form(id="edit-form" action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data' class="grid grid-cols-1 lg:grid-cols-3 gap-6")
+      //- ===== FORM (2-column layout) =====
+      form(id="edit-form" action=`${prefixAdmin}/product/edit/${id}?_method=PATCH` method="POST" enctype='multipart/form-data' class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start")
         
-        //- Left Column (Main Info)
+        //- ===== LEFT COLUMN (2/3) =====
         div(class="lg:col-span-2 space-y-6")
+
+          //- Basic Info
           div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
             h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
               i.bi.bi-info-circle.text-brand-500
               | Thông tin cơ bản
-              
             div(class="space-y-5")
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-1.5") Tiêu đề sản phẩm <span class="text-rose-500">*</span>
                 input(type="text" name="title" value=product.title placeholder="Ví dụ: Giày thể thao Nike Air Max..." required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
-              
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-1.5") Danh mục sản phẩm
                 div(class="relative")
@@ -41,63 +46,125 @@ block main
                     if(categories && categories.length > 0)
                       +select-tree(categories, 1, product.product_category_id)
                   i.bi.bi-chevron-down.absolute.right-4.top-1.translate-y-2.text-surface-400.pointer-events-none
-              
-              div
-                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Mô tả chi tiết
-                textarea(name="description" id="description" placeholder="Nhập mô tả sản phẩm..." rows="8" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none") #{product.description}
 
-        //- Right Column (Pricing, Status, Image)
+          //- Description (TinyMCE)
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-4 pb-3 border-b border-surface-100 flex items-center gap-2")
+              i.bi.bi-card-text.text-brand-500
+              | Mô tả chi tiết
+            textarea(name="description" id="description" placeholder="Nhập mô tả sản phẩm..." class="w-full") #{product.description}
+
+          //- ===== VARIANTS (left column — fills space below description) =====
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+            //- Variants Header
+            div(class="flex items-center justify-between px-5 py-4 border-b border-surface-100 bg-gradient-to-r from-surface-50 to-white")
+              div(class="flex items-center gap-2.5")
+                div(class="w-8 h-8 rounded-xl bg-brand-50 text-brand-500 flex items-center justify-center")
+                  i.bi.bi-collection
+                div
+                  h2(class="text-sm font-bold text-surface-900") Biến thể sản phẩm (Variants)
+                  p(class="text-xs text-surface-400 mt-0.5") #{variants ? variants.length : 0} biến thể — màu sắc, kích thước, bộ nhớ...
+              button(type="button" id="btn-add-variant" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-xl shadow-sm transition-all active:scale-95")
+                i.bi.bi-plus-lg
+                | Thêm variant
+
+            //- Variants List (compact cards, 2-col grid in wide space)
+            div(id="variants-body" class="divide-y divide-surface-100")
+              if variants && variants.length > 0
+                each v in variants
+                  div(class="group px-5 py-3.5 hover:bg-surface-50/80 transition-colors" data-variant-id=v._id.toString())
+                    div(class="flex items-start justify-between gap-3")
+                      //- Left info
+                      div(class="flex-1 min-w-0")
+                        div(class="flex items-center gap-2 mb-1.5")
+                          span(class="font-mono text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded") #{v.sku}
+                          if v.attributes && v.attributes.color
+                            span(class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-surface-100 rounded text-xs text-surface-600")
+                              span(class="w-2.5 h-2.5 rounded-full border border-surface-300 shrink-0" style=`background:${v.attributes.color.toLowerCase()}`)
+                              | #{v.attributes.color}
+                          if v.attributes && v.attributes.size
+                            span(class="px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded text-xs font-medium") #{v.attributes.size}
+                          if v.attributes && v.attributes.storage
+                            span(class="px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded text-xs font-medium") #{v.attributes.storage}
+                        div(class="flex items-center gap-3")
+                          span(class="text-sm font-bold text-brand-600") #{v.pricing.finalPrice.toLocaleString('vi-VN')}₫
+                          if v.pricing.discount > 0
+                            span(class="text-xs text-surface-400 line-through") #{v.pricing.price.toLocaleString('vi-VN')}₫
+                            span(class="text-xs text-rose-500 font-semibold") -#{v.pricing.discount}%
+                          span(class="text-xs text-surface-400") · Kho: <strong class="text-surface-700">#{v.stock.quantity}</strong>
+                      //- Right: status + actions
+                      div(class="flex items-center gap-2 shrink-0")
+                        span(class=`px-2 py-0.5 text-xs font-semibold rounded-full border ${v.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'}`)
+                          | #{v.status === 'active' ? 'Hoạt động' : (v.status === 'inactive' ? 'Tạm dừng' : 'Ngừng')}
+                        div(class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
+                          button(type="button" class="btn-edit-variant w-7 h-7 flex items-center justify-center rounded-lg bg-surface-100 text-surface-500 hover:bg-amber-100 hover:text-amber-600 transition-colors"
+                            data-id=v._id.toString()
+                            data-sku=v.sku
+                            data-color=(v.attributes && v.attributes.color ? v.attributes.color : '')
+                            data-size=(v.attributes && v.attributes.size ? v.attributes.size : '')
+                            data-storage=(v.attributes && v.attributes.storage ? v.attributes.storage : '')
+                            data-price=v.pricing.price
+                            data-discount=v.pricing.discount
+                            data-quantity=v.stock.quantity
+                            data-status=v.status title="Sửa")
+                            i.bi.bi-pencil-square.text-xs
+                          button(type="button" class="btn-delete-variant w-7 h-7 flex items-center justify-center rounded-lg bg-surface-100 text-surface-500 hover:bg-rose-100 hover:text-rose-600 transition-colors" data-id=v._id.toString() title="Xóa")
+                            i.bi.bi-trash.text-xs
+              else
+                div(id="variants-empty" class="flex flex-col items-center justify-center py-12 text-surface-300")
+                  i.bi.bi-collection.text-4xl.mb-2
+                  span(class="text-sm font-medium text-surface-400") Chưa có variant nào
+                  span(class="text-xs text-surface-300 mt-1") Bấm "Thêm variant" để tạo phiên bản đầu tiên
+
+        //- ===== RIGHT COLUMN (1/3) =====
         div(class="space-y-6")
-          
-          //- Pricing & Inventory
+
+          //- Pricing & Stock
           div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
             h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
               i.bi.bi-tags.text-brand-500
               | Giá & Kho
-              
-            div(class="space-y-5")
+            div(class="space-y-4")
               div
-                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Giá bán ($) <span class="text-rose-500">*</span>
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Giá bán (₫) <span class="text-rose-500">*</span>
                 div(class="relative")
                   i.bi.bi-currency-dollar.absolute.left-4.top-1.translate-y-2.text-surface-400
                   input(type="number" name="price" value=product.price required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-10 pr-4 py-3 transition-all outline-none")
-              
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-1.5") Giảm giá (%)
                 div(class="relative")
                   i.bi.bi-percent.absolute.left-4.top-1.translate-y-2.text-surface-400
                   input(type="number" name="discount" value=product.discountPercentage required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-10 pr-4 py-3 transition-all outline-none")
-              
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-1.5") Tồn kho <span class="text-rose-500">*</span>
                 div(class="relative")
                   i.bi.bi-box-seam.absolute.left-4.top-1.translate-y-2.text-surface-400
                   input(type="number" name="quantity" value=product.stock required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block pl-10 pr-4 py-3 transition-all outline-none")
+              div
+                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Vị trí hiển thị
+                input(type="number" name="position" value=product.position placeholder="Tự động" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
 
-          //- Media
+          //- Image
           div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
-            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+            h2(class="text-base font-bold text-surface-900 mb-4 pb-3 border-b border-surface-100 flex items-center gap-2")
               i.bi.bi-image.text-brand-500
               | Hình ảnh
-              
-            div(class="space-y-4" upload-image)
-              div(class="relative border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 p-6 text-center hover:bg-surface-100 transition-colors group cursor-pointer")
+            div(class="space-y-3" upload-image)
+              div(class="relative border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 p-5 text-center hover:bg-surface-100 transition-colors group cursor-pointer")
                 input(type="file" name="thumbnail" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" upload-image-input)
-                i(class="bi bi-cloud-arrow-up text-4xl text-brand-400 mb-2 group-hover:scale-110 transition-transform inline-block")
-                p(class="text-sm font-medium text-surface-700") Click để thay đổi ảnh
-              
+                i(class="bi bi-cloud-arrow-up text-3xl text-brand-400 mb-1 group-hover:scale-110 transition-transform inline-block")
+                p(class="text-xs font-medium text-surface-600") Click để thay đổi ảnh
               div(class="relative bg-white border border-surface-200 p-2 rounded-xl" id="image-preview-container")
-                img(src=`${product.thumbnail}` class="w-full h-48 object-cover rounded-lg" upload-image-preview)
-                button(type="button" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-rose-500 text-white rounded-full hover:bg-rose-600 shadow-md transition-colors" close-image-upload title="Xóa ảnh")
-                  i.bi.bi-x-lg.text-sm
+                img(src=`${product.thumbnail}` class="w-full h-40 object-cover rounded-lg" upload-image-preview)
+                button(type="button" class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center bg-rose-500 text-white rounded-full hover:bg-rose-600 shadow-md transition-colors" close-image-upload title="Xóa ảnh")
+                  i.bi.bi-x-lg.text-xs
 
-          //- Status & Visibility
+          //- Status & Featured
           div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
-            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center gap-2")
+            h2(class="text-base font-bold text-surface-900 mb-4 pb-3 border-b border-surface-100 flex items-center gap-2")
               i.bi.bi-toggle-on.text-brand-500
               | Trạng thái & Hiển thị
-              
-            div(class="space-y-5")
+            div(class="space-y-4")
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-2") Trạng thái
                 div(class="flex gap-4")
@@ -107,7 +174,6 @@ block main
                   label(class="flex items-center gap-2 cursor-pointer")
                     input(type="radio" name="status" value="inactive" checked=(product.status=='inactive') class="w-4 h-4 text-rose-500 bg-white border-surface-300 focus:ring-rose-500")
                     span(class="text-sm text-surface-700 font-medium") Tạm dừng
-
               div
                 label(class="block text-sm font-semibold text-surface-700 mb-2") Sản phẩm nổi bật
                 div(class="flex gap-4")
@@ -117,29 +183,315 @@ block main
                   label(class="flex items-center gap-2 cursor-pointer")
                     input(type="radio" name="featured" value="false" checked=(product.featured==false) class="w-4 h-4 text-surface-500 bg-white border-surface-300 focus:ring-surface-500")
                     span(class="text-sm text-surface-700 font-medium") Bình thường
-              
               div
-                label(class="block text-sm font-semibold text-surface-700 mb-1.5") Vị trí hiển thị
-                input(type="number" name="position" value=product.position placeholder="Tự động" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-4 py-3 transition-all outline-none")
+                label(class="block text-sm font-semibold text-surface-700 mb-2") Bắt buộc chọn biến thể (Mua ngay)
+                div(class="flex gap-4")
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="requireVariants" value="true" checked=(product.requireVariants !== false) class="w-4 h-4 text-brand-500 bg-white border-surface-300 focus:ring-brand-500")
+                    span(class="text-sm text-surface-700 font-medium") Bắt buộc (Mặc định)
+                  label(class="flex items-center gap-2 cursor-pointer")
+                    input(type="radio" name="requireVariants" value="false" checked=(product.requireVariants === false) class="w-4 h-4 text-surface-500 bg-white border-surface-300 focus:ring-surface-500")
+                    span(class="text-sm text-surface-700 font-medium") Bỏ qua biến thể
+
+
+
   else
     div(class="bg-rose-50 border border-rose-200 text-rose-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center mt-10 max-w-md mx-auto")
       i.bi.bi-shield-lock.text-4xl.mb-3
       h2(class="text-lg font-bold mb-1") Không có quyền truy cập
       p(class="text-sm") Bạn không được cấp quyền để chỉnh sửa sản phẩm này.
 
+  //- ===== VARIANT MODAL =====
+  div(id="variant-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4")
+    div(class="absolute inset-0 bg-surface-950/60 backdrop-blur-sm" id="modal-backdrop")
+    div(class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-surface-100")
+      div(class="flex items-center justify-between px-6 py-4 border-b border-surface-100")
+        h3(class="text-base font-bold text-surface-900 flex items-center gap-2" id="modal-title")
+          i.bi.bi-collection.text-brand-500
+          | Thêm variant mới
+        button(type="button" id="modal-close" class="w-8 h-8 flex items-center justify-center rounded-lg text-surface-400 hover:text-surface-700 hover:bg-surface-100 transition-colors")
+          i.bi.bi-x-lg
+
+      div(class="px-6 py-5 space-y-4")
+        //- Image Upload for Variant
+        div
+          label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Hình ảnh Variant
+          div(class="flex items-center gap-4")
+            div(class="relative w-20 h-20 border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 flex flex-col items-center justify-center text-surface-400 hover:bg-surface-100 hover:text-brand-500 transition-colors cursor-pointer group overflow-hidden")
+              input(type="file" id="v-image-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10")
+              img(src="" id="v-image-preview" class="absolute inset-0 w-full h-full object-cover hidden")
+              i(class="bi bi-camera text-xl mb-1 group-hover:scale-110 transition-transform" id="v-image-icon")
+              span(class="text-[10px] font-medium" id="v-image-text") Tải lên
+            div(class="flex-1")
+              p(class="text-xs text-surface-500 mb-1") Định dạng hỗ trợ: JPG, PNG, WEBP.
+              p(class="text-xs text-surface-500") Tối đa 5MB.
+              button(type="button" id="v-image-remove" class="text-xs text-rose-500 hover:text-rose-600 font-semibold mt-2 hidden") Xóa ảnh
+
+        div
+          label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") SKU <span class="text-rose-500">*</span>
+          input(type="text" id="v-sku" placeholder="VD: SHOE-RED-M" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-4 py-2.5 outline-none transition-all uppercase")
+        div(class="grid grid-cols-3 gap-3")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Màu sắc
+            input(type="text" id="v-color" placeholder="VD: Đỏ" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Kích thước
+            input(type="text" id="v-size" placeholder="VD: M, L, XL" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Bộ nhớ
+            input(type="text" id="v-storage" placeholder="VD: 128GB" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+        div(class="grid grid-cols-2 gap-3")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Giá bán (₫) <span class="text-rose-500">*</span>
+            input(type="number" id="v-price" placeholder="0" min="0" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Giảm giá (%)
+            input(type="number" id="v-discount" placeholder="0" min="0" max="100" value="0" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+        div(class="grid grid-cols-2 gap-3")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Tồn kho <span class="text-rose-500">*</span>
+            input(type="number" id="v-quantity" placeholder="0" min="0" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all")
+          div
+            label(class="block text-xs font-bold text-surface-600 uppercase tracking-wider mb-1.5") Trạng thái
+            select(id="v-status" class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 px-3 py-2.5 outline-none transition-all cursor-pointer")
+              option(value="active") Hoạt động
+              option(value="inactive") Tạm dừng
+              option(value="discontinued") Ngừng bán
+        div(id="modal-error" class="hidden px-4 py-2.5 bg-rose-50 border border-rose-200 text-rose-600 text-sm rounded-xl")
+
+      div(class="flex items-center justify-end gap-3 px-6 py-4 border-t border-surface-100 bg-surface-50 rounded-b-2xl")
+        button(type="button" id="modal-cancel" class="px-4 py-2 text-sm font-semibold text-surface-600 bg-white border border-surface-200 rounded-xl hover:bg-surface-50 transition-colors") Huỷ
+        button(type="button" id="modal-save" class="px-5 py-2 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-xl shadow-sm shadow-brand-500/20 transition-all active:scale-95 flex items-center gap-2")
+          i.bi.bi-check2-circle
+          | Lưu variant
+
   script(src='/admin/js/product.js')
   script.
-    // Custom JS to handle image preview container visibility
+    // ---- Image upload ----
     document.querySelector('[close-image-upload]').addEventListener('click', function() {
-      const previewContainer = document.getElementById('image-preview-container');
-      previewContainer.classList.add('hidden');
+      const c = document.getElementById('image-preview-container');
+      c.classList.add('hidden');
       document.querySelector('[upload-image-preview]').src = '';
       document.querySelector('[upload-image-input]').value = '';
     });
     document.querySelector('[upload-image-input]').addEventListener('change', function() {
+      if (this.files[0]) document.getElementById('image-preview-container').classList.remove('hidden');
+    });
+
+    // ---- Variant AJAX ----
+    const PRODUCT_ID = '!{id}';
+    const PREFIX = '!{prefixAdmin}';
+    const variantApiBase = `${PREFIX}/product/edit/${PRODUCT_ID}/variants`;
+
+    const modal = document.getElementById('variant-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalError = document.getElementById('modal-error');
+    const modalSaveBtn = document.getElementById('modal-save');
+    
+    // Variant image preview elements
+    const vImgInput = document.getElementById('v-image-input');
+    const vImgPreview = document.getElementById('v-image-preview');
+    const vImgIcon = document.getElementById('v-image-icon');
+    const vImgText = document.getElementById('v-image-text');
+    const vImgRemove = document.getElementById('v-image-remove');
+
+    // Handle variant image change
+    vImgInput.addEventListener('change', function() {
       const file = this.files[0];
-      const previewContainer = document.getElementById('image-preview-container');
       if (file) {
-        previewContainer.classList.remove('hidden');
+        vImgPreview.src = URL.createObjectURL(file);
+        vImgPreview.classList.remove('hidden');
+        vImgIcon.classList.add('hidden');
+        vImgText.classList.add('hidden');
+        vImgRemove.classList.remove('hidden');
       }
     });
+
+    // Handle variant image remove
+    vImgRemove.addEventListener('click', function() {
+      vImgInput.value = '';
+      vImgPreview.src = '';
+      vImgPreview.classList.add('hidden');
+      vImgIcon.classList.remove('hidden');
+      vImgText.classList.remove('hidden');
+      vImgRemove.classList.add('hidden');
+    });
+
+    let editingVariantId = null;
+
+    function openModal(mode, data = {}) {
+      editingVariantId = data.id || null;
+      modalTitle.innerHTML = `<i class="bi bi-collection text-brand-500"></i> ${mode === 'edit' ? 'Sửa variant' : 'Thêm variant mới'}`;
+      document.getElementById('v-sku').value = data.sku || '';
+      document.getElementById('v-color').value = data.color || '';
+      document.getElementById('v-size').value = data.size || '';
+      document.getElementById('v-storage').value = data.storage || '';
+      document.getElementById('v-price').value = data.price || '';
+      document.getElementById('v-discount').value = data.discount || 0;
+      document.getElementById('v-quantity').value = data.quantity || '';
+      document.getElementById('v-status').value = data.status || 'active';
+      
+      // Reset image field
+      vImgInput.value = '';
+      if (data.image) {
+        vImgPreview.src = data.image;
+        vImgPreview.classList.remove('hidden');
+        vImgIcon.classList.add('hidden');
+        vImgText.classList.add('hidden');
+        vImgRemove.classList.remove('hidden');
+      } else {
+        vImgPreview.src = '';
+        vImgPreview.classList.add('hidden');
+        vImgIcon.classList.remove('hidden');
+        vImgText.classList.remove('hidden');
+        vImgRemove.classList.add('hidden');
+      }
+
+      modalError.classList.add('hidden');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      editingVariantId = null;
+    }
+    function showError(msg) {
+      modalError.textContent = msg;
+      modalError.classList.remove('hidden');
+    }
+    function fmtPrice(n) { return Number(n).toLocaleString('vi-VN') + '₫'; }
+
+    function buildCard(v) {
+      const a = v.attributes || {};
+      const statusCls = v.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+        : v.status === 'inactive' ? 'bg-rose-50 text-rose-600 border-rose-200'
+        : 'bg-surface-100 text-surface-500 border-surface-200';
+      const statusLabel = v.status === 'active' ? 'Hoạt động' : v.status === 'inactive' ? 'Tạm dừng' : 'Ngừng';
+      const colorTag = a.color ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-surface-100 rounded text-xs text-surface-600"><span class="w-2.5 h-2.5 rounded-full border border-surface-300 shrink-0" style="background:${a.color.toLowerCase()}"></span>${a.color}</span>` : '';
+      const sizeTag = a.size ? `<span class="px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded text-xs font-medium">${a.size}</span>` : '';
+      const storageTag = a.storage ? `<span class="px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded text-xs font-medium">${a.storage}</span>` : '';
+      const discountHtml = v.pricing.discount > 0 ? `<span class="text-xs text-surface-400 line-through">${fmtPrice(v.pricing.price)}</span><span class="text-xs text-rose-500 font-semibold">-${v.pricing.discount}%</span>` : '';
+      const imgUrl = (v.images && v.images.length > 0) ? v.images[0].url : '';
+      const imgHtml = imgUrl ? `<img src="${imgUrl}" class="w-10 h-10 object-cover rounded-lg border border-surface-200 shrink-0" alt="variant">` : `<div class="w-10 h-10 rounded-lg bg-surface-100 flex items-center justify-center shrink-0 border border-surface-200"><i class="bi bi-image text-surface-300"></i></div>`;
+      
+      return `
+        <div class="group px-5 py-3.5 hover:bg-surface-50/80 transition-colors" data-variant-id="${v._id}">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex flex-1 items-center gap-4 min-w-0">
+              ${imgHtml}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="font-mono text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">${v.sku}</span>
+                  ${colorTag}${sizeTag}${storageTag}
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm font-bold text-brand-600">${fmtPrice(v.pricing.finalPrice)}</span>
+                  ${discountHtml}
+                  <span class="text-xs text-surface-400">· Kho: <strong class="text-surface-700">${v.stock.quantity}</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full border ${statusCls}">${statusLabel}</span>
+              <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" class="btn-edit-variant w-7 h-7 flex items-center justify-center rounded-lg bg-surface-100 text-surface-500 hover:bg-amber-100 hover:text-amber-600 transition-colors"
+                  data-id="${v._id}" data-sku="${v.sku}" data-color="${a.color||''}" data-size="${a.size||''}" data-storage="${a.storage||''}"
+                  data-price="${v.pricing.price}" data-discount="${v.pricing.discount}" data-quantity="${v.stock.quantity}" data-status="${v.status}" data-image="${imgUrl}" title="Sửa">
+                  <i class="bi bi-pencil-square text-xs"></i>
+                </button>
+                <button type="button" class="btn-delete-variant w-7 h-7 flex items-center justify-center rounded-lg bg-surface-100 text-surface-500 hover:bg-rose-100 hover:text-rose-600 transition-colors" data-id="${v._id}" title="Xóa">
+                  <i class="bi bi-trash text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    document.getElementById('btn-add-variant').addEventListener('click', () => openModal('add'));
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+
+    document.getElementById('variants-body').addEventListener('click', function(e) {
+      const editBtn = e.target.closest('.btn-edit-variant');
+      const delBtn = e.target.closest('.btn-delete-variant');
+      if (editBtn) {
+        openModal('edit', {
+          id: editBtn.dataset.id, sku: editBtn.dataset.sku,
+          color: editBtn.dataset.color, size: editBtn.dataset.size, storage: editBtn.dataset.storage,
+          price: editBtn.dataset.price, discount: editBtn.dataset.discount,
+          quantity: editBtn.dataset.quantity, status: editBtn.dataset.status,
+          image: editBtn.dataset.image
+        });
+      }
+      if (delBtn) {
+        const variantId = delBtn.dataset.id;
+        if (!confirm('Xác nhận xóa variant này?')) return;
+        fetch(`${variantApiBase}/${variantId}?_method=DELETE`, { method: 'POST' })
+          .then(r => r.json())
+          .then(data => {
+            if (data.success) {
+              const card = document.querySelector(`[data-variant-id="${variantId}"]`);
+              if (card) card.remove();
+              if (!document.querySelector('#variants-body [data-variant-id]')) {
+                document.getElementById('variants-body').innerHTML = `<div id="variants-empty" class="flex flex-col items-center justify-center py-10 text-surface-300"><i class="bi bi-collection text-3xl mb-2"></i><span class="text-xs font-medium text-surface-400">Chưa có variant nào</span></div>`;
+              }
+            } else { alert('Xóa thất bại: ' + (data.message || '')); }
+          }).catch(() => alert('Lỗi kết nối.'));
+      }
+    });
+
+    modalSaveBtn.addEventListener('click', async function() {
+      const sku = document.getElementById('v-sku').value.trim();
+      const price = document.getElementById('v-price').value;
+      const quantity = document.getElementById('v-quantity').value;
+      if (!sku) { showError('Vui lòng nhập SKU.'); return; }
+      if (!price) { showError('Vui lòng nhập giá bán.'); return; }
+      if (!quantity) { showError('Vui lòng nhập tồn kho.'); return; }
+      modalError.classList.add('hidden');
+      modalSaveBtn.disabled = true;
+      modalSaveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang lưu...';
+
+      const formData = new FormData();
+      formData.append('sku', sku);
+      formData.append('color', document.getElementById('v-color').value.trim());
+      formData.append('size', document.getElementById('v-size').value.trim());
+      formData.append('storage', document.getElementById('v-storage').value.trim());
+      formData.append('price', price);
+      formData.append('discount', document.getElementById('v-discount').value || 0);
+      formData.append('quantity', quantity);
+      formData.append('status', document.getElementById('v-status').value);
+
+      if (vImgInput.files[0]) {
+        formData.append('variantImage', vImgInput.files[0]);
+      }
+
+      try {
+        const url = editingVariantId ? `${variantApiBase}/${editingVariantId}?_method=PATCH` : variantApiBase;
+        const resp = await fetch(url, { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) {
+          const emptyEl = document.getElementById('variants-empty');
+          if (emptyEl) emptyEl.remove();
+          if (editingVariantId) {
+            const old = document.querySelector(`[data-variant-id="${editingVariantId}"]`);
+            if (old) old.outerHTML = buildCard(data.variant);
+          } else {
+            document.getElementById('variants-body').insertAdjacentHTML('beforeend', buildCard(data.variant));
+          }
+          closeModal();
+        } else {
+          showError(data.message || 'Lưu thất bại. SKU có thể đã tồn tại.');
+        }
+      } catch(err) {
+        showError('Lỗi kết nối, thử lại sau.');
+      } finally {
+        modalSaveBtn.disabled = false;
+        modalSaveBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Lưu variant';
+      }
+    });
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

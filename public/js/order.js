@@ -48,34 +48,109 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // Apply voucher
+  // Apply voucher via AJAX
   // ==========================================
+  
+  // Lấy tổng tiền ban đầu khi load trang (đã bao gồm phí ship, nhưng chưa trừ voucher - voucher nếu có thì server render đã trừ, nhưng ta lấy total gốc)
+  const initialTotalElement = document.querySelector('.price-total');
+  let originalTotal = 0;
+  if (initialTotalElement) {
+    const rawTotal = initialTotalElement.getAttribute('data-raw-total') || initialTotalElement.textContent.replace(/[^\d]/g, '');
+    originalTotal = Number(rawTotal);
+    // Gắn thuộc tính data-raw-total để giữ lại giá trị gốc nếu chưa có
+    if (!initialTotalElement.hasAttribute('data-raw-total')) {
+      initialTotalElement.setAttribute('data-raw-total', originalTotal);
+    }
+  }
+
+  async function applyVoucherAjax(code) {
+    if (!code) return;
+    
+    // Tính tổng tiền sản phẩm (chưa tính ship)
+    const productItems = document.querySelectorAll('.product-item');
+    let subTotal = 0;
+    productItems.forEach(item => {
+      const quantityText = item.querySelector('.product-quantity').textContent.replace('x', '');
+      const quantity = parseInt(quantityText, 10) || 1;
+      const priceText = item.querySelector('.text-brand-600').textContent.replace(/[^\d]/g, '');
+      const price = parseInt(priceText, 10) || 0;
+      subTotal += (price * quantity);
+    });
+
+    try {
+      const res = await fetch('/order/validate-voucher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, amount: subTotal })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.code === 200) {
+        showToast(`✓ Áp dụng thành công mã ${data.voucher.code}!`);
+        
+        // Cập nhật giao diện
+        // 1. Thêm/cập nhật dòng hiển thị giảm giá trong Tóm tắt
+        const summaryDiv = document.querySelector('.order-summary');
+        let discountItem = summaryDiv.querySelector('.summary-discount');
+        if (!discountItem) {
+          discountItem = document.createElement('div');
+          discountItem.className = 'summary-item summary-discount flex justify-between items-center text-sm font-semibold text-emerald-600 mb-4';
+          // Chèn trước cái divider
+          const divider = summaryDiv.querySelector('.summary-divider');
+          summaryDiv.insertBefore(discountItem, divider);
+        }
+        discountItem.innerHTML = `<span>Giảm giá (${data.voucher.percentage}%):</span><span>-${data.voucher.discountAmount.toLocaleString('vi-VN')}₫</span>`;
+        
+        // 2. Cập nhật tổng tiền cuối cùng (Subtotal + Ship - Discount)
+        const newTotal = subTotal + 30000 - data.voucher.discountAmount; // 30000 là phí ship mặc định
+        const totalEl = document.querySelector('.price-total');
+        totalEl.textContent = `${newTotal.toLocaleString('vi-VN')}₫`;
+        
+        // Cập nhật thẻ input voucher
+        const input = document.getElementById('voucherCode');
+        if (input) input.value = data.voucher.code;
+
+        // Cập nhật state active cho voucher tags
+        document.querySelectorAll('.voucher-tag').forEach(tag => {
+          if (tag.dataset.code === data.voucher.code) {
+             tag.classList.add('border-brand-500', 'bg-brand-50');
+             tag.classList.remove('border-slate-200');
+          } else {
+             tag.classList.remove('border-brand-500', 'bg-brand-50');
+             tag.classList.add('border-slate-200');
+          }
+        });
+
+      } else {
+        showToast(data.message || 'Mã voucher không hợp lệ', 'error');
+      }
+    } catch (error) {
+      showToast('Lỗi kết nối khi áp dụng voucher', 'error');
+    }
+  }
+
   document.getElementById('applyVoucher').addEventListener('click', () => {
     const code = document.getElementById('voucherCode').value.trim();
     if (!code) {
       showToast('Vui lòng nhập mã voucher', 'error');
       return;
     }
-    
-    // Redirect with query param
-    const url = new URL(window.location.href);
-    url.searchParams.set('voucherCode', code);
-    window.location.href = url.toString();
+    applyVoucherAjax(code);
   });
 
   // Select voucher from list
   document.querySelectorAll('.voucher-tag').forEach(tag => {
     tag.addEventListener('click', () => {
       const code = tag.dataset.code;
-      const url = new URL(window.location.href);
-      url.searchParams.set('voucherCode', code);
-      window.location.href = url.toString();
+      applyVoucherAjax(code);
     });
   });
 
-  // Remove voucher
-  if (document.querySelector('.btn-remove-voucher')) {
-    document.querySelector('.btn-remove-voucher').addEventListener('click', () => {
+  // Remove voucher (AJAX style - just reset DOM)
+  const btnRemoveVoucher = document.querySelector('.btn-remove-voucher');
+  if (btnRemoveVoucher) {
+    btnRemoveVoucher.addEventListener('click', () => {
+      // Logic for removing a voucher applied on server-side during page load
       const url = new URL(window.location.href);
       url.searchParams.delete('voucherCode');
       window.location.href = url.toString();
@@ -149,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Lấy chuỗi hiển thị số lượng (VD: "x2"), bỏ chữ "x" và ép kiểu về số nguyên
       const quantityText = item
-        .querySelector('.product-quantity span')
+        .querySelector('.product-quantity')
         .textContent.replace('x', '');
       const quantity = parseInt(quantityText, 10) || 1;
       
@@ -172,12 +247,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const voucherCode = document.getElementById('voucherCode')?.value.trim() || null;
 
     // Thông tin giao hàng (lấy từ input nếu đang edit, hoặc từ server-rendered)
+    const fullName = document.getElementById('editFullName')?.value.trim() 
+      || document.querySelector('.shipping-info .info-value')?.textContent.split('|')[0]?.trim() || '';
+    const phone = document.getElementById('editPhone')?.value.trim() 
+      || document.querySelector('.shipping-info .info-value')?.textContent.split('|')[1]?.trim() || '';
+    const address = document.getElementById('editAddress')?.value.trim() 
+      || document.querySelectorAll('.shipping-info .info-value')[1]?.textContent.trim() || '';
+    const orderNote = document.getElementById('orderNote')?.value.trim() || '';
+
+    // VALIDATION
+    if (!fullName || !phone || !address) {
+      showToast('Vui lòng cung cấp đầy đủ thông tin giao hàng', 'error');
+      return;
+    }
+    const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+    if (!phoneRegex.test(phone)) {
+      showToast('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (10 số).', 'error');
+      return;
+    }
+
     const payload = {
       paymentMethod: paymentMethodEl.value,
       products: products,
       voucherCode: voucherCode,
       amount: totalPriceNumber,
-      // orderCode sẽ do server tự sinh
+      shippingAddress: {
+        fullName: fullName,
+        phone: phone,
+        address: address,
+      },
+      orderNote: orderNote,
     };
 
     // Disable nút tránh double-click

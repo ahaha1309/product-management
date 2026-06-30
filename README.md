@@ -1,11 +1,11 @@
-# 🛒 VanHa Tech - Nền Tảng Thương Mại Điện Tử Hiện Đại
+# 🛒 NVH Mall - Nền Tảng Thương Mại Điện Tử Hiện Đại
 
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-**VanHa Tech** là một hệ thống website thương mại điện tử chuyên nghiệp được xây dựng bằng hệ sinh thái Node.js. Dự án cung cấp một giao diện mua sắm mượt mà, tối ưu hóa cho cả thiết bị di động (Responsive) và máy tính để bàn, tích hợp đầy đủ các tính năng phức tạp của một hệ thống bán lẻ như Shopee, Thế Giới Di Động hay Hoàng Hà Mobile.
+**NVH Mall** là một hệ thống website thương mại điện tử chuyên nghiệp được xây dựng bằng hệ sinh thái Node.js. Dự án cung cấp một giao diện mua sắm mượt mà, tối ưu hóa cho cả thiết bị di động (Responsive) và máy tính để bàn, tích hợp đầy đủ các tính năng phức tạp của một hệ thống bán lẻ như Shopee, Thế Giới Di Động hay Hoàng Hà Mobile.
 
 ---
 
@@ -108,4 +108,4 @@ Mở trình duyệt và truy cập: `http://localhost:3002`
 ## 🤝 Hỗ Trợ & Đóng Góp
 Nếu bạn tìm thấy lỗi (bug) hoặc muốn đóng góp ý tưởng phát triển dự án, vui lòng tạo **Issue** hoặc gửi **Pull Request**. Mọi ý kiến đóng góp của bạn đều được trân trọng!
 
-**Dự án được xây dựng và phát triển bởi VanHa Tech. Bản quyền © 2024.**
+**Dự án được xây dựng và phát triển bởi NVH Mall. Bản quyền © 2024.**

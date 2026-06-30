@@ -57,6 +57,17 @@ module.exports.changeStatus = async (req, res) => {
     if (status === 'canceled') {
       const order = await Order.findById(id);
       if (order && order.userId) {
+        // Hoàn lại tồn kho
+        const Product = require('../../models/product.model');
+        for (let item of order.products) {
+          if (item.productId) {
+            await Product.updateOne(
+              { _id: item.productId },
+              { $inc: { stock: (item.quantity || 1) } }
+            );
+          }
+        }
+
         const user = await User.findById(order.userId);
         if (user && user.email) {
           mailHelper.sendOrderCancellationEmail(order, user).catch(err => {
@@ -160,5 +171,94 @@ module.exports.detail = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(404).json({ code: 404, message: "Không tìm thấy" });
+  }
+};
+
+// [GET] /admin/orders/print/:id
+module.exports.printInvoice = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    const user = await User.findById(order.userId);
+    
+    const Product = require('../../models/product.model');
+    const productsInfo = await Promise.all(order.products.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      const itemObj = typeof item.toObject === 'function' ? item.toObject() : { ...item };
+      return {
+        ...itemObj,
+        title: product?.title || 'Sản phẩm không xác định',
+        thumbnail: product?.thumbnail || '',
+      };
+    }));
+
+    const orderObj = order.toObject();
+    orderObj.products = productsInfo;
+
+    res.render('admin/pages/order/invoice', { 
+      order: orderObj, 
+      user: user,
+      title: 'In Hóa Đơn - ' + orderObj.orderCode
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect('back');
+  }
+};
+
+// [GET] /admin/orders/export-csv
+module.exports.exportCsv = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    
+    let csv = '\uFEFF'; // BOM for UTF-8 Excel support
+    csv += 'Mã Đơn,Khách Hàng,Số Điện Thoại,Địa Chỉ,Tổng Tiền,Trạng Thái Đơn,Thanh Toán,Ngày Đặt\n';
+
+    for (const order of orders) {
+      let customerName = '', customerPhone = '', customerAddress = '';
+      if (order.shippingAddress && order.shippingAddress.fullName) {
+        customerName = order.shippingAddress.fullName;
+        customerPhone = order.shippingAddress.phone;
+        customerAddress = order.shippingAddress.address;
+      } else {
+        const user = await User.findById(order.userId);
+        if (user) {
+          customerName = user.fullName;
+          customerPhone = user.phone;
+          customerAddress = user.address;
+        }
+      }
+
+      // Escape fields for CSV
+      const escapeCsv = (str) => {
+        if (!str) return '""';
+        return `"${String(str).replace(/"/g, '""')}"`;
+      };
+
+      const orderCode = escapeCsv(order.orderCode);
+      const name = escapeCsv(customerName);
+      const phone = escapeCsv(customerPhone);
+      const address = escapeCsv(customerAddress);
+      const amount = order.amount || 0;
+      
+      let status = '';
+      if (order.status === 'pending') status = 'Chờ xác nhận';
+      else if (order.status === 'confirm') status = 'Đã xác nhận';
+      else if (order.status === 'finish') status = 'Hoàn thành';
+      else if (order.status === 'canceled') status = 'Đã hủy';
+      else status = order.status;
+
+      let paymentStatus = order.paymentStatus === 'success' ? 'Đã thanh toán' : 'Chưa thanh toán';
+      let date = order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : '';
+
+      csv += `${orderCode},${name},${phone},${address},${amount},${escapeCsv(status)},${escapeCsv(paymentStatus)},${escapeCsv(date)}\n`;
+    }
+
+    res.header('Content-Type', 'text/csv; charset=utf-8');
+    res.attachment(`orders_${Date.now()}.csv`);
+    return res.send(csv);
+  } catch (error) {
+    console.error('Error exporting CSV:', error);
+    req.flash('error', 'Có lỗi khi xuất CSV!');
+    res.redirect('back');
   }
 };

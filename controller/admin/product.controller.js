@@ -1,4 +1,5 @@
 const Product = require('../../models/product.model');
+const ProductVariant = require('../../models/product-variant.model');
 const fillterButtonHelper = require('../../helper/fillterButton');
 const searchHelper = require('../../helper/search');
 const paginationHelper = require('../../helper/pagination');
@@ -161,15 +162,77 @@ module.exports.edit = async (req, res) => {
   const id = req.params.id;
   try {
     const product = await Product.findOne({ _id: id });
+    const variants = await ProductVariant.find({ productId: id }).sort({ createdAt: 1 });
     res.render('admin/pages/products/edit', {
       title: 'Chỉnh sửa sản phẩm',
       product: product,
       id: id,
       categories: categories,
+      variants: variants,
     });
   } catch (error) {
     req.flash('error', 'Không tồn tại sản phẩm này');
     res.redirect(`${systemConfig.prefixAdmin}/product`);
+  }
+};
+
+// --- Variant API handlers ---
+module.exports.variantCreate = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const { sku, color, size, storage, price, discount, quantity, status, variantImage } = req.body;
+    const priceNum = parseFloat(price) || 0;
+    const discountNum = parseFloat(discount) || 0;
+    const finalPrice = +(priceNum * (1 - discountNum / 100)).toFixed(0);
+    const images = variantImage ? [{ url: variantImage, alt: sku, isPrimary: true }] : [];
+    const variant = await ProductVariant.create({
+      productId,
+      sku: sku.trim().toUpperCase(),
+      attributes: { color, size, storage },
+      pricing: { price: priceNum, discount: discountNum, finalPrice },
+      stock: { quantity: parseInt(quantity) || 0, available: parseInt(quantity) || 0 },
+      status: status || 'active',
+      images,
+    });
+    res.json({ success: true, variant });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports.variantUpdate = async (req, res) => {
+  const variantId = req.params.variantId;
+  try {
+    const { sku, color, size, storage, price, discount, quantity, status, variantImage } = req.body;
+    const priceNum = parseFloat(price) || 0;
+    const discountNum = parseFloat(discount) || 0;
+    const finalPrice = +(priceNum * (1 - discountNum / 100)).toFixed(0);
+    const updateData = {
+      sku: sku.trim().toUpperCase(),
+      attributes: { color, size, storage },
+      pricing: { price: priceNum, discount: discountNum, finalPrice },
+      stock: { quantity: parseInt(quantity) || 0, available: parseInt(quantity) || 0 },
+      status: status || 'active',
+      updatedAt: new Date(),
+    };
+    // Chỉ cập nhật ảnh nếu có ảnh mới được upload
+    if (variantImage) {
+      updateData.images = [{ url: variantImage, alt: sku, isPrimary: true }];
+    }
+    const variant = await ProductVariant.findByIdAndUpdate(variantId, updateData, { new: true });
+    res.json({ success: true, variant });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports.variantDelete = async (req, res) => {
+  const variantId = req.params.variantId;
+  try {
+    await ProductVariant.findByIdAndDelete(variantId);
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
 };
 module.exports.createPost = async (req, res) => {
@@ -194,10 +257,11 @@ module.exports.createPost = async (req, res) => {
         accountId: res.locals.account.id,
         createdAt: new Date(),
       },
-      thumbnail: req.file ? req.body[req.file.fieldname] : '',
+      thumbnail: req.body.thumbnail || '',
       status: status,
       position: position,
       product_category_id: product_category_id,
+      requireVariants: req.body.requireVariants === 'true',
       featured: featured,
     };
     await Product.create(data);
@@ -210,7 +274,7 @@ module.exports.createPost = async (req, res) => {
 module.exports.editPost = async (req, res) => {
   const id = req.params.id;
   const product = await Product.findOne({ _id: id });
-  const thumbnail = product.thumbnail;
+  let thumbnail = product.thumbnail;
   const title = req.body.title;
   const product_category_id = req.body.product_category_id;
   const description = req.body.description;
@@ -218,7 +282,7 @@ module.exports.editPost = async (req, res) => {
   const discount = parseInt(req.body.discount);
   const quantity = parseInt(req.body.quantity);
   if (req.file) {
-    thumbnail = `/uploads/${req.file.filename}`;
+    thumbnail = req.body[req.file.fieldname];
   }
   const position = parseInt(req.body.position);
   const featured = req.body.featured ;
@@ -233,6 +297,7 @@ module.exports.editPost = async (req, res) => {
     status: status,
     position: position,
     product_category_id: product_category_id,
+    requireVariants: req.body.requireVariants === 'true',
     featured: featured,
 
   };

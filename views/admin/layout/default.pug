@@ -18,7 +18,9 @@ html
             main(class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8")
                 block main 
         
+        script(src="/socket.io/socket.io.js")
         script(src="/admin/js/index.js") 
+        script(src="/admin/js/notification.js") 
         // Include TinyMCE JS file and configuration
         script(src= "/tinymce/tinymce.min.js")
         script(src= "/admin/js/tinymce-config.js")

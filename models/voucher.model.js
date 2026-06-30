@@ -10,6 +10,8 @@ const voucherSchema = new mongoose.Schema({
   validTo: Date,
   usageLimit: { type: Number, default: 1 }, // Số lần dùng tối đa của voucher này
   usedCount: { type: Number, default: 0 },
+  // Danh sách userId đã dùng voucher (chống dùng lại)
+  usedBy: { type: [String], default: [] },
   // Nếu voucher dành riêng cho 1 user nào đó
   userId: { type: String, default: null },
   status: {

@@ -11,7 +11,7 @@ block main
         h1(class="text-2xl md:text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3")
           i.bi.bi-speedometer2.text-brand-400
           | Tổng quan hệ thống
-        p(class="text-surface-400 font-medium") Xin chào Admin! Theo dõi hiệu suất và quản lý cửa hàng VanHa Tech.
+        p(class="text-white font-medium") Xin chào Admin! Theo dõi hiệu suất và quản lý cửa hàng NVH Mall.
       div(class="relative z-10 mt-4 md:mt-0 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2.5 flex items-center gap-2 text-white")
         i.bi.bi-calendar3.text-brand-400
         span(id="current-date" class="text-sm font-medium")
@@ -28,8 +28,8 @@ block main
             i.bi.bi-arrow-up-right
             | Đang tải
         div(class="relative z-10")
-          p(class="text-sm font-medium text-surface-500 mb-1") Doanh thu (30 ngày)
-          h3(id="stat-revenue" class="text-2xl font-bold text-surface-900 tracking-tight") --
+          p(class="text-sm font-medium text-surface-500 mb-1") Doanh thu
+          h3(id="stat-revenue" class="text-2xl font-bold text-surface-900 tracking-tight") #{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderStats.revenue || 0)}
 
       //- Orders
       div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
@@ -39,10 +39,10 @@ block main
             i.bi.bi-bag-check
           span(class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-md flex items-center gap-1")
             i.bi.bi-clock
-            | Đang tải
+            | Tổng quan
         div(class="relative z-10")
-          p(class="text-sm font-medium text-surface-500 mb-1") Đơn hàng hôm nay
-          h3(id="stat-orders" class="text-2xl font-bold text-surface-900 tracking-tight") --
+          p(class="text-sm font-medium text-surface-500 mb-1") Tổng đơn hàng
+          h3(id="stat-orders" class="text-2xl font-bold text-surface-900 tracking-tight") #{orderStats.total.toLocaleString('vi-VN')}
 
       //- Users
       div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
@@ -52,10 +52,10 @@ block main
             i.bi.bi-people
           span(class="text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-1 rounded-md flex items-center gap-1")
             i.bi.bi-arrow-up-right
-            | Đang tải
+            | #{userStats.active} Đang hoạt động
         div(class="relative z-10")
           p(class="text-sm font-medium text-surface-500 mb-1") Tổng khách hàng
-          h3(id="stat-users" class="text-2xl font-bold text-surface-900 tracking-tight") --
+          h3(id="stat-users" class="text-2xl font-bold text-surface-900 tracking-tight") #{userStats.total.toLocaleString('vi-VN')}
 
       //- Products
       div(class="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
@@ -65,10 +65,10 @@ block main
             i.bi.bi-box-seam
           span(class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1")
             i.bi.bi-check-circle
-            | Đang tải
+            | #{productStats.active} Active
         div(class="relative z-10")
-          p(class="text-sm font-medium text-surface-500 mb-1") Sản phẩm Active
-          h3(id="stat-products" class="text-2xl font-bold text-surface-900 tracking-tight") --
+          p(class="text-sm font-medium text-surface-500 mb-1") Tổng sản phẩm
+          h3(id="stat-products" class="text-2xl font-bold text-surface-900 tracking-tight") #{productStats.total.toLocaleString('vi-VN')}
 
     //- Main Grid (Bento Box Layout)
     div(class="grid grid-cols-1 xl:grid-cols-3 gap-6")
@@ -97,9 +97,11 @@ block main
                   th(class="px-5 py-3 border-b border-surface-100") Thanh toán
               tbody(id="recent-orders-body" class="divide-y divide-surface-100 text-sm")
                 tr
-                  td(colspan="5" class="px-5 py-8 text-center text-surface-400")
-                    i.bi.bi-arrow-repeat.animate-spin.text-2xl.mb-2.inline-block
-                    p Đang tải dữ liệu...
+                  td(colspan="5" class="px-5 py-4")
+                    div(class="space-y-3")
+                      div(class="h-4 bg-surface-200 rounded w-full animate-pulse")
+                      div(class="h-4 bg-surface-200 rounded w-5/6 animate-pulse")
+                      div(class="h-4 bg-surface-200 rounded w-4/6 animate-pulse")
 
         //- Top Products
         div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
@@ -112,9 +114,18 @@ block main
               i.bi.bi-arrow-right
           
           div(id="top-products-list" class="divide-y divide-surface-100")
-            div(class="px-5 py-8 text-center text-surface-400")
-              i.bi.bi-arrow-repeat.animate-spin.text-2xl.mb-2.inline-block
-              p Đang tải dữ liệu...
+            div(class="px-5 py-4")
+              div(class="flex items-center gap-3 animate-pulse")
+                div(class="w-10 h-10 bg-surface-200 rounded-lg")
+                div(class="flex-1 space-y-2")
+                  div(class="h-3 bg-surface-200 rounded w-3/4")
+                  div(class="h-2 bg-surface-200 rounded w-1/4")
+            div(class="px-5 py-4")
+              div(class="flex items-center gap-3 animate-pulse")
+                div(class="w-10 h-10 bg-surface-200 rounded-lg")
+                div(class="flex-1 space-y-2")
+                  div(class="h-3 bg-surface-200 rounded w-2/3")
+                  div(class="h-2 bg-surface-200 rounded w-1/3")
 
       //- Right Column (Quick Actions, Reviews, Status)
       div(class="space-y-6")
