@@ -13,7 +13,7 @@ block main
       
       div(class="flex gap-2")
         if(role.permission.includes('roles_permission') || role.permission.includes('*'))
-          a(href=`${prefixAdmin}/roles/permissions` class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold rounded-xl transition-all active:scale-95 border border-indigo-200")
+          a(href=`${prefixAdmin}/roles/permission` class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold rounded-xl transition-all active:scale-95 border border-indigo-200")
             i.bi.bi-shield-lock-fill.text-lg
             | Phân quyền chi tiết
             
