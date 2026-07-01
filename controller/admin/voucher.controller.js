@@ -1,4 +1,5 @@
 const Voucher = require('../../models/voucher.model');
+const systemConfig = require('../../config/system');
 
 // [GET] /admin/vouchers - Danh sách voucher
 module.exports.index = async (req, res) => {
@@ -33,7 +34,7 @@ module.exports.createGet = async (req, res) => {
 // [POST] /admin/vouchers/create
 module.exports.createPost = async (req, res) => {
   try {
-    const { code, title, discountPercentage, maxDiscountAmount, minOrderValue, validFrom, validTo, usageLimit, status } = req.body;
+    const { code, title, type, discountPercentage, maxDiscountAmount, minOrderValue, validFrom, validTo, usageLimit, status } = req.body;
 
     const existingVoucher = await Voucher.findOne({ code: code.toUpperCase() });
     if (existingVoucher) {
@@ -44,6 +45,7 @@ module.exports.createPost = async (req, res) => {
     const newVoucher = new Voucher({
       code: code.toUpperCase(),
       title: title || '',
+      type: type || 'percentage',
       discountPercentage: parseInt(discountPercentage) || 0,
       maxDiscountAmount: parseInt(maxDiscountAmount) || 0,
       minOrderValue: parseInt(minOrderValue) || 0,
@@ -55,7 +57,7 @@ module.exports.createPost = async (req, res) => {
 
     await newVoucher.save();
     req.flash('success', 'Tạo voucher thành công!');
-    res.redirect(`${res.locals.prefixAdmin}/vouchers`);
+    res.redirect(`${systemConfig.prefixAdmin}/vouchers`);
   } catch (error) {
     console.log(error);
     req.flash('error', 'Có lỗi xảy ra!');
@@ -84,11 +86,12 @@ module.exports.editGet = async (req, res) => {
 // [PATCH] /admin/vouchers/edit/:id
 module.exports.editPatch = async (req, res) => {
   try {
-    const { code, title, discountPercentage, maxDiscountAmount, minOrderValue, validFrom, validTo, usageLimit, status } = req.body;
+    const { code, title, type, discountPercentage, maxDiscountAmount, minOrderValue, validFrom, validTo, usageLimit, status } = req.body;
 
     await Voucher.updateOne({ _id: req.params.id }, {
       code: code.toUpperCase(),
       title: title || '',
+      type: type || 'percentage',
       discountPercentage: parseInt(discountPercentage) || 0,
       maxDiscountAmount: parseInt(maxDiscountAmount) || 0,
       minOrderValue: parseInt(minOrderValue) || 0,
@@ -99,7 +102,7 @@ module.exports.editPatch = async (req, res) => {
     });
 
     req.flash('success', 'Cập nhật voucher thành công!');
-    res.redirect(`${res.locals.prefixAdmin}/vouchers`);
+    res.redirect(`${systemConfig.prefixAdmin}/vouchers`);
   } catch (error) {
     console.log(error);
     req.flash('error', 'Có lỗi xảy ra!');

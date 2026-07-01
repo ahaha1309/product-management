@@ -85,7 +85,7 @@ productVariantSchema.pre('save', function(next) {
 
 // Index for fast queries
 productVariantSchema.index({ productId: 1, status: 1 });
-productVariantSchema.index({ sku: 1 });
+
 productVariantSchema.index({ 'attributes.size': 1, 'attributes.color': 1 });
 
 module.exports = mongoose.model('ProductVariant', productVariantSchema);

@@ -1,0 +1,87 @@
+extends ../../layouts/default.pug
+
+block main
+  div(class="bg-slate-50 min-h-screen py-10")
+    div(class="container mx-auto px-4 max-w-5xl")
+      
+      div(class="mb-8 flex items-center justify-between")
+        h1(class="text-2xl font-black text-slate-800 flex items-center gap-2")
+          i.bi.bi-ticket-perforated-fill.text-brand-500
+          | Kho Voucher Của Tôi
+        a(href="/vouchers" class="text-sm font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-lg transition-colors")
+          | Khám phá thêm ưu đãi
+
+      if vouchers && vouchers.length > 0
+        div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6")
+          each voucher in vouchers
+            div(class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group")
+              //- Trang trí góc
+              div(class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-brand-50 opacity-0 group-hover:opacity-100 transition-opacity")
+              
+              div(class="flex gap-4 items-center mb-4 relative z-10")
+                div(class="w-14 h-14 shrink-0 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex flex-col items-center justify-center shadow-inner")
+                  if voucher.type === 'freeship'
+                    i.bi.bi-truck.text-xl
+                  else
+                    span(class="font-black text-lg") #{voucher.discountPercentage}%
+                    span(class="text-[8px] uppercase tracking-wider font-bold opacity-80") Giảm
+                
+                div(class="flex-1")
+                  div(class="font-black text-slate-900 text-lg tracking-wide uppercase")= voucher.code
+                  if voucher.type === 'freeship'
+                    p(class="text-xs text-slate-500 font-medium") Miễn phí vận chuyển
+                  else
+                    p(class="text-xs text-slate-500 font-medium") Giảm tối đa #{voucher.maxDiscountAmount.toLocaleString('vi-VN')}₫
+              
+              div(class="pt-4 border-t border-dashed border-slate-200 relative z-10")
+                if voucher.minOrderValue > 0
+                  p(class="text-xs text-slate-500 mb-2") Đơn tối thiểu: <span class="font-bold text-slate-700">#{voucher.minOrderValue.toLocaleString('vi-VN')}₫</span>
+                else
+                  p(class="text-xs text-slate-500 mb-2") Không yêu cầu đơn tối thiểu
+                
+                div(class="flex items-center justify-between mt-4")
+                  if voucher.validTo
+                    span(class="text-[11px] font-semibold text-rose-500 bg-rose-50 px-2 py-1 rounded-md") HSD: #{new Date(voucher.validTo).toLocaleDateString('vi-VN')}
+                  else
+                    span(class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md") Không giới hạn
+                  
+                  button.btn-copy-code(data-code=voucher.code class="text-xs font-bold text-white bg-slate-900 px-4 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm") Copy mã
+
+      else
+        div(class="bg-white rounded-3xl p-12 text-center shadow-sm border border-slate-100")
+          div(class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6")
+            i.bi.bi-ticket-detailed.text-4xl.text-slate-300
+          h3(class="text-lg font-bold text-slate-800 mb-2") Bạn chưa có mã khuyến mãi nào
+          p(class="text-slate-500 mb-6") Hãy tham gia các chương trình khuyến mãi hoặc Vòng quay may mắn để nhận thêm mã.
+          a(href="/vouchers" class="btn-premium btn-premium-primary inline-flex items-center gap-2 px-6 py-3")
+            | Đi đến Trung Tâm Khuyến Mãi
+            i.bi.bi-arrow-right
+
+  //- Toast Notification
+  div#copyToast(class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl transition-all duration-300 opacity-0 invisible z-50 flex items-center gap-2")
+    i.bi.bi-check-circle-fill.text-emerald-400
+    span Đã copy mã vào khay nhớ tạm!
+
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyBtns = document.querySelectorAll('.btn-copy-code');
+      const copyToast = document.getElementById('copyToast');
+
+      copyBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const code = btn.getAttribute('data-code');
+          try {
+            await navigator.clipboard.writeText(code);
+            copyToast.classList.remove('opacity-0', 'invisible');
+            copyToast.classList.add('opacity-100', 'visible', '-translate-y-4');
+            
+            setTimeout(() => {
+              copyToast.classList.remove('opacity-100', 'visible', '-translate-y-4');
+              copyToast.classList.add('opacity-0', 'invisible');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy', err);
+          }
+        });
+      });
+    });

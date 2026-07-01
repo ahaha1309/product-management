@@ -12,11 +12,11 @@ block main
     if (cart && cart.products && cart.products.length > 0)
       
       //- Cart Items Container
-      div(class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mb-8")
+      section(class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mb-8")
         //- Desktop Header
         div(class="hidden md:grid grid-cols-12 gap-4 p-6 bg-surface-50 border-b border-slate-100 text-sm font-semibold text-surface-500")
           div(class="col-span-1 flex justify-center")
-            input#check-all(type="checkbox" class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+            input#check-all(type="checkbox" aria-label="Chọn tất cả sản phẩm" class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
           div(class="col-span-5") Sản phẩm
           div(class="col-span-2 text-center") Đơn giá
           div(class="col-span-2 text-center") Số lượng
@@ -25,14 +25,13 @@ block main
         //- Cart Items List
         div(class="flex flex-col")
           each item in cart.products
-            div(class="cart-item grid grid-cols-1 md:grid-cols-12 gap-4 p-6 border-b border-slate-100 last:border-b-0 items-center transition-colors hover:bg-surface-50/50 group")
+            article(class="cart-item grid grid-cols-1 md:grid-cols-12 gap-4 p-6 border-b border-slate-100 last:border-b-0 items-center transition-colors hover:bg-surface-50/50 group")
               
               //- Checkbox
               div(class="col-span-1 flex justify-between md:justify-center items-center mb-4 md:mb-0")
-                input.item-check(type="checkbox" slug=item.product.slug variant=(item.variantText || '') data-price='' checkbox class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
-                form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST" class="md:hidden")
-                  button.btn-delete(type="submit" class="text-surface-400 hover:text-rose-500 p-2")
-                    i.bi.bi-trash
+                input.item-check(type="checkbox" aria-label=`Chọn sản phẩm ${item.product.title}` slug=item.product.slug variant=(item.variantText || '') data-price='' checkbox class="w-5 h-5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 cursor-pointer")
+                button.btn-delete(type="button" aria-label="Xoá sản phẩm" data-id=item._id class="md:hidden text-surface-400 hover:text-rose-500 p-2 focus:outline-none focus:ring-2 focus:ring-rose-500/20 rounded-full")
+                  i.bi.bi-trash
 
               //- Product Info
               div(class="col-span-5 flex items-start gap-4")
@@ -54,9 +53,9 @@ block main
               div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
                 span(class="md:hidden text-sm text-surface-500") Số lượng:
                 div(class="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm")
-                  button.btn-qty.minus(type="button" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors") -
-                  input.input-qty(type="number" value=item.quantity min="1" name="quantity" data-product-id=item.product.id class="w-10 h-8 text-center text-sm font-semibold bg-transparent border-none focus:outline-none appearance-none m-0 p-0")
-                  button.btn-qty.plus(type="button" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors") +
+                  button.btn-qty.minus(type="button" aria-label="Giảm số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus:outline-none focus:bg-surface-200") -
+                  input.input-qty(type="number" aria-label="Số lượng" value=item.quantity min="1" name="quantity" data-product-id=item._id class="w-10 h-8 text-center text-sm font-semibold bg-transparent border-none focus:outline-none appearance-none m-0 p-0")
+                  button.btn-qty.plus(type="button" aria-label="Tăng số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus:outline-none focus:bg-surface-200") +
 
               //- Total & Actions
               div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
@@ -65,9 +64,8 @@ block main
                   | ₫#{Number(item.quantity * item.product.newPrice).toLocaleString('vi-VN')}
                 
                 //- Desktop Delete Button
-                form(action=`/cart/delete/${item.productId}?_method=PATCH` method="POST" class="hidden md:block absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity")
-                  button.btn-delete(type="submit" class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm")
-                    i.bi.bi-trash
+                button.btn-delete(type="button" aria-label="Xoá sản phẩm" data-id=item._id class="hidden md:flex absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white items-center justify-center shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20")
+                  i.bi.bi-trash
 
       //- Floating Sticky Footer
       div(class="fixed bottom-0 left-0 w-full z-40 bg-white/80 backdrop-blur-xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] py-4 transition-all")
@@ -84,7 +82,7 @@ block main
             
             form(action='/order' method='GET' id="checkout-form")
               input(type="hidden" name="listProduct")
-              button(type="submit" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30 whitespace-nowrap")
+              button(type="submit" aria-label="Tiến hành mua hàng" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-brand-500/50")
                 | Mua Hàng
                 i.bi.bi-arrow-right.ml-2
 
@@ -100,8 +98,3 @@ block main
           i.bi.bi-arrow-right.ml-2
 
   script(src='/js/cart.js')
-  form(action='' 
-       method='POST' 
-       form-update-quantity
-       data-path='/cart/update-quantity'
-    )

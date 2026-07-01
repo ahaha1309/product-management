@@ -1,181 +1,419 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 
+block head
+  link(rel="preconnect" href="https://fonts.googleapis.com")
+  link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+  link(href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet")
+  style.
+    .checkout-page { font-family: 'Outfit', sans-serif; }
+
+    /* Checkout cards */
+    .ck-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      padding: 1.75rem;
+      transition: border-color 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .ck-card:focus-within {
+      border-color: #10b981;
+      box-shadow: 0 0 0 4px rgba(16,185,129,0.07);
+    }
+
+    /* Step badge */
+    .step-num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #ecfdf5; color: #059669;
+      font-weight: 800; font-size: 13px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Checkout inputs */
+    .ck-input {
+      width: 100%;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.875rem;
+      padding: 0.65rem 1rem;
+      font-size: 0.875rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      color: #0f172a;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+    .ck-input:focus {
+      border-color: #10b981;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+    }
+
+    /* Payment method cards */
+    .pay-card {
+      border: 2px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+      display: flex; align-items: center; gap: 0.875rem;
+    }
+    .pay-card:has(input:checked),
+    .pay-card.selected {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    .pay-card:hover { border-color: #6ee7b7; }
+    .pay-card .pay-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid #cbd5e1; flex-shrink: 0;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pay-card:has(input:checked) .pay-dot,
+    .pay-card.selected .pay-dot {
+      border-color: #10b981; background: #10b981;
+    }
+
+    /* Installment month cards */
+    .inst-card {
+      border: 2px solid #e2e8f0;
+      border-radius: 0.875rem;
+      padding: 0.75rem 0.5rem;
+      cursor: pointer; text-align: center; flex: 1;
+      transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+    }
+    .inst-card.active { border-color: #10b981; background: #f0fdf4; }
+    .inst-card:hover:not(.active) { border-color: #6ee7b7; }
+
+    /* Installment toggle switch */
+    .inst-toggle { cursor: pointer; display: flex; align-items: center; gap: 0.75rem; }
+    #instSwitch { display: none; }
+    .toggle-track {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: #e2e8f0;
+      position: relative; flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+    .toggle-track::after {
+      content: '';
+      width: 18px; height: 18px; border-radius: 50%;
+      background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      position: absolute; top: 3px; left: 3px;
+      transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);
+    }
+    #instSwitch:checked + .inst-toggle .toggle-track { background: #10b981; }
+    #instSwitch:checked + .inst-toggle .toggle-track::after { transform: translateX(20px); }
+
+    /* Voucher tag */
+    .voucher-tag { cursor: pointer; transition: all 0.2s ease; }
+
+    /* Toast */
+    .checkout-toast { border-radius: 0.875rem; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 600; text-align: center; }
+    .checkout-toast.success { background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.25); }
+    .checkout-toast.error { background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.2); }
+
+    /* Checkout button */
+    #checkoutBtn { transition: all 0.2s cubic-bezier(0.16,1,0.3,1); }
+    #checkoutBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16,185,129,0.35); }
+    #checkoutBtn:active { transform: scale(0.98); box-shadow: none; }
+    #checkoutBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+    /* Product item */
+    .product-item { transition: background 0.15s ease; }
+    .product-item:hover { background: #f8fafc; }
+
+    /* Voucher applied */
+    .voucher-applied-row { animation: slideIn 0.3s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Summary divider line */
+    .summary-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 1.25rem 0; }
+
 block main
   +alert-success(messages.success)
-  
-  div(class="container mx-auto px-4 max-w-6xl py-8 mb-20 checkout-page")
-    
-    div(class="mb-8")
-      h1(class="text-3xl font-black text-surface-950 tracking-tight") Thanh Toán
-      p(class="text-surface-500 mt-2") Hoàn tất đơn hàng của bạn một cách nhanh chóng và an toàn.
 
-    div(class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12")
-      //- Left Column: Checkout Sections
-      div(class="lg:col-span-8 flex flex-col gap-8")
-        
-        //- Section 1: Shipping Info
-        div(class="bento-card relative overflow-hidden checkout-section")
-          div(class="flex justify-between items-center mb-6")
-            h2(class="text-xl font-bold text-surface-900 flex items-center gap-3")
-              div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 1
-              | Thông tin giao hàng
-            a(href="#" class="edit-link text-brand-600 text-sm font-semibold hover:text-brand-700 transition-colors px-3 py-1.5 bg-brand-50 rounded-lg") Chỉnh sửa
-          
-          div(class="shipping-info bg-surface-50 rounded-2xl p-5 border border-slate-100")
-            div(class="flex items-start gap-4 mb-3")
-              i(class="bi bi-person-circle text-surface-400 text-xl mt-0.5")
-              div
-                div(class="text-xs text-surface-500 uppercase font-semibold tracking-wider mb-0.5") Người nhận
-                div(class="font-medium text-surface-900 info-value") #{user.fullName} | #{user.phone}
-            div(class="flex items-start gap-4")
-              i(class="bi bi-geo-alt-fill text-surface-400 text-xl mt-0.5")
-              div
-                div(class="text-xs text-surface-500 uppercase font-semibold tracking-wider mb-0.5") Địa chỉ giao hàng
-                div(class="font-medium text-surface-900 info-value leading-relaxed") #{user.address}
+  div(class="min-h-screen bg-slate-50 checkout-page")
+    div(class="container mx-auto px-4 max-w-6xl py-10 pb-24")
 
-          div(class="edit-form hidden mt-4 bg-white border border-brand-200 rounded-2xl p-5 shadow-inner" style="display: none;" idUser=user._id)
-            div(class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4")
-              div
-                label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Họ và tên
-                input.input-field(type="text" id="editFullName" value=user.fullName placeholder="Họ và tên" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
-              div
-                label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Số điện thoại
-                input.input-field(type="tel" id="editPhone" value=user.phone placeholder="Số điện thoại" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
-            div(class="mb-6")
-              label(class="text-xs font-semibold text-surface-500 mb-1.5 block") Địa chỉ chi tiết
-              input.input-field(type="text" id="editAddress" value=user.address placeholder="Địa chỉ chi tiết" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
-            div(class="flex justify-end gap-3 form-actions")
-              button.btn-cancel(type="button" class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-600 hover:bg-surface-50 transition-colors") Hủy
-              button.btn-save(type="button" class="btn-premium btn-premium-primary px-6 py-2.5 text-sm") Lưu thông tin
+      //- Page header
+      div(class="mb-8")
+        div(class="flex items-center gap-2 text-sm text-slate-400 font-medium mb-3")
+          a(href="/" class="hover:text-emerald-600 transition-colors") Trang chủ
+          i.bi.bi-chevron-right.text-xs
+          span(class="text-slate-600") Thanh toán
+        h1(class="text-3xl font-black text-slate-900 tracking-tight") Hoàn tất đơn hàng
+        p(class="text-slate-400 mt-1 font-medium") Kiểm tra thông tin và chọn phương thức thanh toán
 
-        //- Section 2: Products List
-        div(class="bento-card checkout-section")
-          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
-            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 2
-            | Sản phẩm (#{products.length})
-          
-          div(class="flex flex-col gap-4 products-list")
-            each product in products
-              div(class="product-item flex items-start sm:items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-brand-200 bg-surface-50/50 transition-colors relative group")
-                img(src=product.thumbnail alt=product.title class="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-white")
-                div(class="flex-1")
-                  h4(class="font-bold text-surface-900 text-sm leading-tight line-clamp-2 pr-8")= product.title
-                  if product.variantText
-                    p(class="text-xs text-surface-500 mt-1") Phân loại: #{product.variantText}
-                  div(class="flex items-center gap-4 mt-2")
-                    span(class="font-bold text-brand-600") #{Number(product.newPrice).toLocaleString('vi-VN')}₫
-                    span(class="product-quantity text-xs font-medium text-surface-500 bg-surface-200 px-2 py-0.5 rounded-md") x#{product.quantity}
-                div(class="text-right font-black text-surface-900 hidden sm:block")
-                  | #{(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫
-                button.btn-remove(type="button" data-product-id=product._id class="absolute top-4 right-4 text-surface-400 hover:text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors")
-                  i.bi.bi-x-lg
+      div(class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10")
 
-        //- Section 3: Voucher
-        div(class="bento-card checkout-section")
-          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
-            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 3
-            | Mã khuyến mãi
-          
-          div(class="voucher-section")
-            div(class="flex gap-3 mb-4")
-              div(class="relative flex-1")
-                i.bi.bi-ticket-perforated.absolute.left-4.top-1.translate-y-1.text-surface-400
-                input#voucherCode.input-field(type="text" placeholder="Nhập mã voucher" value=appliedVoucher ? appliedVoucher.code : '' class="w-full bg-surface-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm uppercase font-semibold focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all")
-              button#applyVoucher.btn-apply(type="button" class="btn-premium bg-surface-900 text-white hover:bg-surface-800 px-6 whitespace-nowrap") Áp dụng
+        //- ============================================================
+        //- LEFT COLUMN: Checkout form sections
+        //- ============================================================
+        div(class="lg:col-span-8 flex flex-col gap-5")
 
-            if availableVouchers && availableVouchers.length > 0
-              div(class="mt-4 available-vouchers")
-                h5(class="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-3") Voucher có sẵn:
-                div(class="flex gap-3 overflow-x-auto pb-2 hide-scrollbar")
-                  each v in availableVouchers
-                    div.voucher-tag(data-code=v.code class=`shrink-0 cursor-pointer border ${appliedVoucher && appliedVoucher.code === v.code ? 'border-brand-500 bg-brand-50' : 'border-slate-200 hover:border-brand-300'} rounded-xl p-3 flex flex-col gap-1 transition-all`)
-                      span(class="font-bold text-surface-900 text-sm tracking-wide uppercase")= v.code
-                      span(class="text-xs text-brand-600 font-medium") Giảm #{v.discountPercentage}%
-            
-            if appliedVoucher
-              div(class="mt-4 p-4 rounded-xl border border-emerald-200 bg-emerald-50 flex items-center justify-between voucher-applied")
-                div(class="flex items-center gap-3")
-                  div(class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center")
-                    i.bi.bi-check-lg
-                  div
-                    div(class="font-bold text-emerald-800 text-sm") #{appliedVoucher.code}
-                    div(class="text-xs text-emerald-600") Giảm #{appliedVoucher.discount}% (Tối đa #{appliedVoucher.maxDiscountAmount.toLocaleString('vi-VN')}đ)
-                button.btn-remove-voucher(type="button" class="text-xs font-semibold text-rose-500 hover:underline px-2 py-1") Xóa
+          //- ---- SECTION 1: Shipping info ----
+          div(class="ck-card checkout-section")
+            div(class="flex items-center justify-between mb-5")
+              h2(class="flex items-center gap-3 font-bold text-slate-800 text-base")
+                span.step-num 1
+                | Thông tin giao hàng
+              button.edit-link(type="button" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5")
+                i.bi.bi-pencil.text-xs
+                | Chỉnh sửa
 
-        //- Section 3.5: Order Notes
-        div(class="bento-card checkout-section")
-          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-4")
-            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm")
-              i.bi.bi-chat-left-text
-            | Ghi chú đơn hàng
-          textarea#orderNote(placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..." rows="3" class="w-full bg-surface-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all resize-none")
+            //- Display view
+            div.shipping-info(class="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-3")
+              div(class="flex items-start gap-3")
+                div(class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-sm")
+                  i.bi.bi-person-fill.text-slate-400.text-sm
+                div
+                  div(class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5") Người nhận
+                  div(class="font-semibold text-slate-900 info-value text-sm") #{user.fullName} | #{user.phone}
+              div(class="flex items-start gap-3")
+                div(class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-sm")
+                  i.bi.bi-geo-alt-fill.text-slate-400.text-sm
+                div
+                  div(class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5") Địa chỉ giao hàng
+                  div(class="font-semibold text-slate-900 info-value text-sm leading-relaxed") #{user.address}
 
-        //- Section 4: Payment Methods
-        div(class="bento-card checkout-section")
-          h2(class="text-xl font-bold text-surface-900 flex items-center gap-3 mb-6")
-            div(class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-sm") 4
-            | Phương thức thanh toán
-          
-          div(class="grid grid-cols-1 sm:grid-cols-2 gap-4 payment-methods")
-            each method in paymentMethods
-              label.payment-method(data-method-id=method.id class="relative cursor-pointer group")
-                input(type="radio" name="paymentMethod" value=method.id checked=method.id === 'credit_card' class="peer sr-only")
-                div.method-card(class="p-4 rounded-2xl border-2 border-slate-100 hover:border-brand-200 peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all flex items-center gap-4 h-full")
-                  div.method-icon(class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-2xl shadow-sm text-brand-500 group-hover:scale-110 transition-transform")
-                    != method.icon
-                  div(class="flex-1")
-                    h4(class="font-bold text-surface-900 text-sm mb-0.5")= method.name
-                    p(class="text-xs text-surface-500 leading-tight")= method.description
-                  div.method-check(class="w-5 h-5 rounded-full border-2 border-slate-300 peer-checked:border-brand-500 peer-checked:bg-brand-500 text-white flex items-center justify-center text-xs opacity-0 peer-checked:opacity-100 transition-opacity")
-                    i.bi.bi-check-lg
+            //- Edit form (hidden)
+            div.edit-form(style="display:none;" idUser=user._id class="mt-4 bg-emerald-50/40 border border-emerald-100 rounded-2xl p-5")
+              div(class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4")
+                div
+                  label(class="text-xs font-bold text-slate-500 mb-1.5 block") Họ và tên
+                  input.ck-input(type="text" id="editFullName" value=user.fullName placeholder="Họ và tên")
+                div
+                  label(class="text-xs font-bold text-slate-500 mb-1.5 block") Số điện thoại
+                  input.ck-input(type="tel" id="editPhone" value=user.phone placeholder="Số điện thoại")
+              div(class="mb-5")
+                label(class="text-xs font-bold text-slate-500 mb-1.5 block") Địa chỉ chi tiết
+                input.ck-input(type="text" id="editAddress" value=user.address placeholder="Địa chỉ chi tiết")
+              div(class="flex justify-end gap-3 form-actions")
+                button.btn-cancel(type="button" class="px-5 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-white transition-all") Hủy
+                button.btn-save(type="button" class="px-6 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition-all active:scale-95") Lưu thông tin
 
-      //- Right Column: Order Summary (Sticky)
-      div(class="lg:col-span-4")
-        div(class="sticky top-24")
-          div(class="bg-surface-950 text-white rounded-[2rem] p-8 shadow-diffusion order-summary")
-            h3(class="text-lg font-bold mb-6 flex items-center justify-between")
-              | Tóm tắt đơn hàng
-              i.bi.bi-receipt.text-brand-400
-            
-            div(class="space-y-4 mb-6 text-sm")
-              div(class="flex justify-between items-center")
-                span(class="text-surface-400") Tổng tiền hàng
-                span(class="font-semibold text-surface-50") #{subtotal.toLocaleString('vi-VN')}₫
-              
+          //- ---- SECTION 2: Products ----
+          div(class="ck-card checkout-section")
+            h2(class="flex items-center gap-3 font-bold text-slate-800 text-base mb-5")
+              span.step-num 2
+              | Sản phẩm đặt mua
+              span(class="ml-auto text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full") #{products.length} sản phẩm
+
+            div(class="flex flex-col divide-y divide-slate-100 products-list")
+              each product in products
+                div(class="product-item flex items-center gap-4 py-4 first:pt-0 last:pb-0 rounded-xl px-1")
+                  div(class="relative shrink-0")
+                    img(src=product.thumbnail alt=product.title class="w-[72px] h-[72px] rounded-2xl object-cover border border-slate-100 bg-white")
+                    div(class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] font-black flex items-center justify-center") #{product.quantity}
+                  div(class="flex-1 min-w-0")
+                    h4(class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-1")= product.title
+                    if product.variantText
+                      p(class="product-variant text-xs text-slate-400 font-medium mb-1.5")
+                        | #{product.variantText}
+                    div(class="flex items-center gap-2")
+                      span(class="text-brand-600 font-bold text-sm") #{Number(product.newPrice).toLocaleString('vi-VN')}₫
+                      span(class="product-quantity text-xs text-slate-400 font-medium")  x#{product.quantity}
+                  div(class="text-right shrink-0")
+                    div(class="font-black text-slate-900 text-sm") #{(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫
+                    button.btn-remove(type="button" data-product-id=product._id class="mt-1 text-slate-300 hover:text-rose-500 transition-colors text-xs flex items-center gap-1 ml-auto")
+                      i.bi.bi-trash3
+                      | Xóa
+
+          //- ---- SECTION 3: Voucher ----
+          div(class="ck-card checkout-section")
+            h2(class="flex items-center gap-3 font-bold text-slate-800 text-base mb-5")
+              span.step-num 3
+              | Mã khuyến mãi
+
+            div(class="voucher-section")
+              div(class="flex gap-2")
+                div(class="relative flex-1")
+                  i.bi.bi-ticket-perforated(class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm")
+                  input#voucherCode(type="text" placeholder="Nhập mã voucher..." value=appliedVoucher ? appliedVoucher.code : '' class="ck-input pl-10 uppercase tracking-wider")
+                button#applyVoucher(type="button" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-700 transition-all active:scale-95 whitespace-nowrap") Áp dụng
+
+              if availableVouchers && availableVouchers.length > 0
+                div(class="mt-4")
+                  p(class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2") Voucher có thể dùng
+                  div(class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar")
+                    each v in availableVouchers
+                      div.voucher-tag(data-code=v.code class=`shrink-0 border-2 ${appliedVoucher && appliedVoucher.code === v.code ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'} rounded-xl px-3 py-2.5 transition-all cursor-pointer`)
+                        div(class="font-black text-slate-900 text-xs tracking-wide uppercase mb-0.5")= v.code
+                        if v.type === 'freeship'
+                          div(class="text-emerald-600 text-[10px] font-bold") Miễn phí vận chuyển
+                        else
+                          div(class="text-emerald-600 text-[10px] font-bold") Giảm #{v.discountPercentage}%
+
               if appliedVoucher
-                div(class="flex justify-between items-center discount text-emerald-400")
-                  span Giảm giá (#{appliedVoucher.discount}%)
-                  span(class="font-semibold") -#{discountAmount.toLocaleString('vi-VN')}₫
-              
-              div(class="flex justify-between items-center shipping")
-                span(class="text-surface-400") Phí vận chuyển
-                span(class="font-semibold text-surface-50") #{shippingFee === 0 ? 'Miễn phí' : shippingFee.toLocaleString('vi-VN') + '₫'}
-            
-            div(class="h-px bg-surface-800 w-full mb-6")
-            
-            div(class="flex justify-between items-end mb-8 total")
-              div
-                span(class="text-sm text-surface-400 block mb-1") Tổng thanh toán
-                span(class="text-[10px] text-surface-500 uppercase tracking-wider") Đã bao gồm VAT
-              span(class="text-3xl font-black text-brand-400 price-total tracking-tight") #{total.toLocaleString('vi-VN')}₫
-            
-            button#checkoutBtn.btn-checkout(type="button" class="w-full bg-brand-500 text-white font-bold text-lg py-4 rounded-xl hover:bg-brand-400 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95")
-              | Đặt hàng ngay
-            
-            //- Toast
-            #checkoutToast.checkout-toast(style="display:none;" class="mt-4 p-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-center text-sm font-medium")
-              span#toastMessage
+                div(class="voucher-applied voucher-applied-row mt-3 flex items-center justify-between p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl")
+                  div(class="flex items-center gap-2.5")
+                    div(class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center")
+                      i.bi.bi-check-lg.text-sm
+                    div
+                      div(class="font-bold text-emerald-800 text-xs") #{appliedVoucher.code}
+                      div(class="text-emerald-600 text-[10px]") Giảm #{appliedVoucher.discount}% (tối đa #{appliedVoucher.maxDiscountAmount.toLocaleString('vi-VN')}₫)
+                  button.btn-remove-voucher(type="button" class="text-[11px] font-bold text-rose-500 hover:text-rose-700 transition-colors") Xóa
 
-            div(class="mt-6 space-y-2 text-xs text-surface-500 font-medium")
-              div(class="flex items-center gap-2")
-                i.bi.bi-shield-check.text-brand-400
-                | Bảo mật thanh toán 100%
-              div(class="flex items-center gap-2")
-                i.bi.bi-arrow-return-left.text-brand-400
-                | Hoàn tiền trong 30 ngày
-              div(class="flex items-center gap-2")
-                i.bi.bi-headset.text-brand-400
-                | Hỗ trợ kỹ thuật 24/7
+          //- ---- SECTION 4: Note ----
+          div(class="ck-card checkout-section")
+            h2(class="flex items-center gap-3 font-bold text-slate-800 text-base mb-4")
+              span(class="step-num")
+                i.bi.bi-chat-left-dots.text-xs
+              | Ghi chú đơn hàng
+            textarea#orderNote(rows="3" placeholder="Giao giờ hành chính, gọi trước khi giao..." class="ck-input resize-none leading-relaxed")
+
+          //- ---- SECTION 5: Payment method ----
+          div(class="ck-card checkout-section")
+            h2(class="flex items-center gap-3 font-bold text-slate-800 text-base mb-5")
+              span.step-num 4
+              | Phương thức thanh toán
+
+            div(class="grid grid-cols-1 sm:grid-cols-2 gap-3 payment-methods")
+              each method in paymentMethods
+                label.pay-card(data-method-id=method.id)
+                  input(type="radio" name="paymentMethod" value=method.id checked=method.id === 'cod' class="sr-only")
+                  div.pay-dot
+                    div(class="w-2.5 h-2.5 rounded-full bg-white")
+                  div(class="flex-1")
+                    div(class="font-bold text-slate-900 text-sm")= method.name
+                    div(class="text-xs text-slate-400 font-medium mt-0.5")= method.description
+
+          //- ---- SECTION 6: Installment (NEW) ----
+          - const totalForInstall = products.reduce((sum, p) => sum + p.newPrice * p.quantity, 0)
+          if totalForInstall >= 500000
+            div#installmentSection(class="ck-card checkout-section")
+              //- Toggle header
+              div(class="flex items-center justify-between")
+                div
+                  h2(class="font-bold text-slate-800 text-base flex items-center gap-2")
+                    i.bi.bi-credit-card-2-front.text-emerald-500
+                    | Trả góp 0%
+                  p(class="text-xs text-slate-400 font-medium mt-0.5") Chia nhỏ khoản thanh toán, không lãi suất
+                input#instSwitch(type="checkbox")
+                label(for="instSwitch" class="inst-toggle")
+                  div.toggle-track
+                  span(class="text-sm font-semibold text-slate-600")
+
+              //- Installment options (shown when toggle on)
+              div#instBody(style="display:none;" class="mt-5 border-t border-slate-100 pt-5")
+                //- Month options
+                p(class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3") Chọn kỳ hạn
+                div(class="flex gap-3 mb-5")
+                  div.inst-card.active(data-months="6")
+                    div(class="font-black text-slate-900 text-lg leading-none") 6
+                    div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
+                  div.inst-card(data-months="9")
+                    div(class="font-black text-slate-900 text-lg leading-none") 9
+                    div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
+                  div.inst-card(data-months="12")
+                    div(class="font-black text-slate-900 text-lg leading-none") 12
+                    div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
+
+                //- Payment breakdown
+                div(class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 text-white")
+                  div(class="grid grid-cols-2 gap-4 mb-4")
+                    div
+                      div(class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1") Trả trước (30%)
+                      div(class="text-xl font-black text-white")
+                        span#instDownPayment #{Math.round(totalForInstall * 0.3).toLocaleString('vi-VN')}
+                        span(class="text-sm font-semibold ml-0.5") ₫
+                    div
+                      div(class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1") Dư nợ (70%)
+                      div(class="text-xl font-black text-emerald-400")
+                        span#instRemaining #{Math.round(totalForInstall * 0.7).toLocaleString('vi-VN')}
+                        span(class="text-sm font-semibold ml-0.5") ₫
+                  div(class="border-t border-white/10 pt-4")
+                    div(class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1") Mỗi tháng chỉ trả
+                    div(class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-emerald-100")
+                      span#instMonthly #{Math.round(totalForInstall * 0.7 / 6).toLocaleString('vi-VN')}₫
+
+                div(class="mt-3 flex items-start gap-2 text-xs text-slate-400 font-medium")
+                  i(class="bi bi-info-circle text-slate-400 shrink-0 mt-0.5")
+                  | Trả góp 0% áp dụng qua thẻ tín dụng Visa, MasterCard. Phương thức thanh toán sẽ tự động chuyển sang thẻ tín dụng.
+
+        //- ============================================================
+        //- RIGHT COLUMN: Order summary (sticky)
+        //- ============================================================
+        div(class="lg:col-span-4")
+          div(class="sticky top-24")
+            div(class="bg-zinc-950 text-white rounded-[1.75rem] p-7 order-summary")
+
+              //- Header
+              div(class="flex items-center justify-between mb-6")
+                h3(class="font-bold text-base") Tóm tắt đơn hàng
+                i.bi.bi-receipt.text-emerald-400
+
+              //- Line items
+              div(class="space-y-3 text-sm summary-line-items")
+                div(class="flex items-center justify-between")
+                  span(class="text-zinc-400 font-medium") Tổng tiền hàng
+                  span(class="font-semibold text-white") #{subtotal.toLocaleString('vi-VN')}₫
+
+                if appliedVoucher && appliedVoucher.type !== 'freeship'
+                  div(class="summary-discount flex items-center justify-between text-emerald-400 font-semibold")
+                    span Giảm giá (#{appliedVoucher.discount}%)
+                    span -#{discountAmount.toLocaleString('vi-VN')}₫
+
+                div(class="flex items-center justify-between summary-shipping")
+                  span(class="text-zinc-400 font-medium") Phí vận chuyển
+                  if shippingFee === 0
+                    div(class="text-right")
+                      span(class="line-through text-zinc-600 text-xs mr-1") 30.000₫
+                      span(class="text-emerald-400 font-semibold") Miễn phí
+                  else
+                    span(class="font-semibold text-white") #{shippingFee.toLocaleString('vi-VN')}₫
+
+                if appliedVoucher && appliedVoucher.type === 'freeship'
+                  div(class="summary-discount flex items-center justify-between text-emerald-400 font-semibold")
+                    span
+                      i.bi.bi-truck.mr-1
+                      | Freeship
+                    span -#{freeshipDiscount.toLocaleString('vi-VN')}₫
+
+              //- Installment info row (hidden by default, shown when installment active)
+              div#summaryInstallment(style="display:none;")
+                div.summary-divider
+                div(class="space-y-2 text-sm")
+                  div(class="flex items-center justify-between")
+                    span(class="text-zinc-400 font-medium") Kỳ hạn trả góp
+                    span(class="font-semibold text-emerald-400")
+                      span#instMonthsLabel 6
+                      |  tháng
+                  div(class="flex items-center justify-between")
+                    span(class="text-zinc-400 font-medium") Mỗi tháng trả
+                    span#summaryMonthly(class="font-semibold text-emerald-400") --
+
+              div.summary-divider
+
+              //- Total
+              div(class="mb-6 total")
+                div(class="flex items-end justify-between")
+                  div
+                    div#totalLabel(class="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-1") Tổng thanh toán
+                    div#totalNote(class="text-[10px] text-zinc-600 font-medium") Đã bao gồm VAT
+                  span(class="text-3xl font-black tracking-tight text-white price-total") #{total.toLocaleString('vi-VN')}₫
+
+              //- CTA Button
+              button#checkoutBtn(type="button" class="w-full bg-emerald-500 text-white font-black text-base py-4 rounded-2xl")
+                span(class="flex items-center justify-center gap-2")
+                  i.bi.bi-bag-check-fill
+                  | Đặt hàng ngay
+
+              //- Toast
+              #checkoutToast.checkout-toast(style="display:none;" class="mt-3")
+                span#toastMessage
+
+              //- Trust badges
+              div(class="mt-6 space-y-2.5")
+                div(class="flex items-center gap-2.5 text-xs text-zinc-500 font-medium")
+                  i.bi.bi-shield-check.text-emerald-500
+                  | Bảo mật thanh toán SSL 100%
+                div(class="flex items-center gap-2.5 text-xs text-zinc-500 font-medium")
+                  i.bi.bi-arrow-return-left.text-emerald-500
+                  | Hoàn tiền trong 30 ngày nếu lỗi
+                div(class="flex items-center gap-2.5 text-xs text-zinc-500 font-medium")
+                  i.bi.bi-headset.text-emerald-500
+                  | Hỗ trợ kỹ thuật 24/7
 
   script(src='/js/order.js')

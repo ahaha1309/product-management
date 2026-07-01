@@ -76,6 +76,13 @@ block main
       //- Left Column (Orders & Products)
       div(class="xl:col-span-2 space-y-6")
         
+        //- Chart.js Canvas
+        div(class="bg-white rounded-2xl border border-surface-100 shadow-sm p-5")
+          h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2 mb-4")
+            i.bi.bi-graph-up-arrow.text-brand-500
+            | Biểu đồ Doanh thu (7 ngày gần nhất)
+          canvas(id="revenueChart" height="100")
+
         //- Recent Orders Table
         div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden flex flex-col")
           div(class="p-5 border-b border-surface-100 flex justify-between items-center bg-surface-50/50")
@@ -291,11 +298,53 @@ block main
         } else {
           document.getElementById('latest-reviews-list').innerHTML = '<div class="px-5 py-8 text-center text-surface-500">Chưa có đánh giá</div>';
         }
-
-      } catch(e) {
-        console.log('Dashboard load error:', e);
+      } catch (e) {
+        console.error('Error fetching dashboard data:', e);
       }
     }
     
-    // Initialize
+    //- Cập nhật số liệu ban đầu
     loadDashboardData();
+    
+    //- Tự động cập nhật mỗi 30 giây
+    setInterval(loadDashboardData, 30000);
+
+  script(src="https://cdn.jsdelivr.net/npm/chart.js")
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      const labels = !{chartLabels || '[]'};
+      const data = !{chartData || '[]'};
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Doanh thu (VNĐ)',
+            data: data,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString('vi-VN') + '₫';
+                }
+              }
+            }
+          }
+        }
+      });
+    });

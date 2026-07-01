@@ -55,37 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el);
   });
 
-  // Flash sale countdown timer
-  const hEl = document.getElementById('h');
-  const mEl = document.getElementById('m');
-  const sEl = document.getElementById('s');
-  
-  if (hEl && mEl && sEl) {
-    const updateTimer = () => {
-      const now = new Date();
-      // Đặt thời gian đếm ngược đến cuối ngày hôm nay (23:59:59)
-      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
-      const distance = endOfDay - now.getTime();
-
-      if (distance < 0) {
-        hEl.innerText = '00';
-        mEl.innerText = '00';
-        sEl.innerText = '00';
-        return;
-      }
-
-      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-      hEl.innerText = h.toString().padStart(2, '0');
-      mEl.innerText = m.toString().padStart(2, '0');
-      sEl.innerText = s.toString().padStart(2, '0');
-    };
-
-    updateTimer(); // Initial call
-    setInterval(updateTimer, 1000);
-  }
+  // Flash sale countdown timer logic has been moved directly to home/index.pug 
+  // to avoid conflicting scripts and handle "days" accurately.
 
   // Splash Screen Logic
   const splashScreen = document.getElementById('splash-screen');

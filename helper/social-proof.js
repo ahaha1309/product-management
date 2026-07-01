@@ -196,7 +196,15 @@ module.exports.getGeneralStats = async () => {
     ]);
 
     const totalRevenue = await Order.aggregate([
-      { $match: { status: 'finish' } },
+      { 
+        $match: { 
+          status: { $ne: 'canceled' },
+          $or: [
+            { status: 'finish' },
+            { paymentStatus: 'success' }
+          ]
+        } 
+      },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 

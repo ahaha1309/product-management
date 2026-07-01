@@ -2,6 +2,7 @@ const Product = require('../../models/product.model');
 const categoryModel=require('../../models/product-category.model')
 const productHelper = require('../../helper/product');
 const getSubCategoryHelper=require('../../helper/product-category')
+const flashSaleHelper = require('../../helper/flash-sale');
 module.exports.index = async (req, res) => {
   let sort = {};
   let sortKey='';
@@ -20,7 +21,7 @@ module.exports.index = async (req, res) => {
     deleted: false,
   }).sort(sort);
   
-  let newProduct = productHelper.productHelper(product);
+  let newProduct = await flashSaleHelper.applyFlashSaleToProducts(product);
 
   // Lọc theo khoảng giá (Price Range Filter)
   const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : 0;
@@ -113,17 +114,23 @@ module.exports.detail=async (req,res)=>{
   const reviewModel = require('../../models/review.model');
 
   try {
-    const product = await Product.findOne({slug:slug});
-    if (!product) {
+    const productDoc = await Product.findOne({slug:slug});
+    if (!productDoc) {
       req.flash('error','Không tồn tại sản phẩm này');
       return res.redirect(`/product`);
     }
+    
+    let product = productDoc.toObject();
 
     if(product.product_category_id){
       const category=await categoryModel.findOne({_id:product.product_category_id,status:'active',deleted:false});
       product.category=category;
     }
-    product.newPrice=productHelper.priceNewProduct(product);
+    const [processedProduct] = await flashSaleHelper.applyFlashSaleToProducts([product]);
+    product.newPrice = processedProduct.newPrice;
+    product.priceNew = processedProduct.priceNew;
+    product.isFlashSale = processedProduct.isFlashSale;
+    product.flashSale = processedProduct.flashSale;
 
     // 1. Fetch Variants
     const variants = await productVariantModel.find({ productId: product._id, status: 'active', isActive: true });
@@ -202,9 +209,62 @@ module.exports.detail=async (req,res)=>{
       .populate('answers.userId', 'fullName avatar')
       .sort({ createdAt: 'desc' });
 
+    // 5. Fetch Related Products
+    const relatedProductsRaw = await Product.find({
+      product_category_id: product.product_category_id,
+      _id: { $ne: product._id },
+      status: 'active',
+      deleted: false
+    }).limit(6);
+    const relatedProducts = await flashSaleHelper.applyFlashSaleToProducts(relatedProductsRaw);
+
+    // 6. Fetch Recently Viewed Products
+    let recentlyViewedProductsRaw = [];
+    if (recentlyViewed.length > 1) { // >1 because the first one is the current product
+      const recentIds = recentlyViewed.slice(1, 7); // Show max 6 others
+      recentlyViewedProductsRaw = await Product.find({
+        _id: { $in: recentIds },
+        status: 'active',
+        deleted: false
+      });
+      // Sort to maintain recently viewed order
+      recentlyViewedProductsRaw.sort((a, b) => recentIds.indexOf(a._id.toString()) - recentIds.indexOf(b._id.toString()));
+    }
+    const recentlyViewedProducts = await flashSaleHelper.applyFlashSaleToProducts(recentlyViewedProductsRaw);
+
+    const seoService = require('../../services/seo.service');
+    const seoData = seoService.buildMeta({
+      title: product.title,
+      description: product.description ? product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) : `Mua ${product.title} chính hãng tại NVH Mall. Giá tốt, giao hàng toàn quốc.`,
+      url: `https://vanhatech.com/product/detail/${product.slug}`,
+      image: product.thumbnail,
+      type: 'product',
+      jsonLd: {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.title,
+        "image": [product.thumbnail],
+        "description": product.description ? product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) : '',
+        "sku": product._id.toString(),
+        "brand": {
+          "@type": "Brand",
+          "name": "NVH Mall"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://vanhatech.com/product/detail/${product.slug}`,
+          "priceCurrency": "VND",
+          "price": product.newPrice || product.price,
+          "priceValidUntil": "2026-12-31",
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+        }
+      }
+    });
+
     res.render('client/pages/products/detail', {
       title: product.title,
-      metaDesc: product.description ? product.description.replace(/(<([^>]+)>)/gi, '').substring(0, 160) : `Mua ${product.title} chính hãng tại NVH Mall. Giá tốt, giao hàng toàn quốc.`,
+      seoData: seoData,
       product: product,
       variants: variants,
       variantAttributes: {
@@ -215,8 +275,10 @@ module.exports.detail=async (req,res)=>{
       reviews: reviews,
       averageRating: averageRating,
       isWishlisted: isWishlisted,
-      questions: questions
-    });    
+      questions: questions,
+      relatedProducts: relatedProducts,
+      recentlyViewedProducts: recentlyViewedProducts
+    });
   } catch (error) {
     req.flash('error','Lỗi khi tải chi tiết sản phẩm');
     res.redirect(`/product`);
@@ -241,7 +303,7 @@ module.exports.getProductsByCategory = async (req, res) => {
       deleted: false,
     });
 
-    const newProduct = productHelper.productHelper(products);
+    const newProduct = await flashSaleHelper.applyFlashSaleToProducts(products);
 
     // Lấy danh sách categories cho sidebar
     const categoriesRaw = await categoryModel.find({ status: 'active', deleted: false });

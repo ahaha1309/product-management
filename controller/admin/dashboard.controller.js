@@ -32,18 +32,44 @@ module.exports.dashboard = async (req, res) => {
     orders.forEach(order => {
       if (order.status === 'pending') orderStats.pending++;
       else if (order.status === 'confirm') orderStats.processing++;
-      else if (order.status === 'finish') {
-        orderStats.finished++;
-        orderStats.revenue += order.amount || 0; // Chỉ tính doanh thu đơn hoàn thành
-      }
+      else if (order.status === 'finish') orderStats.finished++;
       else if (order.status === 'canceled') orderStats.canceled++;
+
+      // Tính doanh thu: đơn hoàn thành HOẶC đã thanh toán thành công (và không bị hủy)
+      if (order.status !== 'canceled' && (order.status === 'finish' || order.paymentStatus === 'success')) {
+        orderStats.revenue += order.amount || 0;
+      }
     });
+
+    // Generate Last 7 Days Revenue Data for Chart.js
+    const last7Days = [];
+    const revenueByDay = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateString = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+      last7Days.push(dateString);
+      revenueByDay[dateString] = 0;
+    }
+
+    orders.forEach(order => {
+      if (order.status !== 'canceled' && (order.status === 'finish' || order.paymentStatus === 'success') && order.createdAt) {
+        const orderDate = new Date(order.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+        if (revenueByDay[orderDate] !== undefined) {
+          revenueByDay[orderDate] += (order.amount || 0);
+        }
+      }
+    });
+
+    const revenueChartData = last7Days.map(date => revenueByDay[date]);
 
     res.render('admin/pages/dashboard/index', {
       title: 'Trang tổng quan',
       productStats,
       userStats,
-      orderStats
+      orderStats,
+      chartLabels: JSON.stringify(last7Days),
+      chartData: JSON.stringify(revenueChartData)
     });
   } catch (error) {
     console.error(error);

@@ -89,6 +89,6 @@ module.exports.postComment = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ success: false, message: 'Server Error' });
+    return res.status(500).json({ success: false, message: error.message, stack: error.stack });
   }
 };

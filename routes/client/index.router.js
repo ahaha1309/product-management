@@ -5,6 +5,7 @@ const authMiddleware=require('../../middleware/client/auth.middleware');
 const settingMiddleware = require('../../middleware/client/setting.middleware');
 const searchRouter=require('./search.router')
 const cartRouter=require('./cart.router')
+const apiCartRouter = require('./api.cart.route');
 const authRouter=require('./auth.router')
 const userRouter=require('./user.router')
 const orderRouter=require('./order.router')
@@ -17,6 +18,7 @@ const contactRouter = require('./contact.router');
 const policyRouter = require('./policy.router');
 const articleRouter = require('./article.router');
 const aboutRouter = require('./about.router');
+const voucherRouter = require('./voucher.router');
 
 module.exports = (app) => {
   app.use('/', categoryMiddleware.category);
@@ -26,7 +28,8 @@ module.exports = (app) => {
   app.use('/',  homeRouter);
   app.use('/product', productRouter);
   app.use('/search',searchRouter)
-  app.use('/cart',authMiddleware.requireAuth,cartRouter)
+  app.use('/cart', authMiddleware.requireAuth, cartRouter);
+  app.use('/api/cart', authMiddleware.requireAuth, apiCartRouter);
   app.use('/auth',authRouter);
   app.use('/my-account',userRouter)
   app.use('/order',orderRouter)
@@ -35,6 +38,7 @@ module.exports = (app) => {
   // ✅ EXISTING ROUTES
   app.use('/review', reviewRouter);
   app.use('/wishlist', authMiddleware.requireAuth, wishlistRouter);
+  app.use('/flash-sale', require('./flash-sale.router'));
   app.use('/loyalty', loyaltyRouter);
   app.use('/recommendation', recommendationRouter);
   app.use('/contact', contactRouter);
@@ -44,6 +48,7 @@ module.exports = (app) => {
   app.use('/articles', articleRouter);
   app.use('/about', aboutRouter);
   app.use('/questions', require('./question.route'));
+  app.use('/vouchers', voucherRouter);
   
   // ✅ SEO - Sitemap
   app.get('/sitemap.xml', require('../../controller/client/sitemap.controller').index);

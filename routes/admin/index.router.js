@@ -38,5 +38,8 @@ module.exports = (app) => {
   app.use(path_admin + '/chats', authMiddleware.requireAuth, require('./chat.route'));
   app.use(path_admin + '/vouchers', authMiddleware.requireAuth, require('./voucher.router'));
   app.use(path_admin + '/notifications', authMiddleware.requireAuth, require('./notification.route'));
+  app.use(path_admin + '/suppliers', authMiddleware.requireAuth, require('./supplier.route'));
+  app.use(path_admin + '/purchase-orders', authMiddleware.requireAuth, require('./purchase-order.route'));
   app.use(path_admin + '/settings', authMiddleware.requireAuth, require('./setting.router'));
+  app.use(path_admin + '/flash-sales', authMiddleware.requireAuth, require('./flash-sale.router'));
 };

@@ -27,6 +27,18 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
         i.bi.bi-folder2-open.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Danh mục sản phẩm
 
+    //- Inventory
+    div(class="pt-4 pb-2")
+      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Inventory
+      
+    a(href=`${prefixAdmin}/suppliers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-truck.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Nhà cung cấp
+      
+    a(href=`${prefixAdmin}/purchase-orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-box-arrow-in-down.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Nhập kho
+
     //- Sales
     div(class="pt-4 pb-2")
       p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Sales
@@ -44,6 +56,10 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
     a(href=`${prefixAdmin}/vouchers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
       i.bi.bi-ticket-perforated.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Voucher
+
+    a(href=`${prefixAdmin}/flash-sales` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      i.bi.bi-lightning-charge.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Flash Sale
         
     //- Content & Marketing
     div(class="pt-4 pb-2")

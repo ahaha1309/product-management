@@ -69,9 +69,12 @@ block main
                     span(class="font-bold text-surface-900 bg-surface-100 px-2.5 py-1 rounded-lg text-xs tracking-wider") #{v.code}
                   td(class="px-5 py-3 text-surface-700") #{v.title || '--'}
                   td(class="px-5 py-3")
-                    span(class="font-semibold text-brand-600") #{v.discountPercentage}%
-                    if v.maxDiscountAmount > 0
-                      span(class="text-xs text-surface-500 ml-1") (tối đa #{v.maxDiscountAmount.toLocaleString('vi-VN')}đ)
+                    if v.type === 'freeship'
+                      span(class="font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-xs") Miễn phí vận chuyển
+                    else
+                      span(class="font-semibold text-brand-600") #{v.discountPercentage}%
+                      if v.maxDiscountAmount > 0
+                        span(class="text-xs text-surface-500 ml-1") (tối đa #{v.maxDiscountAmount.toLocaleString('vi-VN')}đ)
                   td(class="px-5 py-3 text-surface-600") #{v.minOrderValue ? v.minOrderValue.toLocaleString('vi-VN') + 'đ' : 'Không'}
                   td(class="px-5 py-3 text-xs text-surface-500")
                     div #{moment(v.validFrom).format('DD/MM/YYYY')}

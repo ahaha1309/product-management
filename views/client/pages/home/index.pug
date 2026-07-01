@@ -3,6 +3,9 @@ include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
 include ../../mixins/alert.pug
 
+block head
+  //- JSON-LD injected centrally via seo.service.js
+
 block main
   +alert-success(messages.success)
   
@@ -15,7 +18,7 @@ block main
         //- ===== BENTO 2.0 ASYMMETRIC HERO =====
         div(class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10")
           //- Main Feature Card (Span 8)
-          div(class="md:col-span-8 bento-card bg-surface-50 flex flex-col justify-center min-h-[400px] relative overflow-hidden")
+          article(class="md:col-span-8 bento-card bg-surface-50 flex flex-col justify-center min-h-[400px] relative overflow-hidden")
             //- Decorative liquid glass blur
             div(class="absolute w-96 h-96 bg-brand-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 perpetual-pulse" style="top: -20%; right: -10%;")
             div(class="relative z-10 max-w-2xl")
@@ -36,7 +39,7 @@ block main
           //- Secondary Card (Span 4)
           div(class="md:col-span-4 grid grid-rows-2 gap-6")
             //- Top Mini Card
-            div(class="bento-card bg-surface-950 text-white p-8 flex flex-col justify-between relative group")
+            article(class="bento-card bg-surface-950 text-white p-8 flex flex-col justify-between relative group")
               div(class="absolute inset-0 bg-gradient-to-br from-brand-500 to-brand-900 opacity-20 transition-opacity duration-500 group-hover:opacity-40")
               div(class="relative z-10")
                 h3(class="text-2xl font-semibold mb-2 tracking-tight") Khuyến mãi sốc
@@ -45,7 +48,7 @@ block main
                 span(class="text-brand-100 font-medium") Khám phá &rarr;
             
             //- Bottom Mini Card
-            div(class="bento-card bg-brand-50 p-8 flex flex-col justify-center items-center text-center group")
+            article(class="bento-card bg-brand-50 p-8 flex flex-col justify-center items-center text-center group")
               div(class="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center mb-4 perpetual-float")
                 i(class="bi bi-lightning-charge-fill text-brand-500 text-2xl")
               h3(class="text-xl font-semibold text-surface-950") Giao hàng siêu tốc
@@ -53,7 +56,7 @@ block main
 
         //- ===== HORIZONTAL CATEGORY GRID =====
         if categories && categories.length > 0
-          div(class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 hide-scrollbar mb-10")
+          section(class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 hide-scrollbar mb-10")
             each item in categories
               a(href=`/product/c/${item.slug}` class="snap-start shrink-0 flex flex-col items-center justify-center min-w-[100px] gap-3 group")
                 div(class="w-20 h-20 rounded-[1.25rem] bg-white border border-slate-100 shadow-sm flex items-center justify-center p-3 group-hover:shadow-brand-500/20 group-hover:border-brand-300 transition-all duration-300 overflow-hidden")
@@ -61,7 +64,7 @@ block main
                 span(class="text-xs font-bold text-surface-600 text-center group-hover:text-brand-600 transition-colors line-clamp-2") #{item.title}
 
         //- ===== TRUST BADGES =====
-        div(class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10")
+        section(class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10")
           div(class="bg-white rounded-2xl p-4 flex flex-col items-center text-center shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform")
             i.bi.bi-shield-check(class="text-4xl text-rose-500 mb-2")
             span(class="text-sm font-bold text-surface-700") 100% Chính Hãng
@@ -76,13 +79,13 @@ block main
             span(class="text-sm font-bold text-surface-700") Đổi Trả 15 Ngày
 
         //- ===== HORIZONTAL PROMO BANNER =====
-        div(class="mb-10 rounded-[2rem] overflow-hidden shadow-lg border border-slate-100")
+        section(class="mb-10 rounded-[2rem] overflow-hidden shadow-lg border border-slate-100")
           a(href="/articles/chuong-trinh-khuyen-mai-giam-gia-cuc-soc" class="block w-full hover:opacity-90 transition-opacity")
             img(src="/image/promo_banner.png" alt="Promo Banner" class="w-full max-h-[250px] object-cover object-center")
 
         //- ===== FLASH SALE =====
         if flashSaleProducts && flashSaleProducts.length > 0
-          div(class="mb-10 rounded-[2rem] overflow-hidden bg-gradient-to-r from-rose-600 to-orange-500 relative shadow-lg")
+          section(class="mb-10 rounded-[2rem] overflow-hidden bg-gradient-to-r from-rose-600 to-orange-500 relative shadow-lg")
             div(class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10")
             div(class="absolute -top-24 -right-24 w-64 h-64 bg-yellow-400 rounded-full mix-blend-overlay filter blur-3xl opacity-40")
             
@@ -93,14 +96,17 @@ block main
                     i.bi.bi-lightning-charge-fill.text-yellow-300.text-3xl.perpetual-pulse
                   div
                     h2(class="text-2xl md:text-3xl font-black text-white tracking-tight mb-2 uppercase drop-shadow-md") Flash Sale
-                    div(class="flex items-center gap-2")
-                      span(class="w-8 h-8 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box" id="h") 02
+                    div(class="flex items-center gap-1 sm:gap-2")
+                      div(class="flex items-center gap-1 timer-days-wrapper" style="display: none;")
+                        span(class="px-2 h-8 sm:w-10 sm:h-10 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md text-sm sm:text-base" id="d") 00
+                        span(class="text-white font-bold text-xs sm:text-sm mr-1") Ngày
+                      span(class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box text-sm sm:text-base" id="h") 02
                       span(class="text-white font-bold") :
-                      span(class="w-8 h-8 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box" id="m") 15
+                      span(class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box text-sm sm:text-base" id="m") 15
                       span(class="text-white font-bold") :
-                      span(class="w-8 h-8 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box" id="s") 43
+                      span(class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white text-rose-600 font-bold flex items-center justify-center shadow-md timer-box text-sm sm:text-base" id="s") 43
                 
-                a(href="/product?discount=true" class="btn-premium bg-white text-rose-600 hover:bg-rose-50 !py-2.5 !px-6 border-none")
+                a(href="/flash-sale" class="btn-premium bg-white text-rose-600 hover:bg-rose-50 !py-2.5 !px-6 border-none")
                   | Xem tất cả 
                   i.bi.bi-arrow-right.ml-2
 
@@ -112,22 +118,31 @@ block main
                   
                 div(class="flash-sale-products flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x snap-mandatory")
                   each item in flashSaleProducts
-                    a(href=`/product/detail/${item.slug}` class="snap-start shrink-0 w-[160px] md:w-[200px] bg-white rounded-[1.5rem] p-3 flex flex-col hover:-translate-y-2 hover:shadow-xl transition-all duration-300 relative group/item")
-                      div(class="relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50")
-                        img(src=item.thumbnail alt=item.title class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500")
-                        if item.discountPercentage > 0
-                          div(class="absolute top-2 left-2 bg-rose-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm")
-                            | -#{item.discountPercentage}%
-                      
-                      div(class="text-center mt-auto")
-                        div(class="text-rose-600 font-black text-lg md:text-xl mb-2") #{Number(item.priceNew).toLocaleString('vi-VN')}₫
-                        div(class="relative h-5 bg-rose-100 rounded-full overflow-hidden w-full flex items-center justify-center")
-                          div(class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-500 to-orange-400 rounded-full" style=`width: ${Math.floor(Math.random() * 50) + 50}%`)
-                          span(class="relative z-10 text-[10px] font-black text-white uppercase tracking-wider drop-shadow-md") Đang bán chạy
+                    article(class="snap-start shrink-0 w-[160px] md:w-[200px]")
+                      a(href=`/product/detail/${item.slug}` class="bg-white rounded-[1.5rem] p-3 flex flex-col hover:-translate-y-2 hover:shadow-xl transition-all duration-300 relative group/item h-full")
+                        div(class="relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50")
+                          img(src=item.thumbnail alt=item.title class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500")
+                          if item.discountPercentage > 0
+                            div(class="absolute top-2 left-2 bg-rose-500 text-white px-2 py-0.5 rounded-md text-xs font-bold shadow-sm")
+                              | -#{item.discountPercentage}%
+                        
+                        div(class="text-center mt-auto")
+                          div(class="text-rose-600 font-black text-lg md:text-xl mb-2") #{Number(item.priceNew).toLocaleString('vi-VN')}₫
+                          if item.flashSale && item.flashSale.quantityLimit
+                            - const sold = item.flashSale.soldQuantity || 0
+                            - const total = item.flashSale.quantityLimit
+                            - const percent = Math.min(100, Math.floor((sold / total) * 100))
+                            div(class="relative h-5 bg-rose-100 rounded-full overflow-hidden w-full flex items-center justify-center")
+                              div(class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-500 to-orange-400 rounded-full" style=`width: ${percent}%`)
+                              span(class="relative z-10 text-[10px] font-black text-white uppercase tracking-wider drop-shadow-md") Đã bán #{sold}
+                          else
+                            div(class="relative h-5 bg-rose-100 rounded-full overflow-hidden w-full flex items-center justify-center")
+                              div(class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-500 to-orange-400 rounded-full" style=`width: 50%`)
+                              span(class="relative z-10 text-[10px] font-black text-white uppercase tracking-wider drop-shadow-md") Đang bán chạy
 
         //- ===== FEATURED PRODUCTS =====
         if productFeatured && productFeatured.length > 0
-          .discovery-wrapper.mb-5
+          section.discovery-wrapper.mb-5
             .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
               .discovery-header(style="margin: 0; border: none; color: #f53d2d;") <i class="bi bi-star-fill me-2"></i>SẢN PHẨM NỔI BẬT
               a.text-danger.fw-bold(href="/product" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
@@ -135,7 +150,7 @@ block main
 
         //- ===== JUST FOR YOU (Dành Riêng Cho Bạn) =====
         if personalizedProducts && personalizedProducts.length > 0
-          .discovery-wrapper.mb-5
+          section.discovery-wrapper.mb-5
             .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2(style="border-bottom-color: #10b981 !important;")
               .discovery-header(style="color: #10b981; margin: 0; border: none;") <i class="bi bi-person-heart me-2"></i>DÀNH RIÊNG CHO BẠN
               a.text-success.fw-bold(href="/product?filter=personalized" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
@@ -143,13 +158,13 @@ block main
 
         //- ===== RECENTLY VIEWED (Sản phẩm vừa xem) =====
         if recentlyViewedProducts && recentlyViewedProducts.length > 0
-          .discovery-wrapper.mb-5
+          section.discovery-wrapper.mb-5
             .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2(style="border-bottom-color: #6366f1 !important;")
               .discovery-header(style="color: #6366f1; margin: 0; border: none;") <i class="bi bi-clock-history me-2"></i>SẢN PHẨM VỪA XEM
             +product-grid(recentlyViewedProducts.slice(0, 12))
 
         //- ===== DAILY DISCOVERY (Gợi Ý Hôm Nay) =====
-        .discovery-wrapper.mb-5
+        section.discovery-wrapper.mb-5
           .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
             .discovery-header(style="margin: 0; border: none;") GỢI Ý HÔM NAY
             a.text-primary.fw-bold(href="/product?filter=daily" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
@@ -157,7 +172,7 @@ block main
 
         //- ===== TIN TỨC MỚI NHẤT =====
         if latestArticles && latestArticles.length > 0
-          .discovery-wrapper.mb-5
+          section.discovery-wrapper.mb-5
             .d-flex.justify-content-between.align-items-center.mb-3.border-bottom.pb-2
               .discovery-header(style="margin: 0; border: none; color: #17a2b8;") <i class="bi bi-newspaper me-2"></i>TIN TỨC MỚI NHẤT
               a.text-info.fw-bold(href="/articles" style="text-decoration: none; font-size: 14px;") Xem tất cả &gt;
@@ -171,7 +186,7 @@ block main
                         h6.card-title.text-dark.fw-bold(style="font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;") #{article.title}
 
     //- ===== SEO FOOTER TEXT (Bottom of full container) =====
-    .seo-footer-container.mt-5.mb-4(style="border-top: 1px solid #e5e5e5; padding-top: 30px; position: relative;")
+    section.seo-footer-container.mt-5.mb-4(style="border-top: 1px solid #e5e5e5; padding-top: 30px; position: relative;")
       .seo-footer-content#seoFooterContent
         h2.scroll-animate(style="font-size: 14px; font-weight: bold; color: rgba(0,0,0,0.54); margin-bottom: 10px;") NVH MALL - THẾ GIỚI MUA SẮM TRỰC TUYẾN DÀNH CHO BẠN
         p.scroll-animate(style="font-size: 12px; color: rgba(0,0,0,0.54); line-height: 1.6; margin-bottom: 15px;") NVH Mall mang đến cho bạn không gian mua sắm trực tuyến thú vị, tin cậy và hoàn toàn an toàn! Là một trong những điểm đến mua sắm uy tín, NVH Mall cam kết cung cấp trải nghiệm giao dịch trực tuyến liền mạch, đáp ứng mọi nhu cầu mua sắm của bạn. Với sự bảo vệ và giám sát chặt chẽ từ chúng tôi, bạn có thể hoàn toàn yên tâm chọn lựa và đặt hàng nhanh chóng hơn bao giờ hết.
@@ -375,31 +390,50 @@ block main
 
     // Flash Sale Timer Animation
     function startTimer() {
+      const elD = document.getElementById('d');
       const elH = document.getElementById('h');
       const elM = document.getElementById('m');
       const elS = document.getElementById('s');
+      const daysWrapper = document.querySelector('.timer-days-wrapper');
       if (!elH || !elM || !elS) return;
 
-      // Tính toán thời gian đến cuối ngày hiện tại
-      const now = new Date();
-      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-      let diffSeconds = Math.floor((endOfDay - now) / 1000);
+      // Extract endDate from the global variables if we passed it, or just use the first flash sale product's endDate
+      let targetTime = null;
+      // Pug can inject it here
+      const firstProductEndDate = '!{flashSaleProducts && flashSaleProducts.length > 0 ? flashSaleProducts[0].flashSale.endDate : ""}';
+      
+      if (firstProductEndDate) {
+        targetTime = new Date(firstProductEndDate).getTime();
+      } else {
+        const now = new Date();
+        targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+      }
 
       setInterval(() => {
-        if (diffSeconds > 0) {
-          diffSeconds--;
-        } else {
-          // Reset sang ngày mới nếu đếm ngược kết thúc
-          diffSeconds = 24 * 60 * 60 - 1;
-        }
-
-        const h = Math.floor(diffSeconds / 3600);
-        const m = Math.floor((diffSeconds % 3600) / 60);
-        const s = diffSeconds % 60;
+        const now = new Date().getTime();
+        const distance = targetTime - now;
         
-        elH.innerText = h.toString().padStart(2, '0');
-        elM.innerText = m.toString().padStart(2, '0');
-        elS.innerText = s.toString().padStart(2, '0');
+        if (distance > 0) {
+          const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const s = Math.floor((distance % (1000 * 60)) / 1000);
+          
+          if (d > 0 && daysWrapper) {
+            daysWrapper.style.display = 'flex';
+            elD.innerText = d.toString().padStart(2, '0');
+          } else if (daysWrapper) {
+            daysWrapper.style.display = 'none';
+          }
+          
+          elH.innerText = h.toString().padStart(2, '0');
+          elM.innerText = m.toString().padStart(2, '0');
+          elS.innerText = s.toString().padStart(2, '0');
+        } else {
+          elH.innerText = '00';
+          elM.innerText = '00';
+          elS.innerText = '00';
+        }
       }, 1000);
     }
     startTimer();

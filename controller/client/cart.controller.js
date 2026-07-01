@@ -1,6 +1,7 @@
 const cartModel = require('../../models/cart.model');
 const productModel = require('../../models/product.model');
 const productHelper = require('../../helper/product');
+const flashSaleHelper = require('../../helper/flash-sale');
 module.exports.index = async (req, res) => {
   const userId = res.locals.user._id;
   try {
@@ -13,20 +14,27 @@ module.exports.index = async (req, res) => {
     }
     const originalLength = cart.products.length;
     const validProducts = [];
+    const productRawList = [];
     for (let item of cart.products) {
       const product = await productModel.findOne({ _id: item.productId });
       if (product) {
-        product.newPrice = productHelper.priceNewProduct(product);
-        item.product = product;
+        productRawList.push(product);
         validProducts.push(item);
       }
+    }
+
+    const processedProducts = await flashSaleHelper.applyFlashSaleToProducts(productRawList);
+    
+    for (let i = 0; i < validProducts.length; i++) {
+        validProducts[i].product = processedProducts[i];
     }
     
     if (validProducts.length !== originalLength) {
       const productsToSave = validProducts.map(p => ({
          productId: p.productId,
          quantity: p.quantity,
-         variantText: p.variantText
+         variantText: p.variantText,
+         variantId: p.variantId
       }));
       await cartModel.updateOne({ _id: cart._id }, { products: productsToSave });
     }
@@ -47,12 +55,33 @@ module.exports.addProduct = async (req, res) => {
   const idAdd = req.params.id;
   const quantity = parseInt(req.body.quantity);
   const variantText = req.body.variantText || '';
+  let variantId = null;
 
   try {
+    if (variantText) {
+      const ProductVariant = require('../../models/product-variant.model');
+      const variants = await ProductVariant.find({ productId: idAdd, isActive: true });
+      const textParts = variantText.split(', ').map(s => s.trim());
+      
+      for (const v of variants) {
+        if (v.attributes) {
+          const attrValues = Object.values(v.attributes).filter(Boolean).map(s => s.trim());
+          const isMatch = textParts.every(part => attrValues.includes(part)) && textParts.length === attrValues.length;
+          if (isMatch) {
+            variantId = v._id.toString();
+            break;
+          }
+        }
+      }
+    }
+
     const cart = await cartModel.findOne({ userId: res.locals.user._id });
     if (cart) {
-      // Tìm sản phẩm cùng id và cùng loại biến thể
-      const productExist = cart.products.find((item) => item.productId == idAdd && (item.variantText || '') === variantText);
+      const productExist = cart.products.find((item) => 
+        item.productId == idAdd && 
+        (variantId ? item.variantId == variantId : (item.variantText || '') === variantText)
+      );
+      
       if (productExist) {
         const newQuantity = productExist.quantity + quantity;
         await cartModel.updateOne(
@@ -62,13 +91,13 @@ module.exports.addProduct = async (req, res) => {
       } else {
         await cartModel.updateOne(
           { userId: res.locals.user._id },
-          { $push: { products: { productId: idAdd, quantity: quantity, variantText: variantText } } }
+          { $push: { products: { productId: idAdd, quantity: quantity, variantText: variantText, variantId: variantId } } }
         );
       }
     } else {
       await cartModel.create({
         userId: res.locals.user._id,
-        products: [{ productId: idAdd, quantity: quantity, variantText: variantText }],
+        products: [{ productId: idAdd, quantity: quantity, variantText: variantText, variantId: variantId }],
       });
     }
     req.flash('success', 'Thêm sản phẩm vào giỏ hàng thành công');
@@ -79,23 +108,24 @@ module.exports.addProduct = async (req, res) => {
   }
 };
 module.exports.deleteProduct = async (req, res) => {
-  const id = req.params.id; // đây là _id của phần tử trong mảng products (nếu truyền từ pug) hoặc productId. 
-  // Sửa lại: Trong index.pug của giỏ hàng sẽ truyền product._id (của item.productId). Ta sửa sau.
-  // Hiện tại sẽ pull theo productId. Nhưng nếu có variant thì sao? Nên truyền thêm variantText hoặc dùng item._id
-  // Tạm thời sửa pull theo productId (xóa tất cả variant của sp đó)
-  await cartModel.updateOne(
-    { userId: res.locals.user._id },
-    { $pull: { products: { productId: id } } }
-  );
-  req.flash('success', 'Đã xóa sản phẩm thành công');
-  res.redirect('back');
+  const id = req.params.id; // Item ID (_id in the products array)
+  try {
+    await cartModel.updateOne(
+      { userId: res.locals.user._id },
+      { $pull: { products: { _id: id } } }
+    );
+    req.flash('success', 'Đã xóa sản phẩm thành công');
+    res.redirect('back');
+  } catch(e) {
+    res.redirect('back');
+  }
 };
 module.exports.updateQuantity = async (req, res) => {
-  const idUpdate = req.params.id;
+  const idUpdate = req.params.id; // Item ID
   const quantity = req.params.quantity;
   try {
     await cartModel.updateOne(
-      { userId: res.locals.user._id, 'products.productId': idUpdate },
+      { userId: res.locals.user._id, 'products._id': idUpdate },
       {
         $set: {
           'products.$.quantity': quantity,

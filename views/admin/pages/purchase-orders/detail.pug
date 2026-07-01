@@ -1,0 +1,82 @@
+extends ../../layout/default.pug
+
+block main
+  div(class="max-w-5xl mx-auto space-y-6 pb-20")
+    div(class="flex items-center justify-between")
+      div(class="flex items-center gap-4")
+        a(href=`${prefixAdmin}/purchase-orders` class="w-10 h-10 rounded-xl bg-white border border-surface-200 text-surface-600 flex items-center justify-center hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+          i.bi.bi-arrow-left.text-lg
+        div
+          h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết phiếu nhập: #{order.poCode}
+          p(class="text-surface-500 text-sm mt-1") Ngày tạo: #{new Date(order.createdAt).toLocaleString('vi-VN')}
+      
+      button(onclick="window.print()" class="btn-premium btn-premium-primary px-6 py-2.5 flex items-center gap-2")
+        i.bi.bi-printer
+        | In phiếu
+
+    div(class="grid grid-cols-1 md:grid-cols-3 gap-6")
+      //- Left Col: General Info
+      div(class="md:col-span-1 space-y-6")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+          h3(class="text-sm font-bold uppercase tracking-wider text-surface-400 mb-4 flex items-center gap-2")
+            i.bi.bi-info-circle
+            | Thông tin chung
+          
+          div(class="space-y-4")
+            div
+              p(class="text-xs text-surface-500 mb-1") Nhà cung cấp
+              p(class="font-bold text-surface-900") #{order.supplierName}
+            div
+              p(class="text-xs text-surface-500 mb-1") Trạng thái
+              if order.status === 'completed'
+                span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700 inline-flex items-center gap-1.5")
+                  i.bi.bi-check-circle-fill
+                  | Hoàn tất
+              else
+                span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-amber-100 text-amber-700 inline-flex items-center gap-1.5")
+                  i.bi.bi-clock-fill
+                  | #{order.status}
+            div
+              p(class="text-xs text-surface-500 mb-1") Ghi chú
+              p(class="text-sm text-surface-700") #{order.note || 'Không có ghi chú'}
+
+        div(class="bg-brand-50 rounded-2xl border border-brand-100 shadow-sm p-6")
+          p(class="text-xs font-bold uppercase tracking-wider text-brand-600 mb-1") Tổng giá trị nhập
+          p(class="text-3xl font-black text-brand-700") #{order.totalAmount.toLocaleString('vi-VN')}₫
+
+      //- Right Col: Products List
+      div(class="md:col-span-2")
+        div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
+          div(class="p-6 border-b border-surface-100 bg-surface-50")
+            h3(class="text-sm font-bold uppercase tracking-wider text-surface-600 flex items-center gap-2")
+              i.bi.bi-box-seam
+              | Chi tiết sản phẩm
+
+          div(class="overflow-x-auto")
+            table(class="w-full text-left border-collapse")
+              thead
+                tr(class="bg-white text-xs uppercase text-surface-400 font-semibold tracking-wider border-b border-surface-100")
+                  th(class="px-5 py-3") Sản phẩm
+                  th(class="px-5 py-3 text-right") Số lượng
+                  th(class="px-5 py-3 text-right") Đơn giá
+                  th(class="px-5 py-3 text-right") Thành tiền
+              tbody(class="divide-y divide-surface-100 text-sm")
+                each item in order.products
+                  tr(class="hover:bg-surface-50/50 transition-colors")
+                    td(class="px-5 py-4")
+                      div(class="flex items-center gap-3")
+                        if item.productInfo.thumbnail
+                          img(src=item.productInfo.thumbnail class="w-10 h-10 rounded-lg object-cover border border-surface-200")
+                        else
+                          div(class="w-10 h-10 rounded-lg bg-surface-100 flex items-center justify-center text-surface-400")
+                            i.bi.bi-image
+                        p(class="font-semibold text-surface-900") #{item.productInfo.title}
+                    td(class="px-5 py-4 text-right font-medium text-surface-600") #{item.quantity}
+                    td(class="px-5 py-4 text-right font-medium text-surface-600") #{item.unitPrice.toLocaleString('vi-VN')}₫
+                    td(class="px-5 py-4 text-right font-bold text-surface-900") #{(item.quantity * item.unitPrice).toLocaleString('vi-VN')}₫
+
+  style(type="text/css" media="print").
+    @page { size: auto; margin: 0mm; }
+    body { padding: 2cm; background: white; }
+    aside, header, .btn-premium { display: none !important; }
+    main { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }

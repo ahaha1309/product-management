@@ -1,0 +1,211 @@
+extends ../../layout/default.pug 
+include ../../mixins/moment.pug
+
+block main 
+  include ../../mixins/alert.pug
+  +alert-error(messages.error)
+  +alert-success(messages.success)
+  
+  - const isEditable = flashSale.status === 'upcoming'
+  
+  div(class="max-w-5xl mx-auto space-y-6")
+    h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chỉnh sửa Flash Sale
+    
+    if !isEditable
+      div(class="bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl flex items-start gap-3")
+        i.bi.bi-exclamation-triangle-fill.text-xl.mt-0.5
+        div
+          h3(class="font-semibold") Chỉ xem
+          p(class="text-sm mt-1") Không thể chỉnh sửa thông tin Flash Sale khi chương trình đang diễn ra hoặc đã kết thúc.
+
+    form(action=`${prefixAdmin}/flash-sales/edit/${flashSale._id}?_method=PATCH` method="POST" id="form-edit-flash-sale" class="space-y-6")
+      div(class="bg-white p-6 rounded-2xl border border-surface-200 shadow-sm space-y-4")
+        h2(class="text-lg font-semibold text-surface-900") Thông tin cơ bản
+        div
+          label(for="name" class="block text-sm font-medium text-surface-700 mb-1") Tên chương trình *
+          input(type="text" name="name" id="name" required value=flashSale.name disabled=!isEditable class="w-full px-4 py-2 border border-surface-200 rounded-lg focus:ring-brand-500 focus:border-brand-500 disabled:bg-surface-100 disabled:text-surface-500")
+        
+        div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
+          div
+            label(for="startDate" class="block text-sm font-medium text-surface-700 mb-1") Thời gian bắt đầu *
+            //- Cần format lại dạng YYYY-MM-DDTHH:mm cho input datetime-local
+            - const startISO = new Date(flashSale.startDate.getTime() - (flashSale.startDate.getTimezoneOffset() * 60000)).toISOString().slice(0,16)
+            input(type="datetime-local" name="startDate" id="startDate" required value=startISO disabled=!isEditable class="w-full px-4 py-2 border border-surface-200 rounded-lg focus:ring-brand-500 focus:border-brand-500 disabled:bg-surface-100 disabled:text-surface-500")
+          div
+            label(for="endDate" class="block text-sm font-medium text-surface-700 mb-1") Thời gian kết thúc *
+            - const endISO = new Date(flashSale.endDate.getTime() - (flashSale.endDate.getTimezoneOffset() * 60000)).toISOString().slice(0,16)
+            input(type="datetime-local" name="endDate" id="endDate" required value=endISO disabled=!isEditable class="w-full px-4 py-2 border border-surface-200 rounded-lg focus:ring-brand-500 focus:border-brand-500 disabled:bg-surface-100 disabled:text-surface-500")
+
+      div(class="bg-white p-6 rounded-2xl border border-surface-200 shadow-sm space-y-4")
+        h2(class="text-lg font-semibold text-surface-900") Sản phẩm áp dụng
+        
+        if isEditable
+          div(class="relative")
+            input(type="text" id="search-product" placeholder="Tìm kiếm sản phẩm theo tên..." class="w-full px-4 py-2 border border-surface-200 rounded-lg focus:ring-brand-500 focus:border-brand-500")
+            div(id="search-results" class="absolute z-10 w-full mt-1 bg-white border border-surface-200 rounded-lg shadow-lg hidden max-h-60 overflow-y-auto")
+        
+        div(class="overflow-x-auto mt-4")
+          table(class="w-full text-left border-collapse whitespace-nowrap")
+            thead
+              tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+                th(class="px-4 py-3") Sản phẩm
+                th(class="px-4 py-3") % Giảm
+                th(class="px-4 py-3") Giới hạn SL
+                th(class="px-4 py-3") Giới hạn/Khách
+                if isEditable
+                  th(class="px-4 py-3 w-16") Xóa
+            tbody(id="selected-products" class="divide-y divide-surface-100 text-sm")
+              //- JS sẽ render
+        
+        if isEditable
+          input(type="hidden" name="products" id="products-input")
+
+      div(class="flex justify-end gap-3")
+        button(type="button" onclick="history.back()" class="px-5 py-2.5 bg-surface-100 text-surface-700 font-semibold rounded-xl hover:bg-surface-200 transition-colors") Quay lại
+        if isEditable
+          button(type="submit" class="px-5 py-2.5 bg-brand-500 text-white font-semibold rounded-xl shadow-lg hover:bg-brand-600 transition-all") Cập nhật
+
+  script.
+    const isEditable = !{isEditable};
+    const searchInput = document.getElementById('search-product');
+    const searchResults = document.getElementById('search-results');
+    const selectedContainer = document.getElementById('selected-products');
+    const productsInput = document.getElementById('products-input');
+    const form = document.getElementById('form-edit-flash-sale');
+    
+    let selectedProducts = !{JSON.stringify(flashSale.products)};
+
+    if (isEditable && searchInput) {
+      searchInput.addEventListener('input', async (e) => {
+        const keyword = e.target.value.trim();
+        if (!keyword) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+        try {
+          const res = await fetch(`!{prefixAdmin}/flash-sales/search-products?keyword=${encodeURIComponent(keyword)}`);
+          const data = await res.json();
+          
+          if (data.length > 0) {
+            searchResults.innerHTML = data.map(item => `
+              <div class="px-4 py-2 hover:bg-surface-50 cursor-pointer flex justify-between items-center" data-id="${item._id}" data-title="${item.title}" data-stock="${item.stock}">
+                <div class="flex items-center gap-2">
+                  <img src="${item.thumbnail}" class="w-8 h-8 rounded object-cover"/>
+                  <span class="text-sm font-medium line-clamp-1">${item.title}</span>
+                </div>
+                <span class="text-xs text-surface-500">Kho: ${item.stock}</span>
+              </div>
+            `).join('');
+            searchResults.classList.remove('hidden');
+          } else {
+            searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-surface-500">Không tìm thấy sản phẩm</div>';
+            searchResults.classList.remove('hidden');
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
+      searchResults.addEventListener('click', (e) => {
+        const item = e.target.closest('[data-id]');
+        if (!item) return;
+        
+        const productId = item.dataset.id;
+        const title = item.dataset.title;
+        const stock = item.dataset.stock;
+        
+        if (selectedProducts.find(p => p.productId === productId)) {
+          alert('Sản phẩm đã được chọn!');
+        } else {
+          selectedProducts.push({
+            productId,
+            title,
+            stock,
+            discountPercent: 10,
+            quantityLimit: '',
+            customerLimit: ''
+          });
+          renderSelected();
+        }
+        
+        searchResults.classList.add('hidden');
+        searchInput.value = '';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.add('hidden');
+        }
+      });
+    }
+
+    function renderSelected() {
+      selectedContainer.innerHTML = selectedProducts.map((p, index) => `
+        <tr>
+          <td class="px-4 py-3 max-w-xs truncate" title="${p.title}">${p.title}</td>
+          <td class="px-4 py-3">
+            ${isEditable 
+              ? `<input type="number" min="1" max="90" value="${p.discountPercent}" data-index="${index}" data-field="discountPercent" class="update-val w-20 px-2 py-1 border border-surface-200 rounded" required>`
+              : `<span>${p.discountPercent}%</span>`
+            }
+          </td>
+          <td class="px-4 py-3">
+            ${isEditable 
+              ? `<input type="number" min="1" max="${p.stock}" value="${p.quantityLimit || ''}" placeholder="Kho: ${p.stock}" data-index="${index}" data-field="quantityLimit" class="update-val w-24 px-2 py-1 border border-surface-200 rounded">`
+              : `<span>${p.quantityLimit || 'Không'}</span>`
+            }
+          </td>
+          <td class="px-4 py-3">
+            ${isEditable 
+              ? `<input type="number" min="1" value="${p.customerLimit || ''}" data-index="${index}" data-field="customerLimit" class="update-val w-20 px-2 py-1 border border-surface-200 rounded">`
+              : `<span>${p.customerLimit || 'Không'}</span>`
+            }
+          </td>
+          ${isEditable ? `
+          <td class="px-4 py-3">
+            <button type="button" class="text-rose-500 hover:text-rose-700" onclick="removeProduct(${index})">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>` : ''}
+        </tr>
+      `).join('');
+    }
+
+    if (isEditable) {
+      selectedContainer.addEventListener('input', (e) => {
+        if (e.target.classList.contains('update-val')) {
+          const index = e.target.dataset.index;
+          const field = e.target.dataset.field;
+          let value = e.target.value;
+          if(value !== '') value = parseInt(value);
+          else value = null;
+          selectedProducts[index][field] = value;
+        }
+      });
+
+      window.removeProduct = (index) => {
+        selectedProducts.splice(index, 1);
+        renderSelected();
+      };
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (selectedProducts.length === 0) {
+          alert('Vui lòng chọn ít nhất 1 sản phẩm');
+          return;
+        }
+        
+        const cleanData = selectedProducts.map(p => ({
+          productId: p.productId,
+          discountPercent: p.discountPercent,
+          quantityLimit: p.quantityLimit || null,
+          customerLimit: p.customerLimit || null
+        }));
+        
+        productsInput.value = JSON.stringify(cleanData);
+        form.submit();
+      });
+    }
+
+    // Initial render
+    renderSelected();

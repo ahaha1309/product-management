@@ -1,0 +1,75 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(messages.success)
+  +alert-error(messages.error)
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+          i.bi.bi-truck.text-brand-500
+          | Quản lý Nhà Cung Cấp
+        p(class="text-surface-500 text-sm mt-1") Quản lý thông tin các nhà cung cấp sản phẩm.
+      a(href=`${prefixAdmin}/suppliers/create` class="btn-premium btn-premium-primary px-6 py-2.5 flex items-center gap-2 self-start")
+        i.bi.bi-plus-lg
+        | Thêm mới
+        
+    //- Search & Filter
+    div(class="bg-white rounded-2xl border border-surface-100 shadow-sm p-4 flex items-center justify-between")
+      form(id="form-search" action="" method="GET" class="relative w-full max-w-md")
+        input(type="text" name="keyword" value=keyword placeholder="Tìm kiếm tên, email, sđt..." class="w-full pl-10 pr-4 py-2 border border-surface-200 rounded-xl focus:outline-none focus:border-brand-500 text-sm")
+        i(class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+        button(type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-brand-500 font-medium text-sm hover:text-brand-600") Tìm
+
+    //- Table
+    div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse")
+          thead
+            tr(class="bg-surface-50 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-5 py-3 border-b border-surface-100") Tên Nhà CC
+              th(class="px-5 py-3 border-b border-surface-100") Thông tin liên hệ
+              th(class="px-5 py-3 border-b border-surface-100") Trạng thái
+              th(class="px-5 py-3 border-b border-surface-100") Hành động
+          tbody(class="divide-y divide-surface-100 text-sm")
+            if suppliers.length > 0
+              each item in suppliers
+                tr(class="hover:bg-surface-50/50 transition-colors group")
+                  td(class="px-5 py-4")
+                    div(class="font-bold text-surface-900") #{item.name}
+                  td(class="px-5 py-4 text-surface-600")
+                    if item.phone
+                      div(class="flex items-center gap-2 text-xs mb-1")
+                        i.bi.bi-telephone
+                        | #{item.phone}
+                    if item.email
+                      div(class="flex items-center gap-2 text-xs")
+                        i.bi.bi-envelope
+                        | #{item.email}
+                  td(class="px-5 py-4")
+                    if item.status === 'active'
+                      span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700 inline-flex items-center gap-1.5")
+                        i.bi.bi-check-circle-fill
+                        | Hoạt động
+                    else
+                      span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-rose-100 text-rose-700 inline-flex items-center gap-1.5")
+                        i.bi.bi-x-circle-fill
+                        | Dừng h.động
+                  td(class="px-5 py-4")
+                    div(class="flex items-center gap-2")
+                      a(href=`${prefixAdmin}/suppliers/edit/${item.id}` class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors tooltip" data-tippy-content="Chỉnh sửa")
+                        i.bi.bi-pencil-square
+                      button(class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center transition-colors btn-delete" data-id=item.id data-path=`${prefixAdmin}/suppliers/delete` tooltip data-tippy-content="Xóa")
+                        i.bi.bi-trash
+            else
+              tr
+                td(colspan="4" class="px-5 py-10 text-center")
+                  div(class="w-16 h-16 rounded-full bg-surface-50 flex items-center justify-center mx-auto mb-3")
+                    i.bi.bi-truck.text-2xl.text-surface-400
+                  p(class="text-surface-500 font-medium") Chưa có nhà cung cấp nào.
+
+  // Form xóa
+  form(action="" method="POST" id="form-delete-item" data-path=`${prefixAdmin}/suppliers/delete`)

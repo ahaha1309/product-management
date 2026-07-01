@@ -108,6 +108,29 @@ block main
                 div(class="font-medium text-surface-900 leading-relaxed") 
                   | #{order.shippingAddress ? order.shippingAddress.address : user.address}
 
+        //- Order Timeline Tracking
+        if order.timeline && order.timeline.length > 0
+          div(class="bento-card")
+            h2(class="text-xl font-bold text-surface-900 mb-6 flex items-center gap-2")
+              i.bi.bi-clock-history.text-brand-500
+              | Lịch sử cập nhật đơn hàng
+            
+            div(class="relative border-l-2 border-slate-100 ml-4 space-y-6 pb-2")
+              each evt, index in order.timeline.slice().reverse()
+                div(class="relative pl-6")
+                  //- Timeline Dot
+                  div(class=`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${index === 0 ? 'bg-brand-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]' : 'bg-surface-300'}`)
+                  
+                  //- Timeline Content
+                  div(class="flex flex-col")
+                    div(class="flex items-baseline justify-between mb-1")
+                      span(class=`font-bold ${index === 0 ? 'text-brand-600' : 'text-surface-900'}`) #{evt.note}
+                      span(class="text-xs text-surface-500") 
+                        +formatDateTime(evt.timestamp)
+                    div(class="text-sm text-surface-500 flex items-center gap-1.5")
+                      i.bi.bi-person-circle.text-xs
+                      | Cập nhật bởi: #{evt.updatedBy}
+
       //- Right Column
       div(class="space-y-8")
         

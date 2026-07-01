@@ -247,6 +247,19 @@ module.exports.createPost = async (req, res) => {
     const position = parseInt(req.body.position) || autoPosition + 1;
     const featured = req.body.featured ;
     const status = req.body.status;
+    
+    // Process tech specs
+    let techSpecs = [];
+    if (req.body.techSpecsName && req.body.techSpecsValue) {
+      const names = Array.isArray(req.body.techSpecsName) ? req.body.techSpecsName : [req.body.techSpecsName];
+      const values = Array.isArray(req.body.techSpecsValue) ? req.body.techSpecsValue : [req.body.techSpecsValue];
+      for (let i = 0; i < names.length; i++) {
+        if (names[i].trim() && values[i].trim()) {
+          techSpecs.push({ name: names[i].trim(), value: values[i].trim() });
+        }
+      }
+    }
+
     const data = {
       title: title,
       description: description,
@@ -263,6 +276,7 @@ module.exports.createPost = async (req, res) => {
       product_category_id: product_category_id,
       requireVariants: req.body.requireVariants === 'true',
       featured: featured,
+      techSpecs: techSpecs,
     };
     await Product.create(data);
     res.redirect(`${systemConfig.prefixAdmin}/product`);
@@ -287,6 +301,19 @@ module.exports.editPost = async (req, res) => {
   const position = parseInt(req.body.position);
   const featured = req.body.featured ;
   const status = req.body.status;
+  
+  // Process tech specs
+  let techSpecs = [];
+  if (req.body.techSpecsName && req.body.techSpecsValue) {
+    const names = Array.isArray(req.body.techSpecsName) ? req.body.techSpecsName : [req.body.techSpecsName];
+    const values = Array.isArray(req.body.techSpecsValue) ? req.body.techSpecsValue : [req.body.techSpecsValue];
+    for (let i = 0; i < names.length; i++) {
+      if (names[i].trim() && values[i].trim()) {
+        techSpecs.push({ name: names[i].trim(), value: values[i].trim() });
+      }
+    }
+  }
+
   const data = {
     title: title,
     description: description,
@@ -299,7 +326,7 @@ module.exports.editPost = async (req, res) => {
     product_category_id: product_category_id,
     requireVariants: req.body.requireVariants === 'true',
     featured: featured,
-
+    techSpecs: techSpecs,
   };
   try {
     await Product.updateOne(

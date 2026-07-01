@@ -146,7 +146,8 @@ block main
       btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin mr-2"></i>Đang gửi...';
 
       try {
-        const response = await fetch(window.location.pathname + '/comment', {
+        const baseUrl = window.location.pathname.replace(/\/$/, '');
+        const response = await fetch(baseUrl + '/comment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -154,7 +155,14 @@ block main
           body: JSON.stringify({ text })
         });
         
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          data = await response.json();
+        } else {
+          throw new Error('Server không trả về JSON (có thể là lỗi 404 hoặc 500 HTML). HTTP Status: ' + response.status);
+        }
+
         if (data.success && data.comment) {
           const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
           
@@ -176,11 +184,11 @@ block main
           list.prepend(newComment);
           input.value = '';
         } else {
-          alert('Có lỗi xảy ra, vui lòng thử lại!');
+          alert('Lỗi: ' + (data.message || 'Không xác định'));
         }
       } catch (error) {
         console.error(error);
-        alert('Có lỗi xảy ra, vui lòng thử lại!');
+        alert('Lỗi catch: ' + error.message);
       } finally {
         input.disabled = false;
         btn.disabled = false;

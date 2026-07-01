@@ -1,0 +1,119 @@
+extends ../../layouts/default.pug
+
+block main
+  div(class="container mx-auto px-4 py-8 mb-20")
+
+    //- Header & Countdown
+    div(class="bg-gradient-to-r from-rose-500 to-orange-500 rounded-3xl p-8 mb-10 text-white shadow-xl shadow-rose-500/20 flex flex-col md:flex-row items-center justify-between gap-6")
+      div
+        div(class="flex items-center gap-3 mb-2")
+          i(class="bi bi-lightning-charge-fill text-3xl text-yellow-300 animate-pulse")
+          h1(class="text-3xl font-black tracking-tight uppercase") Flash Sale
+        p(class="text-rose-100 font-medium") Săn deal chớp nhoáng - Số lượng có hạn!
+
+      if nearestEndDate
+        div(class="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 text-center min-w-[280px]")
+          p(class="text-sm font-bold uppercase tracking-wider mb-2 text-rose-50") Kết thúc trong
+          div(class="flex items-center justify-center gap-2 text-2xl font-black" id="flash-sale-countdown" data-time=nearestEndDate)
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-hours") 00
+            span :
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-minutes") 00
+            span :
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-seconds") 00
+      else if nextUpcomingDate
+        div(class="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 text-center min-w-[280px]")
+          p(class="text-sm font-bold uppercase tracking-wider mb-2 text-rose-50") Sắp diễn ra
+          div(class="flex items-center justify-center gap-2 text-2xl font-black" id="flash-sale-countdown" data-time=nextUpcomingDate data-upcoming="true")
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-hours") 00
+            span :
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-minutes") 00
+            span :
+            div(class="bg-white text-rose-600 rounded-lg w-12 h-12 flex items-center justify-center shadow-inner" id="cd-seconds") 00
+
+    //- Products Grid
+    if product && product.length > 0
+      div(class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6")
+        each Item in product
+          div(class="bg-white border border-rose-100 rounded-[2rem] p-4 flex flex-col h-full group hover:border-rose-400 hover:shadow-lg hover:shadow-rose-500/10 transition-all duration-500 cursor-pointer relative overflow-hidden")
+            div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
+              a(href=`/product/detail/${Item.slug}` title=Item.title class="block w-full h-full") 
+                img(src=Item.thumbnail alt=Item.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+              
+              div(class="absolute top-0 left-0 bg-gradient-to-r from-rose-500 to-orange-500 text-white px-3 py-1.5 rounded-br-2xl text-xs font-black tracking-wide shadow-md flex items-center gap-1")
+                i.bi.bi-lightning-fill
+                | FLASH SALE
+              
+              if Item.discountPercentage > 0
+                div(class="absolute top-2 right-2 bg-yellow-400 text-rose-700 px-2.5 py-1 rounded-xl text-sm font-black shadow-lg")
+                  | -#{Item.discountPercentage}%
+            
+            div(class="flex flex-col flex-1") 
+              a(href=`/product/detail/${Item.slug}` title=Item.title class="text-surface-900 font-bold text-base leading-tight line-clamp-2 mb-2 group-hover:text-rose-500 transition-colors") 
+                span= Item.title
+              
+              div(class="mt-auto")
+                div(class="text-xl font-black text-rose-600")
+                  | #{Number(Item.priceNew).toLocaleString('vi-VN')}₫
+                
+                if Item.price > Item.priceNew
+                  div(class="text-sm font-bold text-surface-400 line-through mt-0.5 mb-3")
+                    | #{Item.price.toLocaleString('vi-VN')}₫
+
+                //- Progress Bar
+                if Item.flashSale && Item.flashSale.quantityLimit
+                  - const sold = Item.flashSale.soldQuantity || 0
+                  - const total = Item.flashSale.quantityLimit
+                  - const percent = Math.min(100, Math.floor((sold / total) * 100))
+                  div(class="relative w-full bg-rose-100 rounded-full h-4 overflow-hidden flex items-center mt-2")
+                    div(class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-400 to-rose-600 rounded-full transition-all duration-1000" style=`width: ${percent}%`)
+                    div(class="absolute w-full text-center text-[10px] font-bold text-white z-10 drop-shadow-md")
+                      if percent >= 100
+                        | Đã bán hết
+                      else
+                        | Đã bán #{sold}
+
+    else
+      div(class="bg-white rounded-3xl p-12 text-center border border-surface-200 shadow-sm")
+        div(class="w-24 h-24 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-6")
+          i.bi.bi-clock-history.text-4xl.text-rose-300
+        if nextUpcomingDate
+          h5(class="text-2xl font-bold text-surface-900 mb-2") Chưa đến giờ Flash Sale
+          p(class="text-surface-500 font-medium") Chương trình sẽ sớm bắt đầu. Quay lại sau nhé!
+        else
+          h5(class="text-2xl font-bold text-surface-900 mb-2") Không có Flash Sale nào
+          p(class="text-surface-500 font-medium") Hiện tại không có chương trình Flash Sale nào đang hoặc sắp diễn ra.
+
+  script.
+    document.addEventListener("DOMContentLoaded", () => {
+      const cdEl = document.getElementById('flash-sale-countdown');
+      if (!cdEl) return;
+
+      const targetTime = new Date(cdEl.dataset.time).getTime();
+      const isUpcoming = cdEl.dataset.upcoming === 'true';
+      
+      const elHours = document.getElementById('cd-hours');
+      const elMinutes = document.getElementById('cd-minutes');
+      const elSeconds = document.getElementById('cd-seconds');
+
+      const updateCountdown = () => {
+        const now = new Date().getTime();
+        const distance = targetTime - now;
+
+        if (distance < 0) {
+          // Time reached, reload page to get new state
+          location.reload();
+          return;
+        }
+
+        const hours = Math.floor(distance / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        elHours.innerText = hours.toString().padStart(2, '0');
+        elMinutes.innerText = minutes.toString().padStart(2, '0');
+        elSeconds.innerText = seconds.toString().padStart(2, '0');
+      };
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    });

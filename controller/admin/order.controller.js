@@ -31,8 +31,25 @@ module.exports.changeStatus = async (req, res) => {
       updateData.canceledAt = new Date();
     }
 
-    // 1. Cập nhật trạng thái đơn hàng vào Database
-    await Order.updateOne({ _id: id }, updateData);
+    let note = 'Trạng thái đơn hàng được cập nhật';
+    if (status === 'confirm') note = 'Đơn hàng đã được xác nhận và đang được xử lý';
+    else if (status === 'finish') note = 'Đơn hàng đã được giao thành công';
+    else if (status === 'canceled') note = 'Đơn hàng đã bị hủy';
+
+    const timelineEntry = {
+      status: status,
+      note: note,
+      updatedBy: res.locals.user ? res.locals.user.fullName : 'Admin'
+    };
+
+    // 1. Cập nhật trạng thái đơn hàng vào Database và thêm vào timeline
+    await Order.updateOne(
+      { _id: id }, 
+      { 
+        $set: updateData,
+        $push: { timeline: timelineEntry }
+      }
+    );
 
     // ==========================================
     // 2. LOGIC GỬI EMAIL KHI XÁC NHẬN ĐƠN HÀNG
@@ -59,7 +76,14 @@ module.exports.changeStatus = async (req, res) => {
       if (order && order.userId) {
         // Hoàn lại tồn kho
         const Product = require('../../models/product.model');
+        const FlashSale = require('../../models/flash-sale.model');
         for (let item of order.products) {
+          if (item.flashSaleId) {
+            await FlashSale.updateOne(
+              { _id: item.flashSaleId, "products.productId": item.productId },
+              { $inc: { "products.$.soldQuantity": -(item.quantity || 1) } }
+            );
+          }
           if (item.productId) {
             await Product.updateOne(
               { _id: item.productId },

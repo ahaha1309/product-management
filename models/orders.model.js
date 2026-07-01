@@ -6,10 +6,17 @@ const orderSchema = new mongoose.Schema({
   userId: String,
   // orderCode sẽ đóng vai trò là vnp_TxnRef (Mã giao dịch gửi sang VNPAY)
   orderCode:String,
-  products:{
-    type:Array,
-    default:[]
-  },
+  products: [{
+    productId: { type: String, required: true },
+    quantity: { type: Number, required: true, min: 1 },
+    price: { type: Number },
+    newPrice: { type: Number },
+    title: { type: String },
+    thumbnail: { type: String },
+    variantText: { type: String },
+    variantId: { type: String },
+    flashSaleId: { type: String }
+  }],
   title: String,
   // ==========================================
   // CÁC TRƯỜNG THÊM VÀO ĐỂ PHỤC VỤ VNPAY
@@ -58,10 +65,23 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  // ==========================================
+  // THÔNG TIN TIMELINE ĐỂ TRACKING
+  // ==========================================
+  timeline: [{
+    status: String,
+    note: String,
+    timestamp: { type: Date, default: Date.now },
+    updatedBy: { type: String, default: 'System' }
+  }],
 },
 {
   timestamps: true // Tự động sinh createdAt và updatedAt
 });
+
+orderSchema.index({ status: 1 });
+orderSchema.index({ userId: 1 });
+orderSchema.index({ createdAt: -1 });
 
 const Orders = mongoose.model('Orders', orderSchema, 'orders');
 module.exports = Orders;

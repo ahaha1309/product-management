@@ -36,11 +36,11 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
           span(class="text-brand-500") Mall
           
     //- Desktop Navigation
-    nav(class="hidden lg:flex items-center gap-8 ml-8 flex-1")
-      a(href="/" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Trang chủ
+    nav(class="hidden lg:flex items-center gap-4 xl:gap-8 ml-4 xl:ml-8 flex-1")
+      a(href="/" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors whitespace-nowrap") Trang chủ
       
       div(class="relative group")
-        a(href="/product" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors flex items-center gap-1 py-4") 
+        a(href="/product" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors flex items-center gap-1 py-4 whitespace-nowrap") 
           | Sản phẩm
           i(class="bi bi-chevron-down text-[10px] transition-transform group-hover:rotate-180")
         //- Mega Menu / Sub Menu Dropdown
@@ -51,16 +51,17 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
             else
               a(href="/product" class="block px-6 py-3 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500") Tất cả sản phẩm
             
-      a(href="/articles" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Tin tức
-      a(href="/contact" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors") Liên hệ
+      a(href="/articles" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors whitespace-nowrap") Tin tức
+      a(href="/vouchers" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors whitespace-nowrap") Khuyến mãi
+      a(href="/contact" class="text-sm font-semibold text-surface-600 hover:text-brand-500 transition-colors whitespace-nowrap") Liên hệ
 
     //- Desktop Actions (Search, Cart, User)
-    div(class="hidden lg:flex items-center gap-4 justify-end")
+    div(class="hidden lg:flex items-center gap-3 xl:gap-4 justify-end shrink-0")
       
       //- Search Bar
       form(action='/search' id="form-search" method='GET' class="relative group")
-        input(type="text" placeholder="Tìm kiếm..." name="keyword" value=keyword class="w-48 xl:w-64 bg-surface-50 border border-slate-200 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all group-hover:shadow-md")
-        button(type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors")
+        input(type="text" aria-label="Tìm kiếm sản phẩm" placeholder="Tìm kiếm..." name="keyword" value=keyword class="w-48 xl:w-64 bg-surface-50 border border-slate-200 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all group-hover:shadow-md")
+        button(type="submit" aria-label="Tìm kiếm" class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-brand-500 transition-colors focus:outline-none focus:text-brand-500")
           i.bi.bi-search
           
       div(class="h-6 w-px bg-slate-200 mx-2")
@@ -73,10 +74,9 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
             span(class="absolute top-0 right-0 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityWishlist
 
       //- Cart
-      a(href="/cart" id="btn-cart" class="relative text-surface-600 hover:text-brand-500 transition-colors hover:scale-110 p-2 flex items-center justify-center")
+      a(href="/cart" id="btn-cart" aria-label="Giỏ hàng" class="relative text-surface-600 hover:text-brand-500 transition-colors hover:scale-110 p-2 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-500/20 rounded-full")
         i.bi.bi-bag.text-lg
-        if(quantityCart)
-          span(class="absolute top-0 right-0 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityCart
+        span(id="desktop-cart-badge" class=`absolute top-0 right-0 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm ${quantityCart ? '' : 'hidden'}`)= quantityCart || 0
             
       //- User Auth
       if (user)
@@ -106,22 +106,24 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
               a(href="/order/history" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
                 i.bi.bi-bag-check.text-lg
                 | Đơn mua
+              a(href="/my-account/vouchers" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-surface-600 hover:bg-surface-50 hover:text-brand-500 transition-colors")
+                i.bi.bi-ticket-perforated.text-lg
+                | Kho Voucher
               div(class="h-px bg-slate-100 my-2")
               a(href="/auth/logout" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors")
                 i.bi.bi-box-arrow-right.text-lg
                 | Đăng xuất
       else
-        a(href="/auth/login" class="btn-premium btn-premium-primary text-sm py-2 px-5 ml-2") Đăng nhập
+        a(href="/auth/login" class="btn-premium btn-premium-primary text-sm py-2 px-4 xl:px-5 ml-2 whitespace-nowrap") Đăng nhập
 
     //- Mobile Actions (Hamburger & Cart)
     div(class="flex lg:hidden items-center gap-4")
-      button(type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearch" class="text-surface-600 hover:text-brand-500 text-xl")
+      button(type="button" aria-label="Mở tìm kiếm" aria-expanded="false" aria-controls="mobileSearch" data-bs-toggle="collapse" data-bs-target="#mobileSearch" class="text-surface-600 hover:text-brand-500 text-xl focus:outline-none")
         i.bi.bi-search
-      a(href="/cart" class="relative text-surface-600 hover:text-brand-500 text-xl")
+      a(href="/cart" aria-label="Giỏ hàng di động" class="relative text-surface-600 hover:text-brand-500 text-xl focus:outline-none")
         i.bi.bi-bag
-        if(quantityCart)
-          span(class="absolute -top-1 -right-2 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm")= quantityCart
-      button(type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" class="text-surface-950 text-2xl ml-2 focus:outline-none active:scale-95 transition-transform")
+        span(id="mobile-cart-badge" class=`absolute -top-1 -right-2 w-4 h-4 bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm ${quantityCart ? '' : 'hidden'}`)= quantityCart || 0
+      button(type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobileMenu" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" class="text-surface-950 text-2xl ml-2 focus:outline-none active:scale-95 transition-transform")
         i.bi.bi-list
 
   //- Mobile Search Collapse
@@ -133,12 +135,12 @@ header(class="sticky top-0 z-[100] liquid-glass border-b border-slate-200/50 py-
           i.bi.bi-search
 
   //- Mobile Menu Offcanvas (Kept Bootstrap JS for toggle, Tailwind for style)
-  div(class="offcanvas offcanvas-end lg:hidden w-80 max-w-[85vw] border-l-0 shadow-2xl" tabindex="-1" id="mobileMenu" style="background-color: #ffffff !important; z-index: 1050 !important; height: 100vh !important; display: flex; flex-direction: column;")
+  nav(class="offcanvas offcanvas-end lg:hidden w-80 max-w-[85vw] border-l-0 shadow-2xl" aria-label="Mobile Navigation" tabindex="-1" id="mobileMenu" style="background-color: #ffffff !important; z-index: 1050 !important; height: 100vh !important; display: flex; flex-direction: column;")
     div(class="offcanvas-header border-b border-slate-100 py-4 px-6" style="background-color: #ffffff !important;")
       h5(class="text-lg font-bold flex items-center gap-2")
         img(src="/image/logo.png" alt="Logo" class="h-6 rounded-sm")
         | NVH Mall
-      button(type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close")
+      button(type="button" aria-label="Đóng menu" class="btn-close text-reset focus:outline-none focus:ring-2 focus:ring-brand-500/20 rounded-full" data-bs-dismiss="offcanvas")
     
     div(class="offcanvas-body p-0 overflow-y-auto" style="background-color: #ffffff !important; flex: 1 1 auto; height: 100%;")
       //- Auth Mobile

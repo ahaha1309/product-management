@@ -54,6 +54,44 @@ block main
               | Mô tả chi tiết
             textarea(name="description" id="description" placeholder="Nhập mô tả sản phẩm..." class="w-full") #{product.description}
 
+          //- Tech Specs Card
+          div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-6")
+            h2(class="text-base font-bold text-surface-900 mb-5 pb-3 border-b border-surface-100 flex items-center justify-between")
+              div(class="flex items-center gap-2")
+                i.bi.bi-cpu.text-brand-500
+                | Thông số kỹ thuật
+              button(type="button" id="btnAddSpec" class="text-sm font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 active:scale-95")
+                i.bi.bi-plus.text-lg
+                | Thêm thông số
+                
+            div(id="techSpecsContainer" class="space-y-3")
+              if product.techSpecs && product.techSpecs.length > 0
+                each spec in product.techSpecs
+                  div(class="flex items-center gap-3 spec-row animate-fade-in")
+                    div(class="w-1/3 relative")
+                      i.bi.bi-list-ul.absolute.left-3.top-1.translate-y-2.text-surface-400
+                      input(list="spec-names" name="techSpecsName[]" value=spec.name placeholder="Tiêu chí (VD: RAM)" required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all")
+                    div(class="flex-1 relative")
+                      i.bi.bi-card-text.absolute.left-3.top-1.translate-y-2.text-surface-400
+                      input(type="text" name="techSpecsValue[]" value=spec.value placeholder="Giá trị (VD: 8GB)" required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all")
+                    button(type="button" class="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 transition-colors btn-remove-spec group")
+                      i(class="bi bi-trash group-hover:scale-110 transition-transform")
+              
+            datalist#spec-names
+              option(value="Thương hiệu")
+              option(value="Bảo hành")
+              option(value="Nơi sản xuất")
+              option(value="RAM")
+              option(value="ROM (Bố nhớ trong)")
+              option(value="Chip (CPU)")
+              option(value="Màn hình")
+              option(value="Pin & Sạc")
+              option(value="Camera trước")
+              option(value="Camera sau")
+              option(value="Hệ điều hành")
+              option(value="Trọng lượng")
+              option(value="Chất liệu")
+
           //- ===== VARIANTS (left column — fills space below description) =====
           div(class="bg-white rounded-2xl border border-surface-200 shadow-sm overflow-hidden")
             //- Variants Header
@@ -264,6 +302,18 @@ block main
         button(type="button" id="modal-save" class="px-5 py-2 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-xl shadow-sm shadow-brand-500/20 transition-all active:scale-95 flex items-center gap-2")
           i.bi.bi-check2-circle
           | Lưu variant
+
+  //- Template for tech spec row
+  template#spec-row-template
+    div(class="flex items-center gap-3 spec-row animate-fade-in")
+      div(class="w-1/3 relative")
+        i.bi.bi-list-ul.absolute.left-3.top-1.translate-y-2.text-surface-400
+        input(list="spec-names" name="techSpecsName[]" placeholder="Tiêu chí (VD: RAM)" required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all")
+      div(class="flex-1 relative")
+        i.bi.bi-card-text.absolute.left-3.top-1.translate-y-2.text-surface-400
+        input(type="text" name="techSpecsValue[]" placeholder="Giá trị (VD: 8GB)" required class="w-full bg-surface-50 border border-surface-200 text-surface-900 text-sm rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all")
+      button(type="button" class="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 transition-colors btn-remove-spec group")
+        i(class="bi bi-trash group-hover:scale-110 transition-transform")
 
   script(src='/admin/js/product.js')
   script.
@@ -493,5 +543,39 @@ block main
         modalSaveBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Lưu variant';
       }
     });
+
+    // ---- Logic for Tech Specs ----
+    const btnAddSpec = document.getElementById('btnAddSpec');
+    const specContainer = document.getElementById('techSpecsContainer');
+    const specTemplate = document.getElementById('spec-row-template');
+
+    if (btnAddSpec && specContainer && specTemplate) {
+      btnAddSpec.addEventListener('click', function() {
+        const clone = specTemplate.content.cloneNode(true);
+        
+        // Add event listener for delete button
+        const deleteBtn = clone.querySelector('.btn-remove-spec');
+        deleteBtn.addEventListener('click', function() {
+          const row = this.closest('.spec-row');
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(-10px)';
+          row.style.transition = 'all 0.3s ease';
+          setTimeout(() => row.remove(), 300);
+        });
+        
+        specContainer.appendChild(clone);
+      });
+      
+      // Bind delete event to existing rows
+      document.querySelectorAll('#techSpecsContainer .btn-remove-spec').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const row = this.closest('.spec-row');
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(-10px)';
+          row.style.transition = 'all 0.3s ease';
+          setTimeout(() => row.remove(), 300);
+        });
+      });
+    }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

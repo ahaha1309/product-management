@@ -85,10 +85,13 @@ block main
                   td(class="px-4 py-3 text-xs")
                     if(Item.createdBy)
                       div(class="text-surface-900 font-medium") #{Item.fullname}
-                      div(class="text-surface-500") +formatDateTime(Item.createdBy.createdAt)
+                      div(class="text-surface-500")
+                        +formatDateTime(Item.createdBy.createdAt)
                     else if(Item.updatedBy && Item.updatedBy.length > 0)
                       div(class="text-surface-900 font-medium") #{Item.updatedByName}
-                      div(class="text-surface-500") Sửa: +formatDateTime(Item.updatedBy[Item.updatedBy.length - 1].updatedAt)
+                      div(class="text-surface-500")
+                        | Sửa: 
+                        +formatDateTime(Item.updatedBy[Item.updatedBy.length - 1].updatedAt)
                     else 
                       div(class="text-surface-400 italic") N/A
                       

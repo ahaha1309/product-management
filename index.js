@@ -146,24 +146,60 @@ const server = http.createServer(app);
 const io = new Server(server);
 global._io = io; // Dùng io ở nơi khác nếu cần
 
+const cookie = require('cookie');
+const User = require('./models/user.model');
+const Account = require('./models/account.model');
+
+io.use(async (socket, next) => {
+  try {
+    const cookieHeader = socket.request.headers.cookie;
+    if (cookieHeader) {
+      const cookies = cookie.parse(cookieHeader);
+      if (cookies.token) {
+        // Kiểm tra Admin
+        const admin = await Account.findOne({ token: cookies.token, deleted: false }).select('_id fullName');
+        if (admin) {
+          socket.user = { id: admin._id.toString(), isAdmin: true, fullName: admin.fullName };
+          return next();
+        }
+        
+        // Kiểm tra Customer
+        const user = await User.findOne({ token: cookies.token, deleted: false, status: 'active' }).select('_id fullName');
+        if (user) {
+          socket.user = { id: user._id.toString(), isAdmin: false, fullName: user.fullName };
+          return next();
+        }
+      }
+    }
+    next();
+  } catch (err) {
+    next(new Error('Authentication error'));
+  }
+});
+
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+  console.log('A user connected:', socket.id, socket.user ? `Auth: ${socket.user.isAdmin ? 'Admin' : 'User'}` : 'Unauth');
 
   // Lắng nghe sự kiện gửi tin nhắn từ Client/Admin
   socket.on('CLIENT_SEND_MESSAGE', async (data) => {
     try {
+      if (!socket.user) {
+        console.warn('Block unauthenticated socket message attempt');
+        return;
+      }
+      
       const chat = new Chat({
-        userId: data.userId,
+        userId: socket.user.id,
         content: data.content,
-        isAdmin: data.isAdmin || false
+        isAdmin: socket.user.isAdmin
       });
       await chat.save();
       
       // Emit lại tin nhắn cho tất cả client để hiển thị
       io.emit('SERVER_RETURN_MESSAGE', {
-        userId: data.userId,
+        userId: socket.user.id,
         content: data.content,
-        isAdmin: data.isAdmin || false,
+        isAdmin: socket.user.isAdmin,
         createdAt: chat.createdAt
       });
     } catch (error) {

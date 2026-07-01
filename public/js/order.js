@@ -1,5 +1,120 @@
 document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
+  // INSTALLMENT (TRẢ GÓP) LOGIC
+  // ==========================================
+  const instSwitch = document.getElementById('instSwitch');
+  const instBody = document.getElementById('instBody');
+  const summaryInstallment = document.getElementById('summaryInstallment');
+
+  if (instSwitch && instBody) {
+    // Get product total from DOM
+    function getProductSubtotal() {
+      let sub = 0;
+      document.querySelectorAll('.product-item').forEach(item => {
+        const qty = parseInt(item.querySelector('.product-quantity').textContent.replace('x', '')) || 1;
+        const price = parseInt(item.querySelector('.text-brand-600').textContent.replace(/[^\d]/g, '')) || 0;
+        sub += price * qty;
+      });
+      return sub;
+    }
+
+    function updateInstallmentCalc() {
+      const activeCard = document.querySelector('.inst-card.active');
+      const months = activeCard ? parseInt(activeCard.dataset.months) : 6;
+      const sub = getProductSubtotal();
+      const downPayment = Math.round(sub * 0.3);
+      const remaining = Math.round(sub * 0.7);
+      const monthly = Math.round(remaining / months);
+
+      const elDown = document.getElementById('instDownPayment');
+      const elRem = document.getElementById('instRemaining');
+      const elMon = document.getElementById('instMonthly');
+      if (elDown) elDown.textContent = downPayment.toLocaleString('vi-VN');
+      if (elRem) elRem.textContent = remaining.toLocaleString('vi-VN');
+      if (elMon) elMon.textContent = monthly.toLocaleString('vi-VN') + '₫';
+
+      // Update summary panel
+      if (summaryInstallment) {
+        const labelEl = summaryInstallment.querySelector('#instMonthsLabel');
+        const monthlyEl = summaryInstallment.querySelector('#summaryMonthly');
+        if (labelEl) labelEl.textContent = months;
+        if (monthlyEl) monthlyEl.textContent = monthly.toLocaleString('vi-VN') + '₫';
+      }
+    }
+
+    // Toggle installment on/off
+    instSwitch.addEventListener('change', () => {
+      const isOn = instSwitch.checked;
+      instBody.style.display = isOn ? 'block' : 'none';
+      if (summaryInstallment) summaryInstallment.style.display = isOn ? 'block' : 'none';
+
+      const totalEl = document.querySelector('.price-total');
+      const totalLabel = document.getElementById('totalLabel');
+      const totalNote = document.getElementById('totalNote');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+
+      if (isOn) {
+        // Auto-select credit_card
+        const creditCardInput = document.querySelector('input[name="paymentMethod"][value="credit_card"]');
+        if (creditCardInput) {
+          creditCardInput.checked = true;
+          document.querySelectorAll('.pay-card').forEach(card => card.classList.remove('selected'));
+          creditCardInput.closest('.pay-card')?.classList.add('selected');
+        }
+
+        updateInstallmentCalc();
+
+        // Switch total to show down payment (30%)
+        const sub = getProductSubtotal();
+        const shippingFee = 30000;
+        const downPayment = Math.round((sub + shippingFee) * 0.3);
+        if (totalEl) totalEl.textContent = downPayment.toLocaleString('vi-VN') + '₫';
+        if (totalLabel) totalLabel.textContent = 'Trả ngay (30%)';
+        if (totalNote) totalNote.textContent = 'Số còn lại chia theo kỳ hạn';
+        if (checkoutBtn) {
+          checkoutBtn.querySelector('span').innerHTML = '<i class="bi bi-credit-card-fill"></i> Xác nhận trả góp';
+        }
+      } else {
+        // Restore original total
+        const origTotal = document.querySelector('.price-total').getAttribute('data-orig-total');
+        if (origTotal && totalEl) totalEl.textContent = parseInt(origTotal).toLocaleString('vi-VN') + '₫';
+        if (totalLabel) totalLabel.textContent = 'Tổng thanh toán';
+        if (totalNote) totalNote.textContent = 'Đã bao gồm VAT';
+        if (checkoutBtn) {
+          checkoutBtn.querySelector('span').innerHTML = '<i class="bi bi-bag-check-fill"></i> Đặt hàng ngay';
+        }
+      }
+    });
+
+    // Month card selection
+    document.querySelectorAll('.inst-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.inst-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        updateInstallmentCalc();
+      });
+    });
+  }
+
+  // Payment card visual sync (for pay-card selected class)
+  document.querySelectorAll('.pay-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+  // Init selected state on load
+  const checkedPay = document.querySelector('input[name="paymentMethod"]:checked');
+  if (checkedPay) checkedPay.closest('.pay-card')?.classList.add('selected');
+
+  // Store original total for restoring when installment is toggled off
+  const priceTotal = document.querySelector('.price-total');
+  if (priceTotal && !priceTotal.hasAttribute('data-orig-total')) {
+    const raw = priceTotal.textContent.replace(/[^\d]/g, '');
+    priceTotal.setAttribute('data-orig-total', raw);
+  }
+
+  // ==========================================
   // HELPER: Hiển thị toast thông báo
   // ==========================================
   function showToast(message, type = 'success') {
@@ -86,38 +201,71 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       
       if (res.ok && data.code === 200) {
-        showToast(`✓ Áp dụng thành công mã ${data.voucher.code}!`);
+        showToast(`Áp dụng thành công mã ${data.voucher.code}!`);
         
-        // Cập nhật giao diện
-        // 1. Thêm/cập nhật dòng hiển thị giảm giá trong Tóm tắt
         const summaryDiv = document.querySelector('.order-summary');
-        let discountItem = summaryDiv.querySelector('.summary-discount');
-        if (!discountItem) {
-          discountItem = document.createElement('div');
-          discountItem.className = 'summary-item summary-discount flex justify-between items-center text-sm font-semibold text-emerald-600 mb-4';
-          // Chèn trước cái divider
-          const divider = summaryDiv.querySelector('.summary-divider');
-          summaryDiv.insertBefore(discountItem, divider);
-        }
-        discountItem.innerHTML = `<span>Giảm giá (${data.voucher.percentage}%):</span><span>-${data.voucher.discountAmount.toLocaleString('vi-VN')}₫</span>`;
-        
-        // 2. Cập nhật tổng tiền cuối cùng (Subtotal + Ship - Discount)
-        const newTotal = subTotal + 30000 - data.voucher.discountAmount; // 30000 là phí ship mặc định
         const totalEl = document.querySelector('.price-total');
-        totalEl.textContent = `${newTotal.toLocaleString('vi-VN')}₫`;
-        
-        // Cập nhật thẻ input voucher
+        const BASE_SHIP = 30000;
+
+        if (data.voucher.type === 'freeship') {
+          // --- FREESHIP: cập nhật dòng phí vận chuyển ---
+          let discountItem = summaryDiv.querySelector('.summary-discount');
+          const lineItems = summaryDiv.querySelector('.summary-line-items');
+          if (!discountItem) {
+            discountItem = document.createElement('div');
+            discountItem.className = 'summary-discount flex items-center justify-between text-emerald-400 font-semibold';
+            if (lineItems) lineItems.appendChild(discountItem);
+          }
+          discountItem.innerHTML = `<span><i class="bi bi-truck mr-1"></i>Freeship</span><span>-${BASE_SHIP.toLocaleString('vi-VN')}₫</span>`;
+
+          // Cập nhật dòng phí ship thành Miễn phí
+          const shipRow = summaryDiv.querySelector('.summary-shipping');
+          if (shipRow) {
+            shipRow.innerHTML = '<span class="text-zinc-400 font-medium">Phí vận chuyển</span><div class="text-right"><span class="line-through text-zinc-600 text-xs mr-1">30.000₫</span><span class="text-emerald-400 font-semibold">Miễn phí</span></div>';
+          }
+
+          // Giảm tổng đi 30.000
+          const newTotal = subTotal + BASE_SHIP - BASE_SHIP;
+          if (totalEl) {
+            totalEl.textContent = `${(subTotal).toLocaleString('vi-VN')}₫`;
+            totalEl.setAttribute('data-orig-total', subTotal);
+          }
+
+        } else {
+          // --- PERCENTAGE: cập nhật dòng giảm giá ---
+          let discountItem = summaryDiv.querySelector('.summary-discount');
+          const lineItems = summaryDiv.querySelector('.summary-line-items');
+          if (!discountItem) {
+            discountItem = document.createElement('div');
+            discountItem.className = 'summary-discount flex items-center justify-between text-emerald-400 font-semibold';
+            if (lineItems) lineItems.appendChild(discountItem);
+          }
+          discountItem.innerHTML = `<span>Giảm giá (${data.voucher.percentage}%)</span><span>-${data.voucher.discountAmount.toLocaleString('vi-VN')}₫</span>`;
+
+          const newTotal = subTotal + BASE_SHIP - data.voucher.discountAmount;
+          if (totalEl) {
+            totalEl.textContent = `${newTotal.toLocaleString('vi-VN')}₫`;
+            totalEl.setAttribute('data-orig-total', newTotal);
+          }
+          
+          // Phục hồi lại dòng phí ship nếu trước đó là freeship
+          const shipRow = summaryDiv.querySelector('.summary-shipping');
+          if (shipRow) {
+            shipRow.innerHTML = '<span class="text-zinc-400 font-medium">Phí vận chuyển</span><span class="font-semibold text-white">30.000₫</span>';
+          }
+        }
+
+        // Cập nhật input + active state
         const input = document.getElementById('voucherCode');
         if (input) input.value = data.voucher.code;
 
-        // Cập nhật state active cho voucher tags
         document.querySelectorAll('.voucher-tag').forEach(tag => {
           if (tag.dataset.code === data.voucher.code) {
-             tag.classList.add('border-brand-500', 'bg-brand-50');
-             tag.classList.remove('border-slate-200');
+            tag.classList.add('border-emerald-500', 'bg-emerald-50');
+            tag.classList.remove('border-slate-200');
           } else {
-             tag.classList.remove('border-brand-500', 'bg-brand-50');
-             tag.classList.add('border-slate-200');
+            tag.classList.remove('border-emerald-500', 'bg-emerald-50');
+            tag.classList.add('border-slate-200');
           }
         });
 

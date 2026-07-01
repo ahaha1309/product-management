@@ -2,43 +2,44 @@ const productModel = require('../../models/product.model');
 const productCategoryModel = require('../../models/product-category.model');
 const articleModel = require('../../models/article.model');
 const productHelper = require('../../helper/product');
+const flashSaleHelper = require('../../helper/flash-sale');
+const cache = require('../../helper/cache');
 
 module.exports.index = async (req, res) => {
-  // 1. Featured Products
-  const productFeaturedRaw = await productModel
-    .find({ featured: true, status: 'active', deleted: false })
-    .limit(6)
-    .exec();
-  const productFeatured = productHelper.productHelper(productFeaturedRaw);
+  // --- Start Caching Logic ---
+  let productFeatured = cache.get('home_featured');
+  if (!productFeatured) {
+    const raw = await productModel.find({ featured: true, status: 'active', deleted: false }).limit(6).exec();
+    productFeatured = await flashSaleHelper.applyFlashSaleToProducts(raw);
+    cache.set('home_featured', productFeatured, 300); // 5 mins
+  }
 
-  // 2. New Products
-  const productNewRaw = await productModel
-    .find({ status: 'active', deleted: false })
-    .limit(8)
-    .sort({ position: "desc" });
-  const productNew = productHelper.productHelper(productNewRaw);
+  let productNew = cache.get('home_new');
+  if (!productNew) {
+    const raw = await productModel.find({ status: 'active', deleted: false }).limit(8).sort({ position: "desc" }).exec();
+    productNew = await flashSaleHelper.applyFlashSaleToProducts(raw);
+    cache.set('home_new', productNew, 300);
+  }
 
-  // 3. Categories for Grid
-  const categories = await productCategoryModel
-    .find({ status: 'active', deleted: false })
-    .sort({ position: "asc" })
-    .limit(12);
+  let categories = cache.get('home_categories');
+  if (!categories) {
+    categories = await productCategoryModel.find({ status: 'active', deleted: false }).sort({ position: "asc" }).limit(12).lean();
+    cache.set('home_categories', categories, 3600); // 1 hour
+  }
 
-  // 4. Flash Sale (Simulation: Highest discount products)
-  const flashSaleProductsRaw = await productModel
-    .find({ status: 'active', deleted: false, discountPercentage: { $gte: 15 } })
-    .sort({ discountPercentage: "desc" })
-    .limit(10)
-    .exec();
-  const flashSaleProducts = productHelper.productHelper(flashSaleProductsRaw);
+  let flashSaleProducts = cache.get('home_flashsale');
+  if (!flashSaleProducts) {
+    flashSaleProducts = await flashSaleHelper.getActiveFlashSaleProducts(10);
+    cache.set('home_flashsale', flashSaleProducts, 60); // 1 min cache
+  }
 
-  // 5. Daily Discovery / Gợi ý hôm nay
-  const dailyDiscoveryRaw = await productModel
-    .find({ status: 'active', deleted: false })
-    .sort({ updatedAt: "desc" }) // Or random, but let's use recent updates
-    .limit(18)
-    .exec();
-  const dailyDiscoveryProducts = productHelper.productHelper(dailyDiscoveryRaw);
+  let dailyDiscoveryProducts = cache.get('home_discovery');
+  if (!dailyDiscoveryProducts) {
+    const raw = await productModel.find({ status: 'active', deleted: false }).sort({ updatedAt: "desc" }).limit(18).exec();
+    dailyDiscoveryProducts = await flashSaleHelper.applyFlashSaleToProducts(raw);
+    cache.set('home_discovery', dailyDiscoveryProducts, 300);
+  }
+  // --- End Caching Logic ---
 
   // 6. Personalized Recommendations (Dành Riêng Cho Bạn)
   const orderModel = require('../../models/orders.model');
@@ -68,7 +69,7 @@ module.exports.index = async (req, res) => {
         deleted: false
       }).limit(12).sort({ position: "desc" });
       
-      personalizedProducts = productHelper.productHelper(recommendedRaw);
+      personalizedProducts = await flashSaleHelper.applyFlashSaleToProducts(recommendedRaw);
     }
   }
 
@@ -78,20 +79,19 @@ module.exports.index = async (req, res) => {
     if (fallbackRaw.length === 0) {
       fallbackRaw = await productModel.find({ status: 'active', deleted: false }).sort({ position: "asc" }).limit(12);
     }
-    personalizedProducts = productHelper.productHelper(fallbackRaw);
+    personalizedProducts = await flashSaleHelper.applyFlashSaleToProducts(fallbackRaw);
   }
 
   // 7. Most Purchased Products (Có thể bạn cũng thích)
-  const allOrders = await orderModel.find({ status: 'finish' }).select('products');
-  let productFrequency = {};
-  allOrders.forEach(order => {
-    order.products.forEach(p => {
-      productFrequency[p.productId] = (productFrequency[p.productId] || 0) + p.quantity;
-    });
-  });
+  const topProductAgg = await orderModel.aggregate([
+    { $match: { status: 'finish' } },
+    { $unwind: "$products" },
+    { $group: { _id: "$products.productId", totalQuantity: { $sum: "$products.quantity" } } },
+    { $sort: { totalQuantity: -1 } },
+    { $limit: 12 }
+  ]);
   
-  // Sort by frequency
-  let sortedProductIds = Object.keys(productFrequency).sort((a, b) => productFrequency[b] - productFrequency[a]).slice(0, 12);
+  const sortedProductIds = topProductAgg.map(p => p._id);
   
   let mostPurchasedRaw = [];
   if (sortedProductIds.length > 0) {
@@ -105,7 +105,7 @@ module.exports.index = async (req, res) => {
     // Fallback if no valid orders exist yet
     mostPurchasedRaw = await productModel.find({ status: 'active', deleted: false }).sort({ position: "desc" }).limit(12);
   }
-  const mostPurchasedProducts = productHelper.productHelper(mostPurchasedRaw);
+  const mostPurchasedProducts = await flashSaleHelper.applyFlashSaleToProducts(mostPurchasedRaw);
 
   // 8. Latest Articles
   const latestArticlesRaw = await articleModel
@@ -132,22 +132,60 @@ module.exports.index = async (req, res) => {
           recentlyViewedRaw.find(p => p._id.toString() === id)
         ).filter(p => p); // Remove any nulls if product deleted
         
-        recentlyViewedProducts = productHelper.productHelper(orderedRecentlyViewed);
+        recentlyViewedProducts = await flashSaleHelper.applyFlashSaleToProducts(orderedRecentlyViewed);
       }
     } catch(e) {}
   }
 
   const isLogin = req.cookies.token ? true : false;
+  const seoService = require('../../services/seo.service');
+  
+  const seoData = seoService.buildMeta({
+    title: 'NVH Mall',
+    description: 'NVH Mall - Chuyên phân phối các sản phẩm công nghệ Apple, Samsung cao cấp, chính hãng với giá tốt nhất thị trường.',
+    url: 'https://vanhatech.com/',
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "NVH Mall",
+        "url": "https://vanhatech.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://vanhatech.com/search?keyword={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "NVH Mall",
+        "url": "https://vanhatech.com/",
+        "logo": "https://vanhatech.com/image/logo.png",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+84-1900-1234",
+          "contactType": "customer service"
+        }
+      }
+    ]
+  });
+
+  let flashSaleEndTime = null;
+  if (flashSaleProducts && flashSaleProducts.length > 0 && flashSaleProducts[0].flashSale) {
+    flashSaleEndTime = flashSaleProducts[0].flashSale.endDate;
+  }
 
   res.render('client/pages/home/index.pug', {
-    title: 'NVH Mall - Premium E-commerce',
-    metaDesc: 'NVH Mall - Chuyên phân phối các sản phẩm công nghệ Apple, Samsung cao cấp, chính hãng với giá tốt nhất thị trường.',
+    title: 'NVH Mall',
+    seoData,
     message: 'Trang chủ',
     isLogin: isLogin,
     productFeatured: productFeatured,
     productNew: productNew,
     categories: categories,
     flashSaleProducts: flashSaleProducts,
+    flashSaleEndTime: flashSaleEndTime,
     dailyDiscoveryProducts: dailyDiscoveryProducts,
     personalizedProducts: personalizedProducts,
     mostPurchasedProducts: mostPurchasedProducts,

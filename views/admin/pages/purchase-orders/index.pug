@@ -1,0 +1,72 @@
+extends ../../layout/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(messages.success)
+  +alert-error(messages.error)
+  
+  div(class="max-w-7xl mx-auto space-y-6")
+    //- Header
+    div(class="flex flex-col md:flex-row md:items-center justify-between gap-4")
+      div
+        h1(class="text-2xl font-bold text-surface-900 tracking-tight flex items-center gap-2")
+          i.bi.bi-box-arrow-in-down.text-brand-500
+          | Lịch sử Nhập Kho
+        p(class="text-surface-500 text-sm mt-1") Quản lý các phiếu nhập hàng từ nhà cung cấp.
+      a(href=`${prefixAdmin}/purchase-orders/create` class="btn-premium btn-premium-primary px-6 py-2.5 flex items-center gap-2 self-start")
+        i.bi.bi-plus-lg
+        | Tạo Phiếu Nhập
+        
+    //- Search
+    div(class="bg-white rounded-2xl border border-surface-100 shadow-sm p-4 flex items-center justify-between")
+      form(id="form-search" action="" method="GET" class="relative w-full max-w-md")
+        input(type="text" name="keyword" value=keyword placeholder="Tìm mã phiếu (VD: PO123...)" class="w-full pl-10 pr-4 py-2 border border-surface-200 rounded-xl focus:outline-none focus:border-brand-500 text-sm")
+        i(class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-surface-400")
+        button(type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-brand-500 font-medium text-sm hover:text-brand-600") Tìm
+
+    //- Table
+    div(class="bg-white rounded-2xl border border-surface-100 shadow-sm overflow-hidden")
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse")
+          thead
+            tr(class="bg-surface-50 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-5 py-3 border-b border-surface-100") Mã Phiếu
+              th(class="px-5 py-3 border-b border-surface-100") Nhà CC
+              th(class="px-5 py-3 border-b border-surface-100") Tổng tiền
+              th(class="px-5 py-3 border-b border-surface-100") Trạng thái
+              th(class="px-5 py-3 border-b border-surface-100") Ngày tạo
+              th(class="px-5 py-3 border-b border-surface-100") Hành động
+          tbody(class="divide-y divide-surface-100 text-sm")
+            if orders.length > 0
+              each item in orders
+                tr(class="hover:bg-surface-50/50 transition-colors group")
+                  td(class="px-5 py-4")
+                    div(class="font-bold text-surface-900") #{item.poCode}
+                  td(class="px-5 py-4 text-surface-600 font-medium") #{item.supplierName}
+                  td(class="px-5 py-4 font-bold text-brand-600")
+                    | #{item.totalAmount.toLocaleString('vi-VN')}₫
+                  td(class="px-5 py-4")
+                    if item.status === 'completed'
+                      span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700 inline-flex items-center gap-1.5")
+                        i.bi.bi-check-circle-fill
+                        | Hoàn tất
+                    else if item.status === 'pending'
+                      span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-amber-100 text-amber-700 inline-flex items-center gap-1.5")
+                        i.bi.bi-clock-fill
+                        | Chờ xử lý
+                    else
+                      span(class="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-rose-100 text-rose-700 inline-flex items-center gap-1.5")
+                        i.bi.bi-x-circle-fill
+                        | Đã hủy
+                  td(class="px-5 py-4 text-surface-500 text-xs")
+                    | #{new Date(item.createdAt).toLocaleString('vi-VN')}
+                  td(class="px-5 py-4")
+                    div(class="flex items-center gap-2")
+                      a(href=`${prefixAdmin}/purchase-orders/detail/${item.id}` class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors tooltip" data-tippy-content="Chi tiết")
+                        i.bi.bi-eye
+            else
+              tr
+                td(colspan="6" class="px-5 py-10 text-center")
+                  div(class="w-16 h-16 rounded-full bg-surface-50 flex items-center justify-center mx-auto mb-3")
+                    i.bi.bi-inbox.text-2xl.text-surface-400
+                  p(class="text-surface-500 font-medium") Chưa có phiếu nhập kho nào.

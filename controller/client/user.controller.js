@@ -30,3 +30,32 @@ module.exports.editPost = async (req, res) => {
   await userModel.updateOne({ _id: id }, updateData);
   res.redirect(`/my-account/${id}`);
 };
+
+module.exports.vouchers = async (req, res) => {
+    try {
+        const userId = res.locals.user._id.toString();
+        const Voucher = require('../../models/voucher.model');
+        const now = new Date();
+
+        const allVouchers = await Voucher.find({
+            status: 'active',
+            $or: [
+                { validTo: { $exists: false } },
+                { validTo: null },
+                { validTo: { $gte: now } }
+            ]
+        }).sort({ createdAt: -1 });
+
+        const availableVouchers = allVouchers.filter(v => 
+            v.usedCount < v.usageLimit && !v.usedBy.includes(userId)
+        );
+
+        res.render('client/pages/user/vouchers', {
+            title: 'Kho Voucher Của Tôi',
+            vouchers: availableVouchers
+        });
+    } catch (error) {
+        console.log(error);
+        res.redirect('back');
+    }
+};

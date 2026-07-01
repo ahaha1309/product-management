@@ -8,6 +8,10 @@ const Productschema = new mongoose.Schema({
     type: String,
    default: ''
   },
+  supplier_id: {
+    type: String,
+    default: ''
+  },
   price: Number,
   discountPercentage: Number,
   stock: Number,
@@ -18,6 +22,13 @@ const Productschema = new mongoose.Schema({
   },
   status: String,
   position: Number,
+  techSpecs: {
+    type: [{
+      name: String,
+      value: String
+    }],
+    default: []
+  },
   requireVariants: {
     type: Boolean,
     default: true
@@ -57,6 +68,10 @@ const Productschema = new mongoose.Schema({
 {
   timestamps:true
 });
+
+Productschema.index({ status: 1, deleted: 1 });
+Productschema.index({ product_category_id: 1 });
+Productschema.index({ featured: 1, deleted: 1 });
 
 const Product = mongoose.model('Product', Productschema, 'products');
 module.exports = Product;
