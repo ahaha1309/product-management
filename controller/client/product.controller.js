@@ -129,6 +129,7 @@ module.exports.detail=async (req,res)=>{
     const [processedProduct] = await flashSaleHelper.applyFlashSaleToProducts([product]);
     product.newPrice = processedProduct.newPrice;
     product.priceNew = processedProduct.priceNew;
+    product.discountPercentage = processedProduct.discountPercentage;
     product.isFlashSale = processedProduct.isFlashSale;
     product.flashSale = processedProduct.flashSale;
 
