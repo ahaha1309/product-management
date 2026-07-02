@@ -36,27 +36,42 @@ document.addEventListener('DOMContentLoaded', () => {
     return '';
   };
 
-  // Update Action Buttons visibility
   const updateActionButtons = () => {
-    btnTake.classList.add('hidden');
-    btnReturn.classList.add('hidden');
-    btnClose.classList.add('hidden');
-    chatInput.disabled = true;
-    btnSendMsg.disabled = true;
-    chatInput.placeholder = "Chỉ có thể nhắn tin khi tiếp nhận hỗ trợ...";
-
+    const isOwner = currentConversationStatus === 'HUMAN' && currentAssignedAgent === currentAdminId;
+    
+    // Nút Tiếp nhận
     if (currentConversationStatus === 'BOT' || (currentConversationStatus === 'HUMAN' && !currentAssignedAgent)) {
       btnTake.classList.remove('hidden');
-    } else if (currentConversationStatus === 'HUMAN') {
-      if (currentAssignedAgent === currentAdminId) {
-        btnReturn.classList.remove('hidden');
-        btnClose.classList.remove('hidden');
+    } else {
+      btnTake.classList.add('hidden');
+    }
+
+    // Nút Trả về và Kết thúc
+    if (isOwner) {
+      btnReturn.classList.remove('hidden');
+      btnClose.classList.remove('hidden');
+    } else {
+      btnReturn.classList.add('hidden');
+      btnClose.classList.add('hidden');
+    }
+
+    // Input state
+    if (isOwner) {
+      if (chatInput.disabled) {
         chatInput.disabled = false;
         btnSendMsg.disabled = false;
         chatInput.placeholder = "Nhập tin nhắn hỗ trợ...";
-      } else {
-        // Locked by someone else
+      }
+    } else {
+      if (!chatInput.disabled) {
+        chatInput.disabled = true;
+        btnSendMsg.disabled = true;
+      }
+      // Luôn cập nhật placeholder nếu không phải owner
+      if (currentConversationStatus === 'HUMAN' && currentAssignedAgent) {
         chatInput.placeholder = "Cuộc trò chuyện này đang được nhân viên khác hỗ trợ.";
+      } else {
+        chatInput.placeholder = "Chỉ có thể nhắn tin khi tiếp nhận hỗ trợ...";
       }
     }
   };
