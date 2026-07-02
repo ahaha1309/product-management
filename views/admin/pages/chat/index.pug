@@ -18,25 +18,25 @@ block main
           
         div(id="chat-user-list" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-slate-100/50")
           if chatUsers && chatUsers.length > 0
-            each user in chatUsers
-              - var isLocked = user.status === 'HUMAN' && user.assignedAgentId && user.assignedAgentId !== currentAdminId
-              a(href="#" class=`chat-user-item block p-4 hover:bg-indigo-50/50 transition-all duration-200 focus:bg-indigo-50/50 group relative ${isLocked ? 'opacity-60 grayscale-[0.3]' : ''}` data-userid=user._id data-fullname=user.fullName data-status=user.status data-agent=user.assignedAgentId)
+            each chatUser in chatUsers
+              - var isLocked = chatUser.status === 'HUMAN' && chatUser.assignedAgentId && chatUser.assignedAgentId !== currentAdminId
+              a(href="#" class=`chat-user-item block p-4 hover:bg-indigo-50/50 transition-all duration-200 focus:bg-indigo-50/50 group relative ${isLocked ? 'opacity-60 grayscale-[0.3]' : ''}` data-userid=chatUser._id data-fullname=chatUser.fullName data-status=chatUser.status data-agent=chatUser.assignedAgentId)
                 div(class="flex items-center gap-4")
                   div(class="relative")
-                    img(src=(user.avatar || 'https://dummyimage.com/40x40/cbd5e1/ffffff') class="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform")
-                    if user.status === 'BOT'
+                    img(src=(chatUser.avatar || 'https://dummyimage.com/40x40/cbd5e1/ffffff') class="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform")
+                    if chatUser.status === 'BOT'
                       span(class="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-white rounded-full")
-                    else if user.status === 'HUMAN'
+                    else if chatUser.status === 'HUMAN'
                       span(class="absolute -bottom-1 -right-1 w-4 h-4 bg-amber-500 border-2 border-white rounded-full")
                   div(class="min-w-0 flex-1")
-                    div(class="font-semibold text-slate-800 truncate group-hover:text-indigo-600 transition-colors") #{user.fullName}
+                    div(class="font-semibold text-slate-800 truncate group-hover:text-indigo-600 transition-colors") #{chatUser.fullName}
                     div(class="text-xs text-slate-500 truncate mt-1 flex items-center gap-2")
-                      if user.status === 'BOT'
+                      if chatUser.status === 'BOT'
                         span(class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-medium text-[10px] tracking-wide border border-blue-100") AI ASSISTANT
-                      else if user.status === 'HUMAN'
-                        if !user.assignedAgentId
+                      else if chatUser.status === 'HUMAN'
+                        if !chatUser.assignedAgentId
                           span(class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 font-medium text-[10px] tracking-wide border border-amber-100") CHỜ TIẾP NHẬN
-                        else if user.assignedAgentId === currentAdminId
+                        else if chatUser.assignedAgentId === currentAdminId
                           span(class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 font-medium text-[10px] tracking-wide border border-emerald-100") ĐANG HỖ TRỢ
                         else
                           span(class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 font-medium text-[10px] tracking-wide border border-rose-100") ĐÃ CÓ NGƯỜI NHẬN
