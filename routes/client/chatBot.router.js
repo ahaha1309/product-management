@@ -5,6 +5,8 @@ const {
   detectQuestionType,
   getProductContext,
 } = require('../../helper/chatbot');
+const Conversation = require('../../models/conversation.model');
+const Chat = require('../../models/chat.model');
 
 // ✅ Lưu conversation history + pagination state
 const conversationSessions = {};
@@ -51,6 +53,45 @@ router.post('/chat', async (req, res) => {
     const questionType = detectQuestionType(trimmedQuestion);
     console.log(`🔍 Question type: ${questionType.type}`);
 
+    // --- NEW: ENTERPRISE CONVERSATION STATE MANAGEMENT ---
+    let conversation = null;
+    let userId = res.locals.user ? res.locals.user._id.toString() : sessionId; // Fallback to sessionId for guests
+
+    if (userId) {
+      conversation = await Conversation.findOne({ userId });
+      if (!conversation) {
+        conversation = await Conversation.create({
+          userId,
+          status: 'BOT',
+          auditLogs: [{ action: 'CREATED', performedBy: 'SYSTEM' }]
+        });
+      }
+
+      // EARLY STOP EXECUTION: Prevent AI if status is HUMAN or CLOSED
+      if (conversation.status !== 'BOT') {
+        console.log(`🔒 Chat locked by status: ${conversation.status}. Bypassing AI.`);
+        
+        // Save the user's message to the Chat DB for the Admin
+        if (res.locals.user) {
+          await Chat.create({
+            userId: userId,
+            content: trimmedQuestion,
+            isAdmin: false
+          });
+        }
+        
+        return res.json({
+          status: 'success',
+          question: trimmedQuestion,
+          response: '', // AI stays completely silent
+          state: conversation.status,
+          messageCount: history.length,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+    // -----------------------------------------------------
+
     // ✅ Get product context dựa trên question type
     const { productContext, paginationData, allProducts } = await getProductContext(
       questionType,
@@ -67,12 +108,43 @@ router.post('/chat', async (req, res) => {
       sessionId
     );
 
+    // --- NEW: AUTOMATIC TRANSFER (FALLBACK / HUMAN REQUEST) ---
+    const failureKeywords = ['xin lỗi', 'không có thông tin', 'chưa hiểu', 'không thể giúp', 'không tìm thấy', 'lỗi'];
+    const humanKeywords = ['nhân viên', 'tư vấn viên', 'admin', 'người thật', 'hỗ trợ thật', 'không biết', 'gặp người'];
+    
+    const isAiFailing = failureKeywords.some(kw => response.toLowerCase().includes(kw));
+    const isRequestingHuman = humanKeywords.some(kw => trimmedQuestion.toLowerCase().includes(kw));
+
+    if ((isAiFailing || isRequestingHuman) && conversation && conversation.status === 'BOT') {
+      const transferReason = isRequestingHuman ? 'HUMAN_REQUEST' : 'FALLBACK';
+      await Conversation.updateOne(
+        { _id: conversation._id },
+        { 
+          $set: { 
+            status: 'HUMAN',
+            transferredBy: 'SYSTEM',
+            transferReason: transferReason
+          },
+          $push: {
+            auditLogs: {
+              action: 'TRANSFERRED',
+              performedBy: 'SYSTEM',
+              reason: transferReason
+            }
+          }
+        }
+      );
+      console.log(`🔄 Handoff triggered: ${transferReason}`);
+    }
+    // -----------------------------------------------------
+
     session.history = updatedHistory;
 
     res.json({
       status: 'success',
       question: trimmedQuestion,
       response: response,
+      state: (conversation && conversation.status !== 'BOT') ? 'HUMAN' : 'BOT',
       timestamp: new Date().toISOString(),
       sessionId: sessionId,
       messageCount: updatedHistory.length,
