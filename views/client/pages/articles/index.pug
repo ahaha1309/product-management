@@ -19,23 +19,23 @@ block main
 
     //- Category Tabs
     div(class="flex flex-wrap items-center justify-center gap-3 mb-12")
-      a(href="/articles" class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${!currentCategory ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
+      a(href="/articles" class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${!currentCategory ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
         | Tất cả bài viết
       
       if categories && categories.length > 0
         each cat in categories
           - const isActive = currentCategory == cat._id.toString()
-          a(href=`/articles?category=${cat._id}` class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${isActive ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
+          a(href=`/articles?category=${cat._id}` class=`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${isActive ? 'bg-gradient-to-r from-brand-500 to-blue-600 text-white shadow-lg shadow-brand-500/30' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'}`)
             | #{cat.title}
 
     //- Articles Grid
     if articles && articles.length > 0
       div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8")
         each article in articles
-          a(href=`/articles/${article.slug}` class="bento-card !p-0 group flex flex-col h-full overflow-hidden hover:-translate-y-2 hover:shadow-diffusion transition-all duration-500 border border-slate-100")
+          a(href=`/articles/${article.slug}` class="bento-card !p-0 group flex flex-col h-full overflow-hidden hover:-translate-y-2 hover:shadow-diffusion transition-all duration-500 border border-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500")
             //- Thumbnail
             div(class="relative h-56 overflow-hidden bg-surface-100")
-              img(src=article.thumbnail || '/image/logo.png' alt=article.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+              img(src=article.thumbnail || '/image/logo.png' alt=article.title width="600" height="400" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none")
               div(class="absolute inset-0 bg-gradient-to-t from-surface-950/80 to-transparent opacity-60")
               
               div(class="absolute bottom-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm flex items-center gap-1.5 border border-white/30")
@@ -63,4 +63,4 @@ block main
           i.bi.bi-newspaper.text-5xl.text-surface-300
         h5(class="text-2xl font-black text-surface-900 mb-3") Chưa có bài viết nào
         p(class="text-surface-500 font-medium mb-8") Các bài viết mới sẽ sớm được cập nhật. Cảm ơn bạn đã quan tâm!
-        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3.5") Mua sắm ngay
+        a(href="/product" class="btn-premium btn-primary px-8 py-3.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2") Mua sắm ngay

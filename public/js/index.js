@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
   // Social Proof Toasts (Fake Recent Sales)
   // --------------------------------------------------------------------------
-  const socialProofNames = ['Nguyễn Văn A', 'Trần Thị B', 'Lê Hoàng C', 'Phạm Minh D', 'Vũ Đức E', 'Bùi Ngọc F'];
+  const socialProofNames = ['Nguyễn Văn Hải', 'Trần Thị Mai', 'Lê Hoàng Minh', 'Phạm Quỳnh Như', 'Vũ Đức Phát', 'Bùi Ngọc Yến', 'Đinh Thanh Tùng', 'Ngô Thu Thủy', 'Lê Văn Tuấn', 'Đỗ Thành Đạt', 'Lý Hải Yến'];
   const socialProofProducts = ['iPhone 15 Pro Max', 'MacBook Air M2', 'AirPods Pro 2', 'Apple Watch Series 9', 'iPad Pro 11-inch', 'Samsung Galaxy S24 Ultra'];
   const socialProofTimes = ['vừa xong', '1 phút trước', '2 phút trước', '5 phút trước', '10 phút trước'];
   const socialProofLocations = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ'];

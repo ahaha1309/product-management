@@ -25,7 +25,10 @@ module.exports.infoUser = async (req, res, next) => {
       status: "active"
     }).select("-password -confirmPassword -token").lean();
     if(!user){
-      return next()
+      res.locals.user = null;
+      res.locals.isLogin = false;
+      res.clearCookie('token');
+      return next();
     }
     const cart = await cartModel.findOne({ userId: user._id.toString() });
     if(!cart){

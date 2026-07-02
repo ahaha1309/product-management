@@ -10,7 +10,7 @@ block main
           h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết phiếu nhập: #{order.poCode}
           p(class="text-surface-500 text-sm mt-1") Ngày tạo: #{new Date(order.createdAt).toLocaleString('vi-VN')}
       
-      button(onclick="window.print()" class="btn-premium btn-premium-primary px-6 py-2.5 flex items-center gap-2")
+      button(onclick="window.print()" class="btn-premium btn-primary px-6 py-2.5 flex items-center gap-2")
         i.bi.bi-printer
         | In phiếu
 

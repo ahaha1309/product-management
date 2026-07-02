@@ -64,13 +64,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(mongoSanitize()); // Chống NoSQL Injection
 app.use(xss()); // Chống XSS
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5, // Tối đa 5 lần thử
-  message: "Quá nhiều lần đăng nhập sai, vui lòng thử lại sau 15 phút."
-});
-app.use('/auth/login', authLimiter);
-app.use(`/${systemConfig.prefixAdmin}/auth/login`, authLimiter);
+
 
 app.use(express.static(`${__dirname}/public`));
 app.set('views', `${__dirname}/views`);
@@ -188,8 +182,11 @@ io.on('connection', (socket) => {
         return;
       }
       
+      // If admin is sending, they specify the target customer's userId. Otherwise, it's the customer's own ID.
+      const targetUserId = socket.user.isAdmin ? data.userId : socket.user.id;
+      
       const chat = new Chat({
-        userId: socket.user.id,
+        userId: targetUserId,
         content: data.content,
         isAdmin: socket.user.isAdmin
       });
@@ -197,7 +194,7 @@ io.on('connection', (socket) => {
       
       // Emit lại tin nhắn cho tất cả client để hiển thị
       io.emit('SERVER_RETURN_MESSAGE', {
-        userId: socket.user.id,
+        userId: targetUserId,
         content: data.content,
         isAdmin: socket.user.isAdmin,
         createdAt: chat.createdAt
@@ -244,6 +241,9 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`tao dang chay o port ${port} voi socket.io`);
   });
 }
+
+// Khởi chạy các Cron Jobs
+require('./jobs/abandoned-cart.job');
 
 module.exports = app;
 

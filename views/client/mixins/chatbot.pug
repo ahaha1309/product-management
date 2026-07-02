@@ -11,7 +11,8 @@ mixin chatbot()
                     h5.mb-0 
                         i.bi.bi-headset.me-2
                         | Chăm sóc khách hàng
-                    button.btn-close.btn-close-white#closeChatbot(type="button" aria-label="Close")
+                    button#closeChatbot(type="button" aria-label="Close" class="bg-transparent border-none text-white hover:text-gray-200 p-1 flex items-center justify-center")
+                        i.bi.bi-x-lg.text-xl
                 
                 #chatbotMessages.chatbot-messages
                     .chat-message.bot-message

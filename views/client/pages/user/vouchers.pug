@@ -6,9 +6,9 @@ block main
       
       div(class="mb-8 flex items-center justify-between")
         h1(class="text-2xl font-black text-slate-800 flex items-center gap-2")
-          i.bi.bi-ticket-perforated-fill.text-brand-500
+          i.bi.bi-ticket-perforated-fill.text-brand-500(aria-hidden="true")
           | Kho Voucher Của Tôi
-        a(href="/vouchers" class="text-sm font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-lg transition-colors")
+        a(href="/vouchers" class="text-sm font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
           | Khám phá thêm ưu đãi
 
       if vouchers && vouchers.length > 0
@@ -45,7 +45,7 @@ block main
                   else
                     span(class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md") Không giới hạn
                   
-                  button.btn-copy-code(data-code=voucher.code class="text-xs font-bold text-white bg-slate-900 px-4 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm") Copy mã
+                  button.btn-copy-code(type="button" aria-label=`Copy mã ${voucher.code}` data-code=voucher.code class="text-xs font-bold text-white bg-slate-900 px-4 py-1.5 rounded-lg hover:bg-brand-600 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2") Copy mã
 
       else
         div(class="bg-white rounded-3xl p-12 text-center shadow-sm border border-slate-100")
@@ -53,9 +53,9 @@ block main
             i.bi.bi-ticket-detailed.text-4xl.text-slate-300
           h3(class="text-lg font-bold text-slate-800 mb-2") Bạn chưa có mã khuyến mãi nào
           p(class="text-slate-500 mb-6") Hãy tham gia các chương trình khuyến mãi hoặc Vòng quay may mắn để nhận thêm mã.
-          a(href="/vouchers" class="btn-premium btn-premium-primary inline-flex items-center gap-2 px-6 py-3")
+          a(href="/vouchers" class="btn-premium btn-primary inline-flex items-center gap-2 px-6 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
             | Đi đến Trung Tâm Khuyến Mãi
-            i.bi.bi-arrow-right
+            i.bi.bi-arrow-right(aria-hidden="true")
 
   //- Toast Notification
   div#copyToast(class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl transition-all duration-300 opacity-0 invisible z-50 flex items-center gap-2")

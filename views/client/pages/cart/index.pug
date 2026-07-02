@@ -35,9 +35,9 @@ block main
 
               //- Product Info
               div(class="col-span-5 flex items-start gap-4")
-                img.cart-img(src=item.product.thumbnail alt=item.product.title class="w-20 h-20 rounded-2xl object-cover border border-slate-100 bg-white shadow-sm")
+                img.cart-img(src=item.product.thumbnail alt=item.product.title width="80" height="80" class="w-20 h-20 rounded-2xl object-cover border border-slate-100 bg-white shadow-sm")
                 div(class="flex flex-col")
-                  a(href=`/product/detail/${item.product.slug}` class="text-surface-900 font-bold hover:text-brand-500 transition-colors line-clamp-2 leading-snug") #{item.product.title}
+                  a(href=`/product/detail/${item.product.slug}` class="text-surface-900 font-bold hover:text-brand-500 transition-colors line-clamp-2 leading-snug focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") #{item.product.title}
                   if item.variantText
                     div(class="mt-1.5 text-xs text-surface-500 bg-surface-100 inline-block px-2 py-0.5 rounded-md self-start") Phân loại: #{item.variantText}
 
@@ -53,9 +53,9 @@ block main
               div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
                 span(class="md:hidden text-sm text-surface-500") Số lượng:
                 div(class="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm")
-                  button.btn-qty.minus(type="button" aria-label="Giảm số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus:outline-none focus:bg-surface-200") -
-                  input.input-qty(type="number" aria-label="Số lượng" value=item.quantity min="1" name="quantity" data-product-id=item._id class="w-10 h-8 text-center text-sm font-semibold bg-transparent border-none focus:outline-none appearance-none m-0 p-0")
-                  button.btn-qty.plus(type="button" aria-label="Tăng số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus:outline-none focus:bg-surface-200") +
+                  button.btn-qty.minus(type="button" aria-label="Giảm số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus-visible:outline-none focus-visible:bg-surface-200 focus-visible:ring-2 focus-visible:ring-brand-500") -
+                  input.input-qty(type="number" aria-label="Số lượng" value=item.quantity min="1" name="quantity" data-product-id=item._id class="w-10 h-8 text-center text-sm font-semibold bg-transparent border-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 appearance-none m-0 p-0")
+                  button.btn-qty.plus(type="button" aria-label="Tăng số lượng" class="w-8 h-8 flex items-center justify-center text-surface-500 hover:bg-surface-100 transition-colors focus-visible:outline-none focus-visible:bg-surface-200 focus-visible:ring-2 focus-visible:ring-brand-500") +
 
               //- Total & Actions
               div(class="col-span-2 flex justify-between md:justify-center items-center mt-4 md:mt-0")
@@ -64,8 +64,8 @@ block main
                   | ₫#{Number(item.quantity * item.product.newPrice).toLocaleString('vi-VN')}
                 
                 //- Desktop Delete Button
-                button.btn-delete(type="button" aria-label="Xoá sản phẩm" data-id=item._id class="hidden md:flex absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white items-center justify-center shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20")
-                  i.bi.bi-trash
+                button.btn-delete(type="button" aria-label="Xoá sản phẩm" data-id=item._id class="hidden md:flex absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white items-center justify-center shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:opacity-100")
+                  i.bi.bi-trash(aria-hidden="true")
 
       //- Floating Sticky Footer
       div(class="fixed bottom-0 left-0 w-full z-40 bg-white/80 backdrop-blur-xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] py-4 transition-all")
@@ -82,7 +82,7 @@ block main
             
             form(action='/order' method='GET' id="checkout-form")
               input(type="hidden" name="listProduct")
-              button(type="submit" aria-label="Tiến hành mua hàng" class="btn-premium btn-premium-primary px-8 py-3.5 shadow-brand-500/30 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-brand-500/50")
+              button(type="submit" aria-label="Tiến hành mua hàng" class="btn-premium btn-primary px-8 py-3.5 shadow-brand-500/30 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
                 | Mua Hàng
                 i.bi.bi-arrow-right.ml-2
 
@@ -90,10 +90,10 @@ block main
       //- Empty Cart State
       div(class="bento-card flex flex-col items-center justify-center py-20 text-center")
         div(class="w-32 h-32 bg-surface-50 rounded-full flex items-center justify-center mb-6")
-          i.bi.bi-cart-x.text-5xl text-surface-300
+          i.bi.bi-cart-x.text-5xl.text-surface-300(aria-hidden="true")
         h2(class="text-xl font-bold text-surface-900 mb-2") Giỏ hàng của bạn đang trống
         p(class="text-surface-500 mb-8 max-w-sm") Hãy khám phá hàng ngàn sản phẩm công nghệ đang chờ bạn.
-        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3")
+        a(href="/product" class="btn-premium btn-primary px-8 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
           | Khám phá sản phẩm
           i.bi.bi-arrow-right.ml-2
 

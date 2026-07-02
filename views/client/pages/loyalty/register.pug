@@ -6,7 +6,7 @@ block main
       
       div(class="hidden lg:block relative")
         div(class="absolute inset-0 bg-brand-500 blur-[100px] opacity-20 rounded-full")
-        img(src="https://img.freepik.com/free-vector/customer-loyalty-concept-illustration_114360-6101.jpg" alt="Loyalty Program" class="relative z-10 w-full rounded-3xl shadow-diffusion")
+        img(src="https://img.freepik.com/free-vector/customer-loyalty-concept-illustration_114360-6101.jpg" alt="Loyalty Program" width="800" height="400" class="relative z-10 w-full rounded-3xl shadow-diffusion")
       
       div(class="bento-card !p-10 relative overflow-hidden")
         div(class="absolute -top-24 -right-24 w-48 h-48 bg-brand-50 rounded-full blur-3xl")
@@ -37,6 +37,6 @@ block main
               span(class="text-surface-500 text-sm") Tặng ngay voucher và 100 điểm vào tháng sinh nhật
         
         form(action="/loyalty/register" method="POST" class="relative z-10")
-          button(type="submit" class="btn-premium btn-premium-primary w-full py-4 text-base")
-            i(class="bi bi-lightning-charge-fill mr-2 text-yellow-300")
+          button(type="submit" class="btn-premium btn-primary w-full py-4 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
+            i(class="bi bi-lightning-charge-fill mr-2 text-yellow-300" aria-hidden="true")
             | Kích hoạt thẻ thành viên miễn phí

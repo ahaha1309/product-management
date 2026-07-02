@@ -9,6 +9,10 @@ const cartSchema = new mongoose.Schema({
         variantId:String,
     }
   ],
+  abandonedEmailSent: {
+    type: Boolean,
+    default: false
+  }
 },
 {
   timestamps:true

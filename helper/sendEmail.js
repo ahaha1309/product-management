@@ -200,3 +200,47 @@ module.exports.sendOTPEmail = async (email, otp, action) => {
     console.error('Lỗi khi gửi email OTP:', error);
   }
 };
+
+module.exports.sendAbandonedCartEmail = async (user, cart) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const html = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <div style="background-color: #0f172a; padding: 32px; text-align: center;">
+          <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">NVH Mall</h1>
+        </div>
+        <div style="padding: 40px;">
+          <p style="font-size: 16px; color: #334155; margin-top: 0; margin-bottom: 24px; line-height: 1.5;">Chào <strong>${user.fullName || 'Bạn'}</strong>,</p>
+          <p style="font-size: 16px; color: #334155; margin-bottom: 24px; line-height: 1.5;">Chúng tôi nhận thấy bạn đã để quên một số món đồ tuyệt vời trong giỏ hàng của mình tại NVH Mall. Đừng bỏ lỡ cơ hội sở hữu chúng trước khi hết hàng nhé!</p>
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="http://product-managementl.vercel.app/cart" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; padding: 16px 32px; border-radius: 8px; transition: background-color 0.3s;">Quay lại Giỏ hàng</a>
+          </div>
+          <p style="font-size: 14px; color: #64748b; margin-bottom: 0;">Nếu bạn cần hỗ trợ, đừng ngần ngại liên hệ với chúng tôi.</p>
+        </div>
+        <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0; font-size: 12px; color: #94a3b8;">© 2026 NVH Mall. All rights reserved.</p>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"NVH Mall" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: '[NVH Mall] Giỏ hàng của bạn đang chờ bạn',
+      html: html
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Lỗi khi gửi email nhắc nhở giỏ hàng:', error);
+  }
+};

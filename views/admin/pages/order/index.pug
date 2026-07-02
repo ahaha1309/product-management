@@ -14,7 +14,7 @@ block main
         h2(class="text-lg font-semibold text-surface-900 flex items-center gap-2")
           i.bi.bi-receipt.text-brand-500
           | Danh sách đơn hàng
-        a(href=`${prefixAdmin}/orders/export-csv` class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-semibold hover:bg-emerald-100 transition-colors flex items-center gap-2")
+        a(href=`${prefixAdmin}/orders/export-csv` class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-semibold hover:bg-emerald-100 transition-colors flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500")
           i.bi.bi-file-earmark-spreadsheet
           | Xuất CSV
           
@@ -49,22 +49,23 @@ block main
                     span(class="px-2 py-1 text-xs font-semibold rounded-lg bg-surface-100 text-surface-600 border border-surface-200") #{item.paymentMethod}
                   
                   td(class="px-4 py-3 hidden md:table-cell")
-                    select(class="select-payment-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
+                    select(class="select-payment-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
                       option(value="pending" selected=(item.paymentStatus === 'pending')) ⏳ Chờ thanh toán
                       option(value="success" selected=(item.paymentStatus === 'success')) ✅ Đã thanh toán
                       option(value="failed" selected=(item.paymentStatus === 'failed')) ❌ Thất bại
 
                   td(class="px-4 py-3")
-                    select(class="select-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
+                    select(class="select-status appearance-none bg-white border border-surface-200 text-surface-700 text-xs font-medium rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 block px-3 py-1.5 pr-8 transition-all outline-none cursor-pointer" data-id=item._id)
                       option(value="pending" selected=(item.status === 'pending' || item.status === '')) Chờ xử lý
                       option(value="confirm" selected=(item.status === 'confirm')) Đã xác nhận
                       option(value="finish" selected=(item.status === 'finish')) Hoàn thành
+                      option(value="returned" selected=(item.status === 'returned')) Đã hoàn trả
                       option(value="canceled" selected=(item.status === 'canceled')) Đã hủy
 
                   td(class="px-4 py-3 text-surface-500 text-xs hidden lg:table-cell") #{new Date(item.createdAt).toLocaleString('vi-VN')}
                   
                   td(class="px-4 py-3 text-right")
-                    button(class="btn-detail w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm" data-id=item._id title="Xem chi tiết")
+                    button(class="btn-detail w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" data-id=item._id title="Xem chi tiết")
                       i.bi.bi-eye
 
             else
@@ -80,7 +81,7 @@ block main
           i.bi.bi-receipt-cutoff.text-brand-500
           | Chi tiết đơn hàng: 
           span(id="modalOrderCode" class="text-brand-600")
-        button(type="button" data-bs-dismiss="modal" class="text-surface-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50")
+        button(type="button" data-bs-dismiss="modal" class="text-surface-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500")
           i.bi.bi-x-lg.text-lg
       
       //- Body
@@ -139,10 +140,10 @@ block main
 
       //- Footer
       div(class="px-6 py-4 border-t border-surface-100 bg-surface-50 flex justify-end gap-3")
-        a(id="btn-print-invoice" href="#" target="_blank" class="px-5 py-2 rounded-xl bg-brand-500 text-white font-semibold hover:bg-brand-600 transition-colors shadow-sm flex items-center gap-2")
+        a(id="btn-print-invoice" href="#" target="_blank" class="px-5 py-2 rounded-xl bg-brand-500 text-white font-semibold hover:bg-brand-600 transition-colors shadow-sm flex items-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
           i.bi.bi-printer
           | In Hóa Đơn
-        button(type="button" data-bs-dismiss="modal" class="px-5 py-2 rounded-xl border border-surface-200 bg-white text-surface-700 font-semibold hover:bg-surface-100 transition-colors shadow-sm") Đóng
+        button(type="button" data-bs-dismiss="modal" class="px-5 py-2 rounded-xl border border-surface-200 bg-white text-surface-700 font-semibold hover:bg-surface-100 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-surface-400") Đóng
 
 block scripts
   script(src="/admin/js/order.js")

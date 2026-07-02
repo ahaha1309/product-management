@@ -11,12 +11,12 @@ block main
     //- Header
     div(class="flex items-center justify-between mb-6")
       div(class="flex items-center gap-3")
-        a(href=`${prefixAdmin}/category-product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm")
+        a(href=`${prefixAdmin}/category-product` class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-surface-200 text-surface-600 hover:bg-surface-50 hover:text-brand-600 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
           i.bi.bi-arrow-left.text-lg
         h1(class="text-2xl font-bold text-surface-900 tracking-tight") Chi tiết danh mục
       
       if(role.permission.includes('products-category_edit') || role.permission.includes('*'))
-        a(href=`${prefixAdmin}/category-product/edit/${category._id}` class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center gap-2")
+        a(href=`${prefixAdmin}/category-product/edit/${category._id}` class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:ring-offset-2")
           i.bi.bi-pencil-square.text-lg
           | Chỉnh sửa
 
@@ -25,7 +25,7 @@ block main
       //- Left Image
       div(class="md:col-span-1")
         div(class="bg-white rounded-2xl border border-surface-200 shadow-sm p-2")
-          img(src=`${category.thumbnail || '/image/logo.png'}` class="w-full h-auto aspect-square object-cover rounded-xl" alt=category.title)
+          img(src=`${category.thumbnail || '/image/logo.png'}` class="w-full h-auto aspect-square object-cover rounded-xl" alt=category.title width="300" height="300")
           
       //- Right Details
       div(class="md:col-span-2 space-y-6")

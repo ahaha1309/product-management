@@ -158,8 +158,8 @@ block main
               h2(class="flex items-center gap-3 font-bold text-slate-800 text-base")
                 span.step-num 1
                 | Thông tin giao hàng
-              button.edit-link(type="button" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5")
-                i.bi.bi-pencil.text-xs
+              button.edit-link(type="button" aria-label="Chỉnh sửa thông tin giao hàng" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500")
+                i.bi.bi-pencil.text-xs(aria-hidden="true")
                 | Chỉnh sửa
 
             //- Display view
@@ -190,8 +190,8 @@ block main
                 label(class="text-xs font-bold text-slate-500 mb-1.5 block") Địa chỉ chi tiết
                 input.ck-input(type="text" id="editAddress" value=user.address placeholder="Địa chỉ chi tiết")
               div(class="flex justify-end gap-3 form-actions")
-                button.btn-cancel(type="button" class="px-5 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-white transition-all") Hủy
-                button.btn-save(type="button" class="px-6 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition-all active:scale-95") Lưu thông tin
+                button.btn-cancel(type="button" aria-label="Hủy chỉnh sửa" class="px-5 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500") Hủy
+                button.btn-save(type="button" aria-label="Lưu thông tin" class="px-6 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500") Lưu thông tin
 
           //- ---- SECTION 2: Products ----
           div(class="ck-card checkout-section")
@@ -204,7 +204,7 @@ block main
               each product in products
                 div(class="product-item flex items-center gap-4 py-4 first:pt-0 last:pb-0 rounded-xl px-1")
                   div(class="relative shrink-0")
-                    img(src=product.thumbnail alt=product.title class="w-[72px] h-[72px] rounded-2xl object-cover border border-slate-100 bg-white")
+                    img(src=product.thumbnail alt=product.title width="72" height="72" class="w-[72px] h-[72px] rounded-2xl object-cover border border-slate-100 bg-white")
                     div(class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] font-black flex items-center justify-center") #{product.quantity}
                   div(class="flex-1 min-w-0")
                     h4(class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-1")= product.title
@@ -216,8 +216,8 @@ block main
                       span(class="product-quantity text-xs text-slate-400 font-medium")  x#{product.quantity}
                   div(class="text-right shrink-0")
                     div(class="font-black text-slate-900 text-sm") #{(product.newPrice * product.quantity).toLocaleString('vi-VN')}₫
-                    button.btn-remove(type="button" data-product-id=product._id class="mt-1 text-slate-300 hover:text-rose-500 transition-colors text-xs flex items-center gap-1 ml-auto")
-                      i.bi.bi-trash3
+                    button.btn-remove(type="button" aria-label="Xoá sản phẩm" data-product-id=product._id class="mt-1 text-slate-300 hover:text-rose-500 transition-colors text-xs flex items-center gap-1 ml-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-sm")
+                      i.bi.bi-trash3(aria-hidden="true")
                       | Xóa
 
           //- ---- SECTION 3: Voucher ----
@@ -230,15 +230,15 @@ block main
               div(class="flex gap-2")
                 div(class="relative flex-1")
                   i.bi.bi-ticket-perforated(class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm")
-                  input#voucherCode(type="text" placeholder="Nhập mã voucher..." value=appliedVoucher ? appliedVoucher.code : '' class="ck-input pl-10 uppercase tracking-wider")
-                button#applyVoucher(type="button" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-700 transition-all active:scale-95 whitespace-nowrap") Áp dụng
+                  input#voucherCode(type="text" placeholder="Nhập mã voucher..." aria-label="Mã giảm giá" value=appliedVoucher ? appliedVoucher.code : '' class="ck-input pl-10 uppercase tracking-wider")
+                button#applyVoucher(type="button" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-700 transition-all active:scale-95 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500") Áp dụng
 
               if availableVouchers && availableVouchers.length > 0
                 div(class="mt-4")
                   p(class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2") Voucher có thể dùng
                   div(class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar")
                     each v in availableVouchers
-                      div.voucher-tag(data-code=v.code class=`shrink-0 border-2 ${appliedVoucher && appliedVoucher.code === v.code ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'} rounded-xl px-3 py-2.5 transition-all cursor-pointer`)
+                      button.voucher-tag(type="button" data-code=v.code aria-label=`Áp dụng voucher ${v.code}` class=`shrink-0 border-2 ${appliedVoucher && appliedVoucher.code === v.code ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'} rounded-xl px-3 py-2.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500`)
                         div(class="font-black text-slate-900 text-xs tracking-wide uppercase mb-0.5")= v.code
                         if v.type === 'freeship'
                           div(class="text-emerald-600 text-[10px] font-bold") Miễn phí vận chuyển
@@ -253,7 +253,7 @@ block main
                     div
                       div(class="font-bold text-emerald-800 text-xs") #{appliedVoucher.code}
                       div(class="text-emerald-600 text-[10px]") Giảm #{appliedVoucher.discount}% (tối đa #{appliedVoucher.maxDiscountAmount.toLocaleString('vi-VN')}₫)
-                  button.btn-remove-voucher(type="button" class="text-[11px] font-bold text-rose-500 hover:text-rose-700 transition-colors") Xóa
+                  button.btn-remove-voucher(type="button" aria-label="Xoá voucher" class="text-[11px] font-bold text-rose-500 hover:text-rose-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-sm") Xóa
 
           //- ---- SECTION 4: Note ----
           div(class="ck-card checkout-section")
@@ -300,13 +300,13 @@ block main
                 //- Month options
                 p(class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3") Chọn kỳ hạn
                 div(class="flex gap-3 mb-5")
-                  div.inst-card.active(data-months="6")
+                  button.inst-card.active(type="button" aria-label="6 tháng" data-months="6" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500")
                     div(class="font-black text-slate-900 text-lg leading-none") 6
                     div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
-                  div.inst-card(data-months="9")
+                  button.inst-card(type="button" aria-label="9 tháng" data-months="9" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500")
                     div(class="font-black text-slate-900 text-lg leading-none") 9
                     div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
-                  div.inst-card(data-months="12")
+                  button.inst-card(type="button" aria-label="12 tháng" data-months="12" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500")
                     div(class="font-black text-slate-900 text-lg leading-none") 12
                     div(class="text-xs text-slate-400 font-semibold mt-0.5") tháng
 
@@ -395,7 +395,7 @@ block main
                   span(class="text-3xl font-black tracking-tight text-white price-total") #{total.toLocaleString('vi-VN')}₫
 
               //- CTA Button
-              button#checkoutBtn(type="button" class="w-full bg-emerald-500 text-white font-black text-base py-4 rounded-2xl")
+              button#checkoutBtn(type="button" aria-label="Đặt hàng ngay" class="w-full bg-emerald-500 text-white font-black text-base py-4 rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950")
                 span(class="flex items-center justify-center gap-2")
                   i.bi.bi-bag-check-fill
                   | Đặt hàng ngay

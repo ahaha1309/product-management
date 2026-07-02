@@ -65,3 +65,4 @@ temp/
 .agents/
 replace.js
 skills-lock.json
+.gemini

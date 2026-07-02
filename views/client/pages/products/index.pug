@@ -15,7 +15,7 @@ block main
       
       //- Mobile Filter Trigger
       div(class="lg:hidden")
-        button(type="button" class="w-full btn-premium btn-premium-secondary py-3 text-sm flex items-center justify-center gap-2" onclick="document.getElementById('mobileFilter').classList.toggle('hidden')")
+        button(type="button" aria-controls="mobileFilter" aria-expanded="false" aria-label="Mở bộ lọc và sắp xếp" class="w-full btn-premium btn-secondary py-3 text-sm flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2" onclick="document.getElementById('mobileFilter').classList.toggle('hidden'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');")
           i(class="bi bi-funnel")
           | Lọc & Sắp xếp
 
@@ -33,7 +33,7 @@ block main
               - const sorts = [{val: 'position-desc', label: 'Mới nhất'}, {val: 'price-asc', label: 'Giá thấp → cao'}, {val: 'price-desc', label: 'Giá cao → thấp'}, {val: 'featured-true', label: 'Nổi bật'}]
               each s in sorts
                 - const isActive = (!type && s.val === 'position-desc') || type === s.val
-                a(href=`/product?sortKey=${s.val.split('-')[0]}&value=${s.val.split('-')[1]}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                a(href=`/product?sortKey=${s.val.split('-')[0]}&value=${s.val.split('-')[1]}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${isActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
                   | #{s.label}
 
           //- Category Filter
@@ -46,7 +46,7 @@ block main
               div(class="flex flex-col gap-2")
                 each cat in categories
                   - const isCatActive = currentCategory === cat._id.toString()
-                  a(href=`/product?category=${cat._id}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isCatActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+                  a(href=`/product?category=${cat._id}` class=`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${isCatActive ? 'bg-brand-50 text-brand-600 border border-brand-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
                     | #{cat.title}
                     
           //- Rating Filter
@@ -56,11 +56,11 @@ block main
               | Đánh Giá
             
             div(class="flex flex-col gap-2")
-              a(href="/product?rating=5" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 ${currentRating === '5' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+              a(href="/product?rating=5" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${currentRating === '5' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
                 - for(let i=1; i<=5; i++)
                   i.bi.bi-star-fill.text-amber-400
               
-              a(href="/product?rating=4" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 ${currentRating === '4' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
+              a(href="/product?rating=4" class=`px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${currentRating === '4' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-surface-600 hover:bg-surface-50 border border-transparent'}`)
                 - for(let i=1; i<=5; i++)
                   if i<=4
                     i.bi.bi-star-fill.text-amber-400
@@ -69,7 +69,7 @@ block main
                 span.ms-2.text-xs.font-medium trở lên
 
           //- Reset button
-          a(href="/product" class="w-full py-3 rounded-xl border border-rose-200 text-rose-500 text-sm font-bold hover:bg-rose-50 transition-colors flex items-center justify-center gap-2")
+          a(href="/product" class="w-full py-3 rounded-xl border border-rose-200 text-rose-500 text-sm font-bold hover:bg-rose-50 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500")
             i.bi.bi-x-circle
             | Xóa bộ lọc
 
@@ -85,10 +85,10 @@ block main
           
           div(class="flex items-center gap-2")
             span(class="text-xs font-bold text-surface-400 uppercase tracking-wider mr-2") Góc nhìn
-            button(class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition-colors" title="Grid View")
-              i.bi.bi-grid-fill
-            button(class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-surface-400 flex items-center justify-center hover:bg-surface-50 transition-colors" title="List View")
-              i.bi.bi-list-ul
+            button(aria-label="Xem dạng lưới" class="w-8 h-8 rounded-lg bg-surface-100 text-surface-600 flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="Grid View")
+              i.bi.bi-grid-fill(aria-hidden="true")
+            button(aria-label="Xem dạng danh sách" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-surface-400 flex items-center justify-center hover:bg-surface-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="List View")
+              i.bi.bi-list-ul(aria-hidden="true")
 
         //- Products Grid (Bento style)
         if product && product.length > 0
@@ -96,8 +96,8 @@ block main
             each Item in product
               div(class="bg-white border border-slate-200/50 rounded-[2rem] p-4 flex flex-col h-full group hover:border-brand-500 hover:shadow-diffusion transition-all duration-500 cursor-pointer relative overflow-hidden")
                 div(class="relative aspect-square w-full rounded-[1.5rem] overflow-hidden mb-4 bg-surface-50")
-                  a(href=`/product/detail/${Item.slug}` title=Item.title class="block w-full h-full") 
-                    img(src=Item.thumbnail alt=Item.title loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110")
+                  a(href=`/product/detail/${Item.slug}` title=Item.title class="block w-full h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") 
+                    img(src=Item.thumbnail alt=Item.title width="300" height="300" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 motion-reduce:transform-none")
                   
                   if Item.isFlashSale
                     div(class="absolute top-0 left-0 bg-gradient-to-r from-rose-500 to-orange-500 text-white px-3 py-1 rounded-br-2xl text-xs font-black shadow-md flex items-center gap-1 z-10")
@@ -114,7 +114,7 @@ block main
                       | -#{Item.discountPercentage}%
                 
                 div(class="flex flex-col flex-1") 
-                  a(href=`/product/detail/${Item.slug}` title=Item.title class="text-surface-900 font-semibold text-lg leading-tight line-clamp-2 mb-3 group-hover:text-brand-500 transition-colors") 
+                  a(href=`/product/detail/${Item.slug}` title=Item.title class="text-surface-900 font-semibold text-lg leading-tight line-clamp-2 mb-3 group-hover:text-brand-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") 
                     span= Item.title
                   
                   div(class="mt-auto")

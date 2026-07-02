@@ -78,6 +78,8 @@ module.exports.changeActivity = async (req, res) => {
       { _id: id },
       { deleted: true, deletedBy: { accountId: res.locals.account.id, deletedAt: new Date() } }
     );
+    const activityLogger = require('../../helper/activity-log');
+    await activityLogger.log(req, 'DELETE', 'PRODUCT', id, `Xóa sản phẩm`);
   }
   res.redirect('back');
 };
@@ -278,7 +280,9 @@ module.exports.createPost = async (req, res) => {
       featured: featured,
       techSpecs: techSpecs,
     };
-    await Product.create(data);
+    const newProduct = await Product.create(data);
+    const activityLogger = require('../../helper/activity-log');
+    await activityLogger.log(req, 'CREATE', 'PRODUCT', newProduct._id, `Tạo mới sản phẩm: ${title}`);
     res.redirect(`${systemConfig.prefixAdmin}/product`);
   } catch (error) {
     console.log('Create Product Error:', error);
@@ -336,6 +340,8 @@ module.exports.editPost = async (req, res) => {
         $push: { updatedBy: { accountId: res.locals.account.id, updatedAt: new Date() } },
       }
     );
+    const activityLogger = require('../../helper/activity-log');
+    await activityLogger.log(req, 'UPDATE', 'PRODUCT', id, `Cập nhật sản phẩm: ${title}`);
     req.flash('success', 'Cập nhật thành công');
   } catch (error) {
     req.flash('error', 'Cập nhật thất bại');
@@ -355,5 +361,36 @@ module.exports.detail = async (req, res) => {
   } catch (error) {
     req.flash('error', 'Không tồn tại sản phẩm này');
     res.redirect(`${systemConfig.prefixAdmin}/product`);
+  }
+};
+
+module.exports.exportCsv = async (req, res) => {
+  try {
+    const products = await Product.find({ deleted: false }).sort({ position: 'desc' });
+    
+    let csv = '\uFEFF'; // BOM for UTF-8
+    csv += 'Tên Sản Phẩm,Giá Gốc,Giảm Giá (%),Giá Bán,Số Lượng Tồn Kho,Trạng Thái,Vị Trí\n';
+
+    for (const p of products) {
+      const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+      
+      const title = escapeCsv(p.title);
+      const price = p.price || 0;
+      const discount = p.discountPercentage || 0;
+      const finalPrice = Math.round(price * (1 - discount/100));
+      const stock = p.stock || 0;
+      const status = p.status === 'active' ? 'Hoạt động' : 'Dừng hoạt động';
+      const position = p.position || 0;
+
+      csv += `${title},${price},${discount},${finalPrice},${stock},${status},${position}\n`;
+    }
+
+    res.header('Content-Type', 'text/csv; charset=utf-8');
+    res.attachment(`products_${Date.now()}.csv`);
+    return res.send(csv);
+  } catch (error) {
+    console.error('Error exporting CSV:', error);
+    req.flash('error', 'Có lỗi khi xuất CSV!');
+    res.redirect('back');
   }
 };

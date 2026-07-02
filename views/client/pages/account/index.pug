@@ -10,7 +10,7 @@ block main
       
       div(class="px-8 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16 relative z-10")
         div(class="relative")
-          img#avatarPreview(src=user.avatar || 'https://via.placeholder.com/150?text=No+Avatar' alt='Avatar' class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover bg-surface-50")
+          img#avatarPreview(src=user.avatar || 'https://via.placeholder.com/150?text=No+Avatar' alt='Avatar' width="128" height="128" class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover bg-surface-50")
           div(class="absolute bottom-2 right-2 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full")
         
         div(class="flex-1 text-center sm:text-left mb-2")
@@ -18,11 +18,11 @@ block main
           p(class="text-surface-500 font-medium") Chào mừng trở lại với NVH Mall
         
         div(class="flex gap-3")
-          a(href=`/my-account/edit/${user._id}` class="btn-premium btn-premium-primary px-6 py-2.5 text-sm shadow-brand-500/30") 
+          a(href=`/my-account/edit/${user._id}` class="btn-premium btn-primary px-6 py-2.5 text-sm shadow-brand-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-lg") 
             i.bi.bi-pencil-square.mr-2
             | Chỉnh sửa
-          a(href="/" class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-50 transition-colors flex items-center gap-2")
-            i.bi.bi-box-arrow-left
+          a(href="/" class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-50 transition-colors flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+            i.bi.bi-box-arrow-left(aria-hidden="true")
             | Thoát
 
     //- Info Grid
@@ -66,4 +66,4 @@ block main
               | #{user.address || 'Bạn chưa cập nhật địa chỉ giao hàng. Vui lòng cập nhật để mua hàng nhanh chóng hơn.'}
             
             if !user.address
-              a(href=`/my-account/edit/${user._id}` class="inline-block mt-4 text-sm font-bold text-brand-600 hover:text-brand-700 hover:underline") Cập nhật ngay →
+              a(href=`/my-account/edit/${user._id}` class="inline-block mt-4 text-sm font-bold text-brand-600 hover:text-brand-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Cập nhật ngay →

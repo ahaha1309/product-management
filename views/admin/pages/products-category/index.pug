@@ -13,7 +13,7 @@ block main
         p(class="text-surface-500 text-sm mt-1") Quản lý hệ thống phân cấp danh mục sản phẩm.
       
       if(role.permission.includes('products-category_create'))
-        a(href=`${prefixAdmin}/category-product/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95")
+        a(href=`${prefixAdmin}/category-product/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
           i.bi.bi-plus-lg.text-lg
           | Thêm danh mục mới
 

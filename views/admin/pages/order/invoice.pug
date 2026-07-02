@@ -43,8 +43,8 @@ html
       }
   body(onload="window.print()")
     .no-print.text-center.mt-4
-      button.btn.btn-primary.me-2(onclick="window.print()") In Hóa Đơn
-      button.btn.btn-outline-secondary(onclick="window.history.back()") Quay Lại
+      button.btn.btn-primary.me-2(onclick="window.print()" class="focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-offset-2") In Hóa Đơn
+      button.btn.btn-outline-secondary(onclick="window.history.back()" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary") Quay Lại
 
     .invoice-container
       .invoice-header.d-flex.justify-content-between.align-items-center

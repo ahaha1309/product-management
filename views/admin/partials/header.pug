@@ -1,13 +1,13 @@
 header(class="relative h-16 bg-white border-b border-surface-200 flex items-center justify-between px-4 md:px-8 shrink-0 z-50")
   //- Left
   div(class="flex items-center gap-4")
-    button(class="md:hidden text-surface-600 hover:text-brand-500 transition-colors" id="mobile-menu-btn")
-      i.bi.bi-list.text-2xl
+    button(class="md:hidden text-surface-600 hover:text-brand-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm" id="mobile-menu-btn" aria-label="Mở menu di động")
+      i.bi.bi-list.text-2xl(aria-hidden="true")
     
     //- Global Search Placeholder (Stripe-like)
-    div(class="hidden md:flex items-center bg-surface-100 hover:bg-surface-200 transition-colors rounded-lg px-3 py-1.5 border border-surface-200/50 cursor-text w-64 group")
-      i.bi.bi-search.text-surface-400.text-sm
-      input(type="text" placeholder="Tìm kiếm (Ctrl+K)..." class="bg-transparent border-none outline-none text-sm text-surface-700 ml-2 w-full placeholder-surface-400")
+    div(class="hidden md:flex items-center bg-surface-100 hover:bg-surface-200 transition-colors rounded-lg px-3 py-1.5 border border-surface-200/50 cursor-text w-64 group focus-within:ring-2 focus-within:ring-brand-500")
+      i.bi.bi-search.text-surface-400.text-sm(aria-hidden="true")
+      input(type="text" aria-label="Tìm kiếm nhanh" placeholder="Tìm kiếm (Ctrl+K)..." class="bg-transparent border-none outline-none text-sm text-surface-700 ml-2 w-full placeholder-surface-400")
       div(class="flex items-center gap-1 text-[10px] font-mono text-surface-400 bg-white px-1.5 py-0.5 rounded border border-surface-200")
         | ⌘K
         
@@ -15,32 +15,32 @@ header(class="relative h-16 bg-white border-b border-surface-200 flex items-cent
   div(class="flex items-center gap-4")
     
     //- Action Icons
-    a(href="/" target="_blank" class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors" title="Xem website")
-      i.bi.bi-globe.text-lg
+    a(href="/" target="_blank" aria-label="Xem website ngoài" class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="Xem website")
+      i.bi.bi-globe.text-lg(aria-hidden="true")
       
     //- Notification Dropdown
     div(class="relative group" id="admin-notification-container")
-      button(class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors relative" title="Thông báo" id="btn-admin-notifications")
-        i.bi.bi-bell.text-lg
+      button(class="w-9 h-9 rounded-full flex items-center justify-center text-surface-600 hover:bg-surface-100 transition-colors relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="Thông báo" id="btn-admin-notifications" aria-label="Thông báo")
+        i.bi.bi-bell.text-lg(aria-hidden="true")
         span(id="admin-notification-badge" class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white hidden")
       
       div(class="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-diffusion border border-surface-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100 z-50")
         div(class="p-3 border-b border-surface-100 flex justify-between items-center bg-surface-50 rounded-t-xl")
           span(class="font-semibold text-surface-900 text-sm") Thông báo mới
-          button(id="btn-mark-all-read" class="text-xs text-brand-600 hover:text-brand-700 hover:underline font-medium") Đánh dấu đã đọc
+          button(id="btn-mark-all-read" class="text-xs text-brand-600 hover:text-brand-700 hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Đánh dấu đã đọc
         
         div(id="admin-notification-list" class="max-h-80 overflow-y-auto divide-y divide-surface-100 overscroll-contain")
           //- Injected by JS
           div(class="p-6 text-center text-surface-500 text-sm") Đang tải...
           
         div(class="p-2 border-t border-surface-100 text-center bg-surface-50 rounded-b-xl")
-          a(href="#" class="text-xs font-semibold text-surface-600 hover:text-brand-600 transition-colors") Xem tất cả
+          a(href="#" class="text-xs font-semibold text-surface-600 hover:text-brand-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Xem tất cả
 
     div(class="w-px h-6 bg-surface-200 mx-1")
     
     //- User Dropdown
     div(class="relative group")
-      button(class="flex items-center gap-2 hover:bg-surface-50 py-1 px-2 rounded-lg transition-colors")
+      button(class="flex items-center gap-2 hover:bg-surface-50 py-1 px-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-label="Tài khoản của tôi")
         div(class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs")
           | #{account.fullname ? account.fullname.charAt(0).toUpperCase() : 'A'}
         div(class="hidden md:flex flex-col items-start")
@@ -51,13 +51,13 @@ header(class="relative h-16 bg-white border-b border-surface-200 flex items-cent
       //- Dropdown Menu
       div(class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-diffusion border border-surface-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100 z-50")
         div(class="p-2")
-          a(href=`${prefixAdmin}/my-account` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors")
+          a(href=`${prefixAdmin}/my-account` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
             i.bi.bi-person
             | Hồ sơ cá nhân
-          a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors")
+          a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-2 px-3 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
             i.bi.bi-gear
             | Cài đặt
           div(class="h-px bg-surface-100 my-1")
-          a(href=`${prefixAdmin}/auth/logout` class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition-colors")
+          a(href=`${prefixAdmin}/auth/logout` class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500")
             i.bi.bi-box-arrow-right
             | Đăng xuất

@@ -4,7 +4,7 @@ block main
   div(class="container mx-auto px-4 max-w-6xl py-12 mb-20")
     //- Breadcrumb
     div(class="flex items-center gap-2 text-sm font-medium text-surface-500 mb-8")
-      a(href="/loyalty" class="hover:text-brand-600 transition-colors") Thành viên
+      a(href="/loyalty" class="hover:text-brand-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") Thành viên
       i(class="bi bi-chevron-right text-[10px]")
       span(class="text-surface-900") Dashboard Chi Tiết
 
@@ -72,7 +72,7 @@ block main
                         h6(class="font-bold text-surface-900 text-sm") #{reward.name}
                         div(class="font-black text-brand-600 mt-1") #{reward.pointsRequired} xu
                     p(class="text-xs text-surface-500 mb-4") #{reward.description}
-                    button(onclick=`quickRedeem('${reward.id}', ${reward.pointsRequired})` class="btn-premium btn-premium-primary w-full py-2.5 text-sm")
+                    button(type="button" onclick=`quickRedeem('${reward.id}', ${reward.pointsRequired})` class="btn-premium btn-primary w-full py-2.5 text-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
                       | Đổi Ngay
           else
             div(class="text-center py-10 bg-surface-50 rounded-2xl border border-dashed border-slate-200")

@@ -1,65 +1,56 @@
 const Product = require('../../models/product.model');
 const Category = require('../../models/product-category.model');
 
-module.exports.index = async (req, res) => {
+module.exports.generateSitemap = async (req, res) => {
   try {
-    const baseUrl = 'https://vanhatech.com'; // In a real app, this should come from env or req.protocol + '://' + req.get('host')
+    const baseUrl = req.protocol + '://' + req.get('host');
+    
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-    // Fetch dynamic content
-    const products = await Product.find({ status: 'active', deleted: false }).select('slug updatedAt');
-    const categories = await Category.find({ status: 'active', deleted: false }).select('slug updatedAt');
+    // 1. Static Pages
+    const staticPages = [
+      '',
+      '/product',
+      '/about',
+      '/contact'
+    ];
 
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Static Pages -->
-  <url>
-    <loc>${baseUrl}/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/product</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-`;
+    for (const page of staticPages) {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}${page}</loc>\n`;
+      xml += '    <changefreq>daily</changefreq>\n';
+      xml += '    <priority>1.0</priority>\n';
+      xml += '  </url>\n';
+    }
 
-    // Add Categories
-    categories.forEach(category => {
-      xml += `  <url>
-    <loc>${baseUrl}/product/c/${category.slug}</loc>
-    <lastmod>${category.updatedAt ? category.updatedAt.toISOString() : new Date().toISOString()}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>\n`;
-    });
+    // 2. Categories
+    const categories = await Category.find({ status: 'active', deleted: false });
+    for (const cat of categories) {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}/product/${cat.slug}</loc>\n`;
+      xml += '    <changefreq>weekly</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
+    }
 
-    // Add Products
-    products.forEach(product => {
-      xml += `  <url>
-    <loc>${baseUrl}/product/detail/${product.slug}</loc>
-    <lastmod>${product.updatedAt ? product.updatedAt.toISOString() : new Date().toISOString()}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>\n`;
-    });
+    // 3. Products
+    const products = await Product.find({ status: 'active', deleted: false });
+    for (const prod of products) {
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}/product/detail/${prod.slug}</loc>\n`;
+      xml += `    <lastmod>${prod.updatedAt ? new Date(prod.updatedAt).toISOString() : new Date().toISOString()}</lastmod>\n`;
+      xml += '    <changefreq>weekly</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
+    }
 
-    xml += `</urlset>`;
+    xml += '</urlset>';
 
     res.header('Content-Type', 'application/xml');
     res.send(xml);
   } catch (error) {
-    console.error('Error generating sitemap:', error);
+    console.error('Lỗi tạo sitemap:', error);
     res.status(500).end();
   }
 };

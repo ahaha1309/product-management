@@ -13,11 +13,11 @@ block main
 
     //- Status Tabs
     div(class="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-surface-50 p-2 rounded-2xl border border-slate-100")
-      a(href="/order/history" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${!status ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Tất cả
-      a(href="/order/history?status=pending" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='pending' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Chờ xác nhận
-      a(href="/order/history?status=confirm" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='confirm' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đang xử lý
-      a(href="/order/history?status=finish" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='finish' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Hoàn thành
-      a(href="/order/history?status=canceled" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${status=='canceled' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đã hủy
+      a(href="/order/history" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${!status ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Tất cả
+      a(href="/order/history?status=pending" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${status=='pending' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Chờ xác nhận
+      a(href="/order/history?status=confirm" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${status=='confirm' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đang xử lý
+      a(href="/order/history?status=finish" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${status=='finish' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Hoàn thành
+      a(href="/order/history?status=canceled" class=`shrink-0 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${status=='canceled' ? 'bg-white text-brand-600 shadow-sm border border-slate-200' : 'text-surface-600 hover:bg-white/50 hover:text-surface-900'}`) Đã hủy
 
     if orders && orders.length > 0
       div(class="flex flex-col gap-6 orders-list")
@@ -39,10 +39,10 @@ block main
               span.order-status-badge(class=`px-3 py-1 rounded-full text-xs font-bold border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`) #{statusInfo.label}
 
             //- Body
-            a(href=`/order/detail/${order._id}` class="block px-6 py-4 card-body")
+            a(href=`/order/detail/${order._id}` class="block px-6 py-4 card-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-lg")
               each item in order.products
                 div(class="flex items-start sm:items-center gap-4 py-4 border-b border-slate-100 last:border-0 last:pb-0 shopee-product")
-                  img(src=item.thumbnail alt=item.title class="w-20 h-20 rounded-xl object-cover border border-slate-100 bg-white shadow-sm transition-transform group-hover:scale-105")
+                  img(src=item.thumbnail alt=item.title width="80" height="80" class="w-20 h-20 rounded-xl object-cover border border-slate-100 bg-white shadow-sm transition-transform group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none")
                   div(class="flex-1")
                     h4(class="font-bold text-surface-900 text-sm leading-tight line-clamp-2") #{item.title}
                     if item.variant
@@ -68,24 +68,24 @@ block main
                   | #{paymentInfo}
 
               div(class="flex gap-3 card-actions")
-                a(href=`/order/detail/${order._id}` class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-100 transition-colors btn-outline") Xem chi tiết
+                a(href=`/order/detail/${order._id}` class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-surface-700 hover:bg-surface-100 transition-colors btn-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") Xem chi tiết
                 if order.status === 'finish' || order.status === 'canceled'
-                  a(href=`/order/rebuy/${order._id}` class="btn-premium btn-premium-primary px-5 py-2.5 text-sm btn-rebuy") Mua lại
+                  a(href=`/order/rebuy/${order._id}` class="btn-premium btn-primary px-5 py-2.5 text-sm btn-rebuy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1") Mua lại
                 if order.cancelRequest
                   button.btn-cancel-request(disabled class="px-5 py-2.5 rounded-xl border border-slate-200 bg-surface-100 text-surface-400 text-sm font-semibold cursor-not-allowed flex items-center gap-2")
                     i.bi.bi-hourglass-split
                     | Đang chờ duyệt hủy
                 else if order.status !== 'canceled' && order.paymentStatus === 'pending' && order.status !== 'finish'
-                  button.btn-cancel-order(data-id=`${order._id}` class="px-5 py-2.5 rounded-xl border border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-500 hover:text-white transition-colors text-sm font-semibold") Hủy đơn
+                  button.btn-cancel-order(data-id=`${order._id}` class="px-5 py-2.5 rounded-xl border border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-500 hover:text-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-1") Hủy đơn
 
     else
       div(class="bento-card flex flex-col items-center justify-center py-20 text-center empty-orders")
         div(class="w-32 h-32 bg-surface-50 rounded-full flex items-center justify-center mb-6 relative")
           i.bi.bi-box-seam.text-5xl.text-surface-300
-          i.bi.bi-stars.absolute.top-2.right-2.text-brand-400.text-xl.perpetual-pulse
+          i(class="bi bi-stars absolute top-2 right-2 text-brand-400 text-xl perpetual-pulse motion-reduce:animate-none")
         h2(class="text-xl font-bold text-surface-900 mb-2") Chưa có đơn hàng nào
         p(class="text-surface-500 mb-8 max-w-sm") Hãy khám phá và chọn mua những sản phẩm công nghệ yêu thích nhé!
-        a(href="/product" class="btn-premium btn-premium-primary px-8 py-3")
+        a(href="/product" class="btn-premium btn-primary px-8 py-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
           | Mua sắm ngay
           i.bi.bi-arrow-right.ml-2
 

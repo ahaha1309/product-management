@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   token: {
     type: String,
-    default: generate.generateToken(20)
+    default: () => generate.generateToken(20)
   },
   confirmPassword:String,
   status:{

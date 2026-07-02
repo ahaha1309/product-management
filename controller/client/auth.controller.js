@@ -13,6 +13,8 @@ module.exports.registerGet = (req, res) => {
   res.render('client/pages/auth/register');
 };
 
+const loginLimiter = require('../../helper/login-limiter');
+
 module.exports.loginPost = async (req, res) => {
   const { email, password } = req.body;
   const userExist = await userModel.findOne({
@@ -20,22 +22,38 @@ module.exports.loginPost = async (req, res) => {
     deleted: false,
   });
   if (!userExist) {
-    req.flash('error', 'Email hoặc mật khẩu không đúng!');
+    const attempts = loginLimiter.incrementFailed(req);
+    if (attempts === 4) {
+      req.flash('error', 'Email hoặc mật khẩu không đúng! Nếu sai 1 lần nữa, bạn sẽ bị khóa đăng nhập 15 phút.');
+    } else {
+      req.flash('error', 'Email hoặc mật khẩu không đúng!');
+    }
     return res.redirect('back');
   }
   const isMatch = await bcrypt.compare(password, userExist.password);
   if (!isMatch) {
-    req.flash('error', 'Email hoặc mật khẩu không đúng!');
+    const attempts = loginLimiter.incrementFailed(req);
+    if (attempts === 4) {
+      req.flash('error', 'Email hoặc mật khẩu không đúng! Nếu sai 1 lần nữa, bạn sẽ bị khóa đăng nhập 15 phút.');
+    } else {
+      req.flash('error', 'Email hoặc mật khẩu không đúng!');
+    }
     return res.redirect('back');
   }
   if (userExist.status == 'inactive') {
+    loginLimiter.incrementFailed(req);
     req.flash('error', 'Tài khoản đã bị khóa!');
     return res.redirect('back');
   }
   if (userExist.status == 'unverified') {
+    loginLimiter.incrementFailed(req);
     req.flash('error', 'Tài khoản chưa được xác thực!');
     return res.redirect('back');
   }
+  
+  // Login success - Reset the limit
+  loginLimiter.reset(req);
+
   req.session.account = {
     id: userExist._id,
     email: userExist.email,
@@ -95,9 +113,15 @@ module.exports.registerPost = async (req, res) => {
 };
 
 module.exports.logout = (req, res) => {
-  req.session.destroy();
-  res.clearCookie('token');
-  res.redirect(`/`);
+  req.session.destroy((err) => {
+    if (err) console.error("Session destroy error:", err);
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+    res.redirect(`/`);
+  });
 };
 
 // ==========================================

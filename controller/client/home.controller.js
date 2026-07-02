@@ -137,11 +137,11 @@ module.exports.index = async (req, res) => {
     } catch(e) {}
   }
 
-  const isLogin = req.cookies.token ? true : false;
+  const isLogin = res.locals.isLogin || false;
   const seoService = require('../../services/seo.service');
   
   const seoData = seoService.buildMeta({
-    title: 'NVH Mall',
+    title: 'Trang Chủ',
     description: 'NVH Mall - Chuyên phân phối các sản phẩm công nghệ Apple, Samsung cao cấp, chính hãng với giá tốt nhất thị trường.',
     url: 'https://vanhatech.com/',
     jsonLd: [
@@ -177,7 +177,7 @@ module.exports.index = async (req, res) => {
   }
 
   res.render('client/pages/home/index.pug', {
-    title: 'NVH Mall',
+    title: 'Trang Chủ',
     seoData,
     message: 'Trang chủ',
     isLogin: isLogin,

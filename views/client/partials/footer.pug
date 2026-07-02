@@ -9,7 +9,7 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
       div(class="lg:col-span-4 flex flex-col")
         a(href="/" class="flex items-center gap-3 text-white font-black text-3xl tracking-tighter mb-6 inline-flex hover:scale-[1.02] transition-transform w-fit")
           if settingGeneral && settingGeneral.logo
-            img(src=settingGeneral.logo alt="Logo" class="h-10 rounded-xl shadow-lg shadow-white/10")
+            img(src=settingGeneral.logo alt="Logo" width="120" height="40" class="h-10 w-auto rounded-xl shadow-lg shadow-white/10")
           else
             div(class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg shadow-brand-500/30")
               i.bi.bi-lightning-charge-fill.text-xl
@@ -31,13 +31,13 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
           | Sản phẩm
         ul(class="flex flex-col gap-4 text-sm font-medium text-slate-400")
           li
-            a(href="/product" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Tất cả sản phẩm
+            a(href="/product" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Tất cả sản phẩm
           li
-            a(href="/product?discount=true" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Khuyến mãi
+            a(href="/product?discount=true" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Khuyến mãi
           li
-            a(href="/articles" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Tin tức công nghệ
+            a(href="/articles" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Tin tức công nghệ
           li
-            a(href="/about" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Về chúng tôi
+            a(href="/about" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Về chúng tôi
 
       //- Links Column 2 (Spans 2)
       div(class="lg:col-span-2")
@@ -46,13 +46,13 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
           | Hỗ trợ
         ul(class="flex flex-col gap-4 text-sm font-medium text-slate-400")
           li
-            a(href="/order/history" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Theo dõi đơn hàng
+            a(href="/order/history" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Theo dõi đơn hàng
           li
-            a(href="/policy/return" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Đổi trả & Bảo hành
+            a(href="/policy/return" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Đổi trả & Bảo hành
           li
-            a(href="/policy/privacy" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Bảo mật thông tin
+            a(href="/policy/privacy" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Bảo mật thông tin
           li
-            a(href="/contact" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all") Liên hệ hỗ trợ
+            a(href="/contact" class="hover:text-brand-400 hover:translate-x-2 inline-block transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-sm") Liên hệ hỗ trợ
 
       //- Contact & Newsletter Column (Spans 4)
       div(class="lg:col-span-4")
@@ -65,9 +65,9 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
           div(class="relative mb-8 group")
             div(class="absolute -inset-0.5 bg-gradient-to-r from-brand-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500")
             div(class="relative flex items-center")
-              input(type="email" id="footerNewsletter" placeholder="Nhập email của bạn..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 pl-4 pr-12 text-sm text-white font-medium focus:outline-none focus:border-brand-500 transition-all")
-              button(type="button" onclick="subscribeNewsletter()" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg bg-brand-500 text-white flex items-center justify-center hover:bg-brand-400 hover:scale-105 transition-all shadow-lg shadow-brand-500/50")
-                i.bi.bi-send-fill
+              input(type="email" aria-label="Email nhận khuyến mãi" id="footerNewsletter" placeholder="Nhập email của bạn..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 pl-4 pr-12 text-sm text-white font-medium focus:outline-none focus:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500 transition-all")
+              button(type="button" aria-label="Gửi email đăng ký" onclick="subscribeNewsletter()" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg bg-brand-500 text-white flex items-center justify-center hover:bg-brand-400 hover:scale-105 transition-all shadow-lg shadow-brand-500/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950")
+                i.bi.bi-send-fill(aria-hidden="true")
                 
           ul(class="flex flex-col gap-3 text-sm text-slate-400 font-medium")
             li(class="flex items-start gap-3 hover:text-slate-300 transition-colors")
@@ -86,11 +86,11 @@ footer(class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mt-20 
     
     div(class="flex items-center gap-4")
       div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
-        img(src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="VNPAY" class="h-4 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
+        img(src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="" width="60" height="16" class="h-4 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
       div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
-        img(src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MOMO" class="h-5 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
+        img(src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="" width="20" height="20" class="h-5 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
       div(class="h-8 px-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:border-slate-700 transition-colors cursor-pointer")
-        img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="VISA" class="h-3 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
+        img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="" width="40" height="12" class="h-3 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity")
 
 script.
   function subscribeNewsletter() {

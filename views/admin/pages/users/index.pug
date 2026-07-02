@@ -41,12 +41,12 @@ block main
                         div(class="text-xs text-surface-500") #{item.email}
                   td(class="px-4 py-3")
                     if item.status == "active"
-                      button(class="px-3 py-1 text-xs font-semibold rounded-full border bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100 transition-colors" button-change-status data-status="active" button-id=item._id) Hoạt động
+                      button(class="px-3 py-1 text-xs font-semibold rounded-full border bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500" button-change-status data-status="active" button-id=item._id) Hoạt động
                     else
-                      button(class="px-3 py-1 text-xs font-semibold rounded-full border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100 transition-colors" button-change-status data-status="inactive" button-id=item._id) Dừng hoạt động
+                      button(class="px-3 py-1 text-xs font-semibold rounded-full border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500" button-change-status data-status="inactive" button-id=item._id) Dừng hoạt động
                   td(class="px-4 py-3 text-surface-500 text-xs hidden lg:table-cell") #{new Date(item.createdAt).toLocaleString('vi-VN')}
                   td(class="px-4 py-3 text-right")
-                    a(href=`${prefixAdmin}/users/detail/${item._id}` class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm" title="Xem chi tiết")
+                    a(href=`${prefixAdmin}/users/detail/${item._id}` class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-brand-50 hover:text-brand-600 transition-colors border border-surface-200 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="Xem chi tiết")
                       i.bi.bi-eye
             else
               tr

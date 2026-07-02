@@ -32,7 +32,7 @@ block main
             //- Main Image Container (Glassmorphism & Perpetual Float)
             div(class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-surface-50 to-surface-100 border border-white shadow-inner flex items-center justify-center group mb-6")
               //- Floating Image
-              img#main-image(src=product.thumbnail alt=product.title class="w-10/12 h-10/12 object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 perpetual-float")
+              img#main-image(src=product.thumbnail alt=product.title width="400" height="500" class="w-10/12 h-10/12 object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 perpetual-float motion-reduce:animate-none")
               
               //- Badges
               div(class="absolute top-6 left-6 flex flex-col gap-2 z-10")
@@ -53,19 +53,19 @@ block main
             //- Thumbnails Gallery (Pill shaped, interactive)
             div(class="flex items-center gap-3 overflow-x-auto pb-4 hide-scrollbar snap-x")
               if variants && variants.length > 0
-                div(class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-brand-500 shadow-brand-500/20` onclick=`changeMainImage(this, '${product.thumbnail}')`)
-                  img(src=product.thumbnail alt=product.title class="w-full h-full object-cover p-2 mix-blend-multiply")
+                button(type="button" aria-label="Xem ảnh chính" class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-brand-500 shadow-brand-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500` onclick=`changeMainImage(this, '${product.thumbnail}')`)
+                  img(src=product.thumbnail alt=product.title width="80" height="80" class="w-full h-full object-cover p-2 mix-blend-multiply")
                 each v, index in variants
-                  - const vImg = (v.images && v.images[0]) ? v.images[0].url : product.thumbnail
+                  - const vImg = (v.images && v.images.length > 0) ? (v.images[0].url || v.images[0]) : product.thumbnail
                   - const vColor = (v.attributes && v.attributes.color) ? v.attributes.color : ''
-                  div(class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-transparent opacity-70 hover:opacity-100` onclick=`selectVariantImage(this, '${vImg}', '${vColor}')`)
-                    img(src=vImg alt=vColor class="w-full h-full object-cover p-2 mix-blend-multiply")
+                  button(type="button" aria-label=`Xem ảnh màu ${vColor}` class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-transparent opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500` onclick=`selectVariantImage(this, '${vImg}', '${vColor}')`)
+                    img(src=vImg alt=vColor width="80" height="80" class="w-full h-full object-cover p-2 mix-blend-multiply")
               else if product.images && product.images.length > 0
-                div(class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-brand-500 shadow-brand-500/20` onclick=`changeMainImage(this, '${product.thumbnail}')`)
-                  img(src=product.thumbnail alt=product.title class="w-full h-full object-cover p-2 mix-blend-multiply")
+                button(type="button" aria-label="Xem ảnh chính" class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-brand-500 shadow-brand-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500` onclick=`changeMainImage(this, '${product.thumbnail}')`)
+                  img(src=product.thumbnail alt=product.title width="80" height="80" class="w-full h-full object-cover p-2 mix-blend-multiply")
                 each img, index in product.images
-                  div(class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-transparent opacity-70 hover:opacity-100` onclick=`changeMainImage(this, '${img}')`)
-                    img(src=img alt=product.title class="w-full h-full object-cover p-2 mix-blend-multiply")
+                  button(type="button" aria-label=`Xem ảnh ${index + 1}` class=`thumbnail-item relative w-20 h-20 rounded-2xl cursor-pointer overflow-hidden border-2 transition-all shrink-0 snap-start bg-surface-50 hover:shadow-md border-transparent opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500` onclick=`changeMainImage(this, '${img}')`)
+                    img(src=img alt=product.title width="80" height="80" class="w-full h-full object-cover p-2 mix-blend-multiply")
 
         //- Right: Product Info & Actions
         div(class="lg:col-span-7 flex flex-col justify-center")
@@ -93,7 +93,7 @@ block main
             
             if product.stock > 0
               div(class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100 text-sm font-bold")
-                div(class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse")
+                div(class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none")
                 | Còn #{product.stock} sản phẩm
             else
               div(class="flex items-center gap-2 bg-rose-50 text-rose-700 px-3 py-1.5 rounded-full border border-rose-100 text-sm font-bold")
@@ -138,7 +138,7 @@ block main
           div(class="flex items-center justify-between p-4 rounded-3xl border border-slate-100 bg-surface-50 mb-8 transition-colors hover:bg-surface-100")
             div(class="flex items-center gap-4")
               div(class="relative")
-                img(src="https://ui-avatars.com/api/?name=VanHa+Tech&background=0d9488&color=fff&size=120" alt="Shop Avatar" class="w-14 h-14 rounded-2xl shadow-sm")
+                img(src="https://ui-avatars.com/api/?name=VanHa+Tech&background=0d9488&color=fff&size=120" alt="Shop Avatar" width="56" height="56" class="w-14 h-14 rounded-2xl shadow-sm")
                 div(class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full")
               div
                 div(class="font-black text-surface-950 flex items-center gap-2 text-lg")
@@ -147,8 +147,8 @@ block main
                 div(class="text-xs text-surface-500 font-medium mt-0.5") Cam kết chính hãng 100%
             
             div(class="flex gap-2")
-              button(onclick=`openProductChat('${product.title.replace(/'/g, "\\'")}')` class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-surface-700 hover:border-brand-500 hover:text-brand-600 hover:shadow-md transition-all")
-                i.bi.bi-chat-dots.text-xl
+              button(onclick=`openProductChat('${product.title.replace(/'/g, "\\'")}')` aria-label="Chat với cửa hàng" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-surface-700 hover:border-brand-500 hover:text-brand-600 hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                i.bi.bi-chat-dots.text-xl(aria-hidden="true")
 
           //- Action Area
           if product.stock > 0
@@ -158,23 +158,23 @@ block main
               div(class="flex flex-col sm:flex-row items-center gap-4 mb-8")
                 //- Quantity Selector
                 div(class="w-full sm:w-auto flex items-center bg-white border-2 border-slate-100 rounded-2xl overflow-hidden shadow-sm h-14")
-                  button(type="button" onclick="changeQty(-1)" class="w-14 h-full flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-surface-900 transition-colors text-lg")
-                    i.bi.bi-dash-lg
-                  input(type="number" name="quantity" value="1" min="1" max=product.stock slug=product.slug id="qty-input" class="w-16 h-full text-center bg-transparent border-none focus:outline-none font-black text-surface-900 text-lg appearance-none m-0")
-                  button(type="button" onclick="changeQty(1)" class="w-14 h-full flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-surface-900 transition-colors text-lg")
-                    i.bi.bi-plus-lg
+                  button(type="button" aria-label="Giảm số lượng" onclick="changeQty(-1)" class="w-14 h-full flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-surface-900 transition-colors text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                    i.bi.bi-dash-lg(aria-hidden="true")
+                  input(type="number" aria-label="Số lượng" name="quantity" value="1" min="1" max=product.stock slug=product.slug id="qty-input" class="w-16 h-full text-center bg-transparent border-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 font-black text-surface-900 text-lg appearance-none m-0")
+                  button(type="button" aria-label="Tăng số lượng" onclick="changeQty(1)" class="w-14 h-full flex items-center justify-center text-surface-500 hover:bg-surface-100 hover:text-surface-900 transition-colors text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                    i.bi.bi-plus-lg(aria-hidden="true")
                 
                 //- Primary Buttons
                 div(class="w-full flex gap-3")
-                  button.btn-action-main(type="button" action-type="cart" class="flex-1 h-14 rounded-2xl bg-brand-50 text-brand-600 font-bold border-2 border-brand-100 hover:bg-brand-100 hover:border-brand-200 transition-all flex items-center justify-center gap-2")
-                    i.bi.bi-cart-plus.text-xl
+                  button.btn-action-main(type="button" action-type="cart" class="flex-1 h-14 rounded-2xl bg-brand-50 text-brand-600 font-bold border-2 border-brand-100 hover:bg-brand-100 hover:border-brand-200 transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                    i.bi.bi-cart-plus.text-xl(aria-hidden="true")
                     | Thêm Vào Giỏ
-                  button.btn-action-main(type="button" action-type="checkout" class="flex-1 h-14 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 text-white font-black shadow-xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all hover:-translate-y-0.5 flex items-center justify-center")
+                  button.btn-action-main(type="button" action-type="checkout" class="flex-1 h-14 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 text-white font-black shadow-xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all motion-reduce:transform-none hover:-translate-y-0.5 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
                     | MUA NGAY
 
               //- Wishlist
-              button.wishlist-btn-main(type="button" class=`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all border-2 ${isWishlisted ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-100 bg-white text-surface-600 hover:border-slate-200 hover:bg-surface-50'}` onclick=`toggleWishlist('${product._id}')`)
-                i.bi(class=(isWishlisted ? "bi-heart-fill text-rose-500 text-lg" : "bi-heart text-lg"))
+              button.wishlist-btn-main(type="button" class=`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${isWishlisted ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-100 bg-white text-surface-600 hover:border-slate-200 hover:bg-surface-50'}` onclick=`toggleWishlist('${product._id}')`)
+                i.bi(class=(isWishlisted ? "bi-heart-fill text-rose-500 text-lg" : "bi-heart text-lg") aria-hidden="true")
                 | #{isWishlisted ? 'Đã yêu thích sản phẩm' : 'Thêm vào danh sách yêu thích'}
 
     //- ---------------------------------------------------------------------
@@ -240,7 +240,7 @@ block main
           span(class="text-lg text-surface-400 font-semibold") (#{product.reviewCount || reviews ? reviews.length : 0})
         
         if isLogin
-          button(data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn-premium btn-premium-primary")
+          button(data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn-premium btn-primary")
             i.bi.bi-pencil-square.mr-2
             | Viết đánh giá
         else
@@ -253,7 +253,7 @@ block main
           each review in reviews
             div(class="p-6 rounded-[2rem] border border-slate-100 bg-surface-50/50 hover:bg-white hover:shadow-lg transition-all duration-300 group")
               div(class="flex gap-4")
-                img(src="https://ui-avatars.com/api/?name=User&background=random" class="w-12 h-12 rounded-full border-2 border-white shadow-sm")
+                img(src="https://ui-avatars.com/api/?name=User&background=random" alt="User Avatar" width="48" height="48" class="w-12 h-12 rounded-full border-2 border-white shadow-sm")
                 div(class="flex-1")
                   div(class="flex items-center justify-between mb-2")
                     div(class="font-black text-surface-900") Người dùng ẩn danh
@@ -319,7 +319,7 @@ block main
                 label.block.text-sm.font-bold.text-surface-700.mb-2 Hình ảnh đính kèm
                 input.form-control.rounded-2xl.text-sm.bg-white.border-slate-200.p-3(type="file" name="images" multiple accept="image/*")
               
-              button.btn-premium.btn-premium-primary.w-full.py-4.text-lg.font-bold.rounded-2xl(type="submit") Gửi Đánh Giá Ngay
+              button.btn-premium.btn-primary.w-full.py-4.text-lg.font-bold.rounded-2xl(type="submit") Gửi Đánh Giá Ngay
 
   //- Variant Modal (Redesigned)
   if variantAttributes && (variantAttributes.colors.length > 0 || variantAttributes.storages.length > 0 || variantAttributes.sizes.length > 0)
@@ -344,24 +344,24 @@ block main
                   .text-xs.font-bold.text-surface-500.uppercase.tracking-widest.mb-4 Dung Lượng
                   .flex.flex-wrap.gap-3
                     each storage in variantAttributes.storages
-                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus:outline-none") #{storage}
+                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") #{storage}
               
               if variantAttributes.sizes.length > 0
                 div
                   .text-xs.font-bold.text-surface-500.uppercase.tracking-widest.mb-4 Kích Thước
                   .flex.flex-wrap.gap-3
                     each size in variantAttributes.sizes
-                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus:outline-none") #{size}
+                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") #{size}
                       
               if variantAttributes.colors.length > 0
                 div
                   .text-xs.font-bold.text-surface-500.uppercase.tracking-widest.mb-4 Màu Sắc
                   .flex.flex-wrap.gap-3
                     each color in variantAttributes.colors
-                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus:outline-none") #{color}
+                      button.variant-btn(type="button" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-surface-700 hover:border-brand-500 hover:text-brand-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") #{color}
                       
           .modal-footer.border-t.border-slate-100.bg-white.p-8
-            button#confirmVariantBtn.btn-premium.btn-premium-primary.w-full.py-4.text-lg.font-bold.rounded-2xl.shadow-xl.shadow-brand-500_30(type="button") Xác Nhận Thêm Vào Giỏ
+            button#confirmVariantBtn.btn-premium.btn-primary.w-full.py-4.text-lg.font-bold.rounded-2xl.shadow-xl.shadow-brand-500_30(type="button") Xác Nhận Thêm Vào Giỏ
 
   //- =====================================================================
   //- GỢI Ý SẢN PHẨM (Related & Recently Viewed)
@@ -378,8 +378,8 @@ block main
           div(class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6")
             each item in relatedProducts
               div(class="bg-white rounded-2xl p-3 border border-surface-100 shadow-sm hover:shadow-xl hover:shadow-brand-500/10 transition-all duration-300 group relative flex flex-col h-full")
-                a(href=`/product/detail/${item.slug}` class="block relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50")
-                  img(src=item.thumbnail alt=item.title class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500")
+                a(href=`/product/detail/${item.slug}` class="block relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                  img(src=item.thumbnail alt=item.title width="200" height="200" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 motion-reduce:transform-none")
                   if item.discountPercentage > 0
                     span(class="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-md") -#{item.discountPercentage}%
                 
@@ -402,8 +402,8 @@ block main
           div(class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6")
             each item in recentlyViewedProducts
               div(class="bg-white rounded-2xl p-3 border border-surface-100 shadow-sm hover:shadow-xl transition-all duration-300 group relative flex flex-col h-full opacity-80 hover:opacity-100")
-                a(href=`/product/detail/${item.slug}` class="block relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50")
-                  img(src=item.thumbnail alt=item.title class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500")
+                a(href=`/product/detail/${item.slug}` class="block relative aspect-square rounded-xl overflow-hidden mb-3 bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
+                  img(src=item.thumbnail alt=item.title width="200" height="200" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 motion-reduce:transform-none")
                 
                 div(class="flex-1 flex flex-col")
                   a(href=`/product/detail/${item.slug}`)
@@ -416,7 +416,7 @@ block main
   //- ---------------------------------------------------------------------
   script.
     document.addEventListener('DOMContentLoaded', function () {
-      const isLogin = !{JSON.stringify(isLogin)};
+      const isLogin = !{JSON.stringify(isLogin || false)};
 
       // Quantity buttons
       window.changeQty = function(delta) {

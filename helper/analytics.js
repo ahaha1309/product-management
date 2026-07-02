@@ -233,6 +233,13 @@ module.exports.getReviewAnalytics = async (days = 30) => {
       deleted: false
     });
 
+    // Reviews chờ duyệt
+    const pendingReviewsCount = await Review.countDocuments({
+      createdAt: { $gte: startDate },
+      status: 'pending',
+      deleted: false
+    });
+
     // Average rating
     const avgRating = await Review.aggregate([
       {
@@ -261,7 +268,7 @@ module.exports.getReviewAnalytics = async (days = 30) => {
     return {
       totalReviews,
       approvedReviews,
-      pendingReviews: totalReviews - approvedReviews,
+      pendingReviews: pendingReviewsCount,
       averageRating: avgRating[0]?.avg.toFixed(1) || 0,
       ratingDistribution: ratingDist.reduce((acc, item) => {
         acc[item._id] = item.count;

@@ -19,7 +19,7 @@ block main
         div(class="bento-card !p-0 overflow-hidden mb-8")
           if article.thumbnail
             div(class="relative h-[300px] md:h-[400px] w-full")
-              img(src=article.thumbnail alt=article.title class="w-full h-full object-cover")
+              img(src=article.thumbnail alt=article.title width="800" height="500" class="w-full h-full object-cover")
           
           div(class="p-6 md:p-10")
             h1(class="text-3xl md:text-4xl font-black text-surface-950 tracking-tight leading-tight mb-6") #{article.title}
@@ -44,14 +44,14 @@ block main
             div(class="mt-12 pt-8 border-t border-slate-100")
               h6(class="text-sm font-bold text-surface-900 uppercase tracking-wider mb-4") Chia sẻ bài viết:
               div(class="flex flex-wrap gap-3")
-                a(href="https://www.facebook.com/sharer/sharer.php" target="_blank" class="px-5 py-2.5 rounded-xl bg-[#1877F2] text-white text-sm font-bold hover:bg-[#166FE5] transition-colors flex items-center gap-2 shadow-sm shadow-[#1877F2]/30")
-                  i.bi.bi-facebook
+                a(href="https://www.facebook.com/sharer/sharer.php" target="_blank" class="px-5 py-2.5 rounded-xl bg-[#1877F2] text-white text-sm font-bold hover:bg-[#166FE5] transition-colors flex items-center gap-2 shadow-sm shadow-[#1877F2]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1877F2] focus-visible:ring-offset-2")
+                  i.bi.bi-facebook(aria-hidden="true")
                   | Facebook
-                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#1DA1F2] text-white text-sm font-bold hover:bg-[#1A91DA] transition-colors flex items-center gap-2 shadow-sm shadow-[#1DA1F2]/30")
-                  i.bi.bi-twitter
+                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#1DA1F2] text-white text-sm font-bold hover:bg-[#1A91DA] transition-colors flex items-center gap-2 shadow-sm shadow-[#1DA1F2]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1DA1F2] focus-visible:ring-offset-2")
+                  i.bi.bi-twitter(aria-hidden="true")
                   | Twitter
-                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#22BF5B] transition-colors flex items-center gap-2 shadow-sm shadow-[#25D366]/30")
-                  i.bi.bi-whatsapp
+                a(href="#" class="px-5 py-2.5 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#22BF5B] transition-colors flex items-center gap-2 shadow-sm shadow-[#25D366]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2")
+                  i.bi.bi-whatsapp(aria-hidden="true")
                   | WhatsApp
 
         //- Comments Section
@@ -65,8 +65,8 @@ block main
               div(class="relative")
                 textarea#article-comment-input(rows="3" placeholder="Chia sẻ suy nghĩ của bạn về bài viết..." class="w-full bg-surface-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all resize-none")
                 div(class="mt-3 flex justify-end")
-                  button(type="button" onclick="submitArticleComment()" class="btn-premium btn-premium-primary px-8 py-2.5 text-sm")
-                    i.bi.bi-send.mr-2
+                  button(type="button" onclick="submitArticleComment()" class="btn-premium btn-primary px-8 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
+                    i.bi.bi-send.mr-2(aria-hidden="true")
                     | Gửi bình luận
             else
               div(class="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center gap-4")
@@ -80,7 +80,7 @@ block main
             if comments && comments.length > 0
               each comment in comments
                 div(class="flex gap-4 p-4 rounded-2xl bg-surface-50/50 border border-slate-100 transition-colors hover:bg-surface-50")
-                  img(src=comment.userAvatar class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0")
+                  img(src=comment.userAvatar width="48" height="48" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0")
                   div(class="flex-1")
                     div(class="flex items-center justify-between mb-1")
                       div(class="font-bold text-surface-900 text-sm") #{comment.userName}
@@ -104,10 +104,10 @@ block main
               
               div(class="flex flex-col gap-4")
                 each recent in recentArticles
-                  a(href=`/articles/${recent.slug}` class="group flex gap-3 p-2 -mx-2 rounded-xl hover:bg-surface-50 transition-colors")
+                  a(href=`/articles/${recent.slug}` class="group flex gap-3 p-2 -mx-2 rounded-xl hover:bg-surface-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500")
                     div(class="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-surface-100")
                       if recent.thumbnail
-                        img(src=recent.thumbnail alt=recent.title class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500")
+                        img(src=recent.thumbnail alt=recent.title width="80" height="80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 motion-reduce:transition-none motion-reduce:transform-none")
                       else
                         div(class="w-full h-full flex items-center justify-center text-surface-400")
                           i.bi.bi-image
@@ -124,8 +124,8 @@ block main
                 i.bi.bi-bag-heart.text-3xl.text-brand-300
               h6(class="text-xl font-black mb-2") Mua sắm ngay!
               p(class="text-sm font-medium text-brand-100/80 mb-6") Hàng nghìn sản phẩm chính hãng công nghệ mới nhất đang chờ bạn khám phá.
-              a(href="/product" class="btn-premium btn-premium-primary w-full py-3 shadow-brand-500/30")
-                i.bi.bi-shop.mr-2
+              a(href="/product" class="btn-premium btn-primary w-full py-3 shadow-brand-500/30 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
+                i.bi.bi-shop.mr-2(aria-hidden="true")
                 | Xem sản phẩm
 
   script.
@@ -171,7 +171,7 @@ block main
           const newComment = document.createElement('div');
           newComment.className = 'flex gap-4 p-4 rounded-2xl bg-brand-50 border border-brand-100 mb-4 animate-fade-in';
           newComment.innerHTML = `
-            <img class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0" src="${data.comment.userAvatar}">
+            <img class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0" width="48" height="48" src="${data.comment.userAvatar}">
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
                 <div class="font-bold text-surface-900 text-sm">${data.comment.userName}</div>

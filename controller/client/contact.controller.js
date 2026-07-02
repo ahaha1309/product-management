@@ -1,5 +1,5 @@
 module.exports.index = async (req, res) => {
-  const isLogin = req.cookies.token ? true : false;
+  const isLogin = res.locals.isLogin || false;
   res.render('client/pages/contact/index', {
     title: 'Liên hệ - NVH Mall Store',
     isLogin: isLogin,

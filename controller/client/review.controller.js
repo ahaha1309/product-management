@@ -246,11 +246,13 @@ module.exports.markHelpful = async (req, res) => {
   }
 };
 
-// [ADMIN GET] Danh sách reviews chờ duyệt
+// [ADMIN GET] Danh sách reviews chờ duyệt (Card view UI)
 module.exports.adminPending = async (req, res) => {
   try {
+    const status = req.query.status || 'pending';
     const reviews = await Review.find({
-      status: 'pending'
+      status: status,
+      deleted: false
     }).sort({ createdAt: -1 });
 
     const Product = require('../../models/product.model');
@@ -267,7 +269,8 @@ module.exports.adminPending = async (req, res) => {
 
     res.render('admin/pages/reviews/pending', {
       reviews: reviewsWithProducts,
-      title: 'Reviews chờ duyệt'
+      title: 'Quản lý Reviews',
+      currentStatus: status
     });
   } catch (error) {
     console.log('Error in adminPending:', error);

@@ -42,4 +42,5 @@ module.exports = (app) => {
   app.use(path_admin + '/purchase-orders', authMiddleware.requireAuth, require('./purchase-order.route'));
   app.use(path_admin + '/settings', authMiddleware.requireAuth, require('./setting.router'));
   app.use(path_admin + '/flash-sales', authMiddleware.requireAuth, require('./flash-sale.router'));
+  app.use(path_admin + '/activity-logs', authMiddleware.requireAuth, require('./activity-log.route'));
 };

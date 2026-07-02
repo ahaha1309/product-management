@@ -11,7 +11,7 @@ block main
         div(class="absolute inset-0 bg-brand-500/20 blur-[80px] rounded-full")
         
         //- 404 Illustration (using local icon to avoid broken external links)
-        div(class="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-white shadow-2xl bg-white flex items-center justify-center animate-[float_6s_ease-in-out_infinite]")
+        div(class="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-white shadow-2xl bg-white flex items-center justify-center animate-[float_6s_ease-in-out_infinite] motion-reduce:animate-none")
           i(class="bi bi-bag-x text-[120px] text-brand-500 drop-shadow-md")
           
         //- Badge
@@ -34,18 +34,18 @@ block main
 
       //- Action Buttons
       div(class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto")
-        a(href="/" class="btn-premium btn-premium-primary w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base")
-          i.bi.bi-house-door-fill
+        a(href="/" class="btn-premium btn-primary w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
+          i.bi.bi-house-door-fill(aria-hidden="true")
           | Về Trang Chủ
 
-        a(href="/product" class="btn-premium bg-white text-surface-700 border border-slate-200 hover:border-brand-500 hover:text-brand-500 w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base shadow-sm")
-          i.bi.bi-bag-heart
+        a(href="/product" class="btn-premium bg-white text-surface-700 border border-slate-200 hover:border-brand-500 hover:text-brand-500 w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
+          i.bi.bi-bag-heart(aria-hidden="true")
           | Tiếp tục mua sắm
 
       //- Quick Links
       div(class="mt-12 w-full max-w-md")
         p(class="text-sm font-semibold text-surface-400 uppercase tracking-wider mb-4") Hoặc xem nhanh:
         div(class="flex flex-wrap items-center justify-center lg:justify-start gap-3")
-          a(href="/articles" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 📰 Tin tức
-          a(href="/contact" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 🎧 Hỗ trợ
-          a(href="/loyalty" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors") 🎁 Điểm thưởng
+          a(href="/articles" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") 📰 Tin tức
+          a(href="/contact" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") 🎧 Hỗ trợ
+          a(href="/loyalty" class="px-5 py-2.5 rounded-xl bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") 🎁 Điểm thưởng

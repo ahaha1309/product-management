@@ -34,6 +34,7 @@ module.exports.changeStatus = async (req, res) => {
     let note = 'Trạng thái đơn hàng được cập nhật';
     if (status === 'confirm') note = 'Đơn hàng đã được xác nhận và đang được xử lý';
     else if (status === 'finish') note = 'Đơn hàng đã được giao thành công';
+    else if (status === 'returned') note = 'Đơn hàng đã được hoàn trả (Refund)';
     else if (status === 'canceled') note = 'Đơn hàng đã bị hủy';
 
     const timelineEntry = {
@@ -71,7 +72,10 @@ module.exports.changeStatus = async (req, res) => {
       }
     }
 
-    if (status === 'canceled') {
+    const orderBefore = await Order.findById(id);
+    const previousStatus = orderBefore ? orderBefore.status : '';
+
+    if (status === 'canceled' || status === 'returned') {
       const order = await Order.findById(id);
       if (order && order.userId) {
         // Hoàn lại tồn kho
@@ -93,10 +97,26 @@ module.exports.changeStatus = async (req, res) => {
         }
 
         const user = await User.findById(order.userId);
-        if (user && user.email) {
-          mailHelper.sendOrderCancellationEmail(order, user).catch(err => {
-             console.log("Lỗi gửi mail báo hủy (admin):", err);
-          });
+        if (user) {
+          // Send email if canceled
+          if (status === 'canceled' && user.email) {
+            mailHelper.sendOrderCancellationEmail(order, user).catch(err => {
+               console.log("Lỗi gửi mail báo hủy (admin):", err);
+            });
+          }
+
+          // If returned and previously finished, deduct totalSpent
+          if (status === 'returned' && previousStatus === 'finish') {
+            user.totalSpent = Math.max(0, (user.totalSpent || 0) - order.amount);
+            
+            let newTier = 'Bronze';
+            if (user.totalSpent >= 50000000) newTier = 'Diamond';
+            else if (user.totalSpent >= 20000000) newTier = 'Gold';
+            else if (user.totalSpent >= 5000000) newTier = 'Silver';
+            
+            user.tier = newTier;
+            await user.save();
+          }
         }
       }
     }
@@ -122,10 +142,8 @@ module.exports.changeStatus = async (req, res) => {
             newTier = 'Silver';
           }
 
-          // Cấp voucher nếu lên hạng
           if (user.tier !== newTier) {
             user.tier = newTier;
-            // TODO: (Optional) Tạo voucher chúc mừng lên hạng
           }
           await user.save();
         }

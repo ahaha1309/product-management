@@ -26,6 +26,10 @@ module.exports = (app) => {
   app.use('/', settingMiddleware.settingGeneral);
   
   app.use('/',  homeRouter);
+  
+  const sitemapController = require('../../controller/client/sitemap.controller');
+  app.get('/sitemap.xml', sitemapController.generateSitemap);
+  
   app.use('/product', productRouter);
   app.use('/search',searchRouter)
   app.use('/cart', authMiddleware.requireAuth, cartRouter);
@@ -51,7 +55,7 @@ module.exports = (app) => {
   app.use('/vouchers', voucherRouter);
   
   // ✅ SEO - Sitemap
-  app.get('/sitemap.xml', require('../../controller/client/sitemap.controller').index);
+  app.get('/sitemap.xml', require('../../controller/client/sitemap.controller').generateSitemap);
 
   // ✅ Intercept Socket.io requests (Vercel serverless doesn't support websockets natively)
   app.use('/socket.io', (req, res) => {

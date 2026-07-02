@@ -38,7 +38,7 @@ class ChatbotClient {
             if (data.userId === this.userId) {
                 // Nếu nhận được tin nhắn từ Admin, tự động chốt cứng mode human
                 if (data.isAdmin) {
-                    this.chatMode = 'human';
+                    // Đã loại bỏ việc chốt cứng chatMode='human'. AI sẽ luôn là người xử lý tin nhắn đầu tiên.
                     this.addMessage(data.content, false, true); // true = isAdmin
                     
                     // Hiện bong bóng nếu đang tắt
@@ -52,11 +52,21 @@ class ChatbotClient {
         // Lắng nghe lịch sử chat human
         this.socket.on('SERVER_RETURN_HISTORY', (history) => {
             if (history && history.length > 0) {
-                // Nếu có lịch sử chat với human, tự động chuyển sang mode human luôn (để họ chat tiếp)
-                // Tuy nhiên, ta có thể ưu tiên AI hỏi lại. 
-                // Ở đây ta ưu tiên AI, lịch sử human chỉ load khi chuyển qua human mode.
+                // Xoá câu chào mặc định của AI
+                this.messageContainer.innerHTML = ''; 
+                
+                history.forEach(msg => {
+                    this.addMessage(msg.content, !msg.isAdmin, msg.isAdmin);
+                });
+                
+                // Lưu ý: Không tự động chuyển sang mode human ở đây nữa.
+                // Để mặc định AI tiếp tục trả lời các câu hỏi mới.
+                // Nếu Admin trả lời (SERVER_RETURN_MESSAGE có isAdmin=true), nó sẽ tự nhảy sang mode human sau.
             }
         });
+        
+        // Yêu cầu lấy lịch sử ngay khi kết nối
+        this.socket.emit('CLIENT_FETCH_HISTORY', { userId: this.userId });
     }
 
     setupEventListeners() {
@@ -107,10 +117,18 @@ class ChatbotClient {
         const isRequestingHuman = humanKeywords.some(kw => question.toLowerCase().includes(kw));
 
         if (isRequestingHuman && this.chatMode === 'ai') {
-            this.switchToHumanMode("Tôi đang kết nối bạn với Nhân viên chăm sóc khách hàng. Xin vui lòng đợi trong giây lát...");
+            if (!this.userId) {
+                this.addMessage('Vui lòng đăng nhập để liên hệ với Nhân viên chăm sóc khách hàng.', false, true);
+                this.isLoading = false;
+                this.sendBtn.disabled = false;
+                this.inputField.focus();
+                return;
+            }
+
+            this.addMessage("Tôi đang kết nối bạn với Nhân viên chăm sóc khách hàng. Xin vui lòng đợi trong giây lát...", false, false);
             
             // Gửi luôn câu hỏi hiện tại cho admin
-            if (this.userId && this.socket) {
+            if (this.socket) {
                 this.socket.emit('CLIENT_SEND_MESSAGE', {
                     userId: this.userId,
                     content: question,
@@ -123,29 +141,8 @@ class ChatbotClient {
             return;
         }
 
-        // --- XỬ LÝ THEO MODE ---
-        if (this.chatMode === 'human') {
-            if (!this.userId) {
-                this.addMessage('Vui lòng đăng nhập để liên hệ với Nhân viên.', false, true);
-                this.isLoading = false;
-                this.sendBtn.disabled = false;
-                return;
-            }
-
-            // Gửi qua Socket cho Admin
-            this.socket.emit('CLIENT_SEND_MESSAGE', {
-                userId: this.userId,
-                content: question,
-                isAdmin: false
-            });
-
-            this.isLoading = false;
-            this.sendBtn.disabled = false;
-            this.inputField.focus();
-
-        } else {
-            // Gửi cho AI
-            try {
+        // Luôn gửi cho AI xử lý trước
+        try {
                 const response = await fetch('/chatbot/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -167,7 +164,7 @@ class ChatbotClient {
                     const isAiFailing = failureKeywords.some(kw => botReply.toLowerCase().includes(kw));
 
                     if (isAiFailing && this.userId) {
-                        this.switchToHumanMode("Hệ thống tự động đang gặp chút khó khăn. Tôi đang chuyển bạn tới Quản trị viên để được hỗ trợ tốt nhất...");
+                        this.addMessage("Câu này tôi không thể giải thích rõ được, tôi đang chuyển câu hỏi của bạn cho nhân viên hỗ trợ nhé...", false, false);
                         if (this.socket) {
                             this.socket.emit('CLIENT_SEND_MESSAGE', {
                                 userId: this.userId,
@@ -179,7 +176,7 @@ class ChatbotClient {
                 } else {
                     this.addMessage(`❌ Lỗi: ${data.message}`, false, false);
                     if (this.userId) {
-                        this.switchToHumanMode("Đang kết nối bạn với Quản trị viên...");
+                        this.addMessage("Đang kết nối bạn với Quản trị viên...", false, false);
                         if (this.socket) {
                             this.socket.emit('CLIENT_SEND_MESSAGE', {
                                 userId: this.userId,
@@ -192,7 +189,7 @@ class ChatbotClient {
             } catch (error) {
                 this.addMessage('❌ Có lỗi xảy ra khi kết nối tới Trợ lý AI. Vui lòng đợi...', false, false);
                 if (this.userId) {
-                    this.switchToHumanMode("Đang kết nối bạn với Quản trị viên...");
+                    this.addMessage("Đang kết nối bạn với Quản trị viên...", false, false);
                     if (this.socket) {
                         this.socket.emit('CLIENT_SEND_MESSAGE', {
                             userId: this.userId,
@@ -206,20 +203,9 @@ class ChatbotClient {
                 this.sendBtn.disabled = false;
                 this.inputField.focus();
             }
-        }
     }
 
-    switchToHumanMode(reasonMessage) {
-        this.chatMode = 'human';
-        setTimeout(() => {
-            this.addMessage(reasonMessage, false, true);
-            
-            // Lấy lịch sử chat cũ với admin
-            if (this.socket && this.userId) {
-                this.socket.emit('CLIENT_FETCH_HISTORY', { userId: this.userId });
-            }
-        }, 1000);
-    }
+    // Đã loại bỏ switchToHumanMode vì AI sẽ luôn đóng vai trò lọc tin nhắn
 
     formatMessage(text) {
         if (!text) return '';

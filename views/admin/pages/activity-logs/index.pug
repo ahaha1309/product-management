@@ -1,0 +1,52 @@
+extends ../../layout/default.pug 
+include ../../mixins/moment.pug
+
+block main 
+  div(class="max-w-7xl mx-auto space-y-6")
+    div(class="flex justify-between items-center")
+      h1(class="text-2xl font-bold text-surface-900 tracking-tight") Lịch sử hoạt động (Audit Logs)
+      
+    div(class="bg-white p-6 rounded-2xl border border-surface-200 shadow-sm")
+      div(class="overflow-x-auto")
+        table(class="w-full text-left border-collapse whitespace-nowrap")
+          thead
+            tr(class="bg-surface-50 border-b border-surface-200 text-xs uppercase text-surface-500 font-semibold tracking-wider")
+              th(class="px-4 py-3") Thời gian
+              th(class="px-4 py-3") Tài khoản
+              th(class="px-4 py-3") Hành động
+              th(class="px-4 py-3") Mục tiêu
+              th(class="px-4 py-3 max-w-xs") Chi tiết
+              th(class="px-4 py-3") IP
+          tbody(class="divide-y divide-surface-100 text-sm text-surface-700")
+            if logs && logs.length > 0
+              each log in logs
+                tr(class="hover:bg-surface-50 transition-colors")
+                  td(class="px-4 py-3 whitespace-nowrap")
+                    +formatDateTime(log.createdAt)
+                  td(class="px-4 py-3 flex items-center gap-2")
+                    if log.accountId
+                      img(src=(log.accountId.avatar || "https://ui-avatars.com/api/?name=A&background=e2e8f0&color=64748b") class="w-8 h-8 rounded-full")
+                      div
+                        div(class="font-medium text-surface-900") #{log.accountId.fullname || 'N/A'}
+                        div(class="text-xs text-surface-500") #{log.accountId.email || ''}
+                    else
+                      span Hệ thống
+                  td(class="px-4 py-3")
+                    if log.action === 'CREATE'
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-700") TẠO MỚI
+                    else if log.action === 'UPDATE'
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-700") CẬP NHẬT
+                    else if log.action === 'DELETE'
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-rose-100 text-rose-700") XÓA
+                    else if log.action === 'LOGIN'
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-brand-100 text-brand-700") ĐĂNG NHẬP
+                    else if log.action === 'LOGOUT'
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700") ĐĂNG XUẤT
+                    else
+                      span(class="px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700") #{log.action}
+                  td(class="px-4 py-3") #{log.targetType}
+                  td(class="px-4 py-3 max-w-xs truncate" title=log.details) #{log.details}
+                  td(class="px-4 py-3 font-mono text-xs") #{log.ipAddress}
+            else
+              tr
+                td(colspan="6" class="px-4 py-8 text-center text-surface-500") Chưa có dữ liệu lịch sử hoạt động

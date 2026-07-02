@@ -1,116 +1,120 @@
-aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex flex-col shrink-0 transition-transform duration-300 border-r border-slate-900 shadow-xl z-50 fixed md:relative -translate-x-full md:translate-x-0")
+aside(id="admin-sidebar" class="w-64 bg-surface-950 text-surface-300 h-screen flex flex-col shrink-0 transition-transform duration-300 border-r border-surface-900 shadow-xl z-50 fixed md:relative -transurface-x-full md:transurface-x-0")
   //- Logo Area
   div(class="h-16 flex items-center px-6 border-b border-surface-800/50 shrink-0")
-    a(href=`${prefixAdmin}/dashboard` class="logo-link flex items-center gap-3 group")
-      img(src="/image/logo.png" alt="Logo" class="w-8 h-8 rounded-lg shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform")
+    a(href=`${prefixAdmin}/dashboard` class="logo-link flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 rounded-lg")
+      img(src="/image/logo.png" alt="" width="32" height="32" class="w-8 h-8 rounded-lg shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform")
       span(class="text-lg font-bold text-white tracking-wide") NVH <span class="text-brand-400">Mall</span>
   
   //- Menu Area
   div(class="flex-1 overflow-y-auto hide-scrollbar py-4 px-3 space-y-1")
     
     //- Dashboard
-    a(href=`${prefixAdmin}/dashboard` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/dashboard` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-speedometer2.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Tổng quan
       
     //- Catalog
     div(class="pt-4 pb-2")
-      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Catalog
+      p(class="px-3 text-xs font-semibold text-surface-400 uppercase tracking-wider") Catalog
       
     if(role.permission.includes('products_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-box-seam.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Sản phẩm
         
     if(role.permission.includes('products-category_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/category-product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/category-product` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-folder2-open.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Danh mục sản phẩm
 
     //- Inventory
     div(class="pt-4 pb-2")
-      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Inventory
+      p(class="px-3 text-xs font-semibold text-surface-400 uppercase tracking-wider") Inventory
       
-    a(href=`${prefixAdmin}/suppliers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/suppliers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-truck.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Nhà cung cấp
       
-    a(href=`${prefixAdmin}/purchase-orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/purchase-orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-box-arrow-in-down.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Nhập kho
 
     //- Sales
     div(class="pt-4 pb-2")
-      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Sales
+      p(class="px-3 text-xs font-semibold text-surface-400 uppercase tracking-wider") Sales
       
     if(role.permission.includes('orders_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/orders` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-bag-check.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Đơn hàng
         
     if(role.permission.includes('accounts_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/users` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/users` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-people.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Khách hàng
 
-    a(href=`${prefixAdmin}/vouchers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/vouchers` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-ticket-perforated.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Voucher
 
-    a(href=`${prefixAdmin}/flash-sales` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/flash-sales` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-lightning-charge.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Flash Sale
         
     //- Content & Marketing
     div(class="pt-4 pb-2")
-      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") Content
+      p(class="px-3 text-xs font-semibold text-surface-400 uppercase tracking-wider") Content
       
     if(role.permission.includes('articles_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/articles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/articles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-newspaper.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Bài viết
         
     if(role.permission.includes('articles-category_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/category-article` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/category-article` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-tags.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Danh mục bài viết
 
-    a(href=`${prefixAdmin}/reviews` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/reviews` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-star.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Quản lý Reviews
       
-    a(href=`${prefixAdmin}/loyalty` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/loyalty` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-award.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Loyalty & Điểm
       
-    a(href=`${prefixAdmin}/chats` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/chats` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-chat-square-dots.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Hỗ trợ CSKH
 
     //- System
     div(class="pt-4 pb-2")
-      p(class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider") System
+      p(class="px-3 text-xs font-semibold text-surface-400 uppercase tracking-wider") System
       
-    a(href=`${prefixAdmin}/analytics` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+    a(href=`${prefixAdmin}/analytics` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-graph-up-arrow.text-lg.transition-colors(class="group-hover:text-brand-400")
       | Thống kê (Analytics)
 
     if(role.permission.includes('accounts_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/accounts` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/accounts` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-person-badge.text-lg.transition-colors(class="group-hover:text-brand-400")
-        | Tài khoản Admin
+        | Quản trị viên
+        
+    a(href=`${prefixAdmin}/activity-logs` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
+      i.bi.bi-shield-check.text-lg.transition-colors(class="group-hover:text-brand-400")
+      | Lịch sử hoạt động
 
     if(role.permission.includes('roles_view') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/roles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/roles` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-shield-check.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Nhóm quyền
         
     if(role.permission.includes('roles_permission') || role.permission.includes('*'))
-      a(href=`${prefixAdmin}/roles/permission` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group")
+      a(href=`${prefixAdmin}/roles/permission` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
         i.bi.bi-key.text-lg.transition-colors(class="group-hover:text-brand-400")
         | Phân quyền
         
-    a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-white group")
+    a(href=`${prefixAdmin}/settings/general` class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-300 transition-all hover:bg-surface-800 hover:text-white group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       i.bi.bi-gear.text-lg.transition-colors(class="group-hover:text-brand-400")
       span Cài đặt chung
 
@@ -133,7 +137,7 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
       });
       
       if (activeLink) {
-        activeLink.classList.remove("text-slate-300");
+        activeLink.classList.remove("text-surface-300");
         activeLink.classList.add("bg-brand-500", "text-white", "shadow-md", "shadow-brand-500/20");
         
         // Find icon and override its color
@@ -149,10 +153,10 @@ aside(id="admin-sidebar" class="w-64 bg-slate-950 text-slate-300 h-screen flex f
 
   //- User Profile Footer
   div(class="p-4 border-t border-surface-800/50 mt-auto shrink-0")
-    a(href=`${prefixAdmin}/my-account` class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-800 transition-colors group")
+    a(href=`${prefixAdmin}/my-account` class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-800 transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400")
       div(class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm")
         | #{account.fullname ? account.fullname.charAt(0).toUpperCase() : 'A'}
       div(class="flex-1 min-w-0")
         p(class="text-sm font-semibold text-white truncate") #{account.fullname}
         p(class="text-xs text-surface-500 truncate") #{role.title}
-      i.bi.bi-chevron-right.text-xs.text-surface-600.transition-transform(class="group-hover:translate-x-1")
+      i.bi.bi-chevron-right.text-xs.text-surface-600.transition-transform(class="group-hover:transurface-x-1")

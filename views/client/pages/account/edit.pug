@@ -15,13 +15,13 @@ block main
         
         //- Avatar Upload
         div(class="flex flex-col items-center justify-center mb-10")
-          div(class="relative group cursor-pointer" onclick="document.getElementById('avatarInput').click()")
-            img#avatarPreview(src=user.avatar || 'https://via.placeholder.com/150?text=No+Avatar' alt='Avatar' class="w-32 h-32 rounded-full border-4 border-surface-100 object-cover bg-surface-50 group-hover:border-brand-200 transition-colors shadow-sm")
+          button(type="button" aria-label="Tải ảnh đại diện lên" class="relative group cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 rounded-full" onclick="document.getElementById('avatarInput').click()")
+            img#avatarPreview(src=user.avatar || 'https://via.placeholder.com/150?text=No+Avatar' alt='Avatar' width="128" height="128" class="w-32 h-32 rounded-full border-4 border-surface-100 object-cover bg-surface-50 group-hover:border-brand-200 transition-colors shadow-sm")
             div(class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center")
-              i.bi.bi-camera.text-white.text-2xl
+              i.bi.bi-camera.text-white.text-2xl(aria-hidden="true")
             
             div(class="absolute bottom-0 right-0 w-10 h-10 bg-brand-500 text-white rounded-full flex items-center justify-center border-4 border-white shadow-md transition-transform group-hover:scale-110")
-              i.bi.bi-upload.text-sm
+              i.bi.bi-upload.text-sm(aria-hidden="true")
               
           input#avatarInput(type="file" name="avatar" accept="image/*" class="hidden")
           p(class="text-xs text-surface-400 mt-4 font-medium uppercase tracking-wider") Định dạng: JPG, PNG (Max 2MB)
@@ -56,8 +56,8 @@ block main
               input(type="text" name="address" value=(user.address || '') placeholder="Số nhà, Đường, Phường/Xã, Quận/Huyện..." required class="w-full bg-surface-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all")
 
         div(class="flex flex-col sm:flex-row gap-3 mt-10 pt-8 border-t border-slate-100")
-          button(type="submit" class="btn-premium btn-premium-primary flex-1 py-3.5 text-base") Lưu thay đổi
-          a(href=`/my-account/${user._id}` class="px-8 py-3.5 rounded-xl border border-slate-200 text-sm font-bold text-surface-600 hover:bg-surface-50 transition-colors text-center") Hủy bỏ
+          button(type="submit" class="btn-premium btn-primary flex-1 py-3.5 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2") Lưu thay đổi
+          a(href=`/my-account/${user._id}` class="px-8 py-3.5 rounded-xl border border-slate-200 text-sm font-bold text-surface-600 hover:bg-surface-50 transition-colors text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") Hủy bỏ
 
   script.
     // Preview Avatar Image

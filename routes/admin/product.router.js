@@ -16,6 +16,7 @@ const Controller = require('../../controller/admin/product.controller');
 const validate = require('../../validate/admin/product.validate');
 
 router.get('/', Controller.product);
+router.get('/export-csv', Controller.exportCsv);
 router.patch('/change-status/:status/:id', Controller.changeStatus);
 router.patch('/change-multi', Controller.changeMulti);
 router.patch('/change-activity/:activity/:id', Controller.changeActivity);

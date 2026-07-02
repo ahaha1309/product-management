@@ -13,12 +13,12 @@ block main
       
       div(class="flex gap-2")
         if(role.permission.includes('roles_permission') || role.permission.includes('*'))
-          a(href=`${prefixAdmin}/roles/permission` class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold rounded-xl transition-all active:scale-95 border border-indigo-200")
+          a(href=`${prefixAdmin}/roles/permission` class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold rounded-xl transition-all active:scale-95 border border-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500")
             i.bi.bi-shield-lock-fill.text-lg
             | Phân quyền chi tiết
             
         if(role.permission.includes('roles_create') || role.permission.includes('*'))
-          a(href=`${prefixAdmin}/roles/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95")
+          a(href=`${prefixAdmin}/roles/create` class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500 focus-visible:ring-offset-2")
             i.bi.bi-plus-lg.text-lg
             | Thêm nhóm quyền
 
@@ -50,13 +50,13 @@ block main
                     
                     td(class="px-4 py-3 text-right")
                       div(class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity")
-                        a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-surface-200 hover:text-brand-600 transition-colors" title="Chi tiết")
+                        a(href=`${prefixAdmin}/roles/detail/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-surface-200 hover:text-brand-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" title="Chi tiết")
                           i.bi.bi-eye
                         if(role.permission.includes('roles_edit') || role.permission.includes('*'))
-                          a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-amber-100 hover:text-amber-600 transition-colors" title="Sửa")
+                          a(href=`${prefixAdmin}/roles/edit/${Item.id}` class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-amber-100 hover:text-amber-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500" title="Sửa")
                             i.bi.bi-pencil-square
                         if(role.permission.includes('roles_delete') || role.permission.includes('*'))
-                          button(button-change-activity="delete" btn-id=Item.id class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-100 hover:text-rose-600 transition-colors" title="Xóa")
+                          button(button-change-activity="delete" btn-id=Item.id class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-100 text-surface-600 hover:bg-rose-100 hover:text-rose-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500" title="Xóa")
                             i.bi.bi-trash
               else
                 tr

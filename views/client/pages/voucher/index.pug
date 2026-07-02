@@ -165,7 +165,7 @@ block main
                   div(class="flex-1 flex flex-col justify-center")
                     div(class="flex justify-between items-start mb-1")
                       div(class="font-black text-slate-900 text-sm tracking-wide uppercase")= voucher.code
-                      button.btn-copy-code(data-code=voucher.code class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md hover:bg-brand-600 hover:text-white transition-colors") Copy
+                      button.btn-copy-code(type="button" aria-label=`Copy mã ${voucher.code}` data-code=voucher.code class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md hover:bg-brand-600 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500") Copy
                     
                     if voucher.type === 'freeship'
                       p(class="text-xs text-slate-500 font-medium mb-1") Miễn phí vận chuyển (Tối đa 30K)
@@ -201,7 +201,7 @@ block main
           p(class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1") Mã của bạn
           p#prizeCode(class="text-2xl font-black text-emerald-600 tracking-widest")
         
-        button#closePrizeBtn(class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors") Đóng lại
+        button#closePrizeBtn(type="button" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-900 focus-visible:ring-offset-2") Đóng lại
 
   script(src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js")
   script(src="/js/lucky-wheel.js")
