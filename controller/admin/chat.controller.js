@@ -6,6 +6,12 @@ const mongoose = require('mongoose');
 
 module.exports.index = async (req, res) => {
   try {
+    // Tự động chữa lành các cuộc hội thoại bị kẹt do lỗi code trước đó
+    await Conversation.updateMany(
+      { assignedAgentId: 'unknown_admin' },
+      { $set: { assignedAgentId: null, status: 'BOT' } }
+    );
+
     // Lấy ra danh sách các userId đã từng chat
     const uniqueUserIds = await Chat.distinct('userId', { deleted: false });
     
