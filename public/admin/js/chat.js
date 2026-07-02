@@ -61,8 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
       chatMessagesContainer.innerHTML = '<div class="text-center text-muted">Đang tải tin nhắn...</div>';
 
       // Yêu cầu load lịch sử (HTTP Fetch thay vì Socket)
-      fetch(`/admin/chat/history/${userId}`)
-        .then(res => res.json())
+      fetch(`/admin/chats/history/${userId}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.json();
+        })
         .then(history => {
           chatMessagesContainer.innerHTML = ''; // Xóa loading
           if (history.length === 0) {
@@ -85,8 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     const targetUserId = currentChatUserId.value;
     if (targetUserId) {
-      fetch(`/admin/chat/history/${targetUserId}`)
-        .then(res => res.json())
+      fetch(`/admin/chats/history/${targetUserId}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.json();
+        })
         .then(history => {
           // Lấy tin nhắn cuối cùng để so sánh (tránh render lại toàn bộ nếu không cần thiết)
           // Để đơn giản, render lại toàn bộ nhưng giữ thanh cuộn nếu đang ở dưới cùng
@@ -117,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (content && targetUserId) {
       // Dùng HTTP POST thay cho Socket
-      fetch('/admin/chat/send', {
+      fetch('/admin/chats/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
