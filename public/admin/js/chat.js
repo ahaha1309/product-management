@@ -97,6 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
   btnTake.addEventListener('click', async () => {
     const userId = currentChatUserId.value;
     if (!userId) return;
+    
+    // Prevent double clicking
+    if (btnTake.disabled) return;
+    btnTake.disabled = true;
+    
     try {
       loadingState.classList.remove('hidden');
       const res = await axios.post(`/admin/chats/take/${userId}`);
@@ -110,12 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       if (error.response && error.response.status === 409) {
         alert("Cuộc trò chuyện này đã được nhân viên khác tiếp nhận!");
-        loadHistory(userId); // Reload to get new status
+        loadHistory(userId, true); // Reload to get new status
       } else {
         alert("Có lỗi xảy ra khi tiếp nhận.");
       }
     } finally {
       loadingState.classList.add('hidden');
+      btnTake.disabled = false;
     }
   });
 

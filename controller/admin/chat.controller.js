@@ -74,7 +74,7 @@ module.exports.send = async (req, res) => {
     }
 
     const conversation = await Conversation.findOne({ userId });
-    const adminId = res.locals.user ? res.locals.user.id : null;
+    const adminId = res.locals.user ? res.locals.user._id.toString() : null;
     
     if (!conversation || conversation.status !== 'HUMAN' || conversation.assignedAgentId !== adminId) {
       return res.status(403).json({ error: "Forbidden: You do not own this conversation." });
@@ -95,7 +95,7 @@ module.exports.send = async (req, res) => {
 module.exports.take = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const adminId = res.locals.user ? res.locals.user.id : 'unknown_admin';
+    const adminId = res.locals.user ? res.locals.user._id.toString() : 'unknown_admin';
 
     const conversation = await Conversation.findOneAndUpdate(
       { userId: userId, assignedAgentId: null },
@@ -126,7 +126,7 @@ module.exports.take = async (req, res) => {
 module.exports.returnBot = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const adminId = res.locals.user ? res.locals.user.id : 'unknown_admin';
+    const adminId = res.locals.user ? res.locals.user._id.toString() : 'unknown_admin';
 
     const conversation = await Conversation.findOne({ userId });
     if (!conversation || conversation.assignedAgentId !== adminId) {
@@ -150,7 +150,7 @@ module.exports.returnBot = async (req, res) => {
 module.exports.closeConversation = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const adminId = res.locals.user ? res.locals.user.id : 'unknown_admin';
+    const adminId = res.locals.user ? res.locals.user._id.toString() : 'unknown_admin';
 
     const conversation = await Conversation.findOne({ userId });
     if (!conversation || conversation.assignedAgentId !== adminId) {
