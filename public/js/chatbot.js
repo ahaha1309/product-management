@@ -153,37 +153,6 @@ class ChatbotClient {
             return;
         }
 
-        // Kiểm tra xem khách hàng có chủ động đòi gặp người thật không
-        const humanKeywords = ['nhân viên', 'tư vấn viên', 'admin', 'người thật', 'hỗ trợ thật', 'không biết', 'gặp người'];
-        const isRequestingHuman = humanKeywords.some(kw => question.toLowerCase().includes(kw));
-
-        if (isRequestingHuman) {
-            if (!this.userId) {
-                this.addMessage('Vui lòng đăng nhập để liên hệ với Nhân viên chăm sóc khách hàng.', false, true);
-                this.isLoading = false;
-                this.sendBtn.disabled = false;
-                this.inputField.focus();
-                return;
-            }
-
-            this.addMessage("Tôi đang kết nối bạn với Nhân viên chăm sóc khách hàng. Xin vui lòng đợi trong giây lát...", false, false);
-            
-            // Gửi luôn câu hỏi hiện tại cho admin bằng REST
-            fetch('/chat/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: question })
-            }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
-            
-            // Cập nhật state nội bộ ngay lập tức để chặn AI các tin nhắn sau
-            this.updateState('HUMAN');
-            
-            this.isLoading = false;
-            this.sendBtn.disabled = false;
-            this.inputField.focus();
-            return;
-        }
-
         // Luôn gửi cho AI xử lý trước
         try {
                 const response = await fetch('/chatbot/chat', {
@@ -211,17 +180,30 @@ class ChatbotClient {
 
                         // Kiểm tra AI có bất lực không
                         const failureKeywords = ['xin lỗi', 'không có thông tin', 'chưa hiểu', 'không thể giúp', 'không tìm thấy', 'lỗi'];
+                        const humanKeywords = ['nhân viên', 'tư vấn viên', 'admin', 'người thật', 'hỗ trợ thật', 'không biết', 'gặp người'];
+                        
                         const isAiFailing = failureKeywords.some(kw => botReply.toLowerCase().includes(kw));
+                        const isRequestingHuman = humanKeywords.some(kw => question.toLowerCase().includes(kw));
 
-                        if (isAiFailing && this.userId) {
-                            this.addMessage("Câu này tôi không thể giải thích rõ được, tôi đang chuyển câu hỏi của bạn cho nhân viên hỗ trợ nhé...", false, false);
+                        if ((isAiFailing || isRequestingHuman) && this.userId) {
+                            if (isAiFailing && !isRequestingHuman) {
+                                this.addMessage("Câu này tôi không thể giải thích rõ được, tôi đang chuyển câu hỏi của bạn cho nhân viên hỗ trợ nhé...", false, false);
+                            } else {
+                                this.addMessage("Tôi đang kết nối bạn với Nhân viên chăm sóc khách hàng. Xin vui lòng đợi trong giây lát...", false, false);
+                            }
+                            
+                            // Gửi câu hỏi lên Admin Chat model
                             fetch('/chat/send', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ content: question })
                             }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
+                            
                             this.updateState('HUMAN');
                         }
+                    } else if (data.state === 'HUMAN') {
+                        // Backend đã tự động chuyển sang HUMAN từ một request trước đó, hoặc vừa chuyển
+                        this.addMessage("Đang chờ phản hồi từ Nhân viên...", false, true);
                     }
                 } else {
                     this.addMessage(`❌ Lỗi: ${data.message}`, false, false);

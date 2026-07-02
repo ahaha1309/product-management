@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSendMsg.disabled = true;
     chatInput.placeholder = "Chỉ có thể nhắn tin khi tiếp nhận hỗ trợ...";
 
-    if (currentConversationStatus === 'BOT') {
+    if (currentConversationStatus === 'BOT' || (currentConversationStatus === 'HUMAN' && !currentAssignedAgent)) {
       btnTake.classList.remove('hidden');
     } else if (currentConversationStatus === 'HUMAN') {
       if (currentAssignedAgent === currentAdminId) {
@@ -64,9 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const renderMessage = (message) => {
+    if (message._id && document.querySelector(`.chat-message[data-msgid="${message._id}"]`)) return;
+
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('chat-message');
     messageDiv.classList.add(message.isAdmin ? 'self' : 'client');
+    if (message._id) messageDiv.setAttribute('data-msgid', message._id);
 
     const bubble = document.createElement('div');
     bubble.classList.add('bubble');
@@ -156,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const loadHistory = async (userId) => {
+  const loadHistory = async (userId, isFirstLoad = false) => {
     try {
       const res = await axios.get(`/admin/chats/history/${userId}`);
       const history = res.data.history;
@@ -170,14 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const isAtBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop <= chatMessagesContainer.clientHeight + 10;
       
-      chatMessagesContainer.innerHTML = '';
-      if (history.length === 0) {
-        chatMessagesContainer.innerHTML = '<div class="text-center text-slate-400 text-sm mt-4">Chưa có tin nhắn nào.</div>';
-      } else {
+      if (isFirstLoad) {
+        chatMessagesContainer.innerHTML = '';
+        if (history.length === 0) {
+          chatMessagesContainer.innerHTML = '<div class="text-center text-slate-400 text-sm mt-4 empty-msg-placeholder">Chưa có tin nhắn nào.</div>';
+        }
+      }
+
+      if (history.length > 0) {
+        const emptyPlaceholder = chatMessagesContainer.querySelector('.empty-msg-placeholder');
+        if (emptyPlaceholder) emptyPlaceholder.remove();
+        
         history.forEach(message => renderMessage(message));
       }
       
-      if (isAtBottom) scrollToBottom();
+      if (isAtBottom || isFirstLoad) scrollToBottom();
     } catch (err) {
       console.log('Error loading history:', err);
     }
@@ -205,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       chatWindow.classList.add('flex');
       
       chatMessagesContainer.innerHTML = '<div class="text-center text-slate-400 text-sm mt-4">Đang tải...</div>';
-      loadHistory(userId);
+      loadHistory(userId, true);
       chatInput.focus();
     });
   });
