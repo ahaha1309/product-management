@@ -158,15 +158,18 @@ io.use(async (socket, next) => {
     const cookieHeader = socket.request.headers.cookie;
     if (cookieHeader) {
       const cookies = cookie.parse(cookieHeader);
-      if (cookies.token) {
-        // Kiểm tra Admin
-        const admin = await Account.findOne({ token: cookies.token, deleted: false }).select('_id fullName');
+      
+      // Kiểm tra Admin bằng admin_token
+      if (cookies.admin_token) {
+        const admin = await Account.findOne({ token: cookies.admin_token, deleted: false }).select('_id fullName');
         if (admin) {
           socket.user = { id: admin._id.toString(), isAdmin: true, fullName: admin.fullName };
           return next();
         }
-        
-        // Kiểm tra Customer
+      }
+      
+      // Kiểm tra Customer bằng token
+      if (cookies.token) {
         const user = await User.findOne({ token: cookies.token, deleted: false, status: 'active' }).select('_id fullName');
         if (user) {
           socket.user = { id: user._id.toString(), isAdmin: false, fullName: user.fullName };

@@ -53,7 +53,7 @@ module.exports.postLogin = async (req, res) => {
   const activityLogger = require('../../helper/activity-log');
   await activityLogger.log(req, 'LOGIN', 'ACCOUNT', accountExist._id, 'Đăng nhập vào hệ thống quản trị', accountExist._id);
 
-  res.cookie('token', accountExist.token, {
+  res.cookie('admin_token', accountExist.token, {
     httpOnly: true, // bảo mật
     secure: false, // true nếu dùng HTTPS
     sameSite: 'lax',
@@ -68,6 +68,6 @@ module.exports.logout = async (req, res) => {
   }
 
   req.session.destroy();
-  res.clearCookie('token');
+  res.clearCookie('admin_token');
   res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
 };

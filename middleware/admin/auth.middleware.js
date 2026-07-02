@@ -2,14 +2,14 @@ const systemConfig = require('../../config/system');
 const account = require('../../models/account.model');
 const roleModel = require('../../models/roles.model');
 module.exports.requireAuth =async (req, res, next) => {
-  if (!req.cookies.token) {
+  if (!req.cookies.admin_token) {
     return res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
   }
   const accountExist= await account.findOne({
-    token: req.cookies.token
+    token: req.cookies.admin_token
   }).select('-password');
   if (!accountExist) {
-    res.clearCookie('token');
+    res.clearCookie('admin_token');
     return res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
   }
   const role=await roleModel.findById(accountExist.roleId).select('title permission').lean();
