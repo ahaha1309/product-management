@@ -67,8 +67,21 @@ router.post('/chat', async (req, res) => {
         });
       }
 
-      // EARLY STOP EXECUTION: Prevent AI if status is HUMAN or CLOSED
-      if (conversation.status !== 'BOT') {
+      // Tự động mở lại hội thoại nếu khách hàng chat tiếp sau khi đã Kết thúc
+      if (conversation.status === 'CLOSED') {
+        console.log(`🔄 Reopening CLOSED conversation for user ${userId}. Switching back to BOT.`);
+        conversation = await Conversation.findOneAndUpdate(
+          { _id: conversation._id },
+          { 
+            $set: { status: 'BOT', assignedAgentId: null, transferredBy: null, transferReason: null },
+            $push: { auditLogs: { action: 'REOPENED', performedBy: 'SYSTEM', reason: 'CUSTOMER_NEW_MESSAGE' } }
+          },
+          { new: true }
+        );
+      }
+
+      // EARLY STOP EXECUTION: Prevent AI if status is HUMAN
+      if (conversation.status === 'HUMAN') {
         console.log(`🔒 Chat locked by status: ${conversation.status}. Bypassing AI.`);
         
         // Save the user's message to the Chat DB for the Admin
