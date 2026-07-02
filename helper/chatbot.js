@@ -382,7 +382,8 @@ case 'search': {
             fallbackProducts.slice(0, 30).forEach((product, index) => {
                 productContext += `${index + 1}. **${product.name}** - ${product.price}\n`;
                 productContext += `   📂 Danh mục: ${product.category}\n`;
-                productContext += `   📝 Mô tả: ${product.description}\n\n`;
+                productContext += `   📝 Mô tả: ${product.description}\n`;
+                productContext += `   📦 Tình trạng kho: ${product.stock > 0 ? `Còn ${product.stock} cái` : 'Hết hàng'}\n\n`;
             });
         } else {
             productContext += `Hiện tại cửa hàng không có sản phẩm nào.`;
@@ -615,7 +616,8 @@ case 'search': {
                         if (product.discount > 0) productContext += ` (${product.discount}%)`;
                         productContext += `\n`;
                         productContext += `   📂 Danh mục: ${product.category}\n`;
-                        productContext += `   📝 Mô tả: ${product.description}\n\n`;
+                        productContext += `   📝 Mô tả: ${product.description}\n`;
+                        productContext += `   📦 Tình trạng kho: ${product.stock > 0 ? `Còn ${product.stock} cái` : 'Hết hàng'}\n\n`;
                     });
                 }
             }
