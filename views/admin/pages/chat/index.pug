@@ -32,12 +32,14 @@ block main
                     div(class="font-semibold text-slate-800 truncate group-hover:text-indigo-600 transition-colors") #{user.fullName}
                     div(class="text-xs text-slate-500 truncate mt-1 flex items-center gap-2")
                       if user.status === 'BOT'
-                        span(class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-medium text-[10px] tracking-wide") AI ASSISTANT
+                        span(class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-medium text-[10px] tracking-wide border border-blue-100") AI ASSISTANT
                       else if user.status === 'HUMAN'
-                        if user.assignedAgentId === currentAdminId
-                          span(class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 font-medium text-[10px] tracking-wide") YOUR CHAT
+                        if !user.assignedAgentId
+                          span(class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 font-medium text-[10px] tracking-wide border border-amber-100") CHỜ TIẾP NHẬN
+                        else if user.assignedAgentId === currentAdminId
+                          span(class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 font-medium text-[10px] tracking-wide border border-emerald-100") ĐANG HỖ TRỢ
                         else
-                          span(class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 font-medium text-[10px] tracking-wide") LOCKED
+                          span(class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 font-medium text-[10px] tracking-wide border border-rose-100") ĐÃ CÓ NGƯỜI NHẬN
           else
             div(class="p-10 text-center text-slate-400 flex flex-col items-center justify-center h-full")
               div(class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4")

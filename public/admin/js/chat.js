@@ -23,13 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (status === 'BOT') {
       return `<span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-medium text-[10px] tracking-wide border border-blue-100">AI ASSISTANT</span>`;
     } else if (status === 'HUMAN') {
-      if (assignedAgentId === currentAdminId) {
-        return `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 font-medium text-[10px] tracking-wide border border-emerald-100">YOUR CHAT</span>`;
+      if (!assignedAgentId) {
+        return `<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 font-medium text-[10px] tracking-wide border border-amber-100">CHỜ TIẾP NHẬN</span>`;
+      } else if (assignedAgentId === currentAdminId) {
+        return `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 font-medium text-[10px] tracking-wide border border-emerald-100">ĐANG HỖ TRỢ</span>`;
       } else {
-        return `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 font-medium text-[10px] tracking-wide border border-rose-100">LOCKED</span>`;
+        return `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 font-medium text-[10px] tracking-wide border border-rose-100">ĐÃ CÓ NGƯỜI NHẬN</span>`;
       }
     } else if (status === 'CLOSED') {
-      return `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium text-[10px] tracking-wide border border-slate-200">CLOSED</span>`;
+      return `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium text-[10px] tracking-wide border border-slate-200">ĐÃ KẾT THÚC</span>`;
     }
     return '';
   };
