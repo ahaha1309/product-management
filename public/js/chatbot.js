@@ -15,6 +15,13 @@ class ChatbotClient {
 
         this.isLoading = false;
 
+        this.sessionId = this.generateSessionId();
+        this.isLoading = false;
+        
+        // Thêm state để quản lý polling
+        this.isInitialLoad = true;
+        this.renderedMsgIds = new Set();
+
         if (this.chatbotBtn && this.chatbotModal) {
             this.setupSocket();
             this.setupEventListeners();
@@ -39,22 +46,33 @@ class ChatbotClient {
             const history = await res.json();
             
             if (history && history.length > 0) {
-                // Kiểm tra xem có tin nhắn mới không để render
-                // Đơn giản là đếm số lượng tin nhắn hiện tại so với lịch sử trả về
-                const currentMessageCount = this.messageContainer.querySelectorAll('.chat-message').length;
-                
-                // Nếu lần đầu tải hoặc có tin nhắn mới
-                if (currentMessageCount === 0 || history.length > currentMessageCount) {
-                    this.messageContainer.innerHTML = ''; 
+                if (this.isInitialLoad) {
+                    // Lần đầu tải: Render toàn bộ lịch sử từ DB (bao gồm cả user và admin)
+                    // Lưu ý: Không clear innerHTML hoàn toàn vì có thể AI vừa gửi tin nhắn chào hỏi
+                    // Nhưng để tránh trùng lặp, ta sẽ chỉ append những tin nhắn chưa có trong renderedMsgIds
+                    // Thực tế là lúc này DOM có thể trống hoặc chỉ có câu chào của AI
                     
-                    let hasAdminMessage = false;
                     history.forEach(msg => {
                         this.addMessage(msg.content, !msg.isAdmin, msg.isAdmin);
-                        if (msg.isAdmin) hasAdminMessage = true;
+                        this.renderedMsgIds.add(msg._id);
                     });
                     
-                    // Hiện bong bóng nếu đang tắt và có tin nhắn admin mới
-                    if (hasAdminMessage && !this.chatbotModal.classList.contains('active')) {
+                    this.isInitialLoad = false;
+                } else {
+                    // Chạy ngầm (polling): Chỉ append tin nhắn MỚI từ Admin để tránh xóa mất tin nhắn của AI
+                    let hasNewAdminMessage = false;
+                    history.forEach(msg => {
+                        if (!this.renderedMsgIds.has(msg._id)) {
+                            // Chỉ thêm tin nhắn của Admin vào DOM để tránh bị lặp tin nhắn của User (do user gửi đã tự render rồi)
+                            if (msg.isAdmin) {
+                                this.addMessage(msg.content, false, true);
+                                hasNewAdminMessage = true;
+                            }
+                            this.renderedMsgIds.add(msg._id);
+                        }
+                    });
+                    
+                    if (hasNewAdminMessage && !this.chatbotModal.classList.contains('active')) {
                         this.chatbotBtn.classList.add('pulse-danger');
                     }
                 }
