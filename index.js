@@ -40,6 +40,15 @@ app.use(async (req, res, next) => {
 });
 
 app.use(methodOverride('_method'));
+
+// Vô hiệu hóa Cache trên Vercel CDN để tránh việc bị cache các lượt Redirect 302 (bắt đăng nhập lại)
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 //tạo ra biến toàn cục để file pug nào cũng dùng đc
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 app.locals.moment = moment;
