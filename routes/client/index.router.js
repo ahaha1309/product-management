@@ -38,6 +38,7 @@ module.exports = (app) => {
   app.use('/my-account',userRouter)
   app.use('/order',orderRouter)
   app.use('/chatbot',chatBotRouter)
+  app.use('/chat', authMiddleware.infoUser, require('./chat.route'))
   
   // ✅ EXISTING ROUTES
   app.use('/review', reviewRouter);

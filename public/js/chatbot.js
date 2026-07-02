@@ -25,48 +25,43 @@ class ChatbotClient {
     generateSessionId() {
         return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
-
     setupSocket() {
-        if (!this.userId) return;
-        this.socket = io({
-            reconnectionAttempts: 2,
-            timeout: 2000
-        });
+        // Loại bỏ kết nối Socket.IO vì Vercel Serverless không hỗ trợ tốt
+        // Thay bằng HTTP Polling để lấy lịch sử chat
+        this.fetchChatHistory();
+        this.pollingInterval = setInterval(() => this.fetchChatHistory(), 3000);
+    }
 
-        // Lắng nghe tin nhắn từ Admin
-        this.socket.on('SERVER_RETURN_MESSAGE', (data) => {
-            if (data.userId === this.userId) {
-                // Nếu nhận được tin nhắn từ Admin, tự động chốt cứng mode human
-                if (data.isAdmin) {
-                    // Đã loại bỏ việc chốt cứng chatMode='human'. AI sẽ luôn là người xử lý tin nhắn đầu tiên.
-                    this.addMessage(data.content, false, true); // true = isAdmin
+    async fetchChatHistory() {
+        if (!this.userId) return;
+        try {
+            const res = await fetch('/chat/history');
+            const history = await res.json();
+            
+            if (history && history.length > 0) {
+                // Kiểm tra xem có tin nhắn mới không để render
+                // Đơn giản là đếm số lượng tin nhắn hiện tại so với lịch sử trả về
+                const currentMessageCount = this.messageContainer.querySelectorAll('.chat-message').length;
+                
+                // Nếu lần đầu tải hoặc có tin nhắn mới
+                if (currentMessageCount === 0 || history.length > currentMessageCount) {
+                    this.messageContainer.innerHTML = ''; 
                     
-                    // Hiện bong bóng nếu đang tắt
-                    if (!this.chatbotModal.classList.contains('active')) {
+                    let hasAdminMessage = false;
+                    history.forEach(msg => {
+                        this.addMessage(msg.content, !msg.isAdmin, msg.isAdmin);
+                        if (msg.isAdmin) hasAdminMessage = true;
+                    });
+                    
+                    // Hiện bong bóng nếu đang tắt và có tin nhắn admin mới
+                    if (hasAdminMessage && !this.chatbotModal.classList.contains('active')) {
                         this.chatbotBtn.classList.add('pulse-danger');
                     }
                 }
             }
-        });
-
-        // Lắng nghe lịch sử chat human
-        this.socket.on('SERVER_RETURN_HISTORY', (history) => {
-            if (history && history.length > 0) {
-                // Xoá câu chào mặc định của AI
-                this.messageContainer.innerHTML = ''; 
-                
-                history.forEach(msg => {
-                    this.addMessage(msg.content, !msg.isAdmin, msg.isAdmin);
-                });
-                
-                // Lưu ý: Không tự động chuyển sang mode human ở đây nữa.
-                // Để mặc định AI tiếp tục trả lời các câu hỏi mới.
-                // Nếu Admin trả lời (SERVER_RETURN_MESSAGE có isAdmin=true), nó sẽ tự nhảy sang mode human sau.
-            }
-        });
-        
-        // Yêu cầu lấy lịch sử ngay khi kết nối
-        this.socket.emit('CLIENT_FETCH_HISTORY', { userId: this.userId });
+        } catch (err) {
+            console.log('Lỗi fetch lịch sử chat:', err);
+        }
     }
 
     setupEventListeners() {
@@ -127,14 +122,12 @@ class ChatbotClient {
 
             this.addMessage("Tôi đang kết nối bạn với Nhân viên chăm sóc khách hàng. Xin vui lòng đợi trong giây lát...", false, false);
             
-            // Gửi luôn câu hỏi hiện tại cho admin
-            if (this.socket) {
-                this.socket.emit('CLIENT_SEND_MESSAGE', {
-                    userId: this.userId,
-                    content: question,
-                    isAdmin: false
-                });
-            }
+            // Gửi luôn câu hỏi hiện tại cho admin bằng REST
+            fetch('/chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: question })
+            }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
             this.isLoading = false;
             this.sendBtn.disabled = false;
             this.inputField.focus();
@@ -165,38 +158,32 @@ class ChatbotClient {
 
                     if (isAiFailing && this.userId) {
                         this.addMessage("Câu này tôi không thể giải thích rõ được, tôi đang chuyển câu hỏi của bạn cho nhân viên hỗ trợ nhé...", false, false);
-                        if (this.socket) {
-                            this.socket.emit('CLIENT_SEND_MESSAGE', {
-                                userId: this.userId,
-                                content: question,
-                                isAdmin: false
-                            });
-                        }
+                        fetch('/chat/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ content: question })
+                        }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
                     }
                 } else {
                     this.addMessage(`❌ Lỗi: ${data.message}`, false, false);
                     if (this.userId) {
                         this.addMessage("Đang kết nối bạn với Quản trị viên...", false, false);
-                        if (this.socket) {
-                            this.socket.emit('CLIENT_SEND_MESSAGE', {
-                                userId: this.userId,
-                                content: question,
-                                isAdmin: false
-                            });
-                        }
+                        fetch('/chat/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ content: question })
+                        }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
                     }
                 }
             } catch (error) {
                 this.addMessage('❌ Có lỗi xảy ra khi kết nối tới Trợ lý AI. Vui lòng đợi...', false, false);
                 if (this.userId) {
                     this.addMessage("Đang kết nối bạn với Quản trị viên...", false, false);
-                    if (this.socket) {
-                        this.socket.emit('CLIENT_SEND_MESSAGE', {
-                            userId: this.userId,
-                            content: question,
-                            isAdmin: false
-                        });
-                    }
+                    fetch('/chat/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: question })
+                    }).catch(err => console.log('Lỗi gửi tin nhắn cho admin:', err));
                 }
             } finally {
                 this.isLoading = false;
