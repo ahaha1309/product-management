@@ -60,99 +60,54 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clear tin nhắn cũ và show loading
       chatMessagesContainer.innerHTML = '<div class="text-center text-muted">Đang tải tin nhắn...</div>';
 
-      // Yêu cầu load lịch sử
-      socket.emit('CLIENT_FETCH_HISTORY', { userId: userId });
+      // Yêu cầu load lịch sử (HTTP Fetch thay vì Socket)
+      fetch(`/admin/chat/history/${userId}`)
+        .then(res => res.json())
+        .then(history => {
+          chatMessagesContainer.innerHTML = ''; // Xóa loading
+          if (history.length === 0) {
+            chatMessagesContainer.innerHTML = '<div class="text-center text-muted">Chưa có tin nhắn nào.</div>';
+          } else {
+            history.forEach(message => {
+              renderMessage(message);
+            });
+          }
+        })
+        .catch(err => {
+          chatMessagesContainer.innerHTML = '<div class="text-center text-danger">Lỗi tải tin nhắn.</div>';
+        });
+
       chatInput.focus();
     });
   });
 
-  // Nhận lịch sử chat từ server
-  socket.on('SERVER_RETURN_HISTORY', (history) => {
-    // Chỉ render nếu history thuộc về user đang chọn
-    if (history.length > 0 && history[0].userId !== currentChatUserId.value && currentChatUserId.value) {
-      // Có thể nhận nhầm nếu click nhanh 2 lần, nhưng logic backend lấy theo id truyền lên nên thường đúng
-    }
-    chatMessagesContainer.innerHTML = ''; // Xóa loading
-    
-    if (history.length === 0) {
-      chatMessagesContainer.innerHTML = '<div class="text-center text-muted">Chưa có tin nhắn nào.</div>';
-    } else {
-      history.forEach(message => {
-        renderMessage(message);
-      });
-    }
-  });
-
-  // Nhận tin nhắn mới
-  socket.on('SERVER_RETURN_MESSAGE', (data) => {
-    // 1. Render tin nhắn nếu đang mở đúng khung chat
-    if (data.userId === currentChatUserId.value) {
-      const emptyMsg = chatMessagesContainer.querySelector('.text-center');
-      if (emptyMsg) emptyMsg.remove();
-      renderMessage(data);
-    }
-    
-    // 2. Cập nhật Sidebar (nếu tin nhắn từ Client gửi)
-    if (!data.isAdmin) {
-      const userList = document.getElementById('chat-user-list');
-      let userItem = userList.querySelector(`.chat-user-item[data-userid="${data.userId}"]`);
-      
-      if (userItem) {
-        // Có sẵn trong danh sách -> Đưa lên đầu
-        userList.prepend(userItem);
-        // Nháy nền nhẹ
-        userItem.style.transition = 'background-color 0.3s';
-        userItem.style.backgroundColor = '#ecfdf5'; // brand-50
-        setTimeout(() => userItem.style.backgroundColor = '', 2000);
-        
-        // Hiện chấm đỏ nếu đang không mở đúng chat này
-        if (data.userId !== currentChatUserId.value) {
-          let badge = userItem.querySelector('.new-msg-badge');
-          if (!badge) {
-             const flexContainer = userItem.querySelector('.flex.items-center');
-             if(flexContainer) {
-                 badge = document.createElement('span');
-                 badge.className = 'new-msg-badge w-3 h-3 bg-red-500 rounded-full inline-block ml-auto';
-                 flexContainer.appendChild(badge);
-             }
+  // Thay thế SERVER_RETURN_HISTORY và SERVER_RETURN_MESSAGE bằng Polling
+  setInterval(() => {
+    const targetUserId = currentChatUserId.value;
+    if (targetUserId) {
+      fetch(`/admin/chat/history/${targetUserId}`)
+        .then(res => res.json())
+        .then(history => {
+          // Lấy tin nhắn cuối cùng để so sánh (tránh render lại toàn bộ nếu không cần thiết)
+          // Để đơn giản, render lại toàn bộ nhưng giữ thanh cuộn nếu đang ở dưới cùng
+          const isAtBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop <= chatMessagesContainer.clientHeight + 10;
+          
+          chatMessagesContainer.innerHTML = '';
+          if (history.length === 0) {
+            chatMessagesContainer.innerHTML = '<div class="text-center text-muted">Chưa có tin nhắn nào.</div>';
+          } else {
+            history.forEach(message => {
+              renderMessage(message);
+            });
           }
-        }
-      } else {
-        // Chưa có trong danh sách -> reload trang cho an toàn và nhanh nhất vì thiếu avatar/fullname
-        if (!currentChatUserId.value) {
-           window.location.reload();
-        } else {
-           // Nếu đang chat dở mà có người mới tinh, tạm thời thêm một ô "Khách hàng mới"
-           const newItem = document.createElement('a');
-           newItem.href = "#";
-           newItem.className = "chat-user-item block p-4 hover:bg-brand-50 transition-colors focus:bg-brand-50";
-           newItem.setAttribute("data-userid", data.userId);
-           newItem.setAttribute("data-fullname", "Khách hàng mới");
-           newItem.innerHTML = `
-             <div class="flex items-center gap-3">
-               <div class="w-10 h-10 rounded-full bg-surface-200 flex items-center justify-center shrink-0">
-                  <i class="bi bi-person text-surface-500"></i>
-               </div>
-               <div class="min-w-0 flex-1">
-                 <div class="font-semibold text-surface-900 truncate">Khách hàng mới</div>
-                 <div class="text-xs text-surface-500 truncate mt-0.5">Vừa gửi tin nhắn</div>
-               </div>
-               <span class="new-msg-badge w-3 h-3 bg-red-500 rounded-full inline-block ml-auto"></span>
-             </div>
-           `;
-           
-           newItem.addEventListener('click', (e) => {
-              e.preventDefault();
-              window.location.href = window.location.pathname; // Tải lại trang để lấy data chuẩn
-           });
-           
-           userList.prepend(newItem);
-           const noMsg = userList.querySelector('.text-center.text-surface-500');
-           if (noMsg) noMsg.remove();
-        }
-      }
+          
+          if (isAtBottom) {
+             scrollToBottom();
+          }
+        })
+        .catch(err => console.log('Polling error:', err));
     }
-  });
+  }, 3000); // Polling mỗi 3 giây
 
   // Gửi tin nhắn
   chatForm.addEventListener('submit', (e) => {
@@ -161,11 +116,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetUserId = currentChatUserId.value;
 
     if (content && targetUserId) {
-      socket.emit('CLIENT_SEND_MESSAGE', {
-        userId: targetUserId,
-        content: content,
-        isAdmin: true // Quan trọng: đánh dấu là admin gửi
-      });
+      // Dùng HTTP POST thay cho Socket
+      fetch('/admin/chat/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: targetUserId,
+          content: content
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Tự render tin nhắn của mình luôn cho nhanh
+        const emptyMsg = chatMessagesContainer.querySelector('.text-center');
+        if (emptyMsg) emptyMsg.remove();
+        renderMessage(data);
+      })
+      .catch(err => console.log('Lỗi gửi tin nhắn', err));
+
       chatInput.value = '';
     }
   });

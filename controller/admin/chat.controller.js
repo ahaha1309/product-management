@@ -38,3 +38,31 @@ module.exports.index = async (req, res) => {
     res.redirect('back');
   }
 };
+
+module.exports.history = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const history = await Chat.find({ userId: userId, deleted: false }).sort({ createdAt: 1 });
+    res.json(history);
+  } catch (error) {
+    res.status(500).json({ error: "Lỗi lấy lịch sử" });
+  }
+};
+
+module.exports.send = async (req, res) => {
+  try {
+    const { userId, content } = req.body;
+    if (!userId || !content) {
+      return res.status(400).json({ error: "Thiếu dữ liệu" });
+    }
+    const chat = new Chat({
+      userId: userId,
+      content: content,
+      isAdmin: true
+    });
+    await chat.save();
+    res.json(chat);
+  } catch (error) {
+    res.status(500).json({ error: "Lỗi gửi tin nhắn" });
+  }
+};
